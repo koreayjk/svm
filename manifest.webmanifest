@@ -1,7 +1,7 @@
 {
   "name": "SVM — Student Volunteer Movement",
   "short_name": "SVM",
-  "description": "Called. Equipped. Sent. — Student Volunteer Movement, Bryan/College Station.",
+  "description": "Mobilizing · Training · Sending — Student Volunteer Movement, Bryan/College Station.",
   "start_url": "./index.html#/home",
   "scope": "./",
   "display": "standalone",

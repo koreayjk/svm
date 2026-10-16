@@ -1,6 +1,6 @@
 # SVM — Student Volunteer Movement App
 
-브라이언/컬리지 스테이션 학생자원운동(SVM) 선교 지원 플랫폼 — **Called. Equipped. Sent.**
+브라이언/컬리지 스테이션 학생자원운동(SVM) 선교 지원 플랫폼 — **Mobilizing · Training · Sending**
 명세서: [`docs/SVM_App_Spec_v2.md`](docs/SVM_App_Spec_v2.md) (현행) · [v1](docs/SVM_App_Spec.md) · 목표: 2026-11-20 발족식
 
 ## 현재 상태 — 1단계 완료 (명세 v2 반영)
