@@ -26,3 +26,7 @@ SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`asse
 3. 앱을 새로고침하면 해당 나라만 우리 사진으로 바뀝니다 (나머지는 기본 사진 유지).
 
 > 우리 사진도 현지인 얼굴·실명·교회 위치가 드러나지 않게 골라 주세요. 특히 이집트 등 민감 국가.
+
+## 세계지도
+`assets/world-dots.svg` — [Natural Earth](https://www.naturalearthdata.com/) 1:110m 육지 데이터(퍼블릭 도메인)를
+[world-atlas](https://github.com/topojson/world-atlas)(ISC) 형식으로 받아 점 지도로 변환했습니다.

@@ -554,6 +554,36 @@
 
   .ev-facts .list-row .ico-tile { background: var(--orange-soft); color: var(--orange-dark); }
   .btn-row { display: grid; gap: 10px; }
+  /* ---------- auth world map ---------- */
+  .map-wrap { position: relative; margin: 0 -24px 10px; aspect-ratio: 800 / 228; max-height: 300px; }
+  .map-wrap::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(180deg, rgba(242, 243, 248, 0), rgba(242, 243, 248, .9)); pointer-events: none; }
+  .worldmap { display: block; width: 100%; height: 100%; }
+  .worldmap .dots { opacity: .2; }
+  .worldmap .arc { fill: none; stroke: var(--orange); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .85;
+    animation: draw 1.3s var(--ease-out) forwards; animation-delay: calc(.35s + var(--i) * .12s); }
+  .worldmap .pin { fill: var(--orange); stroke: #fff; stroke-width: 1.6; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.2s + var(--i) * .12s); }
+  .worldmap .pin-flag { font-size: 13px; text-anchor: middle; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.3s + var(--i) * .12s); }
+  .worldmap .home { fill: var(--navy); stroke: #fff; stroke-width: 2; }
+  .worldmap .home-ring { fill: none; stroke: var(--navy); stroke-width: 1.4; opacity: .35; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes pin-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ring { 0% { transform: scale(.6); opacity: .5; } 100% { transform: scale(2.2); opacity: 0; } }
+  .auth-hero .auth-logo-main { width: 132px; margin: 0 auto 14px; position: relative; }
+  @media (max-width: 520px) {
+    .map-wrap { margin: 0 -18px 10px; }
+    .worldmap .dots { opacity: .26; }
+    .worldmap .arc { stroke-width: 3; }
+    .worldmap .pin { r: 7; stroke-width: 2.4; }
+    .worldmap .home { r: 8; stroke-width: 3; }
+    .worldmap .home-ring { r: 15; stroke-width: 2.2; }
+    .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
+  }
+  .auth-hero { padding-top: calc(var(--safe-t) + 56px); }
+  @media (prefers-reduced-motion: reduce) {
+    .worldmap .arc { animation: none; stroke-dashoffset: 0; }
+    .worldmap .pin, .worldmap .pin-flag { animation: none; opacity: 1; }
+    .worldmap .home-ring { animation: none; opacity: 0; }
+  }
 </style>
 </head>
 <body>
@@ -687,7 +717,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    members_unit: 'members', coming_title: 'Coming next', map_label: 'Map: from Bryan/College Station to seven mission fields', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
   },
   ko: {
     tagline: 'Called. Equipped. Sent.',
@@ -764,7 +794,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    members_unit: '명', coming_title: '곧 열려요', map_label: '지도: 브라이언/컬리지 스테이션에서 7개 선교지로', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
   },
 };
 
@@ -1333,14 +1363,10 @@ function viewAuth() {
       <button type="button" role="tab" data-mode="signup" aria-selected="${m === 'signup'}" class="${m === 'signup' ? 'active' : ''}">${esc(t('signup'))}</button>
       <button type="button" role="tab" data-mode="login" aria-selected="${m === 'login'}" class="${m === 'login' ? 'active' : ''}">${esc(t('login'))}</button>
     </div>` : `<h2 style="margin-bottom:16px">${esc(m === 'forgot' ? t('forgot_password') : t('set_password'))}</h2>`;
-  // 떠 있는 7개 나라 + 가운데 로고
-  const bubbles = [
-    ['KR', 6, 18, 60, 0], ['PH', 70, 2, 50, .05], ['MX', 84, 46, 62, .1], ['JP', 2, 64, 48, .15],
-    ['TH', 14, 2, 40, .2], ['EG', 76, 78, 44, .25], ['MY', 40, 84, 38, .3],
-  ].map(([c, x, y, sz, d]) => `<span class="bub" style="left:${x}%;top:${y}%;--s:${sz}px;--d:${d}s" aria-hidden="true">${flag(c)}</span>`).join('');
   return `<div class="auth-hero">
       ${langToggle()}
-      <div class="orbit">${bubbles}<div class="core-logo"><img src="assets/SVM_Logo.svg" alt="SVM"></div></div>
+      <div class="map-wrap">${worldMapSVG()}</div>
+      <img class="logo auth-logo-main" src="assets/SVM_Logo.svg" alt="SVM">
       <div class="tagline">${esc(t('tagline'))}</div>
       <h1 class="auth-title">${esc(t('auth_title'))}</h1>
       <p>${esc(t('auth_welcome'))}</p>
@@ -1354,6 +1380,34 @@ function viewAuth() {
         <div><b>${esc(t('ap3_n'))}</b>${esc(t('ap3'))}</div>
       </div>
     </div>`;
+}
+
+// 로그인 화면 세계지도 — 점 지도(assets/world-dots.svg, Natural Earth 기반) 위에
+// 브라이언/컬리지 스테이션에서 7개 선교지로 뻗어 가는 선 ("Sent")
+const MAP = { W: 1080, H: 402, LAT_T: 76, LAT_B: -58 };
+const MAP_HOME = { lat: 30.63, lon: -96.33 };   // Bryan/College Station
+const MAP_VIEW = [205, 38, 800, 228];            // 텍사스 ~ 일본이 다 보이는 영역 (x, y, w, h)
+const MAP_FIELDS = [
+  ['MX', 19.43, -99.13], ['EG', 30.04, 31.24], ['TH', 13.75, 100.5], ['MY', 3.14, 101.69],
+  ['PH', 14.6, 120.98], ['KR', 37.57, 126.98], ['JP', 35.68, 139.69],
+];
+function mapXY(lat, lon) { return [(lon + 180) / 360 * MAP.W, (MAP.LAT_T - lat) / (MAP.LAT_T - MAP.LAT_B) * MAP.H]; }
+function worldMapSVG() {
+  const [hx, hy] = mapXY(MAP_HOME.lat, MAP_HOME.lon);
+  const arcs = MAP_FIELDS.map(([code, lat, lon], i) => {
+    const [x, y] = mapXY(lat, lon);
+    const dist = Math.hypot(x - hx, y - hy);
+    const cx = (hx + x) / 2, cy = Math.max(MAP_VIEW[1] + 8, Math.min(hy, y) - Math.max(16, dist * 0.2));   // 위로 휘되 화면 안에서
+    return `<path class="arc" d="M${hx.toFixed(1)} ${hy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" pathLength="1" style="--i:${i}"/>
+      <circle class="pin" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" style="--i:${i}"/>
+      <text class="pin-flag" x="${x.toFixed(1)}" y="${(y - 9).toFixed(1)}" style="--i:${i}">${flag(code)}</text>`;
+  }).join('');
+  return `<svg class="worldmap" viewBox="${MAP_VIEW.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(t('map_label'))}">
+    <image href="assets/world-dots.svg" x="0" y="0" width="${MAP.W}" height="${MAP.H}" class="dots"/>
+    ${arcs}
+    <circle class="home-ring" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="10"/>
+    <circle class="home" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="5.2"/>
+  </svg>`;
 }
 
 function bindAuth() {
