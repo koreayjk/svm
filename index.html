@@ -687,7 +687,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    members_unit: 'members', coming_title: 'Coming next', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Reset all demo data on this device?', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
   },
   ko: {
     tagline: 'Called. Equipped. Sent.',
@@ -764,7 +764,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    members_unit: '명', coming_title: '곧 열려요', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '이 기기의 데모 데이터를 모두 지울까요?', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
   },
 };
 
@@ -885,8 +885,209 @@ function nextRegular(type, now) {
 // ---------------------------------------------------------------------
 // 4) Supabase
 // ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// 데모 모드 — Supabase 연결 정보가 없을 때 브라우저 안의 가짜 DB 로 동작
+//   · 시연·리허설용: 데이터는 이 기기(localStorage)에만 저장됩니다
+//   · 아무 이메일/비밀번호로 가입 가능, 이메일 인증 없음
+//   · 이 기기에서 처음 가입한 사람이 관리자가 됩니다 (관리 탭 시연용)
+//   · 실제 운영 전환: CONFIG 에 Supabase URL/anon key 를 넣으면 자동으로 꺼집니다
+// ---------------------------------------------------------------------
+function createDemoClient() {
+  const KEY = 'svm_demo_db_v1';
+  const uid = () => 'demo-' + Math.random().toString(36).slice(2, 10);
+  const nowIso = () => new Date().toISOString();
+  const ago = d => new Date(Date.now() - d * 86400000).toISOString();
+
+  function seed() {
+    const C = (id, code, name_en, name_ko, is_sensitive, intro, intro_ko, extra, extra_ko, life, life_ko, lang, lang_ko, housing, housing_ko) => ({
+      id, code, name_en, name_ko, is_sensitive, is_active: true, sort_order: id, extra_sections: [], booth_meta: {},
+      intro, intro_ko,
+      ministry: 'INTO THE WORLD — up to 5 English conversation classes a day, serving with local churches and missionaries, sharing the gospel and teaching the Bible, building friendships with local young people, and cross-cultural discipleship.' + (extra ? '\n' + extra : ''),
+      ministry_ko: 'INTO THE WORLD — 하루 최대 5회 영어 회화 수업, 현지 교회·선교사와 동역, 복음 전하기와 성경 수업, 현지 청년과의 관계, 교차문화 제자훈련.' + (extra_ko ? '\n' + extra_ko : ''),
+      daily_life: life, daily_life_ko: life_ko, language: lang, language_ko: lang_ko, housing, housing_ko,
+    });
+    const countries = [
+      C(1, 'KR', 'South Korea', '한국', false, 'Partner churches across Korea welcome students to serve alongside local congregations.', '한국 전역의 협력 교회들이 학생들과 함께 지역 교회를 섬깁니다.',
+        'In Korea: campus outreach and English camps with partner churches.', '한국에서는: 협력 교회와 함께하는 캠퍼스 전도와 영어 캠프.',
+        'Fast-paced city life with excellent public transit. Four distinct seasons.', '대중교통이 편리한 도시 생활. 사계절이 뚜렷합니다.',
+        'Korean (greetings and the gospel message). English for classes.', '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.', 'Host-church housing with all meals provided.', '현지 교회 숙소, 모든 식사 제공.'),
+      C(2, 'PH', 'Philippines', '필리핀', false, 'A warm, open culture with many churches eager for young workers.', '따뜻하고 열린 문화, 젊은 사역자를 기다리는 교회가 많습니다.',
+        "In the Philippines: village evangelism and children's programs.", '필리핀에서는: 마을 전도와 어린이 프로그램.',
+        'Tropical — hot year-round with a rainy season (June–November).', '열대 기후 — 연중 덥고 6~11월은 우기.',
+        'Tagalog/Filipino; English is widely spoken.', '타갈로그어(필리핀어). 영어가 널리 통용됩니다.', 'Mission house or host family, with all meals provided.', '선교관 또는 홈스테이, 모든 식사 제공.'),
+      C(3, 'MY', 'Malaysia', '말레이시아', false, 'A multi-ethnic nation where Malay, Chinese and Indian cultures meet.', '말레이·중국·인도 문화가 어우러진 다민족 국가입니다.',
+        'In Malaysia: student ministry and community care.', '말레이시아에서는: 학생 사역과 지역 돌봄.',
+        'Hot and humid year-round. Modest dress is expected.', '연중 덥고 습함. 단정한 복장이 필요합니다.',
+        'Malay; English and Chinese are commonly used.', '말레이어. 영어와 중국어도 많이 사용됩니다.', 'Church guest rooms or mission house, with all meals provided.', '교회 게스트룸 또는 선교관, 모든 식사 제공.'),
+      C(4, 'TH', 'Thailand', '태국', false, 'The "Land of Smiles" — a Buddhist-majority country with a growing church.', '"미소의 나라" — 불교 국가이지만 교회가 성장하고 있습니다.',
+        'In Thailand: school English classes and village visits.', '태국에서는: 학교 영어 수업과 마을 방문.',
+        'Hot season (Mar–May), rainy season (Jun–Oct), cool season (Nov–Feb).', '더운 철(3~5월), 우기(6~10월), 시원한 철(11~2월).',
+        'Thai.', '태국어.', 'Mission center or host church, with all meals provided.', '선교센터 또는 현지 교회, 모든 식사 제공.'),
+      C(5, 'MX', 'Mexico', '멕시코', false, 'A close neighbor with vibrant churches and great openness to the gospel.', '가까운 이웃 나라, 활기찬 교회와 복음에 대한 열린 마음.',
+        'In Mexico: street and village evangelism and VBS.', '멕시코에서는: 거리·마을 전도와 여름성경학교.',
+        'Climate varies by region. Family and hospitality are central.', '지역마다 기후가 다릅니다. 가족과 환대가 중심인 문화.',
+        'Spanish.', '스페인어.', 'Host families or church facilities, with all meals provided.', '홈스테이 또는 교회 시설, 모든 식사 제공.'),
+      C(6, 'JP', 'Japan', '일본', false, 'Less than 1% of Japan is Christian — one of the largest unreached peoples.', '기독교인이 1% 미만 — 가장 큰 미전도 종족 중 하나입니다.',
+        'In Japan: English cafés with small local churches.', '일본에서는: 작은 지역 교회와 함께하는 영어 카페.',
+        'Clean, orderly and punctual society. Four seasons.', '깨끗하고 질서 있으며 시간을 잘 지키는 사회. 사계절.',
+        'Japanese.', '일본어.', 'Church housing or mission house, with all meals provided.', '교회 숙소 또는 선교관, 모든 식사 제공.'),
+      C(7, 'EG', 'Egypt', '이집트', true, 'One of the oldest Christian communities in the world lives here.', '세계에서 가장 오래된 기독교 공동체 중 하나가 있는 곳입니다.',
+        '', '',
+        'Hot, dry desert climate. Modest dress and discretion are essential.', '덥고 건조한 사막 기후. 단정한 복장과 신중함이 꼭 필요합니다.',
+        'Arabic (Egyptian dialect).', '아랍어 (이집트 방언).', 'Arranged by the local team; details are shared after approval.', '현지 팀이 준비합니다. 세부 사항은 승인 후 안내됩니다.'),
+    ];
+    countries[6].ministry = 'INTO THE WORLD — English conversation classes and quiet, relational ministry alongside local believers. Details are shared in person after approval.';
+    countries[6].ministry_ko = 'INTO THE WORLD — 영어 회화 수업과 현지 성도와 함께하는 조용한 관계 중심 사역. 세부 내용은 승인 후 대면으로 안내합니다.';
+
+    const people = ['Hannah Cho', 'Daniel Reyes', 'Grace Park', 'Joshua Nguyen', 'Esther Kim', 'Caleb Martinez', 'Ruth Tanaka',
+      'Samuel Okafor', 'Lydia Chen', 'Isaac Moreno', 'Naomi Lee', 'Elijah Brooks', 'Abigail Santos', 'Micah Patel', 'Sarah Yoon'];
+    const profiles = people.map((name, i) => ({
+      id: 'seed-' + i, name, email: name.toLowerCase().replace(' ', '.') + '@example.org',
+      school: i % 3 === 0 ? 'Blinn College' : 'Texas A&M', phone: null, role: i === 2 || i === 9 ? 'graduate' : 'member', lang: 'en', created_at: ago(30 - i),
+    }));
+    // 나라별 이름 쓰기 예시 (사람 index 목록)
+    const pledgeMap = { 1: [0, 2, 4, 6, 8, 10, 12, 14], 2: [1, 3, 5, 7, 11], 3: [2, 8, 13], 4: [3, 9, 14], 5: [1, 5, 9, 11, 13, 7], 6: [0, 4, 6, 10], 7: [2, 3, 8, 12, 14] };
+    const nation_pledges = [];
+    Object.entries(pledgeMap).forEach(([cid, idx]) => idx.forEach((i, k) => nation_pledges.push({ user_id: 'seed-' + i, country_id: Number(cid), created_at: ago(20 - k) })));
+
+    return {
+      users: [], session: null, next: 100,
+      profiles, countries, nation_pledges,
+      country_photos: [], gatherings: [],
+      app_settings: [
+        { key: 'require_graduation_to_apply', value: false },
+        { key: 'sensitive_photo_block', value: true },
+        { key: 'gathering_location', value: 'Church — Bryan/College Station, TX' },
+        { key: 'provided_items', value: DEFAULTS.provided_items },
+        { key: 'prepare_items', value: DEFAULTS.prepare_items },
+        { key: 'mission_seasons', value: DEFAULTS.mission_seasons },
+      ],
+      events: [
+        { id: 1, title_en: 'SVM Mission Conference 2026', title_ko: 'SVM 미션 컨퍼런스 2026',
+          subtitle_en: 'Launch night of the Student Volunteer Movement', subtitle_ko: '학생자원운동 발족식',
+          description_en: 'The launch of SVM in Bryan/College Station.\nTent Village — walk the nation booths and sign your nation.\nSign up on site with the QR code, explore the fields, and apply.\nFirst look at the SVM metaverse mission space (teaser).',
+          description_ko: '브라이언/컬리지 스테이션 SVM 발족식.\n텐트 빌리지 — 나라별 부스를 돌며 내 나라에 이름 쓰기.\n현장 QR로 가입하고, 선교지를 둘러보고, 신청까지.\nSVM 메타버스 선교 공간 예고편 첫 공개.',
+          starts_at: '2026-11-20T06:00:00Z', ends_at: null, all_day: true, location: 'Bryan/College Station, TX',
+          image_url: null, link_url: null, is_featured: true, is_published: true },
+        { id: 2, title_en: 'Winter Send-off Prayer Night', title_ko: '겨울 파송 기도회',
+          subtitle_en: 'Praying over the December & January teams', subtitle_ko: '12월·1월 파송팀을 위한 기도',
+          description_en: 'An evening of worship and prayer for everyone going out this winter break.', description_ko: '이번 겨울방학에 떠나는 모든 팀을 위한 예배와 기도의 밤.',
+          starts_at: '2026-12-11T01:00:00Z', ends_at: '2026-12-11T03:00:00Z', all_day: false, location: 'Church — Bryan/College Station, TX',
+          image_url: null, link_url: null, is_featured: false, is_published: true },
+      ],
+    };
+  }
+
+  let db;
+  function load() { try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { db = null; } if (!db || !db.countries) db = seed(); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
+  load();
+
+  const shortName = n => { const p = String(n || '').trim().split(/\s+/).filter(Boolean); return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : (p[0] || null); };
+  const views = {
+    nation_pledge_counts: () => db.countries.map(c => ({ country_id: c.id, pledge_count: db.nation_pledges.filter(p => p.country_id === c.id).length })),
+    nation_pledge_names: () => db.nation_pledges
+      .filter(p => !db.countries.find(c => c.id === p.country_id)?.is_sensitive)
+      .map(p => ({ country_id: p.country_id, display_name: shortName(db.profiles.find(x => x.id === p.user_id)?.name), created_at: p.created_at }))
+      .filter(r => r.display_name),
+  };
+  const rows = t => views[t] ? views[t]() : (db[t] || (db[t] = []));
+
+  class Query {
+    constructor(table) { this.t = table; this.op = 'select'; this.f = []; this.o = []; this.n = null; this.mode = 'many'; this.ret = false; }
+    select() { if (this.op !== 'select') this.ret = true; return this; }
+    eq(k, v) { this.f.push(r => String(r[k]) === String(v)); return this; }
+    gte(k, v) { this.f.push(r => r[k] >= v); return this; }
+    order(k, opt = {}) { this.o.push([k, opt.ascending !== false]); return this; }
+    limit(n) { this.n = n; return this; }
+    single() { this.mode = 'single'; return this; }
+    maybeSingle() { this.mode = 'maybe'; return this; }
+    insert(v) { this.op = 'insert'; this.v = v; return this; }
+    update(v) { this.op = 'update'; this.v = v; return this; }
+    upsert(v) { this.op = 'upsert'; this.v = v; return this; }
+    delete() { this.op = 'delete'; return this; }
+    run() {
+      const all = rows(this.t);
+      const match = r => this.f.every(fn => fn(r));
+      let out = [];
+      if (this.op === 'select') {
+        out = all.filter(match);
+        for (const [k, asc] of [...this.o].reverse()) out = [...out].sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * (asc ? 1 : -1));
+        if (this.n != null) out = out.slice(0, this.n);
+      } else if (this.op === 'insert') {
+        const list = Array.isArray(this.v) ? this.v : [this.v];
+        for (const r of list) {
+          if (this.t === 'nation_pledges' && all.some(p => p.user_id === r.user_id && p.country_id === r.country_id)) return { data: null, error: { code: '23505', message: 'duplicate' } };
+          const row = { created_at: nowIso(), ...r };
+          if (this.t !== 'profiles' && this.t !== 'nation_pledges' && row.id == null) row.id = db.next++;
+          all.push(row); out.push(row);
+        }
+      } else if (this.op === 'update') {
+        all.filter(match).forEach(r => { Object.assign(r, this.v); out.push(r); });
+      } else if (this.op === 'upsert') {
+        const pk = this.t === 'app_settings' ? 'key' : 'id';
+        const ex = all.find(r => r[pk] === this.v[pk]);
+        if (ex) Object.assign(ex, this.v); else all.push({ ...this.v });
+        out = [ex || this.v];
+      } else if (this.op === 'delete') {
+        const keep = all.filter(r => !match(r)); out = all.filter(match);
+        db[this.t] = keep;
+      }
+      if (this.op !== 'select') save();
+      const data = JSON.parse(JSON.stringify(out));
+      if (this.mode === 'single') return data[0] ? { data: data[0], error: null } : { data: null, error: { message: 'Not found' } };
+      if (this.mode === 'maybe') return { data: data[0] ?? null, error: null };
+      return { data: this.op === 'select' || this.ret ? data : null, error: null };
+    }
+    then(res, rej) { return Promise.resolve().then(() => this.run()).then(res, rej); }
+  }
+
+  const listeners = [];
+  const emit = (ev, s) => listeners.forEach(cb => setTimeout(() => cb(ev, s), 0));
+  const sessionFor = u => ({ access_token: 'demo', user: { id: u.id, email: u.email, user_metadata: { name: u.name } } });
+
+  return {
+    demo: true,
+    reset() { try { localStorage.removeItem(KEY); } catch (e) {} load(); },
+    from: t => new Query(t),
+    auth: {
+      onAuthStateChange(cb) {
+        listeners.push(cb);
+        const u = db.session && db.users.find(x => x.id === db.session);
+        setTimeout(() => cb('INITIAL_SESSION', u ? sessionFor(u) : null), 0);
+        return { data: { subscription: { unsubscribe() {} } } };
+      },
+      async signUp({ email, password, options }) {
+        email = String(email || '').toLowerCase();
+        if (!/^\S+@\S+\.\S+$/.test(email)) return { data: {}, error: { message: 'Enter a valid email.' } };
+        if (String(password || '').length < 6) return { data: {}, error: { message: 'Password should be at least 6 characters.' } };
+        if (db.users.some(u => u.email === email)) return { data: {}, error: { message: 'This email is already registered. Log in instead.' } };
+        const name = options?.data?.name || null;
+        const u = { id: uid(), email, password, name };
+        const firstOnDevice = db.users.length === 0;
+        db.users.push(u);
+        db.profiles.unshift({ id: u.id, name, email, school: null, phone: null, role: firstOnDevice ? 'admin' : 'member', lang: options?.data?.lang || 'en', created_at: nowIso() });
+        db.session = u.id; save();
+        const s = sessionFor(u); emit('SIGNED_IN', s);
+        return { data: { user: s.user, session: s }, error: null };
+      },
+      async signInWithPassword({ email, password }) {
+        const u = db.users.find(x => x.email === String(email || '').toLowerCase() && x.password === password);
+        if (!u) return { data: {}, error: { message: 'Invalid login credentials' } };
+        db.session = u.id; save();
+        const s = sessionFor(u); emit('SIGNED_IN', s);
+        return { data: { session: s, user: s.user }, error: null };
+      },
+      async signOut() { db.session = null; save(); emit('SIGNED_OUT', null); return { error: null }; },
+      async resetPasswordForEmail() { return { data: {}, error: null }; },
+      async updateUser() { return { data: {}, error: null }; },
+    },
+  };
+}
+
 const configured = !CONFIG.SUPABASE_URL.includes('YOUR-PROJECT') && !CONFIG.SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
-const sb = configured ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : null;
+const DEMO = !configured;   // 연결 정보가 없으면 데모 모드
+const sb = configured ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : createDemoClient();
 
 async function loadProfile() {
   if (!state.session) { state.profile = null; return; }
@@ -1012,7 +1213,7 @@ async function render() {
   const seq = ++renderSeq;
   document.documentElement.lang = state.lang;
 
-  if (!configured) { app.innerHTML = viewSetup(); delete app.dataset.tab; bindCommon(); return; }
+  if (!configured && !DEMO) { app.innerHTML = viewSetup(); delete app.dataset.tab; bindCommon(); return; }
   if (!state.session || state.authMode === 'recovery') { app.innerHTML = viewAuth(); delete app.dataset.tab; bindAuth(); bindCommon(); return; }
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
@@ -1057,7 +1258,7 @@ function loaderHTML() {
 }
 
 function headerHTML() {
-  return `<header class="apphead ${window.scrollY > 6 ? 'scrolled' : ''}"><div class="apphead-inner"><a href="#/home" aria-label="SVM home">${logo(false)}</a>${langToggle()}</div></header>`;
+  return `<header class="apphead ${window.scrollY > 6 ? 'scrolled' : ''}"><div class="apphead-inner"><a href="#/home" aria-label="SVM home" class="row" style="gap:8px">${logo(false)}${DEMO ? `<span class="tag" title="${esc(t('demo_note'))}">${esc(t('demo_badge'))}</span>` : ''}</a>${langToggle()}</div></header>`;
 }
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
@@ -1144,6 +1345,7 @@ function viewAuth() {
       <p>${esc(t('auth_welcome'))}</p>
     </div>
     <div class="auth-body">
+      ${DEMO ? `<div class="banner" style="background:var(--orange-soft);color:var(--navy)">${icon('spark')}<span>${esc(t('demo_note'))}</span></div>` : ''}
       ${card(seg + form)}
       <div class="auth-points">
         <div><b>${esc(t('ap1_n'))}</b>${esc(t('ap1'))}</div>
@@ -1417,6 +1619,7 @@ const VIEWS = {
       ${card(`<div class="stack">
         <button class="btn light block ${state.installPrompt ? '' : 'hidden'}" id="install-btn">${esc(t('install_app'))}</button>
         ${isIOS ? `<div class="row small muted" style="gap:10px"><span class="ico-tile soft">${icon('download')}</span>${esc(t('install_ios'))}</div>` : ''}
+        ${DEMO ? `<button class="btn light block" id="demo-reset">${esc(t('demo_reset'))}</button>` : ''}
         <button class="btn danger block" id="logout-btn">${icon('logout', 'width="18" height="18"')} ${esc(t('logout'))}</button>
       </div>`)}`;
   },
@@ -1661,6 +1864,8 @@ const BINDERS = {
       render();
     };
     document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
+    const dr = document.getElementById('demo-reset');
+    if (dr) dr.onclick = () => { if (confirm(t('demo_reset_q'))) { sb.reset(); location.hash = '#/home'; location.reload(); } };
     const ib = document.getElementById('install-btn');
     if (ib) ib.onclick = async () => {
       if (!state.installPrompt) return;
@@ -1719,6 +1924,7 @@ async function onSession(session) {
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
     state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
+    if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
     delete app.dataset.tab;
     render();
     return;
@@ -1733,7 +1939,6 @@ async function onSession(session) {
 
 function init() {
   document.documentElement.lang = state.lang;
-  if (!configured) { render(); return; }
   sb.auth.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') { state.authMode = 'recovery'; state.session = session; render(); return; }
     if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') { state.session = session; return; }
