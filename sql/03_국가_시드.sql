@@ -113,7 +113,7 @@ update public.countries set is_active = false where code = 'CN';
 insert into public.app_settings (key, value) values
   ('require_graduation_to_apply', 'false'::jsonb),   -- 초반에는 누구나 신청 가능
   ('sensitive_photo_block',       'true'::jsonb),    -- 민감 국가 후기 사진 업로드 차단
-  ('gathering_location',          '"Church — Bryan/College Station, TX"'::jsonb),
+  ('gathering_location',          '"IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803"'::jsonb),
   -- 국가 페이지 고정 블록: 선교지에서 제공
   ('provided_items', '[
      {"en": "Housing and all meals",                       "ko": "숙소와 모든 식사"},
@@ -150,8 +150,13 @@ where not exists (select 1 from public.checklist_items where country_id is null)
 -- 정기 모임 — 매주 주일 오후 2–4시 미션 게더링 하나뿐입니다 (다음 주일 행이 없을 때만 추가)
 insert into public.gatherings (type, date, start_time, end_time, location, title)
 select 'sunday', (current_date + ((7 - extract(dow from current_date)::int) % 7))::date,
-       '14:00', '16:00', 'Church — Bryan/College Station, TX', 'Sunday Mission Gathering'
+       '14:00', '16:00', 'IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803', 'Sunday Mission Gathering'
 where not exists (select 1 from public.gatherings where type = 'sunday' and date >= current_date);
+
+-- 주일 미션 게더링 장소: IM Friend Baptist Church (예전 임시 장소 문구를 바꿈)
+update public.app_settings set value = '"IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803"'::jsonb
+ where key = 'gathering_location' and value = '"Church — Bryan/College Station, TX"'::jsonb;
+update public.gatherings set location = 'IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803' where location = 'Church — Bryan/College Station, TX';
 
 -- 금요 모임은 없습니다 — 예전 시드로 들어간 금요 트레이닝 나이트 행을 지웁니다
 delete from public.gatherings where type = 'friday' and title = 'Friday Training Night — DNA2 · PST';

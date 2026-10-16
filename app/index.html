@@ -1001,7 +1001,7 @@ function createDemoClient() {
       app_settings: [
         { key: 'require_graduation_to_apply', value: false },
         { key: 'sensitive_photo_block', value: true },
-        { key: 'gathering_location', value: 'Church — Bryan/College Station, TX' },
+        { key: 'gathering_location', value: 'IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803' },
         { key: 'provided_items', value: DEFAULTS.provided_items },
         { key: 'prepare_items', value: DEFAULTS.prepare_items },
         { key: 'mission_seasons', value: DEFAULTS.mission_seasons },
@@ -1016,7 +1016,7 @@ function createDemoClient() {
         { id: 2, title_en: 'Winter Send-off Prayer Night', title_ko: '겨울 파송 기도회',
           subtitle_en: 'Praying over the December & January teams', subtitle_ko: '12월·1월 파송팀을 위한 기도',
           description_en: 'An evening of worship and prayer for everyone going out this winter break.', description_ko: '이번 겨울방학에 떠나는 모든 팀을 위한 예배와 기도의 밤.',
-          starts_at: '2026-12-11T01:00:00Z', ends_at: '2026-12-11T03:00:00Z', all_day: false, location: 'Church — Bryan/College Station, TX',
+          starts_at: '2026-12-11T01:00:00Z', ends_at: '2026-12-11T03:00:00Z', all_day: false, location: 'IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803',
           image_url: null, link_url: null, is_featured: false, is_published: true },
       ],
     };
@@ -1601,7 +1601,7 @@ const VIEWS = {
       </div>
       <div class="meet-title">${esc(next.title || t('g_' + next.type))}</div>
       <div class="meet-when"><b>${esc(fmtDate(next.date))}</b><span class="num" style="font-size:17px">${esc(timeRange(next))}</span></div>
-      <div class="row muted small" style="margin-top:6px;gap:6px">${icon('pin', 'width="15" height="15"')}${esc(where)}</div>
+      <a class="row muted small" style="margin-top:6px;gap:6px;color:inherit;text-decoration:none" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}" target="_blank" rel="noopener">${icon('pin', 'width="15" height="15"')}<span style="text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.35)">${esc(where)}</span></a>
       <p class="muted small" style="margin:12px 0 0">${esc(t('g_' + next.type + '_d'))}</p>
       <div class="sep"></div>
       <div class="then">
