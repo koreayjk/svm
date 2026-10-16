@@ -1,4 +1,16 @@
-# SVM — Student Volunteer Movement App
+# SVM — Student Volunteer Movement
+
+브라이언–컬리지 스테이션 학생자원운동(SVM) 사이트 하나에 세 부분이 들어 있습니다.
+
+| 주소 | 내용 |
+|---|---|
+| [`/`](https://koreayjk.github.io/svm/) | **SVM 홈페이지** — 운동 소개(1886), 비전 영상, Mobilize·Train·Send, 가려는 학생/맞이하는 선교지, 7개 선교지, 앱 소개, 누가 이끄나, 함께하는 3가지 방법, FAQ |
+| [`/conference/`](https://koreayjk.github.io/svm/conference/) | **미션 컨퍼런스 2026** (11/20 금, 오후 6시 입장) — 그날 밤 순서, 텐트 빌리지, FAQ, **등록 폼** |
+| [`/app/`](https://koreayjk.github.io/svm/app/) | **SVM 앱** (PWA) — 가입, 선교지, 내 나라에 이름 쓰기, 이벤트, 관리자 · `app/?demo` 는 실제 DB와 분리된 체험 모드 |
+
+세 곳 모두 루트의 `config.js`(Supabase URL + anon key)를 함께 씁니다.
+
+## SVM 앱
 
 브라이언/컬리지 스테이션 학생자원운동(SVM) 선교 지원 플랫폼 — **Mobilizing · Training · Sending**
 명세서: [`docs/SVM_App_Spec_v2.md`](docs/SVM_App_Spec_v2.md) (현행) · [v1](docs/SVM_App_Spec.md) · 목표: 2026-11-20 발족식
@@ -24,7 +36,7 @@
 
 ![디자인 미리보기](docs/design-preview.png)
 
-브랜드 가이드(명세 v2 §2) 위에 **Apple 스타일의 절제 + 파스텔 그라데이션 배경** 방향으로 정리했습니다. 모든 값은 `index.html` 상단 `:root` 토큰에 있습니다.
+브랜드 가이드(명세 v2 §2) 위에 **Apple 스타일의 절제 + 파스텔 그라데이션 배경** 방향으로 정리했습니다. 모든 값은 `app/index.html` 상단 `:root` 토큰에 있습니다.
 - **배경:** 브랜드 색을 옅게 푼 라벤더(네이비 계열) → 피치(오렌지 계열) 그라데이션, 고정 레이어
 - **카드:** 테두리 없는 반투명 흰 카드 + 옅은 그림자 (`card()` 헬퍼) · 홈 통계는 피치/라벤더 색 타일
 - **선교지 카드:** 사진형 카드 (`destCard()`) — `country_photos` 에 사진이 있으면 첫 장, 없으면 임시 기본 사진(`assets/countries/`, 출처는 [docs/PHOTO_CREDITS.md](docs/PHOTO_CREDITS.md)), 그것도 없으면 파스텔 그라데이션 + 큰 국기
@@ -37,25 +49,32 @@
 ## 파일 구조
 
 ```
-index.html             앱 전체 (단일 파일, Vanilla JS)
-manifest.webmanifest   PWA 매니페스트
-sw.js                  서비스 워커 (앱 셸 캐시)
-assets/                공식 로고 SVG (컬러 / 흰색)
+index.html             SVM 홈페이지 (EN/KO)
+conference/index.html  미션 컨퍼런스 2026 + 등록 폼
+app/index.html         앱 전체 (단일 파일, Vanilla JS)
+app/manifest.webmanifest, app/sw.js   PWA 매니페스트 · 서비스 워커 (앱 셸 캐시)
+config.js              Supabase 연결 정보 (anon key 만)
+assets/site.css, site.js   홈페이지·컨퍼런스 공통 스타일·스크립트 (언어 전환, 세계지도, D-day)
+assets/                공식 로고 SVG, 세계지도 점, 나라 사진, 앱 화면(screens/), 컨퍼런스 사진(images/)
 icons/                 앱 아이콘 (로고 기반)
+landing.html           예전 주소 → 홈페이지로 이동
 sql/01_스키마.sql       테이블 · 트리거
 sql/02_RLS.sql          헬퍼 함수 · RLS 정책 · Realtime · Storage 버킷
 sql/03_국가_시드.sql     7개국 · 기본 설정(제공/준비 항목·파송 시즌) · 공통 준비물 · 주일·금요 모임
 sql/04_관리자_지정.sql   관리자 지정
 ```
 
-## 랜딩페이지
-`landing.html` — SVM 소개 페이지 (EN/KO). 가려는 학생 / 맞이하는 선교지 두 대상 안내, 앱 기능을 실제 화면(`assets/screens/`)으로 소개,
-11/20 발족식 카운트다운, 세계지도(선을 따라 오가는 비행기). 가입 버튼은 앱(`index.html`)으로 연결됩니다.
-- 공유용 빌드: `python3 tools/build_landing_artifact.py out.html <앱 링크>`
+## 홈페이지 · 컨퍼런스
+- 문구는 영어가 HTML 에, 한국어는 각 페이지 아래 `window.KO` 에 있습니다 (`data-k` 키로 연결).
+- 선교지는 7개국(한국·필리핀·말레이시아·태국·멕시코·일본·이집트). 이집트는 민감 국가.
+- 컨퍼런스 등록 → `conference_registrations` 테이블. 공개(anon)는 넣기만 가능하고, **조회는 관리자만** 됩니다.
+  같은 이메일은 한 번만 등록됩니다. 명단 보기: Supabase **Table Editor → conference_registrations** (CSV 내보내기 가능).
+  `config.js` 가 비어 있으면 폼은 "온라인 등록 곧 오픈" 안내를 보여 줍니다.
+- 공유용 빌드: `python3 tools/build_site_artifact.py out.html <앱 링크>`
 - 앱 화면이 바뀌면 스크린샷을 다시 찍어 `assets/screens/{화면}-{en|ko}.jpg` 를 교체하세요.
 
 ## 데모 모드 (바로 시연)
-`index.html` 의 `CONFIG` 에 Supabase 정보가 없으면 **데모 모드**로 동작합니다 — 백엔드 없이 전체 흐름을 시연할 수 있습니다.
+`config.js` 에 Supabase 정보가 없거나 주소 끝에 `?demo` 를 붙이면(`app/?demo`) **데모 모드**로 동작합니다 — 백엔드 없이 전체 흐름을 시연할 수 있습니다.
 - 브라우저 안의 가짜 DB (7개국, 11/20 컨퍼런스, 예시 회원·이름 쓰기 포함), 데이터는 그 기기에만 저장
 - 아무 이메일로 가입 가능 (이메일 인증 없음) · **그 기기에서 처음 가입한 계정이 관리자** → 관리 탭 시연 가능
 - 마이 탭의 **데모 데이터 초기화** 로 처음 상태로 되돌리기
@@ -67,9 +86,10 @@ sql/04_관리자_지정.sql   관리자 지정
 ### 1. Supabase 프로젝트
 1. [supabase.com](https://supabase.com) 에서 새 프로젝트 생성
 2. **SQL Editor** 에서 순서대로 실행: `01_스키마.sql` → `02_RLS.sql` → `03_국가_시드.sql`
+   (현재 프로젝트: `uafdrygbaloqffhwcebc`)
    (모두 여러 번 실행해도 안전합니다)
 3. **Authentication → URL Configuration**
-   - Site URL: `https://<github-아이디>.github.io/svm/`
+   - Site URL: `https://koreayjk.github.io/svm/app/`
    - Redirect URLs 에도 같은 주소 추가 (이메일 인증·비밀번호 재설정 링크용)
 
 > **발족식 현장(3분 흐름) 팁:** Supabase는 기본적으로 가입 시 이메일 인증을 요구합니다. 현장에서 바로 둘러보게 하려면
@@ -77,10 +97,10 @@ sql/04_관리자_지정.sql   관리자 지정
 >
 > **v1 SQL 을 이미 실행했다면:** 01 → 02 → 03 을 다시 실행하면 v2 로 업그레이드됩니다 (새 컬럼 추가, 중국은 삭제하지 않고 숨김 처리).
 
-### 2. 앱 설정
-`index.html` 상단 `CONFIG` 에 **Project Settings → API** 의 값을 넣습니다.
+### 2. 연결 설정
+루트의 `config.js` 에 **Project Settings → API** 의 값을 넣습니다 (홈페이지·컨퍼런스·앱이 함께 사용).
 ```js
-const CONFIG = {
+window.SVM_CONFIG = {
   SUPABASE_URL: 'https://xxxx.supabase.co',
   SUPABASE_ANON_KEY: 'eyJhbGciOi...',
 };
@@ -125,8 +145,8 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 - 관리자 화면에서 이벤트 편집은 4단계(게더링·출석)와 함께 추가 예정 — 그전에는 SQL Editor 에서 수정
 
 ## 확인이 필요한 값
-- 11/20 컨퍼런스의 시간·정확한 장소: 지금은 "시간 추후 안내 · Bryan/College Station, TX" 입니다 (`events` 행 수정).
-- 금요 트레이닝 나이트 시간: 명세에 "금요일 밤"만 있어 **오후 7–9시**로 넣었습니다 (`03_국가_시드.sql`, `index.html` 의 `DEFAULTS.gatherings.friday`).
+- 11/20 컨퍼런스 장소: 지금은 "오후 6시 입장 · venue announced soon" 입니다 (`events` 행, `conference/index.html`, 홈페이지 문구 수정).
+- 금요 트레이닝 나이트 시간: 명세에 "금요일 밤"만 있어 **오후 7–9시**로 넣었습니다 (`03_국가_시드.sql`, `app/index.html` 의 `DEFAULTS.gatherings.friday`).
 - 국가별 소개·생활 문구는 초안입니다. 실제 내용으로 교체하세요.
 
 ## 다음 단계 (2단계, ~10/29)

@@ -1,0 +1,2074 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SVM — Mobilizing · Training · Sending</title>
+<meta name="description" content="SVM — Student Volunteer Movement, Bryan/College Station. Mobilizing · Training · Sending">
+<meta property="og:title" content="SVM — Mobilizing · Training · Sending">
+<meta property="og:description" content="Student Volunteer Movement, Bryan/College Station. Pay only for your flight. Stay as long as you want.">
+<meta property="og:image" content="../icons/icon-512.png">
+<meta name="theme-color" content="#F4F5F8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="SVM">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../config.js"></script>
+<style>
+  /* =================================================================
+     SVM design system — brand guide (spec v2 §2), Apple-style restraint
+     · one soft card surface, no borders · sentence-case captions
+     · Barlow Condensed only for numerals · translucent floating chrome
+     ================================================================= */
+  :root {
+    /* brand */
+    --navy: #0D1B3A;
+    --navy-2: #1A2D57;
+    --orange: #F26722;
+    --orange-dark: #C4501A;
+    --orange-soft: #FDF0E8;
+    --bg: #F4F5F8;
+    --text: #0D1B3A;
+    --muted: #4A5568;
+    --muted-2: #5B6475;
+    --line: #DDE2EA;
+    --danger: #B42318;
+    --danger-soft: #FDF1EF;
+
+    /* surfaces (iOS-style fills) */
+    --surface: #FFFFFF;
+    --fill: rgba(13, 27, 58, .055);
+    --fill-2: rgba(13, 27, 58, .08);
+    --separator: rgba(13, 27, 58, .09);
+    --shadow: 0 1px 1px rgba(13, 27, 58, .025), 0 8px 24px -10px rgba(13, 27, 58, .1);
+    --shadow-lift: 0 2px 4px rgba(13, 27, 58, .04), 0 18px 36px -14px rgba(13, 27, 58, .18);
+
+    /* shape & motion */
+    --r-card: 22px;
+    --r-ctl: 14px;
+    --ease: cubic-bezier(.25, 1, .5, 1);          /* critically-damped feel */
+    --ease-out: cubic-bezier(.22, 1, .36, 1);
+
+    /* layout */
+    --island-h: 64px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-t: env(safe-area-inset-top, 0px);
+    --gutter: 20px;
+
+    /* layers */
+    --z-head: 20;
+    --z-nav: 30;
+    --z-toast: 40;
+
+    --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Apple SD Gothic Neo", sans-serif;
+    --font-num: "Barlow Condensed", "Noto Sans KR", sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font); font-size: 16px; line-height: 1.55; color: var(--text);
+    word-break: keep-all; overflow-wrap: anywhere;   /* 한국어는 단어 단위로 줄바꿈 */
+    background: var(--bg); min-height: 100dvh;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; -webkit-tap-highlight-color: transparent;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: var(--orange-dark); text-decoration: none; }
+  .hidden { display: none !important; }
+  .skip-link {
+    position: absolute; left: 12px; top: -60px; z-index: var(--z-toast); background: var(--navy); color: #fff;
+    padding: 10px 16px; border-radius: 999px; font-weight: 700; transition: top .3s var(--ease);
+  }
+  .skip-link:focus { top: 12px; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 6px; }
+
+  /* ---------- type: size-specific tracking & leading ---------- */
+  h1, h2, h3 { text-wrap: balance; margin: 0; }
+  p { text-wrap: pretty; margin: 0 0 10px; }
+  .display { font-size: 34px; font-weight: 900; line-height: 1.12; letter-spacing: -.035em; }
+  h1 { font-size: 28px; font-weight: 900; line-height: 1.18; letter-spacing: -.03em; }
+  h2 { font-size: 21px; font-weight: 700; line-height: 1.3; letter-spacing: -.02em; }
+  h3 { font-size: 16.5px; font-weight: 700; line-height: 1.35; letter-spacing: -.01em; }
+  .lede { color: var(--muted); font-size: 16px; line-height: 1.5; margin: 0; max-width: 32em; }
+  .muted { color: var(--muted); }
+  .small { font-size: 14px; line-height: 1.5; }
+  .num { font-family: var(--font-num); font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: 0; }
+  .tagline { font-family: var(--font-num); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+  /* caption — sentence case, quiet */
+  .eyebrow, .eyebrow.plain {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13.5px; font-weight: 500; line-height: 1.3; color: var(--muted-2);
+    background: none; padding: 0; letter-spacing: 0; text-transform: none;
+  }
+  .eyebrow svg { width: 15px; height: 15px; }
+  .on-dark .eyebrow { color: rgba(255, 255, 255, .62); }
+
+  /* ---------- chrome: header with scroll-edge material ---------- */
+  .apphead {
+    position: sticky; top: 0; z-index: var(--z-head);
+    padding: calc(var(--safe-t) + 10px) 0 10px;
+    transition: background-color .35s var(--ease), box-shadow .35s var(--ease), backdrop-filter .35s var(--ease);
+  }
+  .apphead-inner { max-width: 600px; margin: 0 auto; padding: 0 var(--gutter); display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .apphead.scrolled {
+    background: rgba(244, 245, 248, .72);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8); backdrop-filter: blur(20px) saturate(1.8);
+    box-shadow: 0 1px 0 var(--separator);
+  }
+  .apphead .logo { height: 26px; width: auto; display: block; }
+  main { max-width: 600px; margin: 0 auto; padding: 0 var(--gutter) calc(var(--island-h) + var(--safe-b) + 48px); }
+  .page-head { padding: 12px 0 22px; }
+  .page-head .lede { margin-top: 6px; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 34px 4px 12px; }
+  .section-head h2 { font-size: 20px; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row.between { justify-content: space-between; }
+  .row.top { align-items: flex-start; }
+  .stack > * + * { margin-top: 12px; }
+  .bento { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .bento .span-2 { grid-column: span 2; }
+  @media (max-width: 340px) { .bento { grid-template-columns: 1fr; } .bento .span-2 { grid-column: auto; } }
+
+  /* ---------- cards: one soft surface ---------- */
+  .shell { margin-bottom: 12px; border-radius: var(--r-card); }
+  .bento > .shell { margin-bottom: 0; }
+  .core {
+    background: var(--surface); border-radius: var(--r-card); padding: 20px;
+    box-shadow: var(--shadow); height: 100%;
+  }
+  .core.quiet { background: var(--surface); }
+  .core.dark {
+    position: relative; overflow: hidden; isolation: isolate; color: #fff;
+    background:
+      radial-gradient(90% 70% at 100% 0%, rgba(242, 103, 34, .2), transparent 62%),
+      linear-gradient(170deg, #15284F 0%, var(--navy) 70%);
+    box-shadow: 0 18px 40px -18px rgba(13, 27, 58, .45);
+  }
+  .core.dark .muted { color: rgba(255, 255, 255, .66); }
+  .core > .sep { height: 1px; background: var(--separator); margin: 18px 0; }
+  .core.dark > .sep { background: rgba(255, 255, 255, .12); }
+  .core.dark .torch { position: absolute; right: -14px; bottom: -30px; width: 130px; height: auto; opacity: .08; z-index: -1; pointer-events: none; }
+
+  /* ---------- buttons: capsule, instant press ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 50px; padding: 0 22px; border: 0; border-radius: 999px; cursor: pointer;
+    background: var(--orange); color: #fff; font-weight: 700; font-size: 16.5px; letter-spacing: -.01em; line-height: 1.2; text-align: center;
+    transition: transform .35s var(--ease), background-color .2s var(--ease), opacity .2s var(--ease);
+  }
+  .btn:hover { background: #E95D18; }
+  .btn:active { transform: scale(.97); transition-duration: .1s; }
+  .btn:disabled { opacity: .5; cursor: default; transform: none; }
+  .btn.block { width: 100%; }
+  .btn svg { width: 19px; height: 19px; flex: 0 0 auto; }
+  .btn.navy { background: var(--navy); }
+  .btn.navy:hover { background: var(--navy-2); }
+  .btn.light { background: var(--fill); color: var(--navy); }
+  .btn.light:hover { background: var(--fill-2); }
+  .btn.on { background: rgba(255, 255, 255, .14); color: #fff; }
+  .btn.on:hover { background: rgba(255, 255, 255, .2); }
+  .btn.danger { background: var(--fill); color: var(--danger); }
+  .btn.small { min-height: 38px; padding: 0 16px; font-size: 14.5px; }
+  .text-link {
+    display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 6px 0; cursor: pointer;
+    color: var(--orange-dark); font-weight: 700; font-size: 15px;
+  }
+  .text-link svg { width: 16px; height: 16px; transition: transform .35s var(--ease); }
+  .text-link:hover svg { transform: translateX(2px); }
+  .text-link:active { opacity: .6; }
+  .back-pill {
+    display: inline-flex; align-items: center; gap: 2px; padding: 6px 2px; margin-left: -4px;
+    color: var(--orange-dark); font-weight: 500; font-size: 16.5px;
+  }
+  .back-pill svg { width: 22px; height: 22px; }
+  .back-pill:active { opacity: .55; }
+
+  /* ---------- forms ---------- */
+  label.field { display: block; margin-bottom: 14px; }
+  label.field > span { display: block; font-size: 13.5px; font-weight: 500; color: var(--muted-2); margin: 0 0 6px 4px; }
+  input[type=text], input[type=email], input[type=password], input[type=tel], select, textarea {
+    width: 100%; min-height: 50px; padding: 13px 15px; border: 0; border-radius: var(--r-ctl);
+    background: var(--fill); color: var(--text); font-size: 16.5px;
+    transition: background-color .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  select { appearance: none; -webkit-appearance: none; padding-right: 34px; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%235B6475' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 13px center; }
+  input::placeholder { color: #8A93A3; }
+  input:focus, select:focus, textarea:focus { outline: none; background-color: #fff; box-shadow: 0 0 0 1.5px var(--orange), 0 0 0 5px rgba(242, 103, 34, .12); }
+  input:user-invalid { box-shadow: 0 0 0 1.5px var(--danger); }
+
+  /* iOS segmented control */
+  .seg { display: flex; padding: 3px; border-radius: 12px; background: var(--fill-2); margin-bottom: 20px; }
+  .seg button {
+    flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 9px; cursor: pointer;
+    font-weight: 500; font-size: 15px; color: var(--text); transition: background-color .3s var(--ease), box-shadow .3s var(--ease);
+  }
+  .seg button.active { background: #fff; font-weight: 700; box-shadow: 0 1px 2px rgba(13, 27, 58, .1), 0 3px 8px rgba(13, 27, 58, .06); }
+
+  .lang-toggle { display: inline-flex; padding: 2px; border-radius: 10px; background: var(--fill-2); }
+  .lang-toggle button {
+    background: transparent; border: 0; color: var(--muted-2); padding: 5px 11px; font-size: 13.5px; cursor: pointer; font-weight: 500;
+    border-radius: 8px; transition: background-color .3s var(--ease), color .2s var(--ease);
+  }
+  .lang-toggle button.active { background: #fff; color: var(--text); font-weight: 700; box-shadow: 0 1px 2px rgba(13, 27, 58, .1); }
+
+  /* ---------- tags & chips ---------- */
+  .tag {
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+    font-size: 12.5px; font-weight: 500; line-height: 1.4; background: var(--fill); color: var(--muted-2);
+  }
+  .tag svg { width: 13px; height: 13px; }
+  .tag.member { background: var(--fill); color: var(--navy); }
+  .tag.graduate { background: var(--orange-soft); color: var(--orange-dark); }
+  .tag.admin { background: var(--navy); color: #fff; }
+  .tag.sensitive { background: var(--danger-soft); color: var(--danger); }
+  .tag.today { background: var(--orange); color: #fff; }
+  .on-dark .tag { background: rgba(255, 255, 255, .12); color: #fff; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px 7px 10px; border-radius: 999px;
+    background: var(--fill); color: var(--navy); font-weight: 500; font-size: 15px;
+    transition: transform .3s var(--ease), background-color .2s var(--ease);
+  }
+  .chip:hover { background: var(--fill-2); }
+  .chip:active { transform: scale(.96); transition-duration: .1s; }
+  .chip .f { font-size: 18px; line-height: 1; }
+
+  /* ---------- icon squircles (Settings-style) ---------- */
+  .ico-tile {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+    background: var(--navy); color: #fff;
+  }
+  .ico-tile svg { width: 19px; height: 19px; stroke-width: 1.9; }
+  .ico-tile.orange { background: var(--orange); }
+  .ico-tile.soft { background: var(--fill); color: var(--navy); }
+  .flag-tile { flex: 0 0 auto; font-size: 34px; line-height: 1; }
+  .flag-tile.lg { font-size: 64px; }
+
+  /* ---------- grouped list ---------- */
+  .list-row { display: flex; align-items: center; gap: 14px; padding: 12px 0; position: relative; }
+  .list-row + .list-row::before { content: ""; position: absolute; top: 0; right: 0; left: 48px; height: 1px; background: var(--separator); }
+  .list-row.no-ico + .list-row::before, .list-row.no-ico::before { left: 0; }
+  .list-row:first-child { padding-top: 0; }
+  .list-row:last-child { padding-bottom: 0; }
+  .list-row .meta { flex: 1; min-width: 0; }
+  .list-row .meta .t { font-weight: 500; font-size: 16px; letter-spacing: -.01em; }
+  .list-row .meta .d { color: var(--muted); font-size: 14px; margin-top: 1px; line-height: 1.45; }
+  .list-row .meta .ellip { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .list-row > .tag { background: none; color: #8A93A3; padding: 0; }
+  .core:has(> .list-row) { padding: 16px; }
+
+  .avatar {
+    flex: 0 0 auto; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center;
+    background: linear-gradient(160deg, #24407A, var(--navy)); color: #fff; font-weight: 700; font-size: 20px; letter-spacing: -.02em;
+  }
+  .avatar.sm { width: 36px; height: 36px; font-size: 13.5px; }
+
+  /* iOS switch (brand orange) */
+  .switch { position: relative; width: 51px; height: 31px; flex: 0 0 auto; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+  .switch span { position: absolute; inset: 0; background: rgba(13, 27, 58, .14); border-radius: 999px; transition: background-color .3s var(--ease); }
+  .switch span::before {
+    content: ""; position: absolute; width: 27px; height: 27px; left: 2px; top: 2px; background: #fff; border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(13, 27, 58, .18), 0 0 1px rgba(13, 27, 58, .2); transition: transform .35s var(--ease);
+  }
+  .switch input:active + span::before { width: 31px; }
+  .switch input:checked + span { background: var(--orange); }
+  .switch input:checked + span::before { transform: translateX(20px); }
+  .switch input:checked:active + span::before { transform: translateX(16px); }
+  .switch input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+  /* ---------- floating tab bar (translucent material) ---------- */
+  .island {
+    position: fixed; z-index: var(--z-nav); left: 50%; transform: translateX(-50%);
+    bottom: calc(var(--safe-b) + 10px); width: min(560px, calc(100% - 24px));
+    border-radius: 999px; padding: 4px;
+    background: rgba(255, 255, 255, .72);
+    -webkit-backdrop-filter: blur(24px) saturate(1.8); backdrop-filter: blur(24px) saturate(1.8);
+    box-shadow: inset 0 0 0 .5px rgba(13, 27, 58, .1), inset 0 1px 0 rgba(255, 255, 255, .7), 0 10px 30px -8px rgba(13, 27, 58, .2);
+  }
+  .island-inner { display: flex; height: calc(var(--island-h) - 8px); }
+  .island a {
+    flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+    color: var(--muted-2); font-size: 10.5px; font-weight: 500; border-radius: 999px;
+    transition: background-color .3s var(--ease), color .2s var(--ease), transform .3s var(--ease);
+  }
+  .island a .ico { display: grid; place-items: center; height: 28px; }
+  .island a svg { width: 24px; height: 24px; }
+  .island a:active { transform: scale(.92); transition-duration: .1s; }
+  .island a.active { color: var(--orange-dark); background: var(--fill); font-weight: 700; }
+
+  /* ---------- home ---------- */
+  .greet { padding: 8px 0 22px; }
+  .greet .date { font-size: 13.5px; font-weight: 500; color: var(--muted-2); margin-bottom: 2px; }
+  .meet-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .dday { font-family: var(--font-num); font-weight: 600; font-size: 40px; line-height: .9; color: #FF8A4C; font-variant-numeric: tabular-nums; }
+  .meet-title { font-size: 24px; font-weight: 700; letter-spacing: -.025em; line-height: 1.25; margin: 18px 0 8px; }
+  .meet-when { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 15.5px; }
+  .meet-when b { font-weight: 500; }
+  .meet-when .num { font-size: 18px; }
+  .then { display: flex; align-items: center; gap: 12px; }
+  .then .ico-tile { background: rgba(255, 255, 255, .12); }
+  .rail {
+    display: grid; grid-auto-flow: column; grid-auto-columns: 76%; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+    margin: 0 calc(var(--gutter) * -1); padding: 2px var(--gutter) 14px; scroll-padding: 0 var(--gutter); scrollbar-width: none;
+  }
+  .rail::-webkit-scrollbar { display: none; }
+  .rail > .shell { scroll-snap-align: start; margin: 0; }
+  .concept-n { font-family: var(--font-num); font-weight: 600; font-size: 30px; line-height: 1; color: var(--orange); font-variant-numeric: tabular-nums; }
+  .concept h3 { font-size: 18px; margin: 22px 0 8px; letter-spacing: -.02em; }
+  .concept p { color: var(--muted); font-size: 14.5px; line-height: 1.55; margin: 0; }
+  .signoff { text-align: center; margin: 44px 0 4px; }
+  .signoff img { width: 56px; opacity: .85; display: block; margin: 0 auto 10px; }
+  .signoff .tagline { color: var(--muted-2); font-size: 13.5px; }
+
+  /* ---------- countries ---------- */
+  .country-link { display: block; color: inherit; border-radius: var(--r-card); transition: transform .4s var(--ease); }
+  .country-link:active { transform: scale(.97); transition-duration: .12s; }
+  .country-link .core { display: flex; flex-direction: column; gap: 14px; padding: 18px; transition: box-shadow .35s var(--ease); }
+  .country-link:hover .core { box-shadow: var(--shadow-lift); }
+  .country-link .name { font-weight: 700; font-size: 17px; letter-spacing: -.02em; line-height: 1.25; }
+  .country-link .foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+  .flame-count { display: inline-flex; align-items: center; gap: 4px; color: var(--muted-2); font-size: 16px; }
+  .flame-count svg { width: 15px; height: 15px; color: var(--orange); }
+  .arrow-dot { color: #A3ABB9; display: grid; place-items: center; }
+  .arrow-dot svg { width: 18px; height: 18px; }
+  .mine-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-top: 4px; }
+
+  .season-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .season-chips span { font-size: 14.5px; font-weight: 500; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .12); }
+  .core:not(.dark) .season-chips span { background: var(--fill); color: var(--navy); }
+
+  .detail-hero { padding: 6px 0 22px; }
+  .detail-hero .flag-tile { display: block; margin-bottom: 10px; }
+  .detail-hero h1 { font-size: 34px; letter-spacing: -.035em; margin-bottom: 8px; }
+  .info-sec + .info-sec { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--separator); }
+  .info-sec p { margin: 6px 0 0; max-width: 36em; font-size: 16px; line-height: 1.6; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 360px) { .two-col { grid-template-columns: 1fr; } }
+  .ticks { list-style: none; padding: 0; margin: 10px 0 0; }
+  .ticks li { display: flex; gap: 9px; align-items: flex-start; padding: 5px 0; font-size: 15px; line-height: 1.45; }
+  .ticks li i { flex: 0 0 auto; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; margin-top: 1px; background: var(--orange); color: #fff; }
+  .ticks.prep li i { background: var(--fill-2); color: var(--navy); }
+  .ticks li i svg { width: 12px; height: 12px; stroke-width: 2.4; }
+
+  .pledge-count { display: flex; align-items: flex-end; gap: 10px; margin: 14px 0 4px; }
+  .pledge-count .big { font-family: var(--font-num); font-weight: 600; font-size: 64px; line-height: .8; font-variant-numeric: tabular-nums; }
+  .pledge-count .lbl { font-weight: 500; font-size: 16px; line-height: 1.35; }
+  .pledge-names { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+  .pledge-names span { border-radius: 999px; padding: 4px 11px; font-size: 13.5px; background: rgba(255, 255, 255, .12); }
+  .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .action-row .btn { padding: 0 12px; font-size: 15.5px; white-space: nowrap; }
+
+  .banner {
+    display: flex; gap: 12px; align-items: flex-start; border-radius: 18px; padding: 14px 16px; margin-bottom: 12px;
+    font-size: 14.5px; line-height: 1.5; background: var(--danger-soft); color: #6E1A12;
+  }
+  .banner svg { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 1px; color: var(--danger); }
+
+  /* ---------- auth (light, calm) ---------- */
+  .auth-hero { position: relative; text-align: center; padding: calc(var(--safe-t) + 50px) 24px 24px; }
+  .auth-hero .logo { width: 150px; height: auto; display: block; margin: 0 auto 18px; }
+  .auth-hero .tagline { color: var(--orange-dark); font-size: 14px; margin-bottom: 14px; }
+  .auth-hero p { color: var(--muted); font-size: 15.5px; line-height: 1.55; max-width: 25em; margin: 0 auto; }
+  .auth-hero .lang-toggle { position: absolute; top: calc(var(--safe-t) + 14px); right: 16px; }
+  .auth-body { max-width: 440px; margin: 0 auto; padding: 0 var(--gutter) 44px; }
+  .auth-body .core { padding: 22px; }
+  .auth-note { text-align: center; margin: 14px 0 0; }
+  .auth-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 26px; text-align: center; }
+  .auth-points div { font-size: 12.5px; color: var(--muted-2); line-height: 1.4; }
+  .auth-points b { display: block; font-family: var(--font-num); font-weight: 600; font-size: 24px; color: var(--navy); margin-bottom: 2px; }
+
+  /* ---------- skeleton ---------- */
+  .sk { border-radius: var(--r-card); background: linear-gradient(100deg, #E9ECF1 30%, #F1F3F7 50%, #E9ECF1 70%); background-size: 300% 100%; animation: shimmer 1.6s linear infinite; margin-bottom: 12px; }
+  @keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0 0; } }
+
+  /* ---------- entry: gentle cross-fade + small rise ---------- */
+  .enter > * { animation: rise .55s var(--ease-out) both; }
+  .enter > *:nth-child(2) { animation-delay: .04s; }
+  .enter > *:nth-child(3) { animation-delay: .08s; }
+  .enter > *:nth-child(4) { animation-delay: .12s; }
+  .enter > *:nth-child(n+5) { animation-delay: .16s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- toast: dark material HUD ---------- */
+  .toast {
+    position: fixed; z-index: var(--z-toast); left: 50%; bottom: calc(var(--island-h) + var(--safe-b) + 22px);
+    transform: translate(-50%, 0); width: max-content; max-width: min(360px, calc(100% - 40px));
+    padding: 12px 18px; border-radius: 16px; text-align: center;
+    background: rgba(13, 27, 58, .86); color: #fff; font-size: 14.5px; font-weight: 500; line-height: 1.45;
+    -webkit-backdrop-filter: blur(20px) saturate(1.6); backdrop-filter: blur(20px) saturate(1.6);
+    box-shadow: 0 12px 32px -10px rgba(13, 27, 58, .4);
+    animation: toast-in .45s var(--ease-out) both;
+  }
+  .toast.error { background: rgba(180, 35, 24, .92); }
+  .toast.no-nav { bottom: calc(var(--safe-b) + 24px); }
+  @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+  pre.code { background: var(--navy); color: #E2E8F0; padding: 14px; border-radius: 14px; overflow-x: auto; font-size: 13px; }
+
+  /* ---------- accessibility preferences ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    .enter > * { animation: fade .2s ease both; }
+    @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+    .btn, .chip, .country-link, .island a { transition: none; }
+    .btn:active, .chip:active, .country-link:active, .island a:active { transform: none; }
+    .sk { animation: none; }
+    .toast { animation: none; }
+  }
+  @media (prefers-reduced-transparency: reduce) {
+    .island, .apphead.scrolled { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
+    .toast { background: var(--navy); backdrop-filter: none; }
+  }
+  @media (prefers-contrast: more) {
+    .core { box-shadow: 0 0 0 1px #9AA3B2; }
+    .muted, .eyebrow, .list-row .meta .d { color: #2D3748; }
+  }
+  /* ---------- pastel wash background (brand-tinted lavender → peach) ---------- */
+  body { background: #F2F3F8; }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(65% 42% at 0% 0%, rgba(176, 189, 242, .6), transparent 70%),
+      radial-gradient(60% 40% at 100% 6%, rgba(255, 200, 170, .55), transparent 70%),
+      radial-gradient(80% 50% at 50% 105%, rgba(206, 213, 246, .55), transparent 70%),
+      linear-gradient(180deg, #ECEFFA 0%, #F6F1F0 48%, #F1F2F8 100%);
+  }
+  .core { background: rgba(255, 255, 255, .88); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 1px rgba(13, 27, 58, .02), 0 10px 28px -12px rgba(64, 76, 140, .16); }
+  .apphead.scrolled { background: rgba(240, 241, 249, .72); }
+  input[type=text], input[type=email], input[type=password], input[type=tel], select { background-color: rgba(13, 27, 58, .05); }
+
+  /* location chip */
+  .loc-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px 7px 10px; border-radius: 999px;
+    background: rgba(255, 255, 255, .8); box-shadow: 0 1px 2px rgba(13, 27, 58, .05); font-size: 13.5px; font-weight: 500; color: var(--navy);
+  }
+  .loc-chip svg { width: 16px; height: 16px; color: var(--orange); }
+
+  /* colored stat tiles */
+  .stat {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 156px;
+    padding: 16px 16px 18px; border-radius: var(--r-card); color: var(--navy); position: relative; overflow: hidden;
+    transition: transform .35s var(--ease);
+  }
+  .stat:active { transform: scale(.97); transition-duration: .1s; }
+  .stat.peach { background: linear-gradient(155deg, #FFE6D6 0%, #FFCDB0 100%); }
+  .stat.lav { background: linear-gradient(155deg, #E6E9FC 0%, #CDD4F6 100%); }
+  .stat .s-ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .6); }
+  .stat .s-ico svg { width: 19px; height: 19px; }
+  .stat.peach .s-ico { color: var(--orange-dark); }
+  .stat .big { font-family: var(--font-num); font-weight: 600; font-size: 50px; line-height: .85; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .stat .lbl { font-size: 13.5px; line-height: 1.35; color: rgba(13, 27, 58, .72); margin-top: 6px; }
+
+  /* destination cards (photo-ready) */
+  .dest {
+    position: relative; isolation: isolate; overflow: hidden; display: block; color: #fff;
+    min-height: 250px; border-radius: 24px; background: var(--g, linear-gradient(155deg, #D6DBF7, #FFD9C4));
+    box-shadow: 0 14px 30px -16px rgba(40, 52, 110, .45); transition: transform .4s var(--ease), box-shadow .4s var(--ease);
+  }
+  .dest:active { transform: scale(.975); transition-duration: .12s; }
+  .dest:hover { box-shadow: 0 20px 40px -18px rgba(40, 52, 110, .55); }
+  .dest .photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .dest::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13, 27, 58, 0) 38%, rgba(13, 27, 58, .74) 100%); }
+  .dest .flag-big { position: absolute; z-index: -1; right: -10px; top: 14px; font-size: 118px; line-height: 1; transform: rotate(-9deg); filter: drop-shadow(0 14px 18px rgba(13, 27, 58, .2)); }
+  .dest.has-photo .flag-big { display: none; }
+  .dest .credit { position: absolute; right: 14px; bottom: 10px; font-size: 10.5px; color: rgba(255, 255, 255, .62); }
+  .dest.has-photo::after { background: linear-gradient(180deg, rgba(13, 27, 58, .18) 0%, rgba(13, 27, 58, 0) 30%, rgba(13, 27, 58, 0) 42%, rgba(13, 27, 58, .78) 100%); }
+  .dest .d-top { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .pill-w { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: rgba(255, 255, 255, .92); color: var(--navy); }
+  .pill-w svg { width: 13px; height: 13px; }
+  .pill-w.warn { color: var(--danger); }
+  .pill-w.mine { background: var(--orange); color: #fff; }
+  .dest .d-bot { position: absolute; left: 16px; right: 16px; bottom: 16px; }
+  .dest .d-name { font-size: 22px; font-weight: 700; letter-spacing: -.025em; line-height: 1.2; text-shadow: 0 1px 12px rgba(13, 27, 58, .25); }
+  .dest .d-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 13.5px; color: rgba(255, 255, 255, .88); }
+  .dest .d-meta svg { width: 15px; height: 15px; color: #FFB48A; }
+  .dest .d-meta .num { font-size: 16px; color: #fff; }
+  .rail.dest-rail { grid-auto-columns: 66%; }
+  .rail.dest-rail > .dest { scroll-snap-align: start; }
+  .bento > .dest { min-height: 214px; }
+  .bento > .dest .flag-big { font-size: 96px; }
+  .bento > .dest .d-name { font-size: 19px; }
+
+  /* country detail hero */
+  .dest.hero { min-height: 300px; margin: 6px 0 14px; border-radius: 28px; }
+  .dest.hero .flag-big { font-size: 160px; right: -14px; top: 40px; }
+  .dest.hero .d-bot { left: 20px; right: 20px; bottom: 20px; }
+  .dest.hero h1 { color: #fff; font-size: 34px; letter-spacing: -.035em; text-shadow: 0 1px 14px rgba(13, 27, 58, .25); }
+  .back-fab {
+    position: absolute; top: 14px; left: 14px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255, 255, 255, .92); color: var(--navy); box-shadow: 0 4px 12px rgba(13, 27, 58, .15); transition: transform .3s var(--ease);
+  }
+  .back-fab:active { transform: scale(.92); }
+  .back-fab svg { width: 22px; height: 22px; }
+
+  /* auth: floating nations */
+  .orbit { position: relative; height: 190px; max-width: 340px; margin: 0 auto 6px; }
+  .orbit .bub {
+    position: absolute; width: var(--s, 58px); height: var(--s, 58px); border-radius: 50%; display: grid; place-items: center;
+    background: rgba(255, 255, 255, .9); box-shadow: 0 10px 24px -10px rgba(40, 52, 110, .35); font-size: calc(var(--s, 58px) * .52);
+    animation: pop .7s var(--ease-out) both; animation-delay: var(--d, 0s);
+  }
+  .orbit .core-logo {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 122px; height: 122px; border-radius: 34px;
+    background: #fff; display: grid; place-items: center; box-shadow: 0 18px 40px -16px rgba(40, 52, 110, .45);
+  }
+  .orbit .core-logo img { width: 92px; height: auto; }
+  @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+  .auth-title { font-size: 34px; font-weight: 900; letter-spacing: -.035em; line-height: 1.15; margin: 10px 0 8px; }
+  @media (prefers-reduced-motion: reduce) { .orbit .bub { animation: none; } }
+  /* ---------- events ---------- */
+  .event-hero { position: relative; display: block; color: #fff; margin-bottom: 12px; }
+  .event-hero .core { padding: 22px; min-height: 230px; display: flex; flex-direction: column; }
+  .event-hero .ev-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: .55; }
+  .event-hero .ev-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .event-hero .ev-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: var(--orange); color: #fff; }
+  .event-hero .ev-badge svg { width: 14px; height: 14px; }
+  .event-hero .ev-dd { font-family: var(--font-num); font-weight: 600; font-size: 46px; line-height: .85; text-align: right; font-variant-numeric: tabular-nums; }
+  .event-hero .ev-dd small { display: block; font-family: var(--font); font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, .65); margin-top: 6px; }
+  .event-hero h2 { color: #fff; font-size: 25px; letter-spacing: -.03em; line-height: 1.2; margin-top: auto; padding-top: 22px; }
+  .event-hero .ev-sub { color: rgba(255, 255, 255, .78); font-size: 15px; margin-top: 4px; }
+  .event-hero .ev-when { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 14px; font-size: 14px; color: rgba(255, 255, 255, .85); }
+  .event-hero .ev-when span { display: inline-flex; align-items: center; gap: 5px; }
+  .event-hero .ev-when svg { width: 15px; height: 15px; color: #FF9A62; }
+  .event-hero:active { transform: scale(.985); }
+  .event-hero { transition: transform .35s var(--ease); }
+
+  .date-tile {
+    flex: 0 0 auto; width: 50px; border-radius: 13px; overflow: hidden; text-align: center; background: #fff;
+    box-shadow: 0 0 0 1px var(--separator), 0 2px 6px rgba(13, 27, 58, .06);
+  }
+  .date-tile .m { display: block; background: var(--orange); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 0 2px; }
+  .date-tile .d { display: block; font-family: var(--font-num); font-weight: 600; font-size: 24px; line-height: 1; padding: 5px 0 6px; color: var(--navy); }
+  a.list-row { color: inherit; }
+  a.list-row:active { opacity: .6; }
+  .list-row .chev { color: #A3ABB9; display: grid; }
+  .list-row .chev svg { width: 18px; height: 18px; }
+  .list-row.dated + .list-row.dated::before { left: 64px; }
+
+  .ev-facts .list-row .ico-tile { background: var(--orange-soft); color: var(--orange-dark); }
+  .btn-row { display: grid; gap: 10px; }
+  /* ---------- auth world map ---------- */
+  .map-wrap { position: relative; margin: 0 -24px 4px; aspect-ratio: 855 / 336; max-height: 380px; }
+  .map-wrap::after { content: ""; position: absolute; inset: auto 0 0; height: 18%; background: linear-gradient(180deg, rgba(242, 243, 248, 0), rgba(242, 243, 248, .9)); pointer-events: none; }
+  .worldmap { display: block; width: 100%; height: 100%; }
+  .worldmap .dots { opacity: .2; }
+  .worldmap .arc { fill: none; stroke: var(--orange); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .85;
+    animation: draw 1.3s var(--ease-out) forwards; animation-delay: calc(.35s + var(--i) * .12s); }
+  .worldmap .pin { fill: var(--orange); stroke: #fff; stroke-width: 1.6; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.2s + var(--i) * .12s); }
+  .worldmap .pin-flag { font-size: 13px; text-anchor: middle; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.3s + var(--i) * .12s); }
+  .worldmap .home { fill: var(--navy); stroke: #fff; stroke-width: 2; }
+  .worldmap .future { fill: var(--orange); opacity: 0; animation: future-in .6s var(--ease-out) forwards; animation-delay: calc(2s + var(--j) * .07s); }
+  @keyframes future-in { from { opacity: 0; } to { opacity: .38; } }
+  .map-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted-2); margin: 0 0 18px; position: relative; }
+  .map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .map-legend i { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); }
+  .map-legend .lg-now { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(242, 103, 34, .35); }
+  .map-legend .lg-future { opacity: .45; width: 7px; height: 7px; }
+  .worldmap .home-ring { fill: none; stroke: var(--navy); stroke-width: 1.4; opacity: .35; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
+  .worldmap .plane-shape { fill: var(--navy); stroke: #fff; stroke-width: .8; paint-order: stroke; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes pin-in { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ring { 0% { transform: scale(.6); opacity: .5; } 100% { transform: scale(2.2); opacity: 0; } }
+  .auth-hero .auth-logo-main { width: 132px; margin: 0 auto 14px; position: relative; }
+  @media (max-width: 520px) {
+    .map-wrap { margin: 0 -18px 10px; }
+    .worldmap .dots { opacity: .26; }
+    .worldmap .arc { stroke-width: 3; }
+    .worldmap .pin { r: 7; stroke-width: 2.4; }
+    .worldmap .future { r: 5.2; }
+    .worldmap .plane-shape { transform: scale(1.9); }
+    .worldmap .home { r: 8; stroke-width: 3; }
+    .worldmap .home-ring { r: 15; stroke-width: 2.2; }
+    .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
+  }
+  .auth-hero { padding-top: calc(var(--safe-t) + 56px); }
+  @media (prefers-reduced-motion: reduce) {
+    .worldmap .arc { animation: none; stroke-dashoffset: 0; }
+    .worldmap .pin, .worldmap .pin-flag { animation: none; opacity: 1; }
+    .worldmap .future { animation: none; opacity: .38; }
+    .worldmap .plane { display: none; }
+    .worldmap .home-ring { animation: none; opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#view">Skip to content</a>
+<div id="app"></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   SVM App — Phase 1 (명세 v2)
+   로그인/회원가입 · 회원 등급 · i18n(EN/KO) · 브랜드 · 하단 탭 · 관리자 기본 화면
+   + 국가 상세(제공/준비 블록·파송 시즌) + 내 나라에 이름 쓰기
+   ===================================================================== */
+
+// ---------------------------------------------------------------------
+// 1) 설정 — Supabase 대시보드 > Project Settings > API 에서 복사해 넣으세요.
+//    anon key 만 사용합니다 (공개되어도 괜찮은 키 — 데이터 보호는 RLS 가 담당).
+//    service_role key 는 절대 여기에 넣지 마세요.
+// ---------------------------------------------------------------------
+// 연결 정보는 사이트 루트의 config.js 한 곳에서 관리합니다 (홈페이지·컨퍼런스 등록과 같은 Supabase 프로젝트)
+const CONFIG = Object.assign({
+  SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+  SUPABASE_ANON_KEY: 'YOUR-ANON-KEY',
+  TIMEZONE: 'America/Chicago',       // 모임 기준 시간대 (Bryan/College Station)
+}, window.SVM_CONFIG || {});
+
+// DB 에 값이 없을 때 쓰는 기본값 (app_settings 가 우선)
+const DEFAULTS = {
+  provided_items: [
+    { en: 'Housing and all meals', ko: '숙소와 모든 식사' },
+    { en: 'Ministry and activity costs', ko: '사역·활동 비용' },
+    { en: 'Local staff support and orientation', ko: '현지 스태프 지원과 오리엔테이션' },
+  ],
+  prepare_items: [
+    { en: 'Round-trip airfare', ko: '왕복 항공권' },
+    { en: 'Personal spending money and a valid passport', ko: '개인 용돈과 유효한 여권' },
+    { en: 'A heart ready to learn', ko: '배우려는 마음' },
+  ],
+  mission_seasons: { en: 'December · January · May–August (and anytime else)', ko: '12월 · 1월 · 5–8월 (그 외에도 언제든)' },
+  gatherings: {
+    sunday: { dow: 0, start: '14:00', end: '16:00' },
+    friday: { dow: 5, start: '19:00', end: '21:00' },
+  },
+};
+
+// ---------------------------------------------------------------------
+// 2) i18n — 모든 UI 문자열
+// ---------------------------------------------------------------------
+const i18n = {
+  en: {
+    tagline: 'Mobilizing · Training · Sending',
+    app_name: 'Student Volunteer Movement',
+    // auth
+    login: 'Log in', signup: 'Sign up', logout: 'Log out',
+    email: 'Email', password: 'Password', password_hint: 'At least 6 characters',
+    name: 'Full name', name_hint: 'First and last name', school: 'School', phone: 'Phone',
+    forgot_password: 'Forgot password?', send_reset: 'Send reset link', back_to_login: 'Back to log in',
+    reset_sent: 'Check your email for a password reset link.',
+    new_password: 'New password', set_password: 'Set new password', password_updated: 'Password updated.',
+    signup_check_email: 'Almost there. Check your email to confirm your account, then log in.',
+    signup_done: 'Welcome to SVM.',
+    auth_welcome: 'In 1886 a student prayer meeting sent 20,000+ students to the nations. We are reviving it in Bryan/College Station.',
+    signup_fast: 'Takes under a minute. You can add school and phone later.',
+    // tabs
+    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
+    // roles
+    role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin',
+    // home
+    hello: 'Hi, {name}', hello_anon: 'Welcome',
+    next_meeting: 'Next meeting', then: 'Then',
+    g_sunday: 'Sunday Mission Gathering', g_friday: 'Friday Training Night',
+    g_sunday_d: 'Worship · mission message · team building · teaching practice', g_friday_d: 'DNA2 discipleship · PST evangelism · campus outreach',
+    today: 'Today', concepts_title: 'How SVM works',
+    c1_t: 'Pay only for your flight', c1_d: 'Housing, meals, ministry costs and local staff support are provided by the field through local giving. No organization fees.',
+    c2_t: 'Stay as long as you want', c2_d: 'Go for a month — want to stay longer? Just extend your flight. No extra cost for room and board. 1, 2, 3, 6 months, up to a year.',
+    c3_t: 'Go every break', c3_d: 'Main sending seasons: December · January · May–August. Anytime else works too.',
+    c4_t: 'Trained, then sent', c4_d: 'Sunday Mission Gathering 2–4 PM + Friday Training Night (DNA2 discipleship, PST evangelism).',
+    c5_t: 'A lifelong path', c5_d: 'Short-term (Into the World) → mid-term (1–2 years) → long-term (lifelong missions & church planting).',
+    my_nations: 'Nations I carry', my_nations_empty: 'You haven’t signed a nation yet.', sign_a_nation: 'Sign your nation',
+    featured_testimony: 'Featured testimony', my_application: 'My application', todays_training: "Today's language training",
+    // countries
+    countries_title: 'Mission fields', countries_sub: 'Explore each country before you apply.',
+    itw_title: 'INTO THE WORLD', itw_desc: 'Up to 5 English conversation classes a day · serve with local churches & missionaries · share the gospel & teach the Bible · build friendships with local young people · cross-cultural discipleship.',
+    seasons: 'Sending seasons',
+    sensitive: 'Sensitive', sensitive_banner: 'Security notice: This is a sensitive country. Do not share local believers’ names, faces, or exact locations (e.g. church addresses) anywhere — in chat, prayers, or testimonies.',
+    sec_intro: 'About', sec_ministry: 'Ministry — what you will actually do', sec_life: 'Daily life — weather & culture', sec_language: 'Language needed', sec_housing: 'Room & board',
+    provided_title: 'Provided by the field', prepare_title: 'What you prepare',
+    enter_room: 'Enter country room', apply_here: 'Apply for this country',
+    pledge_btn: 'Sign my name', pledged_btn: 'You carry this nation',
+    pledge_title: 'Sign Your Nation', pledge_count: '{n} people carry this nation', pledge_count_one: '1 person carries this nation', pledge_count_zero: 'Be the first to carry this nation.',
+    pledge_hidden: 'Names are hidden for this country for security.', pledge_desc: 'A simple commitment to pray for and carry this nation — separate from applying.',
+    pledged_toast: 'Your name is written for {c}.', unpledged_toast: 'Removed.',
+    no_countries: 'No countries yet. Run 03_국가_시드.sql in Supabase.',
+    back: 'Back', not_found: 'Not found.',
+    // train
+    train_title: 'Training',
+    train_lang_t: 'Language training', train_lang_d: 'Memorize the core gospel message in the local language — infinite repeat, listen, shadow, hide & self-test.',
+    train_course_t: 'Mission curriculum', train_course_d: 'Video lessons with written reflections. Track your progress.',
+    train_grad_t: 'Graduation', train_grad_d: 'Complete required lessons and pass a language self-test to earn your graduate badge.',
+    // community
+    community_title: 'Community',
+    com_rooms_t: 'My country rooms', com_rooms_d: 'Join as many rooms as you like. Joining a room is not the same as applying.',
+    com_teams_t: 'Teams', com_teams_d: 'Team board and project to-dos.',
+    com_prayer_t: 'Prayer requests', com_prayer_d: 'Pray for one another. Use initials only for local believers.',
+    com_testi_t: 'Testimonies', com_testi_d: 'Stories from the field (published after review).',
+    com_support_t: 'Support stories', com_support_d: 'Students who need help with airfare.',
+    // my
+    my_title: 'My page', profile: 'Profile', save: 'Save', saved: 'Saved.',
+    language_setting: 'Language', my_app_t: 'My application & extension', my_app_d: 'Track: Into the World · mid-term · long-term. Extensions: airfare change only, no extra room & board.',
+    my_check_t: 'Packing checklist', my_check_d: 'Passport, visa, vaccinations, packing.',
+    my_att_t: 'Attendance record', my_att_d: 'Sunday gatherings and Friday training nights.',
+    install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then “Add to Home Screen”.',
+    graduate_badge: 'Graduate badge',
+    // admin
+    admin_title: 'Admin', admin_members: 'Members', admin_settings: 'Settings', admin_countries: 'Countries',
+    set_require_grad: 'Only graduates can apply', set_require_grad_d: 'Off: anyone can apply. On: only graduate members can submit applications.',
+    set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
+    col_sensitive: 'Sensitive', col_active: 'Active',
+    search_members: 'Search name, email, school', members_count: '{n} members', role_changed: 'Role updated.',
+    admin_more: 'Coming next: application approvals, testimony review, graduation approvals, content & meetings.',
+    // misc
+    coming_soon: 'Coming soon', phase: 'Phase {n}', loading: 'Loading…', error_generic: 'Something went wrong. Please try again.',
+    setup_title: 'Setup needed', setup_body: 'Open index.html and set SUPABASE_URL and SUPABASE_ANON_KEY in CONFIG (Supabase → Project Settings → API).',
+    offline: 'You are offline.',
+    ap1_n: '1886', ap1: 'Began in a student prayer meeting',
+    ap2_n: '20,000+', ap2: 'students sent to the nations',
+    ap3_n: '$0', ap3: 'organization fees — just your flight',
+    carrying_n: 'You carry {n} nations', carrying_one: 'You carry 1 nation', room_short: 'Country room', apply_short: 'Apply', pledged_short: 'You carry this nation',
+    home_app_d: 'Pick a track and a season.', home_train_d: 'Gospel message, by heart.',
+    swipe: 'Swipe →',
+    train_sub: 'Trained, then sent.', train_goal: 'Goal', train_hero: 'Share the gospel in their heart language.',
+    train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
+    community_sub: 'Pray, plan and go together.',
+    pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
+    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'Map: from Bryan/College Station to seven mission fields', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+  },
+  ko: {
+    tagline: 'Mobilizing · Training · Sending',
+    app_name: '학생자원운동',
+    login: '로그인', signup: '회원가입', logout: '로그아웃',
+    email: '이메일', password: '비밀번호', password_hint: '6자 이상',
+    name: '이름', name_hint: '이름과 성', school: '학교', phone: '연락처',
+    forgot_password: '비밀번호를 잊으셨나요?', send_reset: '재설정 링크 보내기', back_to_login: '로그인으로 돌아가기',
+    reset_sent: '비밀번호 재설정 링크를 이메일로 보냈습니다.',
+    new_password: '새 비밀번호', set_password: '새 비밀번호 설정', password_updated: '비밀번호가 변경되었습니다.',
+    signup_check_email: '거의 다 됐어요. 이메일에서 인증 링크를 누른 뒤 로그인하세요.',
+    signup_done: 'SVM에 오신 것을 환영합니다.',
+    auth_welcome: '1886년 대학생 기도 모임에서 시작해 2만 명 이상을 열방으로 보낸 운동을, 브라이언/컬리지 스테이션에서 다시 일으킵니다.',
+    signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
+    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
+    role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
+    hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
+    next_meeting: '다음 모임', then: '이어서',
+    g_sunday: '주일 미션 게더링', g_friday: '금요 트레이닝 나이트',
+    g_sunday_d: '예배 · 선교 말씀 · 팀 빌딩 · 티칭 연습', g_friday_d: 'DNA2 제자훈련 · PST 전도훈련 · 캠퍼스 아웃리치',
+    today: '오늘', concepts_title: 'SVM은 이렇게 갑니다',
+    c1_t: '비행기 값만 낸다', c1_d: '숙소·식사·사역비·현지 스태프 지원은 선교지가 현지 후원으로 제공합니다. 단체 수수료 없음.',
+    c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가 없음 — 1·2·3·6개월, 1년까지.',
+    c3_t: '방학마다 간다', c3_d: '정규 파송 시즌: 12월 · 1월 · 5–8월. 그 외에도 언제든 가능합니다.',
+    c4_t: '훈련 후 파송', c4_d: '매주 주일 오후 2–4시 미션 게더링 + 금요일 밤 트레이닝 나이트(DNA2 제자훈련, PST 전도훈련).',
+    c5_t: '평생의 길', c5_d: '단기(Into the World) → 중기(1–2년) → 장기(평생 선교·교회 개척).',
+    my_nations: '내가 품은 나라', my_nations_empty: '아직 이름을 쓴 나라가 없습니다.', sign_a_nation: '내 나라에 이름 쓰기',
+    featured_testimony: '추천 간증', my_application: '내 신청 상태', todays_training: '오늘의 언어 훈련',
+    countries_title: '선교지', countries_sub: '신청 전에 각 나라를 둘러보세요.',
+    itw_title: 'INTO THE WORLD', itw_desc: '하루 최대 5회 영어 회화 수업 · 현지 교회·선교사와 동역 · 복음 전하기와 성경 수업 · 현지 청년과의 관계 · 교차문화 제자훈련.',
+    seasons: '파송 시즌',
+    sensitive: '민감 국가', sensitive_banner: '보안 안내: 민감 국가입니다. 채팅·기도 제목·후기 어디에도 현지 성도의 실명, 얼굴, 정확한 장소(교회 위치 등)를 올리지 마세요.',
+    sec_intro: '소개', sec_ministry: '사역 소개 — 실제로 하는 일', sec_life: '현지 생활 — 날씨와 문화', sec_language: '필요한 언어', sec_housing: '숙식 안내',
+    provided_title: '선교지에서 제공', prepare_title: '내가 준비할 것',
+    enter_room: '나라방 들어가기', apply_here: '이 나라로 신청하기',
+    pledge_btn: '이 나라에 이름 쓰기', pledged_btn: '이 나라를 품고 있어요',
+    pledge_title: '내 나라에 이름 쓰기', pledge_count: '{n}명이 이 나라를 품고 있습니다', pledge_count_one: '1명이 이 나라를 품고 있습니다', pledge_count_zero: '이 나라를 처음으로 품어 주세요.',
+    pledge_hidden: '보안을 위해 이 나라는 이름을 공개하지 않습니다.', pledge_desc: '이 나라를 위해 기도하고 마음에 품겠다는 가벼운 헌신 표시입니다 — 신청과는 별개예요.',
+    pledged_toast: '{c}에 이름을 썼습니다.', unpledged_toast: '취소되었습니다.',
+    no_countries: '등록된 나라가 없습니다. Supabase에서 03_국가_시드.sql을 실행하세요.',
+    back: '뒤로', not_found: '찾을 수 없습니다.',
+    train_title: '훈련',
+    train_lang_t: '언어 훈련', train_lang_d: '핵심 복음 메시지를 현지어로 완벽 암기 — 무한 반복, 듣기, 따라하기, 가리기, 자가 테스트.',
+    train_course_t: '선교 교육', train_course_d: '영상 강의 시청 후 소감을 작성합니다. 진행률을 확인하세요.',
+    train_grad_t: '수료', train_grad_d: '필수 강의를 모두 마치고 언어 자가 테스트를 통과하면 수료 배지를 받습니다.',
+    community_title: '커뮤니티',
+    com_rooms_t: '내 나라방', com_rooms_d: '원하는 만큼 여러 나라방에 참여하세요. 방 참여는 신청과 별개입니다.',
+    com_teams_t: '팀', com_teams_d: '팀 게시판과 프로젝트 할 일.',
+    com_prayer_t: '기도 제목', com_prayer_d: '서로를 위해 기도해요. 현지 성도 이름은 이니셜로만 적어주세요.',
+    com_testi_t: '간증', com_testi_d: '선교지에서 온 이야기 (검토 후 공개).',
+    com_support_t: '후원 사연', com_support_d: '항공권 후원이 필요한 학생들의 사연.',
+    my_title: '마이페이지', profile: '프로필', save: '저장', saved: '저장되었습니다.',
+    language_setting: '언어', my_app_t: '내 신청 · 연장', my_app_d: '트랙: 단기 Into the World · 중기 · 장기. 연장은 숙식비 추가 없이 항공권만 변경.',
+    my_check_t: '준비물 체크리스트', my_check_d: '여권, 비자, 예방접종, 짐 꾸리기.',
+    my_att_t: '출석 기록', my_att_d: '주일 게더링과 금요 트레이닝 나이트.',
+    install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 “홈 화면에 추가”를 선택하세요.',
+    graduate_badge: '수료 배지',
+    admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
+    set_require_grad: '수료 회원만 신청 가능', set_require_grad_d: '끄면 누구나 신청 가능, 켜면 수료 회원만 신청서를 제출할 수 있습니다.',
+    set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
+    col_sensitive: '민감', col_active: '노출',
+    search_members: '이름, 이메일, 학교 검색', members_count: '회원 {n}명', role_changed: '등급이 변경되었습니다.',
+    admin_more: '다음 단계: 신청 승인, 후기 승인/추천, 수료 승인, 콘텐츠·모임 관리.',
+    coming_soon: '준비 중', phase: '{n}단계', loading: '불러오는 중…', error_generic: '문제가 발생했습니다. 다시 시도해주세요.',
+    setup_title: '설정이 필요합니다', setup_body: 'index.html의 CONFIG에 SUPABASE_URL과 SUPABASE_ANON_KEY를 입력하세요 (Supabase → Project Settings → API).',
+    offline: '오프라인 상태입니다.',
+    ap1_n: '1886', ap1: '대학생 기도 모임에서 시작',
+    ap2_n: '20,000+', ap2: '열방으로 간 학생들',
+    ap3_n: '$0', ap3: '단체 수수료 — 항공권만',
+    carrying_n: '{n}개 나라를 품고 있어요', carrying_one: '1개 나라를 품고 있어요', room_short: '나라방', apply_short: '신청하기', pledged_short: '이 나라를 품고 있어요',
+    home_app_d: '트랙과 시즌을 고르세요.', home_train_d: '복음 메시지를 마음에 새기기.',
+    swipe: '밀어서 보기 →',
+    train_sub: '훈련 후 파송.', train_goal: '목표', train_hero: '그들의 마음의 언어로 복음을 전하기.',
+    train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
+    community_sub: '함께 기도하고, 준비하고, 갑니다.',
+    pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
+    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '지도: 브라이언/컬리지 스테이션에서 7개 선교지로', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+  },
+};
+
+// ---------------------------------------------------------------------
+// 3) 상태 & 유틸
+// ---------------------------------------------------------------------
+const state = {
+  lang: safeGet('svm_lang') || ((navigator.language || '').startsWith('ko') ? 'ko' : 'en'),
+  session: null,
+  profile: null,
+  settings: {},
+  countries: null,
+  myPledges: new Set(),     // 내가 이름 쓴 country_id
+  pledgeCounts: {},         // country_id → count
+  photos: null,             // country_id → 대표 사진 URL
+  events: null,             // 다가오는 특별 이벤트
+  // 처음 온 사람(발족식 QR)은 회원가입 화면부터, 로그인한 적 있으면 로그인 화면부터
+  authMode: safeGet('svm_returning') ? 'login' : 'signup',   // login | signup | forgot | recovery
+  adminTab: 'members',
+  adminMembers: null,
+  adminSearch: '',
+  installPrompt: null,
+};
+
+function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+function t(key, vars) {
+  let s = (i18n[state.lang] && i18n[state.lang][key]) ?? i18n.en[key] ?? key;
+  if (vars) for (const k in vars) s = s.replaceAll('{' + k + '}', vars[k]);
+  return s;
+}
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function para(v) { return esc(v).replace(/\n/g, '<br>'); }
+// 국가 콘텐츠: field / field_ko — 현재 언어 우선, 없으면 다른 언어
+function loc(obj, field) {
+  if (!obj) return '';
+  if (state.lang === 'ko') return obj[field + '_ko'] || obj[field] || '';
+  return obj[field] || obj[field + '_ko'] || '';
+}
+// { en, ko } 또는 { title_en, title_ko } 형식
+function locPair(obj, field) {
+  if (!obj) return '';
+  const ko = field ? obj[field + '_ko'] : obj.ko;
+  const en = field ? (obj[field + '_en'] ?? obj[field]) : obj.en;
+  return (state.lang === 'ko' ? (ko || en) : (en || ko)) || '';
+}
+function setting(key) { return state.settings[key] ?? DEFAULTS[key]; }
+function countryName(c) { return state.lang === 'ko' ? (c.name_ko || c.name_en) : (c.name_en || c.name_ko); }
+function countryById(id) { return (state.countries || []).find(c => c.id === id); }
+function flag(code) {
+  if (!code || code.length !== 2) return '🌏';
+  return String.fromCodePoint(...[...code.toUpperCase()].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+}
+function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === 'graduate' ? '🎓 ' : ''}${esc(t('role_' + role))}</span>`; }
+function isAdmin() { return state.profile?.role === 'admin'; }
+function logo(white) { return `<img class="logo" src="../assets/${white ? 'SVM_Logo_white' : 'SVM_Logo'}.svg" alt="SVM">`; }
+
+let toastTimer;
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '') + (document.querySelector('.island') ? '' : ' no-nav');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+}
+function errMsg(e) { return (e && (e.message || e.error_description)) || t('error_generic'); }
+
+function setLang(lang) {
+  state.lang = lang;
+  safeSet('svm_lang', lang);
+  document.documentElement.lang = lang;
+  if (state.profile && state.profile.lang !== lang) {
+    state.profile.lang = lang;
+    sb.from('profiles').update({ lang }).eq('id', state.profile.id).then(() => {});
+  }
+  render();
+}
+function langToggle() {
+  return `<div class="lang-toggle" role="group" aria-label="Language">
+    <button type="button" data-lang="en" class="${state.lang === 'en' ? 'active' : ''}">EN</button>
+    <button type="button" data-lang="ko" class="${state.lang === 'ko' ? 'active' : ''}">한국어</button>
+  </div>`;
+}
+
+// ---------- 날짜·시간 (모임 기준 시간대) ----------
+const dateLocale = () => (state.lang === 'ko' ? 'ko-KR' : 'en-US');
+function fmtDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString(dateLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
+}
+function fmtTime(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return new Date(2000, 0, 1, h, m).toLocaleTimeString(dateLocale(), { hour: 'numeric', minute: '2-digit' });
+}
+function nowInTZ() {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
+}
+function addDays(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const x = new Date(Date.UTC(y, m - 1, d + n));
+  return x.toISOString().slice(0, 10);
+}
+function dow(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
+// DB 에 예정된 모임이 없을 때: 정기 일정으로 다음 모임 계산
+function nextRegular(type, now) {
+  const g = DEFAULTS.gatherings[type];
+  let add = (g.dow - dow(now.date) + 7) % 7;
+  if (add === 0 && now.time >= g.end) add = 7;
+  return { type, date: addDays(now.date, add), start_time: g.start, end_time: g.end, location: null, title: null };
+}
+
+// ---------------------------------------------------------------------
+// 4) Supabase
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// 데모 모드 — Supabase 연결 정보가 없을 때 브라우저 안의 가짜 DB 로 동작
+//   · 시연·리허설용: 데이터는 이 기기(localStorage)에만 저장됩니다
+//   · 아무 이메일/비밀번호로 가입 가능, 이메일 인증 없음
+//   · 이 기기에서 처음 가입한 사람이 관리자가 됩니다 (관리 탭 시연용)
+//   · 실제 운영 전환: CONFIG 에 Supabase URL/anon key 를 넣으면 자동으로 꺼집니다
+// ---------------------------------------------------------------------
+function createDemoClient() {
+  const KEY = 'svm_demo_db_v1';
+  const uid = () => 'demo-' + Math.random().toString(36).slice(2, 10);
+  const nowIso = () => new Date().toISOString();
+  const ago = d => new Date(Date.now() - d * 86400000).toISOString();
+
+  function seed() {
+    const C = (id, code, name_en, name_ko, is_sensitive, intro, intro_ko, extra, extra_ko, life, life_ko, lang, lang_ko, housing, housing_ko) => ({
+      id, code, name_en, name_ko, is_sensitive, is_active: true, sort_order: id, extra_sections: [], booth_meta: {},
+      intro, intro_ko,
+      ministry: 'INTO THE WORLD — up to 5 English conversation classes a day, serving with local churches and missionaries, sharing the gospel and teaching the Bible, building friendships with local young people, and cross-cultural discipleship.' + (extra ? '\n' + extra : ''),
+      ministry_ko: 'INTO THE WORLD — 하루 최대 5회 영어 회화 수업, 현지 교회·선교사와 동역, 복음 전하기와 성경 수업, 현지 청년과의 관계, 교차문화 제자훈련.' + (extra_ko ? '\n' + extra_ko : ''),
+      daily_life: life, daily_life_ko: life_ko, language: lang, language_ko: lang_ko, housing, housing_ko,
+    });
+    const countries = [
+      C(1, 'KR', 'South Korea', '한국', false, 'Partner churches across Korea welcome students to serve alongside local congregations.', '한국 전역의 협력 교회들이 학생들과 함께 지역 교회를 섬깁니다.',
+        'In Korea: campus outreach and English camps with partner churches.', '한국에서는: 협력 교회와 함께하는 캠퍼스 전도와 영어 캠프.',
+        'Fast-paced city life with excellent public transit. Four distinct seasons.', '대중교통이 편리한 도시 생활. 사계절이 뚜렷합니다.',
+        'Korean (greetings and the gospel message). English for classes.', '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.', 'Host-church housing with all meals provided.', '현지 교회 숙소, 모든 식사 제공.'),
+      C(2, 'PH', 'Philippines', '필리핀', false, 'A warm, open culture with many churches eager for young workers.', '따뜻하고 열린 문화, 젊은 사역자를 기다리는 교회가 많습니다.',
+        "In the Philippines: village evangelism and children's programs.", '필리핀에서는: 마을 전도와 어린이 프로그램.',
+        'Tropical — hot year-round with a rainy season (June–November).', '열대 기후 — 연중 덥고 6~11월은 우기.',
+        'Tagalog/Filipino; English is widely spoken.', '타갈로그어(필리핀어). 영어가 널리 통용됩니다.', 'Mission house or host family, with all meals provided.', '선교관 또는 홈스테이, 모든 식사 제공.'),
+      C(3, 'MY', 'Malaysia', '말레이시아', false, 'A multi-ethnic nation where Malay, Chinese and Indian cultures meet.', '말레이·중국·인도 문화가 어우러진 다민족 국가입니다.',
+        'In Malaysia: student ministry and community care.', '말레이시아에서는: 학생 사역과 지역 돌봄.',
+        'Hot and humid year-round. Modest dress is expected.', '연중 덥고 습함. 단정한 복장이 필요합니다.',
+        'Malay; English and Chinese are commonly used.', '말레이어. 영어와 중국어도 많이 사용됩니다.', 'Church guest rooms or mission house, with all meals provided.', '교회 게스트룸 또는 선교관, 모든 식사 제공.'),
+      C(4, 'TH', 'Thailand', '태국', false, 'The "Land of Smiles" — a Buddhist-majority country with a growing church.', '"미소의 나라" — 불교 국가이지만 교회가 성장하고 있습니다.',
+        'In Thailand: school English classes and village visits.', '태국에서는: 학교 영어 수업과 마을 방문.',
+        'Hot season (Mar–May), rainy season (Jun–Oct), cool season (Nov–Feb).', '더운 철(3~5월), 우기(6~10월), 시원한 철(11~2월).',
+        'Thai.', '태국어.', 'Mission center or host church, with all meals provided.', '선교센터 또는 현지 교회, 모든 식사 제공.'),
+      C(5, 'MX', 'Mexico', '멕시코', false, 'A close neighbor with vibrant churches and great openness to the gospel.', '가까운 이웃 나라, 활기찬 교회와 복음에 대한 열린 마음.',
+        'In Mexico: street and village evangelism and VBS.', '멕시코에서는: 거리·마을 전도와 여름성경학교.',
+        'Climate varies by region. Family and hospitality are central.', '지역마다 기후가 다릅니다. 가족과 환대가 중심인 문화.',
+        'Spanish.', '스페인어.', 'Host families or church facilities, with all meals provided.', '홈스테이 또는 교회 시설, 모든 식사 제공.'),
+      C(6, 'JP', 'Japan', '일본', false, 'Less than 1% of Japan is Christian — one of the largest unreached peoples.', '기독교인이 1% 미만 — 가장 큰 미전도 종족 중 하나입니다.',
+        'In Japan: English cafés with small local churches.', '일본에서는: 작은 지역 교회와 함께하는 영어 카페.',
+        'Clean, orderly and punctual society. Four seasons.', '깨끗하고 질서 있으며 시간을 잘 지키는 사회. 사계절.',
+        'Japanese.', '일본어.', 'Church housing or mission house, with all meals provided.', '교회 숙소 또는 선교관, 모든 식사 제공.'),
+      C(7, 'EG', 'Egypt', '이집트', true, 'One of the oldest Christian communities in the world lives here.', '세계에서 가장 오래된 기독교 공동체 중 하나가 있는 곳입니다.',
+        '', '',
+        'Hot, dry desert climate. Modest dress and discretion are essential.', '덥고 건조한 사막 기후. 단정한 복장과 신중함이 꼭 필요합니다.',
+        'Arabic (Egyptian dialect).', '아랍어 (이집트 방언).', 'Arranged by the local team; details are shared after approval.', '현지 팀이 준비합니다. 세부 사항은 승인 후 안내됩니다.'),
+    ];
+    countries[6].ministry = 'INTO THE WORLD — English conversation classes and quiet, relational ministry alongside local believers. Details are shared in person after approval.';
+    countries[6].ministry_ko = 'INTO THE WORLD — 영어 회화 수업과 현지 성도와 함께하는 조용한 관계 중심 사역. 세부 내용은 승인 후 대면으로 안내합니다.';
+
+    const people = ['Hannah Cho', 'Daniel Reyes', 'Grace Park', 'Joshua Nguyen', 'Esther Kim', 'Caleb Martinez', 'Ruth Tanaka',
+      'Samuel Okafor', 'Lydia Chen', 'Isaac Moreno', 'Naomi Lee', 'Elijah Brooks', 'Abigail Santos', 'Micah Patel', 'Sarah Yoon'];
+    const profiles = people.map((name, i) => ({
+      id: 'seed-' + i, name, email: name.toLowerCase().replace(' ', '.') + '@example.org',
+      school: i % 3 === 0 ? 'Blinn College' : 'Texas A&M', phone: null, role: i === 2 || i === 9 ? 'graduate' : 'member', lang: 'en', created_at: ago(30 - i),
+    }));
+    // 나라별 이름 쓰기 예시 (사람 index 목록)
+    const pledgeMap = { 1: [0, 2, 4, 6, 8, 10, 12, 14], 2: [1, 3, 5, 7, 11], 3: [2, 8, 13], 4: [3, 9, 14], 5: [1, 5, 9, 11, 13, 7], 6: [0, 4, 6, 10], 7: [2, 3, 8, 12, 14] };
+    const nation_pledges = [];
+    Object.entries(pledgeMap).forEach(([cid, idx]) => idx.forEach((i, k) => nation_pledges.push({ user_id: 'seed-' + i, country_id: Number(cid), created_at: ago(20 - k) })));
+
+    return {
+      users: [], session: null, next: 100,
+      profiles, countries, nation_pledges,
+      country_photos: [], gatherings: [],
+      app_settings: [
+        { key: 'require_graduation_to_apply', value: false },
+        { key: 'sensitive_photo_block', value: true },
+        { key: 'gathering_location', value: 'Church — Bryan/College Station, TX' },
+        { key: 'provided_items', value: DEFAULTS.provided_items },
+        { key: 'prepare_items', value: DEFAULTS.prepare_items },
+        { key: 'mission_seasons', value: DEFAULTS.mission_seasons },
+      ],
+      events: [
+        { id: 1, title_en: 'SVM Mission Conference 2026', title_ko: 'SVM 미션 컨퍼런스 2026',
+          subtitle_en: 'Launch night of the Student Volunteer Movement', subtitle_ko: '학생자원운동 발족식',
+          description_en: 'The launch of SVM in Bryan/College Station.\nTent Village — walk the nation booths and sign your nation.\nSign up on site with the QR code, explore the fields, and apply.\nFirst look at the SVM metaverse mission space (teaser).',
+          description_ko: '브라이언/컬리지 스테이션 SVM 발족식.\n텐트 빌리지 — 나라별 부스를 돌며 내 나라에 이름 쓰기.\n현장 QR로 가입하고, 선교지를 둘러보고, 신청까지.\nSVM 메타버스 선교 공간 예고편 첫 공개.',
+          starts_at: '2026-11-21T00:00:00Z', ends_at: null, all_day: false, location: 'Bryan–College Station, TX · venue announced soon',
+          image_url: null, link_url: '../conference/#register', is_featured: true, is_published: true },
+        { id: 2, title_en: 'Winter Send-off Prayer Night', title_ko: '겨울 파송 기도회',
+          subtitle_en: 'Praying over the December & January teams', subtitle_ko: '12월·1월 파송팀을 위한 기도',
+          description_en: 'An evening of worship and prayer for everyone going out this winter break.', description_ko: '이번 겨울방학에 떠나는 모든 팀을 위한 예배와 기도의 밤.',
+          starts_at: '2026-12-11T01:00:00Z', ends_at: '2026-12-11T03:00:00Z', all_day: false, location: 'Church — Bryan/College Station, TX',
+          image_url: null, link_url: null, is_featured: false, is_published: true },
+      ],
+    };
+  }
+
+  let db;
+  function load() { try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { db = null; } if (!db || !db.countries) db = seed(); }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) {} }
+  load();
+
+  const shortName = n => { const p = String(n || '').trim().split(/\s+/).filter(Boolean); return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : (p[0] || null); };
+  const views = {
+    nation_pledge_counts: () => db.countries.map(c => ({ country_id: c.id, pledge_count: db.nation_pledges.filter(p => p.country_id === c.id).length })),
+    nation_pledge_names: () => db.nation_pledges
+      .filter(p => !db.countries.find(c => c.id === p.country_id)?.is_sensitive)
+      .map(p => ({ country_id: p.country_id, display_name: shortName(db.profiles.find(x => x.id === p.user_id)?.name), created_at: p.created_at }))
+      .filter(r => r.display_name),
+  };
+  const rows = t => views[t] ? views[t]() : (db[t] || (db[t] = []));
+
+  class Query {
+    constructor(table) { this.t = table; this.op = 'select'; this.f = []; this.o = []; this.n = null; this.mode = 'many'; this.ret = false; }
+    select() { if (this.op !== 'select') this.ret = true; return this; }
+    eq(k, v) { this.f.push(r => String(r[k]) === String(v)); return this; }
+    gte(k, v) { this.f.push(r => r[k] >= v); return this; }
+    order(k, opt = {}) { this.o.push([k, opt.ascending !== false]); return this; }
+    limit(n) { this.n = n; return this; }
+    single() { this.mode = 'single'; return this; }
+    maybeSingle() { this.mode = 'maybe'; return this; }
+    insert(v) { this.op = 'insert'; this.v = v; return this; }
+    update(v) { this.op = 'update'; this.v = v; return this; }
+    upsert(v) { this.op = 'upsert'; this.v = v; return this; }
+    delete() { this.op = 'delete'; return this; }
+    run() {
+      const all = rows(this.t);
+      const match = r => this.f.every(fn => fn(r));
+      let out = [];
+      if (this.op === 'select') {
+        out = all.filter(match);
+        for (const [k, asc] of [...this.o].reverse()) out = [...out].sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * (asc ? 1 : -1));
+        if (this.n != null) out = out.slice(0, this.n);
+      } else if (this.op === 'insert') {
+        const list = Array.isArray(this.v) ? this.v : [this.v];
+        for (const r of list) {
+          if (this.t === 'nation_pledges' && all.some(p => p.user_id === r.user_id && p.country_id === r.country_id)) return { data: null, error: { code: '23505', message: 'duplicate' } };
+          const row = { created_at: nowIso(), ...r };
+          if (this.t !== 'profiles' && this.t !== 'nation_pledges' && row.id == null) row.id = db.next++;
+          all.push(row); out.push(row);
+        }
+      } else if (this.op === 'update') {
+        all.filter(match).forEach(r => { Object.assign(r, this.v); out.push(r); });
+      } else if (this.op === 'upsert') {
+        const pk = this.t === 'app_settings' ? 'key' : 'id';
+        const ex = all.find(r => r[pk] === this.v[pk]);
+        if (ex) Object.assign(ex, this.v); else all.push({ ...this.v });
+        out = [ex || this.v];
+      } else if (this.op === 'delete') {
+        const keep = all.filter(r => !match(r)); out = all.filter(match);
+        db[this.t] = keep;
+      }
+      if (this.op !== 'select') save();
+      const data = JSON.parse(JSON.stringify(out));
+      if (this.mode === 'single') return data[0] ? { data: data[0], error: null } : { data: null, error: { message: 'Not found' } };
+      if (this.mode === 'maybe') return { data: data[0] ?? null, error: null };
+      return { data: this.op === 'select' || this.ret ? data : null, error: null };
+    }
+    then(res, rej) { return Promise.resolve().then(() => this.run()).then(res, rej); }
+  }
+
+  const listeners = [];
+  const emit = (ev, s) => listeners.forEach(cb => setTimeout(() => cb(ev, s), 0));
+  const sessionFor = u => ({ access_token: 'demo', user: { id: u.id, email: u.email, user_metadata: { name: u.name } } });
+
+  return {
+    demo: true,
+    reset() { try { localStorage.removeItem(KEY); } catch (e) {} load(); },
+    from: t => new Query(t),
+    auth: {
+      onAuthStateChange(cb) {
+        listeners.push(cb);
+        const u = db.session && db.users.find(x => x.id === db.session);
+        setTimeout(() => cb('INITIAL_SESSION', u ? sessionFor(u) : null), 0);
+        return { data: { subscription: { unsubscribe() {} } } };
+      },
+      async signUp({ email, password, options }) {
+        email = String(email || '').toLowerCase();
+        if (!/^\S+@\S+\.\S+$/.test(email)) return { data: {}, error: { message: 'Enter a valid email.' } };
+        if (String(password || '').length < 6) return { data: {}, error: { message: 'Password should be at least 6 characters.' } };
+        if (db.users.some(u => u.email === email)) return { data: {}, error: { message: 'This email is already registered. Log in instead.' } };
+        const name = options?.data?.name || null;
+        const u = { id: uid(), email, password, name };
+        const firstOnDevice = db.users.length === 0;
+        db.users.push(u);
+        db.profiles.unshift({ id: u.id, name, email, school: null, phone: null, role: firstOnDevice ? 'admin' : 'member', lang: options?.data?.lang || 'en', created_at: nowIso() });
+        db.session = u.id; save();
+        const s = sessionFor(u); emit('SIGNED_IN', s);
+        return { data: { user: s.user, session: s }, error: null };
+      },
+      async signInWithPassword({ email, password }) {
+        const u = db.users.find(x => x.email === String(email || '').toLowerCase() && x.password === password);
+        if (!u) return { data: {}, error: { message: 'Invalid login credentials' } };
+        db.session = u.id; save();
+        const s = sessionFor(u); emit('SIGNED_IN', s);
+        return { data: { session: s, user: s.user }, error: null };
+      },
+      async signOut() { db.session = null; save(); emit('SIGNED_OUT', null); return { error: null }; },
+      async resetPasswordForEmail() { return { data: {}, error: null }; },
+      async updateUser() { return { data: {}, error: null }; },
+    },
+  };
+}
+
+const configured = !CONFIG.SUPABASE_URL.includes('YOUR-PROJECT') && !CONFIG.SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
+const FORCE_DEMO = /[?&]demo\b/.test(location.search);   // app/?demo — 실제 DB와 분리된 체험용
+const DEMO = !configured || FORCE_DEMO;   // 연결 정보가 없으면 데모 모드
+const CAN_DOWNLOAD = true;   // 파일 저장·공유가 막힌 미리보기 환경용 빌드에서는 false
+const sb = DEMO ? createDemoClient() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
+
+async function loadProfile() {
+  if (!state.session) { state.profile = null; return; }
+  const uid = state.session.user.id;
+  let { data, error } = await sb.from('profiles').select('*').eq('id', uid).maybeSingle();
+  if (!data && !error) {
+    // 트리거 이전에 가입한 계정 등 — 프로필이 없으면 생성
+    const meta = state.session.user.user_metadata || {};
+    ({ data, error } = await sb.from('profiles')
+      .insert({ id: uid, email: state.session.user.email, name: meta.name || null, lang: state.lang })
+      .select().single());
+  }
+  if (error) { toast(errMsg(error), true); return; }
+  state.profile = data;
+  if (data.lang && data.lang !== state.lang) {
+    state.lang = data.lang; safeSet('svm_lang', data.lang); document.documentElement.lang = data.lang;
+  }
+}
+async function loadSettings() {
+  const { data } = await sb.from('app_settings').select('key,value');
+  state.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
+}
+async function loadCountries(force) {
+  if (state.countries && !force) return state.countries;
+  const { data, error } = await sb.from('countries').select('*').order('sort_order').order('id');
+  if (error) { toast(errMsg(error), true); state.countries = []; }
+  else state.countries = data;
+  return state.countries;
+}
+async function loadPledges() {
+  const [mine, counts] = await Promise.all([
+    sb.from('nation_pledges').select('country_id').eq('user_id', state.profile.id),
+    sb.from('nation_pledge_counts').select('country_id,pledge_count'),
+  ]);
+  state.myPledges = new Set((mine.data || []).map(r => r.country_id));
+  state.pledgeCounts = Object.fromEntries((counts.data || []).map(r => [r.country_id, r.pledge_count]));
+}
+async function togglePledge(c) {
+  const on = state.myPledges.has(c.id);
+  const q = on
+    ? sb.from('nation_pledges').delete().eq('user_id', state.profile.id).eq('country_id', c.id)
+    : sb.from('nation_pledges').insert({ user_id: state.profile.id, country_id: c.id });
+  const { error } = await q;
+  if (error && error.code !== '23505') { toast(errMsg(error), true); return; }   // 23505 = 이미 있음
+  if (on) state.myPledges.delete(c.id); else state.myPledges.add(c.id);
+  state.pledgeCounts[c.id] = Math.max(0, (state.pledgeCounts[c.id] || 0) + (on ? -1 : 1));
+  toast(on ? t('unpledged_toast') : t('pledged_toast', { c: countryName(c) }));
+  render();
+}
+
+// ---------------------------------------------------------------------
+// 5) 아이콘 · 라우팅
+//    한 가지 선 굵기(1.7)로 통일한 라인 아이콘 세트
+// ---------------------------------------------------------------------
+const ICON = {
+  home: '<path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/>',
+  globe: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5S9.4 5.9 12 3.5z"/>',
+  book: '<path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H18v13H5.5A1.5 1.5 0 0 0 4 18.5z"/><path d="M4 18.5A1.5 1.5 0 0 0 5.5 20H18v-3"/><path d="M8 8h6"/>',
+  people: '<circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><path d="M15.5 6a2.6 2.6 0 0 1 0 5"/><path d="M17 14.5c1.9.5 3.1 2 3.5 4.5"/>',
+  user: '<circle cx="12" cy="8" r="3.8"/><path d="M4.5 20c.9-3.9 3.8-6.2 7.5-6.2s6.6 2.3 7.5 6.2"/>',
+  shield: '<path d="M12 3.5 5 6v5.5c0 4.3 2.9 7.8 7 9 4.1-1.2 7-4.7 7-9V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>',
+  arrow: '<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',
+  chev: '<path d="m9.5 6 6 6-6 6"/>',
+  chevl: '<path d="m14.5 6-6 6 6 6"/>',
+  back: '<path d="M19 12H5"/><path d="m11 18-6-6 6-6"/>',
+  flame: '<path d="M12 21c-3.9 0-6.5-2.6-6.5-6.2 0-2.9 1.7-4.6 3.2-6.2.3 1.7 1 2.7 2.2 3.4C10.3 8.6 11.3 5.6 14 3c-.4 2.9.5 4.8 2.1 6.5 1.4 1.5 2.4 3.1 2.4 5.3 0 3.6-2.6 6.2-6.5 6.2z"/>',
+  check: '<path d="m5 12.5 4.2 4.2L19 7"/>',
+  plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
+  lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+  chat: '<path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.4A7.5 7.5 0 1 1 20 12z"/>',
+  plane: '<path d="M10.5 13.5 3.5 11l1.3-1.3 7.7.6 4.2-4.2a1.9 1.9 0 0 1 2.7 2.7l-4.2 4.2.6 7.7L14.5 22l-2.5-7"/>',
+  voice: '<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v2.5"/>',
+  play: '<rect x="3.5" y="5" width="17" height="14" rx="3.5"/><path d="m10.5 9.5 4 2.5-4 2.5z"/>',
+  cap: '<path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4c1.4 1.4 3.3 2 5.5 2s4.1-.6 5.5-2v-4"/>',
+  hands: '<path d="M12 20.5s-7-4.3-7-10a4 4 0 0 1 7-2.6 4 4 0 0 1 7 2.6c0 5.7-7 10-7 10z"/>',
+  spark: '<path d="M12 3.5v4M12 16.5v4M3.5 12h4M16.5 12h4M6 6l2.8 2.8M15.2 15.2 18 18M6 18l2.8-2.8M15.2 8.8 18 6"/>',
+  gift: '<rect x="4" y="9" width="16" height="11" rx="2"/><path d="M12 9v11"/><path d="M3.5 9h17"/><path d="M12 9c-2.5 0-4-1.1-4-2.5S9.5 4 12 9zm0 0c2.5 0 4-1.1 4-2.5S14.5 4 12 9z"/>',
+  bag: '<rect x="5" y="7.5" width="14" height="12.5" rx="2.5"/><path d="M9 7.5V6a3 3 0 0 1 6 0v1.5"/><path d="M9 12h6"/>',
+  calendar: '<rect x="4" y="5.5" width="16" height="14.5" rx="3"/><path d="M4 10h16"/><path d="M8.5 3.5v4M15.5 3.5v4"/>',
+  pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
+  download: '<path d="M12 4v11"/><path d="m7 10.5 5 5 5-5"/><path d="M5 20h14"/>',
+  logout: '<path d="M14 4.5h3.5A1.5 1.5 0 0 1 19 6v12a1.5 1.5 0 0 1-1.5 1.5H14"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4.5"/>',
+};
+function icon(name, extra = '') {
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${ICON[name] || ''}</svg>`;
+}
+const TORCH = '<svg class="torch" viewBox="940 660 220 480" aria-hidden="true"><path fill="#F26722" d="M1053.04 671.498C1050.51 697.405 1058.21 725.604 1076.01 745.006C1109.46 781.47 1151.4 818.101 1146.77 872.794C1145.09 892.643 1129.74 931.182 1105.43 928.442C1081.01 926.792 1052.2 928.792 1027.56 928.108C1017.89 927.84 1004.36 928.733 995.086 927.414C949.629 883.799 966.167 838.42 994.512 790.133C1005.89 813.369 1013.6 822.798 1034.45 837.871C995.898 771.282 1003.44 728.325 1053.04 671.498z"/><path fill="#F26722" d="M993.498 939.256C1017.78 938.819 1042.43 939.279 1066.78 939.11C1081.01 939.356 1095.31 938.587 1109.51 939.637C1121.45 940.52 1124.4 955.113 1116.73 962.725C1112.44 966.987 1104.14 965.846 1098.54 965.587C1080.53 998.281 1057.6 1049.85 1042.59 1084.26C1035.22 1101.59 1027.25 1120.78 1019.1 1137.64C1009.18 1112.28 999.627 1086.78 990.44 1061.15C997.037 1030.58 1003.07 996.714 1008.85 965.861L1005.74 965.853C997.645 965.845 982.393 963.821 983.188 950.447C983.43 946.389 989.802 941.21 993.498 939.256z"/></svg>';
+
+// 공통 카드 (double-bezel: 바깥 셸 + 안쪽 코어)
+function card(inner, { dark = false, quiet = false, cls = '', coreCls = '', tag = 'section', attrs = '' } = {}) {
+  return `<${tag} class="shell ${dark ? 'dark' : ''} ${cls}" ${attrs}><div class="core ${dark ? 'dark on-dark' : ''} ${quiet ? 'quiet' : ''} ${coreCls}">${inner}</div></${tag}>`;
+}
+function initials(name) {
+  const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'S';
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+function roleTag(role) { return `<span class="tag ${esc(role)}">${role === 'graduate' ? icon('cap') : ''}${esc(t('role_' + role))}</span>`; }
+
+const TABS = [
+  { id: 'home', icon: 'home' },
+  { id: 'countries', icon: 'globe' },
+  { id: 'train', icon: 'book' },
+  { id: 'community', icon: 'people' },
+  { id: 'my', icon: 'user' },
+  { id: 'admin', icon: 'shield', adminOnly: true },
+];
+
+function parseRoute() {
+  const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/').filter(Boolean);
+  return { tab: parts[0] || 'home', param: parts[1] ? decodeURIComponent(parts[1]) : null };
+}
+
+// ---------------------------------------------------------------------
+// 6) 렌더링
+// ---------------------------------------------------------------------
+const app = document.getElementById('app');
+let renderSeq = 0;
+let lastRouteKey = null;
+
+async function render() {
+  const seq = ++renderSeq;
+  document.documentElement.lang = state.lang;
+
+  if (!configured && !DEMO) { app.innerHTML = viewSetup(); delete app.dataset.tab; bindCommon(); return; }
+  if (!state.session || state.authMode === 'recovery') { app.innerHTML = viewAuth(); delete app.dataset.tab; bindAuth(); bindCommon(); return; }
+  if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
+
+  let { tab, param } = parseRoute();
+  const SUB_ROUTES = ['events'];   // 탭이 아닌 하위 화면 (하단 탭은 홈으로 표시)
+  if ((!TABS.some(x => x.id === tab) && !SUB_ROUTES.includes(tab)) || (tab === 'admin' && !isAdmin())) tab = 'home';
+  const routeKey = tab + '/' + (param || '') + '/' + state.lang;
+  const routeChanged = routeKey !== lastRouteKey;
+  lastRouteKey = routeKey;
+
+  // 탭이 바뀌지 않았으면 기존 화면을 유지한 채 내용만 교체 (깜빡임 방지)
+  if (!document.getElementById('view') || app.dataset.tab !== tab) {
+    app.innerHTML = shell(tab, loaderHTML());
+    app.dataset.tab = tab;
+  } else {
+    app.querySelector('.apphead').outerHTML = headerHTML();
+    app.querySelector('.island').outerHTML = islandHTML(tab);
+    if (routeChanged) document.getElementById('view').innerHTML = loaderHTML();
+  }
+  bindCommon();
+  let body;
+  try {
+    body = await VIEWS[tab](param);
+  } catch (e) {
+    console.error(e);
+    body = card(`<h3>${esc(t('error_generic'))}</h3>`);
+  }
+  if (seq !== renderSeq) return;   // 더 최신 렌더가 시작됨
+  const view = document.getElementById('view');
+  view.classList.toggle('enter', routeChanged);   // 페이지 진입 시에만 순차 등장
+  view.innerHTML = body;
+  bindCommon();
+  BINDERS[tab]?.(param);
+}
+
+function loaderHTML() {
+  return `<div aria-busy="true" aria-label="${esc(t('loading'))}" style="padding-top:18px">
+    <div class="sk" style="height:34px;width:55%;border-radius:12px;margin-bottom:18px"></div>
+    <div class="sk" style="height:210px"></div>
+    <div class="row" style="gap:10px"><div class="sk" style="height:120px;flex:1"></div><div class="sk" style="height:120px;flex:1"></div></div>
+  </div>`;
+}
+
+function headerHTML() {
+  return `<header class="apphead ${window.scrollY > 6 ? 'scrolled' : ''}"><div class="apphead-inner"><a href="#/home" aria-label="SVM home" class="row" style="gap:8px">${logo(false)}${DEMO ? `<span class="tag" title="${esc(t('demo_note'))}">${esc(t('demo_badge'))}</span>` : ''}</a>${langToggle()}</div></header>`;
+}
+// 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
+window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
+function islandHTML(tab) {
+  if (!TABS.some(x => x.id === tab)) tab = 'home';
+  const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
+  return `<nav class="island" aria-label="Main"><div class="island-inner">
+    ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
+      <span class="ico">${icon(x.icon)}</span><span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
+  </div></nav>`;
+}
+function shell(tab, inner) {
+  return `${headerHTML()}<main id="view" tabindex="-1">${inner}</main>${islandHTML(tab)}`;
+}
+
+// 다음 단계 기능 — 리스트 행
+function soonRow(ico, title, desc, phaseN) {
+  return `<div class="list-row">
+    <span class="ico-tile">${icon(ico)}</span>
+    <div class="meta"><div class="t">${esc(title)}</div><div class="d">${esc(desc)}</div></div>
+    <span class="tag">${esc(t('phase', { n: phaseN }))}</span>
+  </div>`;
+}
+function pageHead(title, lede) {
+  return `<div class="page-head"><h1 class="display">${esc(title)}</h1>${lede ? `<p class="lede">${esc(lede)}</p>` : ''}</div>`;
+}
+
+// ---------- Setup ----------
+function viewSetup() {
+  return `<div class="auth-hero">${langToggle()}${logo(false)}<div class="tagline">${esc(t('tagline'))}</div></div>
+  <div class="auth-body">${card(`<h2 style="margin-bottom:10px">${esc(t('setup_title'))}</h2><p class="muted">${esc(t('setup_body'))}</p>
+<pre class="code">const CONFIG = {
+  SUPABASE_URL: 'https://xxxx.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOi...',
+};</pre>`)}</div>`;
+}
+
+// ---------- Auth ----------
+function viewAuth() {
+  const m = state.authMode;
+  let form;
+  if (m === 'login') {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
+      <label class="field"><span>${esc(t('password'))}</span><input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn block navy" type="submit">${esc(t('login'))}</button>
+      <div class="auth-note"><button type="button" class="text-link" data-mode="forgot">${esc(t('forgot_password'))}</button></div>
+    </form>`;
+  } else if (m === 'signup') {
+    // 발족식 현장 흐름: 가입은 이름·이메일·비밀번호만 (학교·연락처는 마이 탭에서)
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('name'))} <span class="muted">· ${esc(t('name_hint'))}</span></span><input type="text" name="name" autocomplete="name" required></label>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
+      <label class="field"><span>${esc(t('password'))} <span class="muted">· ${esc(t('password_hint'))}</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <button class="btn block" type="submit">${esc(t('signup'))}</button>
+      <p class="small muted auth-note">${esc(t('signup_fast'))}</p>
+    </form>`;
+  } else if (m === 'forgot') {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <button class="btn block navy" type="submit">${esc(t('send_reset'))}</button>
+      <div class="auth-note"><button type="button" class="text-link" data-mode="login">${icon('back')} ${esc(t('back_to_login'))}</button></div>
+    </form>`;
+  } else {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('new_password'))} <span class="muted">· ${esc(t('password_hint'))}</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <button class="btn block navy" type="submit">${esc(t('set_password'))}</button>
+    </form>`;
+  }
+  const seg = (m === 'login' || m === 'signup') ? `<div class="seg" role="tablist">
+      <button type="button" role="tab" data-mode="signup" aria-selected="${m === 'signup'}" class="${m === 'signup' ? 'active' : ''}">${esc(t('signup'))}</button>
+      <button type="button" role="tab" data-mode="login" aria-selected="${m === 'login'}" class="${m === 'login' ? 'active' : ''}">${esc(t('login'))}</button>
+    </div>` : `<h2 style="margin-bottom:16px">${esc(m === 'forgot' ? t('forgot_password') : t('set_password'))}</h2>`;
+  return `<div class="auth-hero">
+      ${langToggle()}
+      <div class="map-wrap">${worldMapSVG()}</div>
+      <div class="map-legend"><span><i class="lg-now"></i>${esc(t('map_now'))}</span><span><i class="lg-future"></i>${esc(t('map_future'))}</span></div>
+      <img class="logo auth-logo-main" src="../assets/SVM_Logo.svg" alt="SVM">
+      <div class="tagline">${esc(t('tagline'))}</div>
+      <h1 class="auth-title">${esc(t('auth_title'))}</h1>
+      <p>${esc(t('auth_welcome'))}</p>
+    </div>
+    <div class="auth-body">
+      ${DEMO ? `<div class="banner" style="background:var(--orange-soft);color:var(--navy)">${icon('spark')}<span>${esc(t('demo_note'))}</span></div>` : ''}
+      ${card(seg + form)}
+      <div class="auth-points">
+        <div><b>${esc(t('ap1_n'))}</b>${esc(t('ap1'))}</div>
+        <div><b>${esc(t('ap2_n'))}</b>${esc(t('ap2'))}</div>
+        <div><b>${esc(t('ap3_n'))}</b>${esc(t('ap3'))}</div>
+      </div>
+    </div>`;
+}
+
+// 로그인 화면 세계지도 — 점 지도(../assets/world-dots.svg, Natural Earth 기반) 위에
+// 브라이언/컬리지 스테이션에서 7개 선교지로 뻗어 가는 선 ("Sent")
+const MAP = { W: 1080, H: 402, LAT_T: 76, LAT_B: -58 };
+const MAP_HOME = { lat: 30.63, lon: -96.33 };   // Bryan/College Station
+const MAP_VIEW = [150, 18, 855, 336];            // 중남미 남단 ~ 러시아 ~ 일본까지 보이는 영역 (x, y, w, h)
+// 지금 파송 중인 선교지 — 선 + 국기
+const MAP_FIELDS = [
+  ['MX', 19.43, -99.13], ['EG', 30.04, 31.24], ['TH', 13.75, 100.5], ['MY', 3.14, 101.69],
+  ['PH', 14.6, 120.98], ['KR', 37.57, 126.98], ['JP', 35.68, 139.69],
+];
+// 앞으로 갈 나라들 — 은은한 점 (정식 선교지가 되면 위 목록으로 옮기세요)
+const MAP_FUTURE = [
+  // 중남미
+  [14.63, -90.51], [18.49, -69.93], [4.71, -74.07], [-0.18, -78.47], [-12.05, -77.04], [-16.5, -68.15],
+  [-15.79, -47.88], [-23.55, -46.63], [-33.45, -70.67], [-34.6, -58.38], [10.48, -66.9],
+  // 아프리카
+  [34.02, -6.83], [14.69, -17.44], [5.6, -0.19], [9.06, 7.49], [9.03, 38.74], [0.35, 32.58],
+  [-1.29, 36.82], [-6.79, 39.21], [-4.32, 15.31], [-15.39, 28.32], [-25.75, 28.19], [-18.88, 47.51],
+  // 러시아·중앙아시아·몽골
+  [55.76, 37.62], [59.94, 30.31], [56.84, 60.6], [55.03, 82.92], [52.29, 104.3], [43.12, 131.9],
+  [51.17, 71.45], [41.3, 69.24], [47.92, 106.92],
+  // 중동·남아시아
+  [39.93, 32.86], [31.95, 35.93], [27.72, 85.32], [23.81, 90.41], [6.93, 79.86],
+  // 동남아·오세아니아
+  [21.03, 105.85], [11.56, 104.92], [16.87, 96.2], [-6.21, 106.85], [-9.44, 147.18],
+  // 유럽
+  [50.45, 30.52], [52.23, 21.01], [52.52, 13.4], [40.42, -3.7], [44.43, 26.1],
+];
+// 비행기 모양 (오른쪽을 향함, 원점 중심)
+const PLANE_PATH = 'M7 0 L2.2 -1.1 L-1.2 -5.6 L-2.8 -5.6 L-1 -1.2 L-4.6 -1 L-6 -2.8 L-7 -2.8 L-6.2 0 L-7 2.8 L-6 2.8 L-4.6 1 L-1 1.2 L-2.8 5.6 L-1.2 5.6 L2.2 1.1 Z';
+function mapXY(lat, lon) { return [(lon + 180) / 360 * MAP.W, (MAP.LAT_T - lat) / (MAP.LAT_T - MAP.LAT_B) * MAP.H]; }
+function worldMapSVG() {
+  const [hx, hy] = mapXY(MAP_HOME.lat, MAP_HOME.lon);
+  const planes = [];
+  const arcs = MAP_FIELDS.map(([code, lat, lon], i) => {
+    const [x, y] = mapXY(lat, lon);
+    const dist = Math.hypot(x - hx, y - hy);
+    const cx = (hx + x) / 2, cy = Math.max(MAP_VIEW[1] + 8, Math.min(hy, y) - Math.max(16, dist * 0.2));   // 위로 휘되 화면 안에서
+    const f = v => v.toFixed(1);
+    const out = `M${f(hx)} ${f(hy)} Q${f(cx)} ${f(cy)} ${f(x)} ${f(y)}`, back = `M${f(x)} ${f(y)} Q${f(cx)} ${f(cy)} ${f(hx)} ${f(hy)}`;
+    // 작은 비행기: 선을 따라 갔다가 기수를 돌려 돌아옴 (SMIL — 가는 길/오는 길을 이어 붙임)
+    const dur = (3.2 + dist / 160).toFixed(1), start = (2.2 + i * 0.7).toFixed(1);
+    planes.push(`<path id="mp-o${i}" d="${out}" fill="none" stroke="none"/><path id="mp-b${i}" d="${back}" fill="none" stroke="none"/>
+      <g class="plane" opacity="0"><path class="plane-shape" d="${PLANE_PATH}"/>
+        <set attributeName="opacity" to="1" begin="${start}s" fill="freeze"/>
+        <animateMotion id="pl-o${i}" dur="${dur}s" begin="${start}s;pl-b${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#mp-o${i}"/></animateMotion>
+        <animateMotion id="pl-b${i}" dur="${dur}s" begin="pl-o${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#mp-b${i}"/></animateMotion>
+      </g>`);
+    return `<path class="arc" d="${out}" pathLength="1" style="--i:${i}"/>
+      <circle class="pin" cx="${f(x)}" cy="${f(y)}" r="4.2" style="--i:${i}"/>
+      <text class="pin-flag" x="${f(x)}" y="${f(y - 9)}" style="--i:${i}">${flag(code)}</text>`;
+  }).join('');
+  return `<svg class="worldmap" viewBox="${MAP_VIEW.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(t('map_label'))}">
+    <image href="../assets/world-dots.svg" x="0" y="0" width="${MAP.W}" height="${MAP.H}" class="dots"/>
+    ${MAP_FUTURE.map(([lat, lon], i) => { const [x, y] = mapXY(lat, lon); return `<circle class="future" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" style="--j:${i % 9}"/>`; }).join('')}
+    ${arcs}
+    ${planes.join('')}
+    <circle class="home-ring" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="10"/>
+    <circle class="home" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="5.2"/>
+  </svg>`;
+}
+
+function bindAuth() {
+  app.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { state.authMode = b.dataset.mode; render(); });
+  const form = document.getElementById('auth-form');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const f = Object.fromEntries(new FormData(form));
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      const redirectTo = location.origin + location.pathname;
+      if (state.authMode === 'login') {
+        const { error } = await sb.auth.signInWithPassword({ email: f.email.trim(), password: f.password });
+        if (error) throw error;
+      } else if (state.authMode === 'signup') {
+        const { data, error } = await sb.auth.signUp({
+          email: f.email.trim(), password: f.password,
+          options: { emailRedirectTo: redirectTo, data: { name: f.name.trim(), lang: state.lang } },
+        });
+        if (error) throw error;
+        if (data.session) toast(t('signup_done'));
+        else { toast(t('signup_check_email')); state.authMode = 'login'; render(); }
+      } else if (state.authMode === 'forgot') {
+        const { error } = await sb.auth.resetPasswordForEmail(f.email.trim(), { redirectTo });
+        if (error) throw error;
+        toast(t('reset_sent')); state.authMode = 'login'; render();
+      } else if (state.authMode === 'recovery') {
+        const { error } = await sb.auth.updateUser({ password: f.password });
+        if (error) throw error;
+        toast(t('password_updated')); state.authMode = 'login'; render();
+      }
+    } catch (err) {
+      toast(errMsg(err), true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+}
+
+function bindCommon() {
+  app.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+  app.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => toast(t('coming_soon') + ' · ' + t('phase', { n: b.dataset.soon })));
+}
+
+// ---------- Views ----------
+async function upcomingMeetings() {
+  const now = nowInTZ();
+  const { data } = await sb.from('gatherings').select('*').gte('date', now.date)
+    .order('date').order('start_time').limit(6);
+  const fromDb = (data || []).filter(g => g.date > now.date || g.end_time.slice(0, 5) > now.time);
+  // 종류별로 가장 가까운 모임 (DB 에 없으면 정기 일정으로 계산)
+  const pick = type => fromDb.find(g => (g.type || 'sunday') === type) || nextRegular(type, now);
+  const list = [pick('sunday'), pick('friday')].map(g => ({ ...g, type: g.type || 'sunday' }));
+  list.sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+  return { list, today: now.date };
+}
+function daysBetween(a, b) { return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000); }
+function timeRange(g) { return `${fmtTime(g.start_time.slice(0, 5))}–${fmtTime(g.end_time.slice(0, 5))}`; }
+function shortDate(dateStr) {
+  return new Date(dateStr + 'T12:00:00').toLocaleDateString(dateLocale(), { weekday: 'short', month: 'short', day: 'numeric' });
+}
+function seasonsChips() {
+  const s = locPair(setting('mission_seasons'));
+  const main = s.split('(')[0].split('·').map(x => x.trim()).filter(Boolean);
+  const rest = s.includes('(') ? s.slice(s.indexOf('(') + 1).replace(')', '').trim() : '';
+  return `<div class="season-chips">${main.map(x => `<span>${esc(x)}</span>`).join('')}</div>${rest ? `<p class="small muted" style="margin:8px 0 0">${esc(rest)}</p>` : ''}`;
+}
+function nationChips(list) {
+  return `<div class="chips">${list.map(c => `<a class="chip" href="#/countries/${esc(c.code)}"><span class="f" aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>`;
+}
+
+// 국가 카드 배경: 사진(country_photos 첫 장)이 있으면 사진, 없으면 국가별 파스텔 그라데이션
+const DEST_GRAD = {
+  KR: ['#C6D2F7', '#F7D2DC'], PH: ['#BCD2FA', '#FFDFB3'], MY: ['#C8D7F7', '#F8CFC2'], TH: ['#D2C8F5', '#C5DFF7'],
+  MX: ['#BFE4D0', '#F8D3C0'], JP: ['#E9ECF8', '#F5C3CD'], EG: ['#F1D9AE', '#DCC2A6'],
+};
+function destStyle(c) { const [a, b] = DEST_GRAD[c.code] || ['#D6DBF7', '#FFD9C4']; return `--g: linear-gradient(155deg, ${a} 0%, ${b} 100%)`; }
+async function loadPhotos() {
+  if (state.photos) return state.photos;
+  const { data } = await sb.from('country_photos').select('country_id,url,sort_order').order('sort_order');
+  state.photos = {};
+  (data || []).forEach(r => { if (!state.photos[r.country_id]) state.photos[r.country_id] = r.url; });
+  return state.photos;
+}
+// 임시 기본 사진 (Pexels 무료 라이선스) — 관리자가 country_photos 에 올린 사진이 있으면 그쪽이 우선
+//   선교 활동 장면이되 얼굴이 식별되지 않는 사진만 사용 (손·뒷모습·실루엣 — 선교지 보호 원칙)
+const DEFAULT_PHOTOS = {
+  KR: { src: '../assets/countries/kr.jpg', by: 'Max Fischer' },          // 영어 수업
+  PH: { src: '../assets/countries/ph.jpg', by: 'Kampus Production' },    // 어린이 사역
+  MY: { src: '../assets/countries/my.jpg', by: 'Chris Liu' },            // 성경 공부
+  TH: { src: '../assets/countries/th.jpg', by: 'Daniel Queiroz' },       // 예배
+  MX: { src: '../assets/countries/mx.jpg', by: 'RDNE Stock project' },   // 섬김·구제
+  JP: { src: '../assets/countries/jp.jpg', by: 'Luis Quintero' },        // 예배
+  EG: { src: '../assets/countries/eg.jpg', by: 'Luis Quintero' },        // 기도 (사람 얼굴 없음)
+};
+function photoFor(c) { return state.photos?.[c.id] || DEFAULT_PHOTOS[c.code]?.src || null; }
+function destInner(c, { hero = false } = {}) {
+  const photo = photoFor(c);
+  const credit = !state.photos?.[c.id] && DEFAULT_PHOTOS[c.code] ? DEFAULT_PHOTOS[c.code].by : null;
+  const n = state.pledgeCounts[c.id] || 0;
+  const tags = [
+    c.is_sensitive ? `<span class="pill-w warn">${icon('lock')}${esc(t('sensitive'))}</span>` : (hero ? `<span class="pill-w">${esc(t('itw_title'))}</span>` : ''),
+    state.myPledges.has(c.id) ? `<span class="pill-w mine">${icon('flame')}${esc(t('carrying_tag'))}</span>` : '',
+  ].join('');
+  return `${photo ? `<img class="photo" src="${esc(photo)}" alt="" loading="lazy">` : ''}
+    <span class="flag-big" aria-hidden="true">${flag(c.code)}</span>
+    <div class="d-top" ${hero ? 'style="left:64px"' : ''}>${tags}</div>
+    <div class="d-bot">
+      ${hero ? `<h1>${esc(countryName(c))}</h1>` : `<div class="d-name">${esc(countryName(c))}</div>`}
+      <div class="d-meta">${icon('flame')}${n ? `<span class="num">${n}</span><span>${esc(t('carry_short'))}</span>` : `<span>${esc(t('carry_zero'))}</span>`}</div>
+    </div>
+    ${hero && credit ? `<span class="credit">Photo · ${esc(credit)} / Pexels</span>` : ''}`;
+}
+function destCard(c) {
+  return `<a class="dest ${photoFor(c) ? 'has-photo' : ''}" href="#/countries/${esc(c.code)}" style="${destStyle(c)}" aria-label="${esc(countryName(c))}">${destInner(c)}</a>`;
+}
+
+const VIEWS = {
+  async home() {
+    const p = state.profile;
+    const [{ list, today }, events] = await Promise.all([upcomingMeetings(), loadEvents(true), loadCountries(), loadPledges(), loadPhotos()]);
+    const featured = events.find(e => e.is_featured) || null;
+    const others = events.filter(e => e !== featured).slice(0, 3);
+    const [next, after] = list;
+    const where = next.location || setting('gathering_location') || 'Church';
+    const d = daysBetween(today, next.date);
+    const mine = [...state.myPledges].map(countryById).filter(Boolean);
+    const firstName = p.name ? p.name.split(/\s+/)[0] : '';
+    const todayLabel = new Date().toLocaleDateString(dateLocale(), { weekday: 'long', month: 'long', day: 'numeric', timeZone: CONFIG.TIMEZONE });
+
+    const meeting = card(`
+      <div class="meet-top">
+        <span class="eyebrow">${icon('calendar', 'width="13" height="13"')} ${esc(t('next_meeting'))}</span>
+        <div style="text-align:right">
+          <div class="dday">${d === 0 ? 'D-DAY' : 'D-' + d}</div>
+          ${d === 0 ? `<span class="tag today" style="margin-top:6px">${esc(t('today'))}</span>` : ''}
+        </div>
+      </div>
+      <div class="meet-title">${esc(next.title || t('g_' + next.type))}</div>
+      <div class="meet-when"><b>${esc(fmtDate(next.date))}</b><span class="num" style="font-size:17px">${esc(timeRange(next))}</span></div>
+      <div class="row muted small" style="margin-top:6px;gap:6px">${icon('pin', 'width="15" height="15"')}${esc(where)}</div>
+      <p class="muted small" style="margin:12px 0 0">${esc(t('g_' + next.type + '_d'))}</p>
+      <div class="sep"></div>
+      <div class="then">
+        <span class="ico-tile">${icon(after.type === 'friday' ? 'book' : 'people')}</span>
+        <div style="min-width:0"><div class="small muted">${esc(t('then'))} · ${esc(shortDate(after.date))} · <span class="num">${esc(timeRange(after))}</span></div>
+          <div style="font-weight:700">${esc(after.title || t('g_' + after.type))}</div></div>
+      </div>
+      ${TORCH}`, { dark: true });
+
+    const nations = card(`
+      <div class="row between top">
+        <div><span class="eyebrow plain">${icon('flame', 'width="14" height="14" style="color:var(--orange)"')} ${esc(t('my_nations'))}</span>
+          <h2 style="margin-top:10px">${mine.length ? esc(t(mine.length === 1 ? 'carrying_one' : 'carrying_n', { n: mine.length })) : esc(t('my_nations_empty'))}</h2></div>
+      </div>
+      <div style="margin-top:14px">${mine.length ? nationChips(mine) : ''}</div>
+      <div style="margin-top:${mine.length ? 14 : 4}px"><a class="text-link" href="#/countries">${esc(t('sign_a_nation'))} ${icon('arrow')}</a></div>`);
+
+    const concepts = [1, 2, 3, 4, 5].map(n => card(`
+      <div class="concept"><div class="concept-n">0${n}</div>
+        <h3>${esc(t('c' + n + '_t'))}</h3><p>${esc(t('c' + n + '_d'))}</p></div>`)).join('');
+
+    const active = (state.countries || []).filter(c => c.is_active);
+    const totalNames = Object.values(state.pledgeCounts).reduce((a, b) => a + b, 0);
+    return `
+      <div class="greet">
+        <span class="loc-chip">${icon('pin')}Bryan/College Station</span>
+        <div class="date" style="margin-top:16px">${esc(todayLabel)}</div>
+        <div class="row between top">
+          <h1 class="display">${esc(firstName ? t('hello', { name: firstName }) : t('hello_anon'))}</h1>
+          <div style="padding-top:8px">${roleTag(p.role)}</div>
+        </div>
+      </div>
+      ${featured ? eventHero(featured) : ''}
+      <div class="bento" style="margin-bottom:12px">
+        <a class="stat peach" href="#/countries"><span class="s-ico">${icon('flame')}</span>
+          <div><div class="big">${totalNames.toLocaleString()}</div><div class="lbl">${esc(t('stat_names'))}</div></div></a>
+        <a class="stat lav" href="#/countries"><span class="s-ico">${icon('globe')}</span>
+          <div><div class="big">${active.length}</div><div class="lbl">${esc(t('stat_fields'))}</div></div></a>
+      </div>
+      ${meeting}
+      ${others.length ? `<div class="section-head"><h2>${esc(t('ev_upcoming'))}</h2><a class="text-link" href="#/events">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(others.map(eventRow).join(''))}` : ''}
+      <div class="section-head"><h2>${esc(t('countries_title'))}</h2><a class="text-link" href="#/countries">${esc(t('see_all'))} ${icon('chev')}</a></div>
+      <div class="rail dest-rail">${active.map(destCard).join('')}</div>
+      ${nations}
+      <div class="section-head"><h2>${esc(t('coming_title'))}</h2></div>
+      ${card(soonRow('plane', t('my_application'), t('home_app_d'), 2)
+        + soonRow('voice', t('todays_training'), t('home_train_d'), 3)
+        + soonRow('spark', t('featured_testimony'), t('com_testi_d'), 4))}
+      <div class="section-head"><h2>${esc(t('concepts_title'))}</h2><span class="small muted">${esc(t('swipe'))}</span></div>
+      <div class="rail">${concepts}</div>
+      <div class="signoff"><img src="../assets/SVM_Logo.svg" alt=""><div class="tagline">${esc(t('tagline'))}</div></div>`;
+  },
+
+  async countries(code) {
+    const [list] = await Promise.all([loadCountries(), loadPledges(), loadPhotos()]);
+    if (code) return viewCountryDetail(list.find(c => c.code === code.toUpperCase() && c.is_active));
+    const active = list.filter(c => c.is_active);
+    if (!active.length) return pageHead(t('countries_title')) + card(`<p class="muted" style="margin:0">${esc(t('no_countries'))}</p>`);
+    return `
+      ${pageHead(t('countries_title'), t('countries_sub'))}
+      ${card(`
+        <span class="eyebrow">${esc(t('itw_title'))}</span>
+        <p style="margin:14px 0 0;font-size:15px;max-width:30em">${esc(t('itw_desc'))}</p>
+        <div class="sep"></div>
+        <div class="small muted">${esc(t('seasons'))}</div>
+        ${seasonsChips()}
+        ${TORCH}`, { dark: true })}
+      <div class="bento" style="margin-top:12px">${active.map(destCard).join('')}</div>`;
+  },
+
+  async train() {
+    return `${pageHead(t('train_title'), t('train_sub'))}
+      ${card(`
+        <span class="eyebrow">${esc(t('train_goal'))}</span>
+        <h2 style="margin:14px 0 8px;color:#fff">${esc(t('train_hero'))}</h2>
+        <p class="muted small" style="margin:0">${esc(t('train_lang_d'))}</p>
+        ${TORCH}`, { dark: true })}
+      ${card(`
+        ${soonRow('voice', t('train_lang_t'), t('train_lang_steps'), 3)}
+        ${soonRow('play', t('train_course_t'), t('train_course_d'), 3)}
+        ${soonRow('cap', t('train_grad_t'), t('train_grad_d'), 3)}`)}`;
+  },
+
+  async community() {
+    return `${pageHead(t('community_title'), t('community_sub'))}
+      ${card(`
+        ${soonRow('chat', t('com_rooms_t'), t('com_rooms_d'), 2)}
+        ${soonRow('hands', t('com_prayer_t'), t('com_prayer_d'), 4)}
+        ${soonRow('spark', t('com_testi_t'), t('com_testi_d'), 4)}
+        ${soonRow('people', t('com_teams_t'), t('com_teams_d'), 4)}
+        ${soonRow('gift', t('com_support_t'), t('com_support_d'), 4)}`)}`;
+  },
+
+  async my() {
+    const p = state.profile;
+    await Promise.all([loadCountries(), loadPledges()]);
+    const mine = [...state.myPledges].map(countryById).filter(Boolean);
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+    return `${pageHead(t('my_title'))}
+      ${card(`
+        <div class="row" style="gap:14px;margin-bottom:20px">
+          <span class="avatar" aria-hidden="true">${esc(initials(p.name || p.email))}</span>
+          <div style="min-width:0;flex:1"><h2 style="font-size:19px">${esc(p.name || p.email)}</h2><div class="muted small" style="overflow:hidden;text-overflow:ellipsis">${esc(p.email)}</div></div>
+          ${roleTag(p.role)}
+        </div>
+        <form id="profile-form">
+          <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(p.name)}" autocomplete="name"></label>
+          <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" value="${esc(p.school)}" autocomplete="organization"></label>
+          <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" value="${esc(p.phone)}" autocomplete="tel"></label>
+          <button class="btn navy" type="submit">${esc(t('save'))}</button>
+        </form>`)}
+      ${card(`
+        <span class="eyebrow plain">${icon('flame', 'width="14" height="14" style="color:var(--orange)"')} ${esc(t('my_nations'))}</span>
+        <div style="margin-top:14px">${mine.length ? nationChips(mine) : `<p class="muted small" style="margin:0">${esc(t('my_nations_empty'))}</p>`}</div>
+        <div style="margin-top:12px"><a class="text-link" href="#/countries">${esc(t('sign_a_nation'))} ${icon('arrow')}</a></div>`)}
+      ${card(`<div class="row between"><div><h3>${esc(t('language_setting'))}</h3><div class="small muted">English · 한국어</div></div>${langToggle()}</div>`)}
+      ${card(`
+        ${soonRow('plane', t('my_app_t'), t('my_app_d'), 2)}
+        ${soonRow('bag', t('my_check_t'), t('my_check_d'), 4)}
+        ${soonRow('calendar', t('my_att_t'), t('my_att_d'), 4)}`)}
+      ${card(`<div class="stack">
+        <button class="btn light block ${state.installPrompt ? '' : 'hidden'}" id="install-btn">${esc(t('install_app'))}</button>
+        ${isIOS ? `<div class="row small muted" style="gap:10px"><span class="ico-tile soft">${icon('download')}</span>${esc(t('install_ios'))}</div>` : ''}
+        ${DEMO ? `<button class="btn light block" id="demo-reset">${esc(t('demo_reset'))}</button>` : ''}
+        <button class="btn danger block" id="logout-btn">${icon('logout', 'width="18" height="18"')} ${esc(t('logout'))}</button>
+      </div>`)}`;
+  },
+
+  async admin() {
+    const tab = state.adminTab;
+    const seg = `<div class="seg" role="tablist">
+      ${['members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
+    </div>`;
+    let body = '';
+    if (tab === 'members') {
+      if (!state.adminMembers) {
+        const { data, error } = await sb.from('profiles').select('id,name,email,school,role,created_at').order('created_at', { ascending: false });
+        if (error) throw error;
+        state.adminMembers = data;
+      }
+      body = `<input type="text" id="member-search" placeholder="${esc(t('search_members'))}" value="${esc(state.adminSearch)}" style="margin-bottom:10px" aria-label="${esc(t('search_members'))}">
+        ${card(`<div id="member-list">${memberListHTML()}</div>`)}`;
+    } else if (tab === 'settings') {
+      await loadSettings();
+      const s = state.settings;
+      const sw = (key, title, desc) => `<div class="list-row">
+        <div class="meta"><div class="t">${esc(title)}</div><div class="d">${esc(desc)}</div></div>
+        <label class="switch"><input type="checkbox" data-setting="${key}" ${s[key] === true ? 'checked' : ''} aria-label="${esc(title)}"><span></span></label>
+      </div>`;
+      body = card(`
+        ${sw('require_graduation_to_apply', t('set_require_grad'), t('set_require_grad_d'))}
+        ${sw('sensitive_photo_block', t('set_photo_block'), t('set_photo_block_d'))}`);
+    } else {
+      const list = await loadCountries(true);
+      body = card(`
+        <div class="row between small muted" style="padding-bottom:8px"><span>${esc(t('admin_countries'))}</span><span class="row" style="gap:22px;padding-right:4px"><span>${esc(t('col_sensitive'))}</span><span>${esc(t('col_active'))}</span></span></div>
+        ${list.map(c => `<div class="list-row">
+          <span class="flag-tile" style="font-size:28px" aria-hidden="true">${flag(c.code)}</span>
+          <div class="meta"><div class="t">${esc(countryName(c))}</div><div class="d num">${esc(c.code)}</div></div>
+          <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_sensitive" ${c.is_sensitive ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_sensitive'))}"><span></span></label>
+          <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_active" ${c.is_active ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_active'))}"><span></span></label>
+        </div>`).join('')}`);
+    }
+    return `${pageHead(t('admin_title'))}${seg}${body}
+      <p class="muted small" style="margin:14px 4px 0">${esc(t('admin_more'))}</p>`;
+  },
+};
+
+// ---------------------------------------------------------------------
+// 특별 이벤트 (컨퍼런스·발족식 등) — 매주 모임(gatherings)과 별개
+// ---------------------------------------------------------------------
+async function loadEvents(force) {
+  if (state.events && !force) return state.events;
+  const since = new Date(Date.now() - 36 * 3600 * 1000).toISOString();   // 진행 중·당일 이벤트 포함
+  const { data } = await sb.from('events').select('*').eq('is_published', true)
+    .gte('starts_at', since).order('starts_at').limit(20);
+  const today = nowInTZ().date;
+  state.events = (data || []).filter(e => evDay(e.ends_at || e.starts_at) >= today);
+  return state.events;
+}
+function evDay(iso) { return new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); }
+function evDateLong(e) { return new Date(e.starts_at).toLocaleDateString(dateLocale(), { timeZone: CONFIG.TIMEZONE, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+function evDateShort(e) { return new Date(e.starts_at).toLocaleDateString(dateLocale(), { timeZone: CONFIG.TIMEZONE, weekday: 'short', month: 'short', day: 'numeric' }); }
+function evTime(e) {
+  if (e.all_day) return t('ev_time_tbd');
+  const o = { timeZone: CONFIG.TIMEZONE, hour: 'numeric', minute: '2-digit' };
+  const a = new Date(e.starts_at).toLocaleTimeString(dateLocale(), o);
+  return e.ends_at ? `${a} – ${new Date(e.ends_at).toLocaleTimeString(dateLocale(), o)}` : a;
+}
+function evDday(e) { const d = daysBetween(nowInTZ().date, evDay(e.starts_at)); return d <= 0 ? 'D-DAY' : 'D-' + d; }
+function dateTile(e) {
+  const d = new Date(e.starts_at);
+  const m = d.toLocaleDateString('en-US', { timeZone: CONFIG.TIMEZONE, month: 'short' });
+  const day = d.toLocaleDateString('en-US', { timeZone: CONFIG.TIMEZONE, day: 'numeric' });
+  return `<span class="date-tile" aria-hidden="true"><span class="m">${esc(m)}</span><span class="d">${esc(day)}</span></span>`;
+}
+function eventHero(e) {
+  return `<a class="event-hero shell dark" href="#/events/${e.id}"><div class="core dark on-dark">
+      ${e.image_url ? `<img class="ev-img" src="${esc(e.image_url)}" alt="">` : ''}
+      <div class="ev-top">
+        <span class="ev-badge">${icon('spark')}${esc(t('ev_featured'))}</span>
+        <div class="ev-dd">${esc(evDday(e))}<small>${esc(evDateShort(e))}</small></div>
+      </div>
+      <h2>${esc(locPair(e, 'title'))}</h2>
+      ${locPair(e, 'subtitle') ? `<div class="ev-sub">${esc(locPair(e, 'subtitle'))}</div>` : ''}
+      <div class="ev-when"><span>${icon('calendar')}${esc(evDateShort(e))} · ${esc(evTime(e))}</span>${e.location ? `<span>${icon('pin')}${esc(e.location)}</span>` : ''}</div>
+      ${TORCH}
+    </div></a>`;
+}
+function eventRow(e) {
+  return `<a class="list-row dated" href="#/events/${e.id}">
+      ${dateTile(e)}
+      <div class="meta"><div class="t">${esc(locPair(e, 'title'))}</div><div class="d">${esc(evDateShort(e))} · ${esc(evTime(e))}${e.location ? ' · ' + esc(e.location) : ''}</div></div>
+      <span class="chev">${icon('chev')}</span>
+    </a>`;
+}
+// .ics 파일 — iPhone/Google/Outlook 캘린더에 추가
+function icsFor(e) {
+  const pad = n => String(n).padStart(2, '0');
+  const utc = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+  const icsEsc = v => String(v || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\;');
+  let when;
+  if (e.all_day) {
+    const day = evDay(e.starts_at).replace(/-/g, '');
+    const next = addDays(evDay(e.ends_at || e.starts_at), 1).replace(/-/g, '');
+    when = `DTSTART;VALUE=DATE:${day}\r\nDTEND;VALUE=DATE:${next}`;
+  } else {
+    const st = new Date(e.starts_at), en = e.ends_at ? new Date(e.ends_at) : new Date(st.getTime() + 2 * 3600e3);
+    when = `DTSTART:${utc(st)}\r\nDTEND:${utc(en)}`;
+  }
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SVM//Events//EN', 'BEGIN:VEVENT',
+    `UID:svm-event-${e.id}@svm`, `DTSTAMP:${utc(new Date())}`, when,
+    `SUMMARY:${icsEsc(locPair(e, 'title'))}`, `DESCRIPTION:${icsEsc(locPair(e, 'description'))}`,
+    `LOCATION:${icsEsc(e.location)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+
+VIEWS.events = async function (id) {
+  const list = await loadEvents(true);
+  const back = `<a href="#/home" class="back-pill">${icon('chevl')}${esc(t('tab_home'))}</a>`;
+  if (!id) {
+    return `<div style="padding-top:8px">${back}</div>${pageHead(t('ev_title'), t('ev_sub'))}
+      ${list.length ? card(list.map(eventRow).join('')) : card(`<p class="muted" style="margin:0">${esc(t('ev_none'))}</p>`)}`;
+  }
+  const e = list.find(x => String(x.id) === String(id));
+  if (!e) return `<div style="padding-top:8px">${back}</div><div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  return `<div style="padding-top:8px"><a href="#/events" class="back-pill">${icon('chevl')}${esc(t('ev_title'))}</a></div>
+    <div style="margin-top:10px">${eventHero(e).replace('<a class="event-hero', '<div class="event-hero').replace(/<\/a>$/, '</div>')}</div>
+    ${card(`<div class="ev-facts">
+        <div class="list-row"><span class="ico-tile">${icon('calendar')}</span><div class="meta"><div class="t">${esc(evDateLong(e))}</div><div class="d">${esc(evTime(e))}</div></div></div>
+        ${e.location ? `<div class="list-row"><span class="ico-tile">${icon('pin')}</span><div class="meta"><div class="t">${esc(e.location)}</div></div></div>` : ''}
+      </div>`)}
+    ${locPair(e, 'description') ? card(`<span class="eyebrow">${esc(t('ev_about'))}</span><p style="margin:8px 0 0">${para(locPair(e, 'description'))}</p>`) : ''}
+    <div class="btn-row">
+      ${e.link_url ? `<a class="btn block" href="${esc(e.link_url)}" target="_blank" rel="noopener">${icon('arrow')} ${esc(t('ev_register'))}</a>` : ''}
+      ${CAN_DOWNLOAD ? `<button class="btn block navy" id="ics-btn" data-id="${e.id}">${icon('calendar')} ${esc(t('ev_add_cal'))}</button>` : ''}
+      ${navigator.share && CAN_DOWNLOAD ? `<button class="btn block light" id="share-btn">${esc(t('ev_share'))}</button>` : ''}
+    </div>`;
+};
+
+async function viewCountryDetail(c) {
+  const back = `<a href="#/countries" class="back-pill">${icon('chevl')}${esc(t('countries_title'))}</a>`;
+  if (!c) return `<div style="padding-top:14px">${back}</div><div style="margin-top:14px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const sections = [
+    ['sec_intro', 'intro'], ['sec_ministry', 'ministry'], ['sec_life', 'daily_life'],
+    ['sec_language', 'language'], ['sec_housing', 'housing'],
+  ].filter(([, f]) => loc(c, f));
+  const extras = (Array.isArray(c.extra_sections) ? c.extra_sections : []).filter(x => x && (locPair(x, 'title') || locPair(x, 'body')));
+  const provided = setting('provided_items') || [];
+  const prepare = setting('prepare_items') || [];
+  const extraProvided = loc(c, 'extra_provided');
+
+  // 이름 쓰기: 민감 국가는 숫자만 (이름 목록은 DB 뷰에서도 제외됨)
+  const n = state.pledgeCounts[c.id] || 0;
+  let names = [];
+  if (!c.is_sensitive && n > 0) {
+    const { data } = await sb.from('nation_pledge_names').select('display_name').eq('country_id', c.id)
+      .order('created_at', { ascending: false }).limit(60);
+    names = (data || []).map(r => r.display_name).filter(Boolean);
+  }
+  const pledged = state.myPledges.has(c.id);
+  const countLabel = n === 0 ? t('pledge_count_zero') : n === 1 ? t('pledge_label_one') : t('pledge_label');
+  const tick = (cls) => `<i class="${cls}">${icon(cls === 'p' ? 'plus' : 'check')}</i>`;
+
+  return `
+    <div class="dest hero ${photoFor(c) ? 'has-photo' : ''}" style="${destStyle(c)}">
+      <a href="#/countries" class="back-fab" aria-label="${esc(t('back'))}">${icon('chevl')}</a>
+      ${destInner(c, { hero: true })}
+    </div>
+    ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
+
+    ${card(sections.map(([k, f]) => `<div class="info-sec"><span class="eyebrow plain">${esc(t(k))}</span><p>${para(loc(c, f))}</p></div>`).join('')
+      + extras.map(x => `<div class="info-sec"><span class="eyebrow plain">${esc(locPair(x, 'title'))}</span><p>${para(locPair(x, 'body'))}</p></div>`).join(''))}
+
+    ${card(`
+      <div class="two-col">
+        <div><span class="eyebrow plain" style="color:var(--orange-dark)">${esc(t('provided_title'))}</span>
+          <ul class="ticks">${provided.map(x => `<li>${tick('c')}<span>${esc(locPair(x))}</span></li>`).join('')}${extraProvided ? `<li>${tick('c')}<span>${esc(extraProvided)}</span></li>` : ''}</ul></div>
+        <div><span class="eyebrow plain">${esc(t('prepare_title'))}</span>
+          <ul class="ticks prep">${prepare.map(x => `<li>${tick('p')}<span>${esc(locPair(x))}</span></li>`).join('')}</ul></div>
+      </div>
+      <div class="sep"></div>
+      <div class="small muted">${esc(t('seasons'))}</div>
+      ${seasonsChips()}`)}
+
+    ${card(`
+      <span class="eyebrow">${icon('flame', 'width="13" height="13"')} ${esc(t('pledge_title'))}</span>
+      <div class="pledge-count">${n > 0 ? `<span class="big">${n}</span>` : ''}<span class="lbl">${esc(countLabel)}</span></div>
+      <p class="muted small" style="margin:6px 0 0">${esc(c.is_sensitive ? t('pledge_hidden') : t('pledge_desc'))}</p>
+      ${names.length ? `<div class="pledge-names">${names.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
+      <button class="btn block ${pledged ? 'on' : ''}" id="pledge-btn" style="margin-top:18px" aria-pressed="${pledged}">
+        ${icon(pledged ? 'check' : 'flame')} ${esc(pledged ? t('pledged_btn') : t('pledge_btn'))}</button>
+      ${TORCH}`, { dark: true })}
+
+    <div class="action-row">
+      <button class="btn light" data-soon="2" aria-label="${esc(t('enter_room'))}">${icon('chat', 'width="19" height="19"')} ${esc(t('room_short'))}</button>
+      <button class="btn navy" data-soon="2" aria-label="${esc(t('apply_here'))}">${icon('plane', 'width="19" height="19"')} ${esc(t('apply_short'))}</button>
+    </div>`;
+}
+
+function memberListHTML() {
+  const q = state.adminSearch.trim().toLowerCase();
+  const list = (state.adminMembers || []).filter(m => !q || [m.name, m.email, m.school].some(v => (v || '').toLowerCase().includes(q)));
+  return `<div class="small muted" style="padding-bottom:6px"><span class="num" style="font-size:15px;color:var(--navy)">${list.length}</span> ${esc(t('members_unit'))}</div>` +
+    list.map(m => `<div class="list-row">
+      <span class="avatar sm" aria-hidden="true">${esc(initials(m.name || m.email))}</span>
+      <div class="meta"><div class="t ellip">${esc(m.name || '—')}</div>
+        <div class="d ellip">${esc(m.email)}${m.school ? ' · ' + esc(m.school) : ''}</div></div>
+      <select data-role-for="${esc(m.id)}" style="width:auto;min-width:118px;min-height:42px;padding:8px 12px" ${m.id === state.profile.id ? 'disabled' : ''} aria-label="Role">
+        ${['member', 'graduate', 'admin'].map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}
+      </select>
+    </div>`).join('');
+}
+function bindMemberList() {
+  app.querySelectorAll('[data-role-for]').forEach(sel => sel.onchange = async () => {
+    const id = sel.dataset.roleFor, role = sel.value;
+    const prev = state.adminMembers.find(m => m.id === id);
+    sel.disabled = true;
+    const { error } = await sb.from('profiles').update({ role }).eq('id', id);
+    sel.disabled = false;
+    if (error) { toast(errMsg(error), true); sel.value = prev.role; return; }
+    prev.role = role;
+    toast(t('role_changed'));
+  });
+}
+
+const BINDERS = {
+  countries(code) {
+    const btn = document.getElementById('pledge-btn');
+    if (btn) btn.onclick = async () => {
+      btn.disabled = true;
+      const c = state.countries.find(x => x.code === code.toUpperCase());
+      await togglePledge(c);
+      btn.disabled = false;
+    };
+  },
+  my() {
+    const form = document.getElementById('profile-form');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(form));
+      const patch = { name: f.name.trim() || null, school: f.school.trim() || null, phone: f.phone.trim() || null };
+      const { data, error } = await sb.from('profiles').update(patch).eq('id', state.profile.id).select().single();
+      if (error) return toast(errMsg(error), true);
+      state.profile = data;
+      toast(t('saved'));
+      render();
+    };
+    document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
+    const dr = document.getElementById('demo-reset');
+    // 두 번 눌러 확인 (브라우저 confirm 창 대신 화면 안에서 확인)
+    if (dr) dr.onclick = () => {
+      if (dr.dataset.armed) { sb.reset(); location.hash = '#/home'; location.reload(); return; }
+      dr.dataset.armed = '1'; dr.textContent = t('demo_reset_q'); dr.classList.replace('light', 'danger');
+      setTimeout(() => { if (dr.isConnected) { delete dr.dataset.armed; dr.textContent = t('demo_reset'); dr.classList.replace('danger', 'light'); } }, 4000);
+    };
+    const ib = document.getElementById('install-btn');
+    if (ib) ib.onclick = async () => {
+      if (!state.installPrompt) return;
+      state.installPrompt.prompt();
+      await state.installPrompt.userChoice;
+      state.installPrompt = null;
+      ib.classList.add('hidden');
+    };
+  },
+  admin() {
+    app.querySelectorAll('[data-admin-tab]').forEach(b => b.onclick = () => { state.adminTab = b.dataset.adminTab; render(); });
+    const search = document.getElementById('member-search');
+    if (search) {
+      search.oninput = () => {
+        state.adminSearch = search.value;
+        document.getElementById('member-list').innerHTML = memberListHTML();
+        bindMemberList();
+      };
+      bindMemberList();
+    }
+    app.querySelectorAll('[data-setting]').forEach(cb => cb.onchange = async () => {
+      const { error } = await sb.from('app_settings').upsert({ key: cb.dataset.setting, value: cb.checked });
+      if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
+      state.settings[cb.dataset.setting] = cb.checked;
+      toast(t('saved'));
+    });
+    app.querySelectorAll('[data-country]').forEach(cb => cb.onchange = async () => {
+      const { error } = await sb.from('countries').update({ [cb.dataset.field]: cb.checked }).eq('id', cb.dataset.country);
+      if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
+      state.countries = null;   // 다음에 다시 불러오기
+      toast(t('saved'));
+    });
+  },
+};
+
+BINDERS.events = function (id) {
+  const e = (state.events || []).find(x => String(x.id) === String(id));
+  if (!e) return;
+  const ics = document.getElementById('ics-btn');
+  if (ics) ics.onclick = () => {
+    const url = URL.createObjectURL(new Blob([icsFor(e)], { type: 'text/calendar;charset=utf-8' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'svm-event.ics' });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+  const sh = document.getElementById('share-btn');
+  if (sh) sh.onclick = () => navigator.share({ title: locPair(e, 'title'), text: `${locPair(e, 'title')} · ${evDateShort(e)}`, url: location.href }).catch(() => {});
+};
+
+// ---------------------------------------------------------------------
+// 7) 시작
+// ---------------------------------------------------------------------
+async function onSession(session) {
+  const prevUser = state.session?.user?.id;
+  state.session = session;
+  if (!session) {
+    state.profile = null; state.adminMembers = null; state.countries = null;
+    state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
+    if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
+    delete app.dataset.tab;
+    render();
+    return;
+  }
+  safeSet('svm_returning', '1');
+  if (prevUser !== session.user.id || !state.profile) {
+    render();   // 로더 표시
+    await Promise.all([loadProfile(), loadSettings()]);
+  }
+  render();
+}
+
+function init() {
+  document.documentElement.lang = state.lang;
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') { state.authMode = 'recovery'; state.session = session; render(); return; }
+    if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') { state.session = session; return; }
+    if (event === 'SIGNED_IN' && state.session?.user?.id === session?.user?.id && state.profile) return;
+    // INITIAL_SESSION / SIGNED_IN / SIGNED_OUT
+    // 콜백 안에서 Supabase 호출 시 데드락 방지 — 다음 틱에 처리
+    setTimeout(() => onSession(session), 0);
+  });
+}
+
+window.addEventListener('hashchange', () => { if (state.session && state.profile) render(); window.scrollTo(0, 0); });
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); state.installPrompt = e; document.getElementById('install-btn')?.classList.remove('hidden'); });
+window.addEventListener('offline', () => toast(t('offline'), true));
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+init();
+</script>
+</body>
+</html>

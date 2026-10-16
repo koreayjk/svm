@@ -246,6 +246,7 @@ alter table public.checklist_progress         enable row level security;
 alter table public.support_stories            enable row level security;
 alter table public.app_settings               enable row level security;
 alter table public.events                     enable row level security;
+alter table public.conference_registrations   enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -260,7 +261,7 @@ begin
              'application_status_history','application_extensions','gospel_messages','gospel_sentences',
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
-             'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events'])
+             'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -282,6 +283,11 @@ create policy "settings: read"         on public.app_settings   for select using
 create policy "settings: admin write"  on public.app_settings   for all using (public.is_admin()) with check (public.is_admin());
 create policy "events: read"           on public.events         for select using (is_published or public.is_admin());
 create policy "events: admin write"    on public.events         for all using (public.is_admin()) with check (public.is_admin());
+
+-- 컨퍼런스 등록: 누구나 제출(insert)만, 조회·수정·삭제는 관리자
+create policy "registrations: public insert" on public.conference_registrations for insert to anon, authenticated
+  with check (event_key = 'mc2026');
+create policy "registrations: admin manage"  on public.conference_registrations for all using (public.is_admin()) with check (public.is_admin());
 
 -- 로그인 회원 읽기, 관리자만 쓰기
 create policy "gospel_messages: read"         on public.gospel_messages  for select to authenticated using (is_active or public.is_admin());

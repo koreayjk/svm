@@ -363,6 +363,24 @@ create table if not exists public.app_settings (
   value  jsonb not null
 );
 
+-- ---------------------------------------------------------------------
+-- 컨퍼런스 등록 (홈페이지 /conference/ 의 등록 폼 — 로그인 없이 제출)
+-- 공개(anon)는 넣기만 가능, 읽기는 관리자만. 같은 이메일은 한 번만.
+-- ---------------------------------------------------------------------
+create table if not exists public.conference_registrations (
+  id          bigint generated always as identity primary key,
+  event_key   text not null default 'mc2026',
+  full_name   text not null check (char_length(full_name) between 1 and 120),
+  email       text not null check (char_length(email) between 3 and 200 and email like '%_@_%'),
+  phone       text check (phone is null or char_length(phone) <= 40),
+  role        text not null default 'other'
+              check (role in ('student','young_adult','youth','leader','volunteer','other')),
+  lang        text not null default 'en' check (lang in ('en','ko')),
+  created_at  timestamptz not null default now()
+);
+create unique index if not exists conference_registrations_email_uq
+  on public.conference_registrations (event_key, lower(email));
+
 -- =====================================================================
 -- v1 → v2 업그레이드 (v1 SQL 을 이미 실행한 DB 용 — 새 DB 에서는 아무 일도 하지 않음)
 -- =====================================================================
