@@ -555,8 +555,8 @@
   .ev-facts .list-row .ico-tile { background: var(--orange-soft); color: var(--orange-dark); }
   .btn-row { display: grid; gap: 10px; }
   /* ---------- auth world map ---------- */
-  .map-wrap { position: relative; margin: 0 -24px 10px; aspect-ratio: 800 / 228; max-height: 300px; }
-  .map-wrap::after { content: ""; position: absolute; inset: auto 0 0; height: 40%; background: linear-gradient(180deg, rgba(242, 243, 248, 0), rgba(242, 243, 248, .9)); pointer-events: none; }
+  .map-wrap { position: relative; margin: 0 -24px 4px; aspect-ratio: 855 / 336; max-height: 380px; }
+  .map-wrap::after { content: ""; position: absolute; inset: auto 0 0; height: 18%; background: linear-gradient(180deg, rgba(242, 243, 248, 0), rgba(242, 243, 248, .9)); pointer-events: none; }
   .worldmap { display: block; width: 100%; height: 100%; }
   .worldmap .dots { opacity: .2; }
   .worldmap .arc { fill: none; stroke: var(--orange); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .85;
@@ -564,6 +564,13 @@
   .worldmap .pin { fill: var(--orange); stroke: #fff; stroke-width: 1.6; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.2s + var(--i) * .12s); }
   .worldmap .pin-flag { font-size: 13px; text-anchor: middle; opacity: 0; animation: pin-in .5s var(--ease-out) forwards; animation-delay: calc(1.3s + var(--i) * .12s); }
   .worldmap .home { fill: var(--navy); stroke: #fff; stroke-width: 2; }
+  .worldmap .future { fill: var(--orange); opacity: 0; animation: future-in .6s var(--ease-out) forwards; animation-delay: calc(2s + var(--j) * .07s); }
+  @keyframes future-in { from { opacity: 0; } to { opacity: .38; } }
+  .map-legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--muted-2); margin: 0 0 18px; position: relative; }
+  .map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .map-legend i { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); }
+  .map-legend .lg-now { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(242, 103, 34, .35); }
+  .map-legend .lg-future { opacity: .45; width: 7px; height: 7px; }
   .worldmap .home-ring { fill: none; stroke: var(--navy); stroke-width: 1.4; opacity: .35; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
   @keyframes draw { to { stroke-dashoffset: 0; } }
   @keyframes pin-in { from { opacity: 0; } to { opacity: 1; } }
@@ -574,6 +581,7 @@
     .worldmap .dots { opacity: .26; }
     .worldmap .arc { stroke-width: 3; }
     .worldmap .pin { r: 7; stroke-width: 2.4; }
+    .worldmap .future { r: 5.2; }
     .worldmap .home { r: 8; stroke-width: 3; }
     .worldmap .home-ring { r: 15; stroke-width: 2.2; }
     .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
@@ -582,6 +590,7 @@
   @media (prefers-reduced-motion: reduce) {
     .worldmap .arc { animation: none; stroke-dashoffset: 0; }
     .worldmap .pin, .worldmap .pin-flag { animation: none; opacity: 1; }
+    .worldmap .future { animation: none; opacity: .38; }
     .worldmap .home-ring { animation: none; opacity: 0; }
   }
 </style>
@@ -717,7 +726,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', map_label: 'Map: from Bryan/College Station to seven mission fields', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'Map: from Bryan/College Station to seven mission fields', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
   },
   ko: {
     tagline: 'Called. Equipped. Sent.',
@@ -794,7 +803,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', map_label: '지도: 브라이언/컬리지 스테이션에서 7개 선교지로', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '지도: 브라이언/컬리지 스테이션에서 7개 선교지로', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
   },
 };
 
@@ -1366,6 +1375,7 @@ function viewAuth() {
   return `<div class="auth-hero">
       ${langToggle()}
       <div class="map-wrap">${worldMapSVG()}</div>
+      <div class="map-legend"><span><i class="lg-now"></i>${esc(t('map_now'))}</span><span><i class="lg-future"></i>${esc(t('map_future'))}</span></div>
       <img class="logo auth-logo-main" src="assets/SVM_Logo.svg" alt="SVM">
       <div class="tagline">${esc(t('tagline'))}</div>
       <h1 class="auth-title">${esc(t('auth_title'))}</h1>
@@ -1386,10 +1396,29 @@ function viewAuth() {
 // 브라이언/컬리지 스테이션에서 7개 선교지로 뻗어 가는 선 ("Sent")
 const MAP = { W: 1080, H: 402, LAT_T: 76, LAT_B: -58 };
 const MAP_HOME = { lat: 30.63, lon: -96.33 };   // Bryan/College Station
-const MAP_VIEW = [205, 38, 800, 228];            // 텍사스 ~ 일본이 다 보이는 영역 (x, y, w, h)
+const MAP_VIEW = [150, 18, 855, 336];            // 중남미 남단 ~ 러시아 ~ 일본까지 보이는 영역 (x, y, w, h)
+// 지금 파송 중인 선교지 — 선 + 국기
 const MAP_FIELDS = [
   ['MX', 19.43, -99.13], ['EG', 30.04, 31.24], ['TH', 13.75, 100.5], ['MY', 3.14, 101.69],
   ['PH', 14.6, 120.98], ['KR', 37.57, 126.98], ['JP', 35.68, 139.69],
+];
+// 앞으로 갈 나라들 — 은은한 점 (정식 선교지가 되면 위 목록으로 옮기세요)
+const MAP_FUTURE = [
+  // 중남미
+  [14.63, -90.51], [18.49, -69.93], [4.71, -74.07], [-0.18, -78.47], [-12.05, -77.04], [-16.5, -68.15],
+  [-15.79, -47.88], [-23.55, -46.63], [-33.45, -70.67], [-34.6, -58.38], [10.48, -66.9],
+  // 아프리카
+  [34.02, -6.83], [14.69, -17.44], [5.6, -0.19], [9.06, 7.49], [9.03, 38.74], [0.35, 32.58],
+  [-1.29, 36.82], [-6.79, 39.21], [-4.32, 15.31], [-15.39, 28.32], [-25.75, 28.19], [-18.88, 47.51],
+  // 러시아·중앙아시아·몽골
+  [55.76, 37.62], [59.94, 30.31], [56.84, 60.6], [55.03, 82.92], [52.29, 104.3], [43.12, 131.9],
+  [51.17, 71.45], [41.3, 69.24], [47.92, 106.92],
+  // 중동·남아시아
+  [39.93, 32.86], [31.95, 35.93], [28.61, 77.21], [19.08, 72.88], [27.72, 85.32], [23.81, 90.41], [6.93, 79.86],
+  // 동남아·오세아니아
+  [21.03, 105.85], [11.56, 104.92], [16.87, 96.2], [-6.21, 106.85], [-9.44, 147.18],
+  // 유럽
+  [50.45, 30.52], [52.23, 21.01], [52.52, 13.4], [40.42, -3.7], [44.43, 26.1],
 ];
 function mapXY(lat, lon) { return [(lon + 180) / 360 * MAP.W, (MAP.LAT_T - lat) / (MAP.LAT_T - MAP.LAT_B) * MAP.H]; }
 function worldMapSVG() {
@@ -1404,6 +1433,7 @@ function worldMapSVG() {
   }).join('');
   return `<svg class="worldmap" viewBox="${MAP_VIEW.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(t('map_label'))}">
     <image href="assets/world-dots.svg" x="0" y="0" width="${MAP.W}" height="${MAP.H}" class="dots"/>
+    ${MAP_FUTURE.map(([lat, lon], i) => { const [x, y] = mapXY(lat, lon); return `<circle class="future" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" style="--j:${i % 9}"/>`; }).join('')}
     ${arcs}
     <circle class="home-ring" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="10"/>
     <circle class="home" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="5.2"/>
