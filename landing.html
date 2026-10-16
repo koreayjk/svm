@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SVM Bryan/College Station</title>
+<meta name="description" content="Student Volunteer Movement, Bryan/College Station. Pay only for your flight, stay as long as you want, go every break. Launch night Nov 20, 2026.">
+<meta property="og:title" content="SVM Bryan/College Station">
+<meta property="og:description" content="Mobilizing · Training · Sending. Launch night Nov 20, 2026.">
+<meta property="og:image" content="icons/icon-512.png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* Layout: one long scroll on a pastel wash — hero with the "sent" world map, a navy launch band,
+     then plain sections that alternate text-led and figure-led rows. Single light look (brand). */
+  :root {
+    --navy: #0D1B3A;
+    --navy-2: #172A52;
+    --orange: #F26722;
+    --orange-dark: #C4501A;
+    --orange-soft: #FDF0E8;
+    --bg: #F2F3F8;
+    --surface: #FFFFFF;
+    --text: #0D1B3A;
+    --muted: #4A5568;
+    --muted-2: #5B6475;
+    --line: rgba(13, 27, 58, .1);
+    --fill: rgba(13, 27, 58, .055);
+    --on-dark: #FFFFFF;
+    --on-dark-muted: rgba(255, 255, 255, .7);
+
+    --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Segoe UI", sans-serif;
+    --font-num: "Barlow Condensed", "Noto Sans KR", "Arial Narrow", sans-serif;
+
+    --r-card: 24px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --wrap: 1120px;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; font-family: var(--font); font-size: 17px; line-height: 1.6; color: var(--text); background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background:
+      radial-gradient(60% 40% at 0% 0%, rgba(176, 189, 242, .55), transparent 70%),
+      radial-gradient(55% 40% at 100% 4%, rgba(255, 200, 170, .5), transparent 70%),
+      linear-gradient(180deg, #ECEFFA 0%, #F6F1F0 50%, #F1F2F8 100%);
+  }
+  a { color: var(--orange-dark); }
+  img { max-width: 100%; display: block; }
+  h1, h2, h3 { margin: 0; text-wrap: balance; }
+  p { margin: 0; text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  .num { font-family: var(--font-num); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tagline { font-family: var(--font-num); font-weight: 600; letter-spacing: .16em; text-transform: uppercase; font-size: 15px; color: var(--orange-dark); }
+  .kicker { font-size: 14px; font-weight: 700; color: var(--orange-dark); }
+  .muted { color: var(--muted); }
+
+  /* ---------- header ---------- */
+  .top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+    background: rgba(240, 241, 249, .72); -webkit-backdrop-filter: blur(18px) saturate(1.7); backdrop-filter: blur(18px) saturate(1.7);
+    box-shadow: 0 1px 0 var(--line);
+  }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+  .top .logo { height: 28px; width: auto; }
+  .top nav { display: flex; align-items: center; gap: 22px; font-size: 15px; font-weight: 500; }
+  .top nav a { color: var(--text); text-decoration: none; }
+  .top nav a:hover { color: var(--orange-dark); }
+  .top .right { display: flex; align-items: center; gap: 10px; }
+  @media (max-width: 860px) { .top nav { display: none; } }
+
+  .lang { display: inline-flex; padding: 2px; border-radius: 10px; background: var(--fill); }
+  .lang button { border: 0; background: transparent; padding: 5px 11px; border-radius: 8px; font: inherit; font-size: 13.5px; font-weight: 500; color: var(--muted-2); cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--surface); color: var(--text); font-weight: 700; box-shadow: 0 1px 2px rgba(13, 27, 58, .1); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 24px; border-radius: 999px;
+    background: var(--orange); color: var(--on-dark); font-weight: 700; font-size: 16.5px; text-decoration: none; border: 0; cursor: pointer;
+    transition: transform .3s var(--ease), background-color .2s var(--ease);
+  }
+  .btn:hover { background: #E95D18; }
+  .btn:active { transform: scale(.97); }
+  .btn.small { min-height: 40px; padding: 0 18px; font-size: 15px; }
+  .btn.ghost { background: var(--surface); color: var(--navy); box-shadow: inset 0 0 0 1px var(--line); }
+  .btn.ghost:hover { box-shadow: inset 0 0 0 1px var(--navy); }
+  .btn svg { width: 18px; height: 18px; }
+
+  /* ---------- hero ---------- */
+  .hero { padding-block: 56px 8px; text-align: center; }
+  .hero h1 { font-size: clamp(36px, 7vw, 72px); font-weight: 900; line-height: 1.08; letter-spacing: -.035em; margin: 16px auto 18px; max-width: 14em; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero .lede { font-size: clamp(17px, 2.2vw, 20px); color: var(--muted); max-width: 34em; margin: 0 auto; }
+  .hero .ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 28px; }
+  .map-wrap { position: relative; margin: 26px auto 0; max-width: 1100px; aspect-ratio: 855 / 336; }
+  .worldmap { display: block; width: 100%; height: 100%; }
+  .worldmap .dots { opacity: .2; }
+  .worldmap .arc { fill: none; stroke: var(--orange); stroke-width: 1.7; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: .9;
+    animation: draw 1.4s var(--ease) forwards; animation-delay: calc(.3s + var(--i) * .12s); }
+  .worldmap .pin { fill: var(--orange); stroke: #fff; stroke-width: 1.6; opacity: 0; animation: fade-in .5s var(--ease) forwards; animation-delay: calc(1.2s + var(--i) * .12s); }
+  .worldmap .pin-flag { font-size: 13px; text-anchor: middle; opacity: 0; animation: fade-in .5s var(--ease) forwards; animation-delay: calc(1.3s + var(--i) * .12s); }
+  .worldmap .future { fill: var(--orange); opacity: 0; animation: future-in .6s var(--ease) forwards; animation-delay: calc(2s + var(--j) * .07s); }
+  .worldmap .home { fill: var(--navy); stroke: #fff; stroke-width: 2; }
+  .worldmap .home-ring { fill: none; stroke: var(--navy); stroke-width: 1.4; opacity: .35; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
+  .worldmap .home-label { font-size: 12px; font-weight: 700; fill: var(--navy); }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes fade-in { to { opacity: 1; } }
+  @keyframes future-in { to { opacity: .38; } }
+  @keyframes ring { 0% { transform: scale(.6); opacity: .5; } 100% { transform: scale(2.2); opacity: 0; } }
+  @media (max-width: 560px) {
+    .worldmap .arc { stroke-width: 3; }
+    .worldmap .pin { r: 7; stroke-width: 2.4; }
+    .worldmap .future { r: 5.2; }
+    .worldmap .home { r: 8; }
+    .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
+    .worldmap .home-label { display: none; }
+    .map-wrap { margin-left: -12px; margin-right: -12px; }
+  }
+  .legend { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 18px; font-size: 13.5px; color: var(--muted-2); margin-top: 6px; }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .legend i { width: 10px; height: 10px; border-radius: 50%; background: var(--orange); }
+  .legend .now { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(242, 103, 34, .35); }
+  .legend .fut { width: 8px; height: 8px; opacity: .45; }
+
+  /* ---------- facts strip ---------- */
+  .facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-block: 44px 0; }
+  .fact { background: rgba(255, 255, 255, .78); border-radius: 20px; padding: 18px 18px 20px; }
+  .fact .num { display: block; font-size: 44px; line-height: 1; color: var(--navy); margin-bottom: 8px; }
+  .fact span:last-child { font-size: 14px; color: var(--muted); line-height: 1.45; display: block; }
+  @media (max-width: 760px) { .facts { grid-template-columns: 1fr 1fr; } }
+
+  /* ---------- sections ---------- */
+  section.block { padding-block: 84px 0; }
+  .s-head { max-width: 40em; margin-bottom: 30px; }
+  .s-head h2 { font-size: clamp(28px, 4.4vw, 44px); font-weight: 900; letter-spacing: -.03em; line-height: 1.15; margin-top: 8px; }
+  .s-head p { margin-top: 12px; color: var(--muted); font-size: 18px; }
+
+  /* launch band */
+  .launch {
+    position: relative; overflow: hidden; isolation: isolate; color: var(--on-dark); border-radius: 32px; padding: clamp(28px, 5vw, 56px);
+    background: radial-gradient(80% 70% at 100% 0%, rgba(242, 103, 34, .28), transparent 62%), linear-gradient(165deg, #15284F, var(--navy) 70%);
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: end;
+  }
+  .launch .torch { position: absolute; right: -20px; bottom: -40px; width: 220px; opacity: .08; z-index: -1; }
+  .launch .kicker { color: #FF9A62; }
+  .launch h2 { font-size: clamp(30px, 5vw, 52px); font-weight: 900; letter-spacing: -.03em; line-height: 1.1; margin: 10px 0 12px; }
+  .launch p { color: var(--on-dark-muted); max-width: 32em; }
+  .launch ul { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 10px; }
+  .launch li { display: flex; gap: 10px; align-items: flex-start; color: var(--on-dark); }
+  .launch li svg { flex: 0 0 auto; width: 20px; height: 20px; color: #FF9A62; margin-top: 3px; }
+  .countdown { text-align: right; }
+  .countdown .big { font-family: var(--font-num); font-weight: 600; font-size: clamp(84px, 14vw, 150px); line-height: .85; color: #FF8A4C; font-variant-numeric: tabular-nums; }
+  .countdown .when { margin-top: 10px; font-size: 16px; color: var(--on-dark); font-weight: 700; }
+  .countdown .where { color: var(--on-dark-muted); font-size: 15px; }
+  .countdown .btn { margin-top: 18px; }
+  @media (max-width: 760px) { .launch { grid-template-columns: 1fr; } .countdown { text-align: left; } }
+
+  /* how it works — figure-led list */
+  .how { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .how-item { background: var(--surface); border-radius: var(--r-card); padding: 24px; display: grid; grid-template-columns: 116px 1fr; gap: 18px; align-items: start; box-shadow: 0 10px 28px -16px rgba(64, 76, 140, .25); }
+  .how-item .fig { font-family: var(--font-num); font-weight: 600; font-size: 34px; line-height: 1; color: var(--orange); letter-spacing: -.01em; }
+  .how-item .fig small { display: block; font-size: 13px; color: var(--muted-2); letter-spacing: .06em; text-transform: uppercase; margin-top: 6px; font-weight: 600; }
+  .how-item h3 { font-size: 19px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+  .how-item p { color: var(--muted); font-size: 15.5px; }
+  .how-item.wide { grid-column: span 2; }
+  @media (max-width: 760px) { .how { grid-template-columns: 1fr; } .how-item.wide { grid-column: auto; } .how-item { grid-template-columns: 1fr; gap: 10px; } }
+
+  /* provided / prepare */
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .panel { background: var(--surface); border-radius: var(--r-card); padding: 26px; }
+  .panel h3 { font-size: 18px; font-weight: 700; margin-bottom: 14px; }
+  .ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .ticks li { display: flex; gap: 10px; align-items: flex-start; }
+  .ticks i { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--orange); color: #fff; margin-top: 2px; }
+  .ticks.prep i { background: var(--fill); color: var(--navy); }
+  .ticks i svg { width: 12px; height: 12px; }
+  @media (max-width: 680px) { .split { grid-template-columns: 1fr; } }
+
+  /* fields */
+  .fields { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .field {
+    position: relative; overflow: hidden; isolation: isolate; border-radius: 22px; min-height: 230px; color: var(--on-dark); display: flex; flex-direction: column; justify-content: flex-end; padding: 16px;
+    box-shadow: 0 14px 30px -16px rgba(40, 52, 110, .45); background: var(--navy);
+  }
+  .field img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+  .field::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13, 27, 58, .05) 30%, rgba(13, 27, 58, .8)); }
+  .field .f-top { position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: rgba(255, 255, 255, .92); color: var(--navy); }
+  .pill.warn { color: #B42318; }
+  .field b { font-size: 20px; letter-spacing: -.02em; line-height: 1.2; }
+  .field span.sub { font-size: 13.5px; color: var(--on-dark-muted); margin-top: 2px; }
+  .field.more { background: var(--surface); color: var(--text); justify-content: center; box-shadow: none; outline: 1px dashed rgba(13, 27, 58, .25); outline-offset: -1px; }
+  .field.more::after { display: none; }
+  .field.more .num { font-size: 56px; color: var(--orange); line-height: 1; }
+  .field.more span.sub { color: var(--muted); }
+  @media (max-width: 900px) { .fields { grid-template-columns: repeat(2, 1fr); } }
+
+  /* ministry */
+  .ministry { display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: start; }
+  .m-list { list-style: none; margin: 0; padding: 0; background: var(--surface); border-radius: var(--r-card); padding: 8px 22px; }
+  .m-list li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 16px 0; align-items: start; }
+  .m-list li + li { border-top: 1px solid var(--line); }
+  .m-list .ic { width: 40px; height: 40px; border-radius: 11px; background: var(--navy); color: #fff; display: grid; place-items: center; }
+  .m-list .ic svg { width: 20px; height: 20px; }
+  .m-list b { display: block; font-size: 16.5px; }
+  .m-list span { color: var(--muted); font-size: 15px; }
+  .track { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px; }
+  .track span { padding: 8px 14px; border-radius: 999px; background: var(--surface); font-size: 14.5px; font-weight: 500; }
+  .track span:first-child { background: var(--orange); color: #fff; }
+  @media (max-width: 860px) { .ministry { grid-template-columns: 1fr; gap: 20px; } }
+
+  /* rhythm */
+  .rhythm { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .r-card { background: var(--surface); border-radius: var(--r-card); padding: 26px; display: grid; gap: 8px; }
+  .r-card .day { font-family: var(--font-num); font-weight: 600; font-size: 15px; letter-spacing: .12em; text-transform: uppercase; color: var(--orange-dark); }
+  .r-card h3 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+  .r-card .time { font-family: var(--font-num); font-size: 26px; font-weight: 600; color: var(--navy); }
+  .r-card p { color: var(--muted); font-size: 15.5px; }
+  @media (max-width: 680px) { .rhythm { grid-template-columns: 1fr; } }
+
+  /* story */
+  .story { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; background: rgba(255, 255, 255, .7); border-radius: 32px; padding: clamp(24px, 4vw, 44px); }
+  .story .years { font-family: var(--font-num); font-weight: 600; font-size: clamp(54px, 9vw, 96px); line-height: .9; color: var(--navy); }
+  .story .years span { color: var(--orange); }
+  .story p { font-size: 18px; color: var(--muted); max-width: 36em; }
+  .story p + p { margin-top: 10px; }
+  @media (max-width: 680px) { .story { grid-template-columns: 1fr; } }
+
+  /* final cta */
+  .final { text-align: center; padding-block: 96px 40px; }
+  .final h2 { font-size: clamp(30px, 5vw, 50px); font-weight: 900; letter-spacing: -.03em; line-height: 1.12; max-width: 15em; margin: 12px auto 14px; }
+  .final p { color: var(--muted); max-width: 30em; margin: 0 auto 26px; }
+  footer { padding-block: 28px 40px; border-top: 1px solid var(--line); }
+  footer .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted-2); }
+  footer img { height: 22px; width: auto; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .worldmap .arc { animation: none; stroke-dashoffset: 0; }
+    .worldmap .pin, .worldmap .pin-flag { animation: none; opacity: 1; }
+    .worldmap .future { animation: none; opacity: .38; }
+    .worldmap .home-ring { animation: none; opacity: 0; }
+    .btn { transition: none; }
+  }
+  /* two audiences */
+  .aud { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .aud-card { border-radius: 28px; padding: clamp(24px, 4vw, 36px); display: flex; flex-direction: column; gap: 14px; }
+  .aud-card.go { background: var(--surface); }
+  .aud-card.host { background: linear-gradient(165deg, #15284F, var(--navy) 70%); color: var(--on-dark); }
+  .aud-card .who { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--orange-dark); }
+  .aud-card.host .who { color: #FF9A62; }
+  .aud-card .who i { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; background: var(--orange); color: #fff; }
+  .aud-card .who i svg { width: 19px; height: 19px; }
+  .aud-card h3 { font-size: clamp(24px, 3.2vw, 30px); font-weight: 900; letter-spacing: -.03em; line-height: 1.2; }
+  .aud-card p { color: var(--muted); }
+  .aud-card.host p { color: var(--on-dark-muted); }
+  .aud-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .aud-card li { display: flex; gap: 9px; align-items: flex-start; font-size: 15.5px; }
+  .aud-card li::before { content: ""; flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%; background: var(--orange); margin-top: 9px; }
+  .aud-card .btn { align-self: flex-start; margin-top: auto; }
+  .aud-card.host .btn { background: #fff; color: var(--navy); }
+  @media (max-width: 760px) { .aud { grid-template-columns: 1fr; } }
+
+  /* app walkthrough */
+  .feat { display: grid; gap: 64px; }
+  .feat-row { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: clamp(28px, 6vw, 72px); align-items: center; }
+  .feat-row:nth-child(even) { grid-template-columns: minmax(0, 1fr) minmax(0, 300px); }
+  .feat-row:nth-child(even) .phone { order: 2; }
+  .feat-row .copy { max-width: 30em; }
+  .feat-row .tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; background: var(--orange-soft); color: var(--orange-dark); font-size: 13px; font-weight: 700; }
+  .feat-row .tag.leader { background: var(--fill); color: var(--navy); }
+  .feat-row h3 { font-size: clamp(24px, 3.4vw, 34px); font-weight: 900; letter-spacing: -.03em; line-height: 1.18; margin: 12px 0 10px; }
+  .feat-row p { color: var(--muted); font-size: 17px; }
+  .feat-row ul { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 8px; }
+  .feat-row li { display: flex; gap: 10px; align-items: flex-start; font-size: 15.5px; }
+  .feat-row li svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--orange); margin-top: 2px; }
+  .phone {
+    position: relative; width: 100%; max-width: 300px; aspect-ratio: 390 / 844; justify-self: center;
+    border-radius: 46px; padding: 9px; background: #10131A;
+    box-shadow: inset 0 0 0 1.5px #2C3242, 0 2px 4px rgba(13, 27, 58, .1), 0 30px 60px -24px rgba(13, 27, 58, .45);
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 38px; }
+  .phone::before { content: ""; position: absolute; top: 19px; left: 50%; transform: translateX(-50%); width: 86px; height: 25px; border-radius: 14px; background: #10131A; z-index: 1; }
+  .soon-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .soon-chips span { padding: 7px 13px; border-radius: 999px; background: var(--surface); font-size: 14.5px; }
+  .soon-chips span b { color: var(--orange-dark); font-weight: 700; margin-right: 4px; }
+  @media (max-width: 760px) {
+    .feat { gap: 52px; }
+    .feat-row, .feat-row:nth-child(even) { grid-template-columns: 1fr; gap: 22px; }
+    .feat-row:nth-child(even) .phone { order: 0; }
+    .phone { max-width: 250px; }
+  }
+
+  /* host fields */
+  .host-band { border-radius: 32px; padding: clamp(26px, 5vw, 52px); background: var(--surface); }
+  .host-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 26px; }
+  .h-col { background: var(--bg); border-radius: 22px; padding: 22px; }
+  .h-col h3 { font-size: 17px; font-weight: 700; margin-bottom: 12px; }
+  .h-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; font-size: 15px; color: var(--muted); }
+  .h-col li b { color: var(--text); font-weight: 700; }
+  .steps { list-style: none; margin: 30px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; counter-reset: st; }
+  .steps li { counter-increment: st; position: relative; padding-top: 44px; font-size: 15px; color: var(--muted); }
+  .steps li::before { content: counter(st); position: absolute; top: 0; left: 0; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--navy); color: #fff; font-family: var(--font-num); font-weight: 600; font-size: 17px; }
+  .steps li:not(:last-child)::after { content: ""; position: absolute; top: 16px; left: 40px; right: 6px; height: 2px; background: var(--line); }
+  .steps li b { display: block; color: var(--text); font-size: 16px; margin-bottom: 2px; }
+  .protect { display: flex; gap: 12px; align-items: flex-start; margin-top: 26px; padding: 16px 18px; border-radius: 18px; background: #FDF1EF; color: #6E1A12; font-size: 15px; }
+  .protect svg { flex: 0 0 auto; width: 20px; height: 20px; color: #B42318; margin-top: 2px; }
+  @media (max-width: 900px) { .host-grid { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr; gap: 14px; } .steps li { padding: 4px 0 0 46px; } .steps li::after { display: none; } }
+
+  /* planes on the map */
+  .worldmap .plane-shape { fill: var(--navy); stroke: #fff; stroke-width: .8; paint-order: stroke; }
+  @media (max-width: 560px) { .worldmap .plane-shape { transform: scale(1.9); } }
+  @media (prefers-reduced-motion: reduce) { .worldmap .plane { display: none; } }
+
+  body { word-break: keep-all; overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="#top" aria-label="SVM"><img class="logo" src="assets/SVM_Logo.svg" alt="SVM"></a>
+    <nav aria-label="Sections">
+      <a href="#students" data-k="nav_students">For students</a>
+      <a href="#host" data-k="nav_host">For fields</a>
+      <a href="#app" data-k="nav_app">The app</a>
+      <a href="#launch" data-k="nav_launch">Nov 20</a>
+    </nav>
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
+      </div>
+      <a class="btn small app-link" href="index.html" data-k="cta_join_short">Join</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap">
+      <div class="tagline">Mobilizing · Training · Sending</div>
+      <h1 data-k="hero_h" data-html>The movement that sent <em>20,000 students</em> to the nations starts again.</h1>
+      <p class="lede" data-k="hero_p">In 1886 a student prayer meeting began a movement that sent more than 20,000 college students overseas. SVM is reviving it in Bryan/College Station. You pay for your flight. The field covers the rest.</p>
+      <div class="ctas">
+        <a class="btn" href="#students" data-k="cta_go">I want to go</a>
+        <a class="btn ghost" href="#host" data-k="cta_host">We want to host students</a>
+      </div>
+    </div>
+    <div class="wrap">
+      <div class="map-wrap" id="map"></div>
+      <div class="legend"><span><i class="now"></i><span data-k="lg_now">Sending now · 7 fields</span></span><span><i class="fut"></i><span data-k="lg_future">Nations we are praying toward</span></span></div>
+      <div class="facts">
+        <div class="fact"><span class="num">1886</span><span data-k="f1">A student prayer meeting starts the movement</span></div>
+        <div class="fact"><span class="num">20,000+</span><span data-k="f2">Students sent to the nations</span></div>
+        <div class="fact"><span class="num">$0</span><span data-k="f3">Organization fees, room or board</span></div>
+        <div class="fact"><span class="num">7</span><span data-k="f4">Fields open now, more coming</span></div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="block" id="two">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="au_kicker">Two sides of one mission</div>
+        <h2 data-k="au_h">Students who go, and fields that receive them</h2>
+        <p data-k="au_p">SVM connects college students who want to serve with churches and missionaries on the field who are asking for workers.</p>
+      </div>
+      <div class="aud">
+        <div class="aud-card go" id="students">
+          <div class="who"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10.5 13.5 3.5 11l1.3-1.3 7.7.6 4.2-4.2a1.9 1.9 0 0 1 2.7 2.7l-4.2 4.2.6 7.7L14.5 22l-2.5-7"/></svg></i><span data-k="go_who">For students who want to go</span></div>
+          <h3 data-k="go_h">Pay for your flight. Go every break.</h3>
+          <p data-k="go_p">You do not need to raise a big budget or join for life. Train with us on Sundays and Fridays, pick a field and a season, and go.</p>
+          <ul>
+            <li data-k="go1">Room, board and ministry costs covered by the field</li>
+            <li data-k="go2">Stay one month or longer. Extend by changing your flight</li>
+            <li data-k="go3">Weekly training and gospel-message language practice in the app</li>
+            <li data-k="go4">Short-term first, with a path to mid- and long-term</li>
+          </ul>
+          <a class="btn app-link" href="index.html" data-k="cta_join">Sign up in one minute</a>
+        </div>
+        <div class="aud-card host" id="host-card">
+          <div class="who"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5.5h4V20"/></svg></i><span data-k="ho_who">For churches and missionaries on the field</span></div>
+          <h3 data-k="ho_h">Receive trained students who come back again.</h3>
+          <p data-k="ho_p">Host Into the World teams for English classes, outreach and discipleship. SVM trains and screens students in the US and sends you an approved team.</p>
+          <ul>
+            <li data-k="ho1">Teams in December, January and May–August</li>
+            <li data-k="ho2">Approved roster and arrival dates from SVM headquarters</li>
+            <li data-k="ho3">Students trained weekly, gospel message memorized in your language</li>
+            <li data-k="ho4">Your field page, photos and security settings managed with you</li>
+          </ul>
+          <a class="btn" href="#host" data-k="cta_host_more">How hosting works</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="launch">
+    <div class="wrap">
+      <div class="launch">
+        <div>
+          <div class="kicker" data-k="l_kicker">SVM Mission Conference 2026</div>
+          <h2 data-k="l_h">Launch night in Bryan/College Station</h2>
+          <p data-k="l_p">The night SVM begins. Walk the Tent Village, meet each field, and write your name on the nation you will carry.</p>
+          <ul>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="l1">Tent Village with a booth for every nation</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="l2">Sign up on site with a QR code and apply the same night</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="l3">First look at the SVM metaverse mission space</span></li>
+          </ul>
+        </div>
+        <div class="countdown">
+          <div class="big" id="dday">D-35</div>
+          <div class="when" data-k="l_when">Friday, November 20, 2026</div>
+          <div class="where" data-k="l_where">Bryan/College Station, TX · time to be announced</div>
+          <a class="btn app-link" href="index.html" data-k="l_cta">Save my spot</a>
+        </div>
+        <svg class="torch" viewBox="940 660 220 480" aria-hidden="true"><path fill="#F26722" d="M1053.04 671.498C1050.51 697.405 1058.21 725.604 1076.01 745.006C1109.46 781.47 1151.4 818.101 1146.77 872.794C1145.09 892.643 1129.74 931.182 1105.43 928.442C1081.01 926.792 1052.2 928.792 1027.56 928.108C1017.89 927.84 1004.36 928.733 995.086 927.414C949.629 883.799 966.167 838.42 994.512 790.133C1005.89 813.369 1013.6 822.798 1034.45 837.871C995.898 771.282 1003.44 728.325 1053.04 671.498z"/><path fill="#F26722" d="M993.498 939.256C1017.78 938.819 1042.43 939.279 1066.78 939.11C1081.01 939.356 1095.31 938.587 1109.51 939.637C1121.45 940.52 1124.4 955.113 1116.73 962.725C1112.44 966.987 1104.14 965.846 1098.54 965.587C1080.53 998.281 1057.6 1049.85 1042.59 1084.26C1035.22 1101.59 1027.25 1120.78 1019.1 1137.64C1009.18 1112.28 999.627 1086.78 990.44 1061.15C997.037 1030.58 1003.07 996.714 1008.85 965.861L1005.74 965.853C997.645 965.845 982.393 963.821 983.188 950.447C983.43 946.389 989.802 941.21 993.498 939.256z"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="h_kicker">How SVM works</div>
+        <h2 data-k="h_h">Five promises that make going possible</h2>
+      </div>
+      <div class="how">
+        <div class="how-item"><div class="fig">$0<small data-k="h1_u">room & board</small></div><div><h3 data-k="h1_t">Pay only for your flight</h3><p data-k="h1_d">Housing, meals, ministry costs and local staff support are covered by the field through local giving. No organization fees.</p></div></div>
+        <div class="how-item"><div class="fig">1–12<small data-k="h2_u">months</small></div><div><h3 data-k="h2_t">Stay as long as you want</h3><p data-k="h2_d">Go for a month. Want to stay longer? Change your return flight. There is no extra cost for room and board.</p></div></div>
+        <div class="how-item"><div class="fig">3×<small data-k="h3_u">a year</small></div><div><h3 data-k="h3_t">Go every break</h3><p data-k="h3_d">Main sending seasons are December, January and May through August. Other times work too.</p></div></div>
+        <div class="how-item"><div class="fig">2<small data-k="h4_u">nights a week</small></div><div><h3 data-k="h4_t">Trained, then sent</h3><p data-k="h4_d">Sunday Mission Gathering plus Friday Training Night with DNA2 discipleship and PST evangelism.</p></div></div>
+        <div class="how-item wide"><div class="fig">3<small data-k="h5_u">tracks</small></div><div><h3 data-k="h5_t">A lifelong path</h3><p data-k="h5_d">Start short-term with Into the World. Go mid-term for one to two years. Some will give their lives to long-term missions and church planting.</p></div></div>
+      </div>
+      <div class="split">
+        <div class="panel"><h3 data-k="pv_h">Provided by the field</h3>
+          <ul class="ticks">
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg></i><span data-k="pv1">Housing and all meals</span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg></i><span data-k="pv2">Ministry and activity costs</span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg></i><span data-k="pv3">Local staff support and orientation</span></li>
+          </ul></div>
+        <div class="panel"><h3 data-k="pp_h">What you prepare</h3>
+          <ul class="ticks prep">
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i><span data-k="pp1">Round-trip airfare</span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i><span data-k="pp2">Personal spending money and a valid passport</span></li>
+            <li><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></i><span data-k="pp3">A heart ready to learn</span></li>
+          </ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="fields">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="fd_kicker">Mission fields</div>
+        <h2 data-k="fd_h">Seven fields open now</h2>
+        <p data-k="fd_p">Every field runs Into the World, our short-term program. More nations across Latin America, Africa, Russia and Asia are coming.</p>
+      </div>
+      <div class="fields">
+        <div class="field"><img src="assets/countries/kr.jpg" alt=""><div class="f-top"><span class="pill">🇰🇷</span></div><b data-k="c_kr">South Korea</b><span class="sub" data-k="c_kr_d">Campus outreach, English camps</span></div>
+        <div class="field"><img src="assets/countries/ph.jpg" alt=""><div class="f-top"><span class="pill">🇵🇭</span></div><b data-k="c_ph">Philippines</b><span class="sub" data-k="c_ph_d">Village evangelism, children's ministry</span></div>
+        <div class="field"><img src="assets/countries/my.jpg" alt=""><div class="f-top"><span class="pill">🇲🇾</span></div><b data-k="c_my">Malaysia</b><span class="sub" data-k="c_my_d">Student ministry, community care</span></div>
+        <div class="field"><img src="assets/countries/th.jpg" alt=""><div class="f-top"><span class="pill">🇹🇭</span></div><b data-k="c_th">Thailand</b><span class="sub" data-k="c_th_d">School English classes, village visits</span></div>
+        <div class="field"><img src="assets/countries/mx.jpg" alt=""><div class="f-top"><span class="pill">🇲🇽</span></div><b data-k="c_mx">Mexico</b><span class="sub" data-k="c_mx_d">Street evangelism, VBS</span></div>
+        <div class="field"><img src="assets/countries/jp.jpg" alt=""><div class="f-top"><span class="pill">🇯🇵</span></div><b data-k="c_jp">Japan</b><span class="sub" data-k="c_jp_d">English cafés with local churches</span></div>
+        <div class="field"><img src="assets/countries/eg.jpg" alt=""><div class="f-top"><span class="pill">🇪🇬</span><span class="pill warn" data-k="c_sens">Sensitive</span></div><b data-k="c_eg">Egypt</b><span class="sub" data-k="c_eg_d">Details shared in person</span></div>
+        <div class="field more"><span class="num">48+</span><b data-k="c_more">Nations we are praying toward</b><span class="sub" data-k="c_more_d">Latin America, Africa, Russia, South Asia</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap ministry">
+      <div class="s-head" style="margin-bottom:0">
+        <div class="kicker">INTO THE WORLD</div>
+        <h2 data-k="it_h">What you will actually do</h2>
+        <p data-k="it_p">Short-term trips are built around language, friendship and the local church. Some students extend. Some come back and go again every break.</p>
+        <div class="track"><span data-k="tr1">Short-term · Into the World</span><span data-k="tr2">Mid-term · 1–2 years</span><span data-k="tr3">Long-term · lifelong</span></div>
+      </div>
+      <ul class="m-list">
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.4A7.5 7.5 0 1 1 20 12z"/></svg></span><div><b data-k="m1_t">Up to 5 English conversation classes a day</b><span data-k="m1_d">The door into schools, campuses and homes.</span></div></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/></svg></span><div><b data-k="m2_t">Serve with local churches and missionaries</b><span data-k="m2_d">You join work that is already there and stays after you leave.</span></div></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H18v13H5.5A1.5 1.5 0 0 0 4 18.5z"/><path d="M4 18.5A1.5 1.5 0 0 0 5.5 20H18v-3"/></svg></span><div><b data-k="m3_t">Share the gospel and teach the Bible</b><span data-k="m3_d">Trained before you go, in the local language where you can.</span></div></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.6-3 2.8-4.8 5.5-4.8s4.9 1.8 5.5 4.8"/><path d="M15.5 6a2.6 2.6 0 0 1 0 5"/><path d="M17 14.5c1.9.5 3.1 2 3.5 4.5"/></svg></span><div><b data-k="m4_t">Build friendships with local young people</b><span data-k="m4_d">Students reaching students.</span></div></li>
+        <li><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.9 5.2 3.9 8.5s-1.3 6.1-3.9 8.5c-2.6-2.4-3.9-5.2-3.9-8.5S9.4 5.9 12 3.5z"/></svg></span><div><b data-k="m5_t">Cross-cultural discipleship</b><span data-k="m5_d">You come home changed, and ready to go again.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="block" id="rhythm">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="rh_kicker">Weekly rhythm</div>
+        <h2 data-k="rh_h">Meet every week before you go</h2>
+      </div>
+      <div class="rhythm">
+        <div class="r-card"><div class="day" data-k="r1_day">Sunday</div><h3 data-k="r1_t">Mission Gathering</h3><div class="time">2:00–4:00 PM</div><p data-k="r1_d">Worship, a mission message, team building, teaching practice and cross-cultural preparation. At church in Bryan/College Station.</p></div>
+        <div class="r-card"><div class="day" data-k="r2_day">Friday night</div><h3 data-k="r2_t">Training Night</h3><div class="time" data-k="r2_time">Evenings</div><p data-k="r2_d">DNA2 discipleship, PST evangelism training and campus outreach practice.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="story">
+        <div class="years">1886<br><span>2026</span></div>
+        <div>
+          <p data-k="st1">In the summer of 1886, a hundred college students at a conference in Mount Hermon, Massachusetts committed to go overseas. Over the next forty years the Student Volunteer Movement sent more than 20,000 of them.</p>
+          <p data-k="st2">We believe it can happen again, starting with students in Bryan/College Station.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="block" id="app">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="ap_kicker">The SVM app</div>
+        <h2 data-k="ap_h">From sign-up to sending, in your pocket</h2>
+        <p data-k="ap_p">These are real screens from the SVM app. More features open in stages before the launch.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/signup-en.jpg" data-img="signup" alt=""></div>
+          <div class="copy">
+            <span class="tag" data-k="a1_tag">Step 1 · Sign up</span>
+            <h3 data-k="a1_h">Join in under a minute</h3>
+            <p data-k="a1_p">Scan the QR code at the launch and sign up with your name, email and a password. That is all it takes to start.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a1_l1">Works in English and Korean</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a1_l2">Opens like an app from your home screen</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a1_l3">School and phone can be added later</span></li></ul>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/home-en.jpg" data-img="home" alt=""></div>
+          <div class="copy">
+            <span class="tag" data-k="a2_tag">Home</span>
+            <h3 data-k="a2_h">Everything for this week on one screen</h3>
+            <p data-k="a2_p">See the next Sunday gathering or Friday training night, the countdown to the launch conference, and the nations you carry.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a2_l1">Featured event with a D-day countdown</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a2_l2">Next meeting time and place</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a2_l3">Names written for the nations, updated live</span></li></ul>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/country-en.jpg" data-img="country" alt=""></div>
+          <div class="copy">
+            <span class="tag" data-k="a3_tag">Mission fields</span>
+            <h3 data-k="a3_h">Explore each field before you apply</h3>
+            <p data-k="a3_p">Every country page shows what you will actually do, daily life and weather, the language, room and board, and the sending seasons.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a3_l1">Provided by the field and what you prepare, side by side</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a3_l2">Security notice on sensitive countries</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a3_l3">Country room chat and applying from the same page</span></li></ul>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/pledge-en.jpg" data-img="pledge" alt=""></div>
+          <div class="copy">
+            <span class="tag" data-k="a4_tag">Sign Your Nation</span>
+            <h3 data-k="a4_h">Write your name on a nation</h3>
+            <p data-k="a4_p">The Tent Village name board, moved into the app. Commit to carry a nation in prayer. It is separate from applying.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a4_l1">See how many people carry each nation</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a4_l2">Names show as first name and last initial</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a4_l3">Sensitive countries show a count only</span></li></ul>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/event-en.jpg" data-img="event" alt=""></div>
+          <div class="copy">
+            <span class="tag" data-k="a5_tag">Events</span>
+            <h3 data-k="a5_h">Never miss a conference or send-off</h3>
+            <p data-k="a5_p">Conferences, launch nights and prayer send-offs live in one list, with the details you need to show up.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a5_l1">Add any event to your phone calendar</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a5_l2">Register link and sharing</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a5_l3">Featured event pinned to the top of Home</span></li></ul>
+          </div>
+        </div>
+        <div class="feat-row">
+          <div class="phone"><img src="assets/screens/admin-en.jpg" data-img="admin" alt=""></div>
+          <div class="copy">
+            <span class="tag leader" data-k="a6_tag">For leaders</span>
+            <h3 data-k="a6_h">Run the movement from the same app</h3>
+            <p data-k="a6_p">Leaders approve applications, manage members and set which countries are sensitive. Field rosters are prepared here for each host.</p>
+            <ul><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a6_l1">Member roles: member, graduate, admin</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a6_l2">Graduate-only applications switch</span></li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.2 4.2L19 7"/></svg><span data-k="a6_l3">Sensitive-country and photo controls</span></li></ul>
+          </div>
+        </div>
+      </div>
+      <div class="soon-chips">
+        <span><b data-k="soon">Coming next</b><span data-k="s1">Country room chat</span></span>
+        <span data-k="s2">Applications and extensions</span>
+        <span data-k="s3">Gospel-message language training</span>
+        <span data-k="s4">Prayer requests</span>
+        <span data-k="s5">Testimonies</span>
+        <span data-k="s6">Packing checklist</span>
+        <span data-k="s7">Attendance</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="host">
+    <div class="wrap">
+      <div class="host-band">
+        <div class="s-head" style="margin-bottom:0">
+          <div class="kicker" data-k="hs_kicker">For host fields</div>
+          <h2 data-k="hs_h">How hosting an SVM team works</h2>
+          <p data-k="hs_p">For local churches and missionaries who want college students to serve with them. The field provides room and board through local giving. SVM sends trained, approved students.</p>
+        </div>
+        <div class="host-grid">
+          <div class="h-col"><h3 data-k="hc1_h">What SVM sends</h3><ul>
+            <li data-k="hc1_1" data-html><b>Trained students</b>: weekly mission gathering and Friday training night</li>
+            <li data-k="hc1_2" data-html><b>Language prepared</b>: the core gospel message memorized in your language</li>
+            <li data-k="hc1_3" data-html><b>Flexible stays</b>: one month to a year, in your seasons</li></ul></div>
+          <div class="h-col"><h3 data-k="hc2_h">What the field provides</h3><ul>
+            <li data-k="hc2_1">Housing and all meals</li>
+            <li data-k="hc2_2">Ministry and activity costs</li>
+            <li data-k="hc2_3">Local staff support and orientation</li></ul></div>
+          <div class="h-col"><h3 data-k="hc3_h">What you receive</h3><ul>
+            <li data-k="hc3_1">Approved roster and arrival dates from SVM headquarters</li>
+            <li data-k="hc3_2">Up to 5 English conversation classes a day, run by the team</li>
+            <li data-k="hc3_3">Extension requests coordinated with you, airfare only for the student</li></ul></div>
+        </div>
+        <ol class="steps">
+          <li data-k="st_1" data-html><b>Connect</b>Talk with SVM about your ministry and needs</li>
+          <li data-k="st_2" data-html><b>Field page</b>We set up your country page, photos and seasons</li>
+          <li data-k="st_3" data-html><b>Students apply</b>They train weekly and apply for your field</li>
+          <li data-k="st_4" data-html><b>Approved team</b>SVM approves and shares the roster and arrivals</li>
+          <li data-k="st_5" data-html><b>Serve together</b>Students arrive trained and ready to work with you</li>
+        </ol>
+        <div class="protect"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+          <span data-k="protect">We protect your field. Students are told never to post local believers' faces, real names or exact church locations. Testimonies and photos are reviewed before they appear, and sensitive countries hide names and limit photos.</span></div>
+        <p class="muted" style="margin-top:20px" data-k="hs_contact">Want to host a team? Meet the SVM team at the Nov 20 launch, or ask any SVM leader to connect you with headquarters.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="final">
+    <div class="wrap">
+      <div class="tagline">Mobilizing · Training · Sending</div>
+      <h2 data-k="fn_h">Write your name on a nation</h2>
+      <p data-k="fn_p">Sign up in under a minute, explore the fields, and choose a nation to carry in prayer. Applying is a separate step when you are ready.</p>
+      <a class="btn app-link" href="index.html" data-k="cta_join">Sign up in one minute</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <img src="assets/SVM_Logo.svg" alt="SVM">
+    <span data-k="ft">Student Volunteer Movement · Bryan/College Station, TX</span>
+    <span>© 2026 SVM</span>
+  </div>
+</footer>
+
+<script>
+  // 앱 링크 — 저장소에서는 index.html, 공유용 빌드에서는 시연 링크로 바뀝니다
+  const APP_URL = 'index.html';
+
+  const KO = {
+    nav_students: '가려는 학생', nav_host: '선교지·현지 교회', nav_app: '앱 소개',
+    cta_go: '선교를 가고 싶어요', cta_host: '학생들을 받고 싶어요', cta_host_more: '선교지 협력 방법 보기',
+    au_kicker: '하나의 선교, 두 편', au_h: '가는 학생들, 그리고 맞이하는 선교지', au_p: 'SVM은 섬기고 싶은 대학생과, 일꾼을 기다리는 선교지의 교회·선교사를 연결합니다.',
+    go_who: '선교를 가고 싶은 학생', go_h: '항공권만 준비하고, 방학마다 갑니다.', go_p: '큰 후원금을 모으거나 평생을 약속하지 않아도 됩니다. 주일과 금요일에 함께 훈련받고, 선교지와 시기를 골라 떠나세요.',
+    go1: '숙식과 사역비는 선교지가 제공', go2: '1개월 또는 그 이상, 항공권만 바꾸면 연장', go3: '매주 훈련과 앱에서 하는 복음 메시지 언어 연습', go4: '단기로 시작해 중기·장기로 이어지는 길',
+    ho_who: '학생을 맞이하는 현지 교회·선교사', ho_h: '훈련받고, 다시 돌아오는 학생들을 맞이하세요.', ho_p: '영어 수업, 전도, 제자훈련을 함께할 Into the World 팀을 맞이하세요. SVM이 미국에서 학생을 훈련·선발해 승인된 팀을 보냅니다.',
+    ho1: '12월, 1월, 5–8월 파송팀', ho2: 'SVM 본부가 승인한 명단과 도착 일정', ho3: '매주 훈련, 현지어 복음 메시지 암기', ho4: '선교지 페이지·사진·보안 설정을 함께 관리',
+    ap_kicker: 'SVM 앱', ap_h: '가입부터 파송까지, 손 안에서', ap_p: '실제 SVM 앱 화면입니다. 발족식 전까지 단계별로 기능이 더 열립니다.',
+    a1_tag: '1단계 · 가입', a1_h: '1분이면 가입 끝', a1_p: '발족식 현장 QR을 찍고 이름·이메일·비밀번호만 입력하면 시작됩니다.', a1_l1: '영어·한국어 지원', a1_l2: '홈 화면에서 앱처럼 열기', a1_l3: '학교·연락처는 나중에 추가',
+    a2_tag: '홈', a2_h: '이번 주에 필요한 모든 것이 한 화면에', a2_p: '다음 주일 게더링이나 금요 트레이닝 나이트, 발족식 카운트다운, 내가 품은 나라를 한눈에 봅니다.', a2_l1: 'D-day 카운트다운이 있는 추천 이벤트', a2_l2: '다음 모임 시간과 장소', a2_l3: '나라에 쓴 이름 수, 실시간 반영',
+    a3_tag: '선교지', a3_h: '신청 전에 각 나라를 둘러보세요', a3_p: '나라마다 실제로 하는 사역, 생활과 날씨, 필요한 언어, 숙식, 파송 시즌을 보여줍니다.', a3_l1: '선교지 제공 항목과 내가 준비할 것을 나란히', a3_l2: '민감 국가는 보안 안내 표시', a3_l3: '같은 화면에서 나라방 채팅과 신청',
+    a4_tag: '내 나라에 이름 쓰기', a4_h: '한 나라에 이름을 써 주세요', a4_p: '텐트 빌리지의 이름 쓰기 보드를 앱으로 옮겼습니다. 기도로 한 나라를 품겠다는 표시이며, 신청과는 별개입니다.', a4_l1: '나라마다 품은 사람 수 표시', a4_l2: '이름은 "이름 + 성 이니셜"로만', a4_l3: '민감 국가는 숫자만 공개',
+    a5_tag: '이벤트', a5_h: '컨퍼런스와 파송식을 놓치지 마세요', a5_p: '컨퍼런스, 발족식, 파송 기도회를 한 목록에서 보고 필요한 정보를 바로 확인합니다.', a5_l1: '내 휴대폰 캘린더에 바로 추가', a5_l2: '등록 링크와 공유', a5_l3: '추천 이벤트는 홈 맨 위에',
+    a6_tag: '리더용', a6_h: '같은 앱에서 운동을 운영합니다', a6_p: '리더는 신청을 승인하고, 회원을 관리하고, 민감 국가를 설정합니다. 선교지별 명단도 여기서 준비합니다.', a6_l1: '회원 등급: 일반·수료·관리자', a6_l2: '수료 회원만 신청 가능 스위치', a6_l3: '민감 국가·사진 업로드 제어',
+    soon: '곧 추가', s1: '나라방 채팅', s2: '선교 신청·연장', s3: '복음 메시지 언어 훈련', s4: '기도 제목', s5: '간증', s6: '준비물 체크리스트', s7: '출석',
+    hs_kicker: '선교지를 위한 안내', hs_h: 'SVM 팀을 맞이하는 방법', hs_p: '대학생과 함께 사역하고 싶은 현지 교회와 선교사를 위한 안내입니다. 선교지는 현지 후원으로 숙식을 제공하고, SVM은 훈련받고 승인된 학생을 보냅니다.',
+    hc1_h: 'SVM이 보내는 것', hc1_1: '<b>훈련받은 학생</b>: 매주 미션 게더링과 금요 트레이닝 나이트', hc1_2: '<b>언어 준비</b>: 핵심 복음 메시지를 현지어로 암기', hc1_3: '<b>유연한 기간</b>: 선교지 시즌에 맞춰 1개월~1년',
+    hc2_h: '선교지가 제공하는 것', hc2_1: '숙소와 모든 식사', hc2_2: '사역·활동 비용', hc2_3: '현지 스태프 지원과 오리엔테이션',
+    hc3_h: '선교지가 받는 것', hc3_1: 'SVM 본부가 승인한 명단과 도착 일정', hc3_2: '팀이 진행하는 하루 최대 5회 영어 회화 수업', hc3_3: '연장 요청은 선교지와 함께 조율, 학생은 항공권만 부담',
+    st_1: '<b>연결</b>사역과 필요를 SVM과 나눕니다', st_2: '<b>선교지 페이지</b>나라 페이지·사진·시즌을 함께 만듭니다', st_3: '<b>학생 신청</b>학생들이 매주 훈련받고 신청합니다', st_4: '<b>팀 승인</b>SVM이 승인하고 명단과 도착 일정을 공유합니다', st_5: '<b>함께 사역</b>훈련받은 학생들이 도착해 함께 섬깁니다',
+    protect: '선교지를 보호합니다. 학생들은 현지 성도의 얼굴·실명·정확한 교회 위치를 절대 올리지 않도록 안내받습니다. 후기와 사진은 검토 후 공개되며, 민감 국가는 이름을 숨기고 사진을 제한합니다.',
+    hs_contact: '팀을 맞이하고 싶으신가요? 11월 20일 발족식에서 SVM 팀을 만나시거나, SVM 리더를 통해 본부와 연결해 주세요.',
+    nav_how: 'SVM 방식', nav_fields: '선교지', nav_rhythm: '매주 모임', nav_launch: '11/20 발족식',
+    cta_join_short: '가입', cta_join: '1분 만에 가입하기', cta_launch: '발족식 · 11월 20일',
+    hero_h: '2만 명의 대학생을 <em>열방으로</em> 보낸 그 운동이 다시 시작됩니다.',
+    hero_p: '1886년 대학생 기도 모임에서 시작된 운동이 2만 명이 넘는 대학생을 해외로 보냈습니다. SVM은 그 운동을 브라이언/컬리지 스테이션에서 다시 일으킵니다. 항공권만 준비하세요. 나머지는 선교지가 맡습니다.',
+    lg_now: '지금 파송 · 7개국', lg_future: '기도하며 준비하는 나라들',
+    f1: '대학생 기도 모임에서 운동이 시작된 해', f2: '열방으로 간 학생들', f3: '단체 수수료·숙식비', f4: '지금 열린 선교지, 계속 늘어납니다',
+    l_kicker: 'SVM 미션 컨퍼런스 2026', l_h: '브라이언/컬리지 스테이션 발족식', l_p: 'SVM이 시작되는 밤입니다. 텐트 빌리지를 돌며 나라별 선교지를 만나고, 마음에 품을 나라에 이름을 써 주세요.',
+    l1: '나라마다 부스가 있는 텐트 빌리지', l2: '현장 QR로 가입하고 그 자리에서 신청까지', l3: 'SVM 메타버스 선교 공간 첫 공개',
+    l_when: '2026년 11월 20일 금요일', l_where: '텍사스 브라이언/컬리지 스테이션 · 시간 추후 안내', l_cta: '미리 가입하기',
+    h_kicker: 'SVM은 이렇게 갑니다', h_h: '떠날 수 있게 만드는 다섯 가지 약속',
+    h1_u: '숙식비', h1_t: '비행기 값만 낸다', h1_d: '숙소·식사·사역비·현지 스태프 지원은 선교지가 현지 후원으로 제공합니다. 단체 수수료도 없습니다.',
+    h2_u: '개월', h2_t: '원하는 만큼 머문다', h2_d: '1개월로 갔다가 더 있고 싶으면 귀국 항공권만 바꾸세요. 숙식비 추가는 없습니다.',
+    h3_u: '1년에', h3_t: '방학마다 간다', h3_d: '정규 파송 시즌은 12월, 1월, 5–8월입니다. 그 외에도 언제든 갈 수 있습니다.',
+    h4_u: '매주', h4_t: '훈련 후 파송', h4_d: '주일 미션 게더링과 금요 트레이닝 나이트(DNA2 제자훈련, PST 전도훈련).',
+    h5_u: '트랙', h5_t: '평생의 길', h5_d: '단기 Into the World로 시작해 1–2년 중기로, 그리고 평생 선교와 교회 개척으로 이어집니다.',
+    pv_h: '선교지에서 제공', pv1: '숙소와 모든 식사', pv2: '사역·활동 비용', pv3: '현지 스태프 지원과 오리엔테이션',
+    pp_h: '내가 준비할 것', pp1: '왕복 항공권', pp2: '개인 용돈과 유효한 여권', pp3: '배우려는 마음',
+    fd_kicker: '선교지', fd_h: '지금 열린 7개 선교지', fd_p: '모든 선교지에서 단기 프로그램 Into the World가 진행됩니다. 중남미·아프리카·러시아·아시아의 더 많은 나라가 열립니다.',
+    c_kr: '한국', c_kr_d: '캠퍼스 전도, 영어 캠프', c_ph: '필리핀', c_ph_d: '마을 전도, 어린이 사역', c_my: '말레이시아', c_my_d: '학생 사역, 지역 돌봄',
+    c_th: '태국', c_th_d: '학교 영어 수업, 마을 방문', c_mx: '멕시코', c_mx_d: '거리 전도, 여름성경학교', c_jp: '일본', c_jp_d: '지역 교회와 영어 카페',
+    c_eg: '이집트', c_eg_d: '세부 내용은 대면 안내', c_sens: '민감 국가', c_more: '기도하며 준비하는 나라들', c_more_d: '중남미, 아프리카, 러시아, 남아시아',
+    it_h: '실제로 하는 일', it_p: '단기 사역은 언어, 우정, 그리고 현지 교회를 중심으로 진행됩니다. 연장하는 학생도 있고, 방학마다 다시 가는 학생도 있습니다.',
+    tr1: '단기 · Into the World', tr2: '중기 · 1–2년', tr3: '장기 · 평생',
+    m1_t: '하루 최대 5회 영어 회화 수업', m1_d: '학교와 캠퍼스, 가정으로 들어가는 문입니다.',
+    m2_t: '현지 교회·선교사와 동역', m2_d: '이미 있는 사역에 함께하고, 떠난 뒤에도 사역은 이어집니다.',
+    m3_t: '복음 전하기와 성경 수업', m3_d: '떠나기 전에 훈련받고, 가능하면 현지어로 전합니다.',
+    m4_t: '현지 청년과의 관계', m4_d: '학생이 학생에게 다가갑니다.',
+    m5_t: '교차문화 제자훈련', m5_d: '돌아올 때는 달라져서, 다시 갈 준비가 됩니다.',
+    rh_kicker: '매주 모임', rh_h: '떠나기 전, 매주 함께 모입니다',
+    r1_day: '주일', r1_t: '미션 게더링', r1_d: '예배, 선교 말씀, 팀 빌딩, 티칭 연습, 교차문화·사역 준비. 브라이언/컬리지 스테이션 교회에서 모입니다.',
+    r2_day: '금요일 밤', r2_t: '트레이닝 나이트', r2_time: '저녁', r2_d: 'DNA2 제자훈련, PST 전도훈련, 캠퍼스 아웃리치 실습.',
+    st1: '1886년 여름, 미국 매사추세츠 마운트 허먼 수련회에서 100명의 대학생이 해외 선교를 결단했습니다. 이후 40년 동안 학생자원운동은 2만 명이 넘는 학생을 열방으로 보냈습니다.',
+    st2: '그 일이 다시 일어날 수 있다고 믿습니다. 브라이언/컬리지 스테이션의 학생들부터.',
+    fn_h: '한 나라에 이름을 써 주세요', fn_p: '1분이면 가입하고, 선교지를 둘러보고, 기도로 품을 나라를 고를 수 있습니다. 신청은 준비되었을 때 따로 하면 됩니다.',
+    ft: '학생자원운동 · 텍사스 브라이언/컬리지 스테이션',
+  };
+  const EN = {};
+  document.querySelectorAll('[data-k]').forEach(el => { EN[el.dataset.k] = el.hasAttribute('data-html') ? el.innerHTML : el.textContent; });
+  function setLang(lang) {
+    const dict = lang === 'ko' ? KO : EN;
+    document.querySelectorAll('[data-k]').forEach(el => {
+      const v = dict[el.dataset.k] ?? EN[el.dataset.k];
+      if (v == null) return;
+      if (el.hasAttribute('data-html') || /<em>/.test(v)) el.innerHTML = v; else el.textContent = v;
+    });
+    document.documentElement.lang = lang;
+    document.querySelectorAll('img[data-img]').forEach(im => { im.src = `assets/screens/${im.dataset.img}-${lang}.jpg`; });
+    document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+    try { localStorage.setItem('svm_lang', lang); } catch (e) {}
+  }
+  document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+  document.querySelectorAll('.app-link').forEach(a => { a.href = APP_URL; if (/^https?:/.test(APP_URL)) { a.target = '_blank'; a.rel = 'noopener'; } });
+
+  // D-day (Bryan/College Station 기준)
+  (function () {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+    const d = Math.round((Date.parse('2026-11-20T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000);
+    document.getElementById('dday').textContent = d > 0 ? 'D-' + d : d === 0 ? 'D-DAY' : '2026';
+  })();
+
+  // 세계지도: 브라이언/컬리지 스테이션 → 7개 선교지, 연한 점은 앞으로 갈 나라들
+  (function () {
+    const W = 1080, H = 402, LT = 76, LB = -58, VIEW = [150, 18, 855, 336];
+    const xy = (lat, lon) => [(lon + 180) / 360 * W, (LT - lat) / (LT - LB) * H];
+    const flag = c => String.fromCodePoint(...[...c].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+    const FIELDS = [['MX', 19.43, -99.13], ['EG', 30.04, 31.24], ['TH', 13.75, 100.5], ['MY', 3.14, 101.69], ['PH', 14.6, 120.98], ['KR', 37.57, 126.98], ['JP', 35.68, 139.69]];
+    const FUTURE = [[14.63, -90.51], [18.49, -69.93], [4.71, -74.07], [-0.18, -78.47], [-12.05, -77.04], [-16.5, -68.15], [-15.79, -47.88], [-23.55, -46.63], [-33.45, -70.67], [-34.6, -58.38], [10.48, -66.9],
+      [34.02, -6.83], [14.69, -17.44], [5.6, -0.19], [9.06, 7.49], [9.03, 38.74], [0.35, 32.58], [-1.29, 36.82], [-6.79, 39.21], [-4.32, 15.31], [-15.39, 28.32], [-25.75, 28.19], [-18.88, 47.51],
+      [55.76, 37.62], [59.94, 30.31], [56.84, 60.6], [55.03, 82.92], [52.29, 104.3], [43.12, 131.9], [51.17, 71.45], [41.3, 69.24], [47.92, 106.92],
+      [39.93, 32.86], [31.95, 35.93], [28.61, 77.21], [19.08, 72.88], [27.72, 85.32], [23.81, 90.41], [6.93, 79.86],
+      [21.03, 105.85], [11.56, 104.92], [16.87, 96.2], [-6.21, 106.85], [-9.44, 147.18], [50.45, 30.52], [52.23, 21.01], [52.52, 13.4], [40.42, -3.7], [44.43, 26.1]];
+    const [hx, hy] = xy(30.63, -96.33);
+    const fut = FUTURE.map(([a, o], i) => { const [x, y] = xy(a, o); return `<circle class="future" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" style="--j:${i % 9}"/>`; }).join('');
+    const PLANE = 'M7 0 L2.2 -1.1 L-1.2 -5.6 L-2.8 -5.6 L-1 -1.2 L-4.6 -1 L-6 -2.8 L-7 -2.8 L-6.2 0 L-7 2.8 L-6 2.8 L-4.6 1 L-1 1.2 L-2.8 5.6 L-1.2 5.6 L2.2 1.1 Z';
+    const planes = [];
+    const arcs = FIELDS.map(([c, a, o], i) => {
+      const [x, y] = xy(a, o), dist = Math.hypot(x - hx, y - hy);
+      const cx = (hx + x) / 2, cy = Math.max(VIEW[1] + 8, Math.min(hy, y) - Math.max(16, dist * 0.2));
+      const f = v => v.toFixed(1), dur = (3.2 + dist / 160).toFixed(1), st = (2.2 + i * 0.7).toFixed(1);
+      planes.push(`<path id="lo${i}" d="M${f(hx)} ${f(hy)} Q${f(cx)} ${f(cy)} ${f(x)} ${f(y)}" fill="none"/><path id="lb${i}" d="M${f(x)} ${f(y)} Q${f(cx)} ${f(cy)} ${f(hx)} ${f(hy)}" fill="none"/>
+        <g class="plane" opacity="0"><path class="plane-shape" d="${PLANE}"/><set attributeName="opacity" to="1" begin="${st}s" fill="freeze"/>
+        <animateMotion id="po${i}" dur="${dur}s" begin="${st}s;pb${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#lo${i}"/></animateMotion>
+        <animateMotion id="pb${i}" dur="${dur}s" begin="po${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#lb${i}"/></animateMotion></g>`);
+      return `<path class="arc" d="M${hx.toFixed(1)} ${hy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" pathLength="1" style="--i:${i}"/>
+        <circle class="pin" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" style="--i:${i}"/><text class="pin-flag" x="${x.toFixed(1)}" y="${(y - 9).toFixed(1)}" style="--i:${i}">${flag(c)}</text>`;
+    }).join('');
+    document.getElementById('map').innerHTML = `<svg class="worldmap" viewBox="${VIEW.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Map: from Bryan/College Station to seven mission fields, with more nations marked">
+      <image href="assets/world-dots.svg" x="0" y="0" width="${W}" height="${H}" class="dots"/>${fut}${arcs}${planes.join('')}
+      <circle class="home-ring" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="10"/><circle class="home" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="5.2"/>
+      <text class="home-label" x="${(hx - 8).toFixed(1)}" y="${(hy + 22).toFixed(1)}">Bryan/College Station</text></svg>`;
+  })();
+
+  try { const saved = localStorage.getItem('svm_lang'); if (saved === 'ko' || (!saved && (navigator.language || '').startsWith('ko'))) setLang('ko'); } catch (e) {}
+</script>
+</body>
+</html>

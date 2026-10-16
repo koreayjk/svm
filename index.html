@@ -74,6 +74,7 @@
   html, body { margin: 0; padding: 0; }
   body {
     font-family: var(--font); font-size: 16px; line-height: 1.55; color: var(--text);
+    word-break: keep-all; overflow-wrap: anywhere;   /* 한국어는 단어 단위로 줄바꿈 */
     background: var(--bg); min-height: 100dvh;
     -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; -webkit-tap-highlight-color: transparent;
   }
@@ -572,6 +573,7 @@
   .map-legend .lg-now { box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(242, 103, 34, .35); }
   .map-legend .lg-future { opacity: .45; width: 7px; height: 7px; }
   .worldmap .home-ring { fill: none; stroke: var(--navy); stroke-width: 1.4; opacity: .35; transform-box: fill-box; transform-origin: center; animation: ring 2.4s ease-out infinite; }
+  .worldmap .plane-shape { fill: var(--navy); stroke: #fff; stroke-width: .8; paint-order: stroke; }
   @keyframes draw { to { stroke-dashoffset: 0; } }
   @keyframes pin-in { from { opacity: 0; } to { opacity: 1; } }
   @keyframes ring { 0% { transform: scale(.6); opacity: .5; } 100% { transform: scale(2.2); opacity: 0; } }
@@ -582,6 +584,7 @@
     .worldmap .arc { stroke-width: 3; }
     .worldmap .pin { r: 7; stroke-width: 2.4; }
     .worldmap .future { r: 5.2; }
+    .worldmap .plane-shape { transform: scale(1.9); }
     .worldmap .home { r: 8; stroke-width: 3; }
     .worldmap .home-ring { r: 15; stroke-width: 2.2; }
     .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
@@ -591,6 +594,7 @@
     .worldmap .arc { animation: none; stroke-dashoffset: 0; }
     .worldmap .pin, .worldmap .pin-flag { animation: none; opacity: 1; }
     .worldmap .future { animation: none; opacity: .38; }
+    .worldmap .plane { display: none; }
     .worldmap .home-ring { animation: none; opacity: 0; }
   }
 </style>
@@ -1420,21 +1424,35 @@ const MAP_FUTURE = [
   // 유럽
   [50.45, 30.52], [52.23, 21.01], [52.52, 13.4], [40.42, -3.7], [44.43, 26.1],
 ];
+// 비행기 모양 (오른쪽을 향함, 원점 중심)
+const PLANE_PATH = 'M7 0 L2.2 -1.1 L-1.2 -5.6 L-2.8 -5.6 L-1 -1.2 L-4.6 -1 L-6 -2.8 L-7 -2.8 L-6.2 0 L-7 2.8 L-6 2.8 L-4.6 1 L-1 1.2 L-2.8 5.6 L-1.2 5.6 L2.2 1.1 Z';
 function mapXY(lat, lon) { return [(lon + 180) / 360 * MAP.W, (MAP.LAT_T - lat) / (MAP.LAT_T - MAP.LAT_B) * MAP.H]; }
 function worldMapSVG() {
   const [hx, hy] = mapXY(MAP_HOME.lat, MAP_HOME.lon);
+  const planes = [];
   const arcs = MAP_FIELDS.map(([code, lat, lon], i) => {
     const [x, y] = mapXY(lat, lon);
     const dist = Math.hypot(x - hx, y - hy);
     const cx = (hx + x) / 2, cy = Math.max(MAP_VIEW[1] + 8, Math.min(hy, y) - Math.max(16, dist * 0.2));   // 위로 휘되 화면 안에서
-    return `<path class="arc" d="M${hx.toFixed(1)} ${hy.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)}" pathLength="1" style="--i:${i}"/>
-      <circle class="pin" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" style="--i:${i}"/>
-      <text class="pin-flag" x="${x.toFixed(1)}" y="${(y - 9).toFixed(1)}" style="--i:${i}">${flag(code)}</text>`;
+    const f = v => v.toFixed(1);
+    const out = `M${f(hx)} ${f(hy)} Q${f(cx)} ${f(cy)} ${f(x)} ${f(y)}`, back = `M${f(x)} ${f(y)} Q${f(cx)} ${f(cy)} ${f(hx)} ${f(hy)}`;
+    // 작은 비행기: 선을 따라 갔다가 기수를 돌려 돌아옴 (SMIL — 가는 길/오는 길을 이어 붙임)
+    const dur = (3.2 + dist / 160).toFixed(1), start = (2.2 + i * 0.7).toFixed(1);
+    planes.push(`<path id="mp-o${i}" d="${out}" fill="none" stroke="none"/><path id="mp-b${i}" d="${back}" fill="none" stroke="none"/>
+      <g class="plane" opacity="0"><path class="plane-shape" d="${PLANE_PATH}"/>
+        <set attributeName="opacity" to="1" begin="${start}s" fill="freeze"/>
+        <animateMotion id="pl-o${i}" dur="${dur}s" begin="${start}s;pl-b${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#mp-o${i}"/></animateMotion>
+        <animateMotion id="pl-b${i}" dur="${dur}s" begin="pl-o${i}.end+0.6s" rotate="auto" fill="freeze"><mpath href="#mp-b${i}"/></animateMotion>
+      </g>`);
+    return `<path class="arc" d="${out}" pathLength="1" style="--i:${i}"/>
+      <circle class="pin" cx="${f(x)}" cy="${f(y)}" r="4.2" style="--i:${i}"/>
+      <text class="pin-flag" x="${f(x)}" y="${f(y - 9)}" style="--i:${i}">${flag(code)}</text>`;
   }).join('');
   return `<svg class="worldmap" viewBox="${MAP_VIEW.join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(t('map_label'))}">
     <image href="assets/world-dots.svg" x="0" y="0" width="${MAP.W}" height="${MAP.H}" class="dots"/>
     ${MAP_FUTURE.map(([lat, lon], i) => { const [x, y] = mapXY(lat, lon); return `<circle class="future" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.4" style="--j:${i % 9}"/>`; }).join('')}
     ${arcs}
+    ${planes.join('')}
     <circle class="home-ring" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="10"/>
     <circle class="home" cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="5.2"/>
   </svg>`;
