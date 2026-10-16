@@ -1,0 +1,929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SVM — Student Volunteer Movement</title>
+<meta name="description" content="SVM — Student Volunteer Movement, Bryan/College Station">
+<meta name="theme-color" content="#1d2b53">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SVM">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+  :root {
+    --navy: #1d2b53;
+    --navy-2: #2c3e74;
+    --gold: #e0a526;
+    --gold-soft: #fdf3dc;
+    --bg: #f5f6fa;
+    --card: #ffffff;
+    --text: #1b1f2a;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --danger: #c0392b;
+    --danger-soft: #fdecea;
+    --ok: #1e8e5a;
+    --ok-soft: #e6f6ee;
+    --radius: 14px;
+    --tabbar-h: 64px;
+    --safe-b: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.5;
+    -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: var(--navy-2); }
+  .hidden { display: none !important; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: var(--navy); color: #fff;
+    padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .5px; }
+  .brand-img { width: 34px; height: 34px; border-radius: 9px; display: block; }
+  .brand small { display: block; font-weight: 500; font-size: 11px; opacity: .75; letter-spacing: 0; }
+  .lang-toggle {
+    display: inline-flex; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; overflow: hidden;
+  }
+  .lang-toggle button {
+    background: transparent; border: 0; color: #fff; padding: 4px 10px; font-size: 13px; cursor: pointer;
+  }
+  .lang-toggle button.active { background: #fff; color: var(--navy); font-weight: 700; }
+  .lang-toggle.dark { border-color: var(--line); }
+  .lang-toggle.dark button { color: var(--muted); }
+  .lang-toggle.dark button.active { background: var(--navy); color: #fff; }
+
+  /* ---------- Layout ---------- */
+  main {
+    max-width: 640px; margin: 0 auto;
+    padding: 16px 16px calc(var(--tabbar-h) + var(--safe-b) + 24px);
+  }
+  h1 { font-size: 24px; margin: 4px 0 12px; }
+  h2 { font-size: 18px; margin: 20px 0 10px; }
+  h3 { font-size: 16px; margin: 0 0 6px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13px; }
+  .card {
+    background: var(--card); border-radius: var(--radius); padding: 16px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04);
+    margin-bottom: 12px;
+  }
+  .card.hero { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; }
+  .card.hero .muted { color: rgba(255,255,255,.75); }
+  .card.soon { opacity: .9; border: 1px dashed var(--line); box-shadow: none; }
+  .row { display: flex; align-items: center; gap: 10px; }
+  .row.between { justify-content: space-between; }
+  .stack > * + * { margin-top: 10px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 360px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; background: var(--line); color: var(--text); white-space: nowrap;
+  }
+  .badge.member { background: #e8edf9; color: var(--navy-2); }
+  .badge.graduate { background: var(--gold-soft); color: #8a5a00; }
+  .badge.admin { background: var(--navy); color: #fff; }
+  .badge.sensitive { background: var(--danger-soft); color: var(--danger); }
+  .badge.soon { background: #eef0f4; color: var(--muted); font-weight: 600; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 0; border-radius: 10px; padding: 11px 16px; font-weight: 700; cursor: pointer;
+    background: var(--navy); color: #fff; text-decoration: none; min-height: 44px;
+  }
+  .btn:disabled { opacity: .55; cursor: default; }
+  .btn.block { width: 100%; }
+  .btn.gold { background: var(--gold); color: var(--navy); }
+  .btn.ghost { background: transparent; color: var(--navy); border: 1px solid var(--line); }
+  .btn.danger { background: var(--danger-soft); color: var(--danger); }
+  .btn.small { padding: 6px 12px; min-height: 34px; font-size: 14px; }
+  .link-btn { background: none; border: 0; color: var(--navy-2); cursor: pointer; padding: 4px; text-decoration: underline; }
+
+  label.field { display: block; margin-bottom: 12px; }
+  label.field > span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151; }
+  input[type=text], input[type=email], input[type=password], input[type=tel], select, textarea {
+    width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    min-height: 44px;
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: transparent; }
+
+  .banner {
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 14px;
+    background: var(--danger-soft); color: #7a1f16; border: 1px solid #f5c2bc;
+  }
+  .banner.info { background: var(--gold-soft); color: #6b4700; border-color: #f1d99a; }
+
+  /* ---------- Auth ---------- */
+  .auth-wrap {
+    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+    max-width: 420px; margin: 0 auto; padding: 24px 16px;
+  }
+  .auth-head { text-align: center; margin-bottom: 20px; }
+  .auth-logo { width: 72px; height: 72px; border-radius: 18px; display: block; margin: 0 auto 12px; }
+  .tabs-seg { display: flex; background: #e9ecf3; border-radius: 10px; padding: 3px; margin-bottom: 16px; }
+  .tabs-seg button {
+    flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--muted);
+  }
+  .tabs-seg button.active { background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+  /* ---------- Concepts ---------- */
+  .concept { display: flex; gap: 12px; align-items: flex-start; }
+  .concept .num {
+    flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--gold-soft); color: #8a5a00;
+    display: grid; place-items: center; font-weight: 800; font-size: 14px;
+  }
+
+  /* ---------- Countries ---------- */
+  .country-card {
+    display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit;
+    background: var(--card); border-radius: var(--radius); padding: 14px;
+    box-shadow: 0 1px 2px rgba(16,24,40,.06); border: 1px solid transparent;
+  }
+  .country-card:active { border-color: var(--gold); }
+  .flag { font-size: 30px; line-height: 1; }
+  .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 700; margin: 0 0 4px; }
+
+  /* ---------- Lists ---------- */
+  .list-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .list-item:last-child { border-bottom: 0; }
+  .list-item .meta { min-width: 0; }
+  .list-item .meta div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .switch { position: relative; width: 46px; height: 28px; flex: 0 0 auto; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch span { position: absolute; inset: 0; background: #cfd4de; border-radius: 999px; transition: .2s; cursor: pointer; }
+  .switch span::before { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
+  .switch input:checked + span { background: var(--ok); }
+  .switch input:checked + span::before { transform: translateX(18px); }
+  .switch input:focus-visible + span { outline: 2px solid var(--gold); }
+
+  /* ---------- Tab bar ---------- */
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    background: #fff; border-top: 1px solid var(--line);
+    padding-bottom: var(--safe-b);
+  }
+  .tabbar-inner { max-width: 640px; margin: 0 auto; display: flex; height: var(--tabbar-h); }
+  .tabbar a {
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+    color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 600;
+  }
+  .tabbar a svg { width: 24px; height: 24px; }
+  .tabbar a.active { color: var(--navy); }
+  .tabbar a.active svg { stroke: var(--gold); }
+
+  /* ---------- Toast / loader ---------- */
+  .toast {
+    position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + var(--safe-b) + 16px);
+    background: #111827; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 50;
+    max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.2);
+  }
+  .toast.error { background: var(--danger); }
+  .loader { text-align: center; padding: 48px 0; color: var(--muted); }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--navy); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  pre.code { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 10px; overflow-x: auto; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   SVM App — Phase 1
+   로그인/회원가입 · 회원 등급 · i18n(EN/KO) · 하단 탭 내비게이션 · 관리자 기본 화면
+   ===================================================================== */
+
+// ---------------------------------------------------------------------
+// 1) 설정 — Supabase 대시보드 > Project Settings > API 에서 복사해 넣으세요.
+//    anon key 는 공개되어도 괜찮은 키입니다 (데이터 보호는 RLS 가 담당).
+// ---------------------------------------------------------------------
+const CONFIG = {
+  SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
+  SUPABASE_ANON_KEY: 'YOUR-ANON-KEY',
+  TIMEZONE: 'America/Chicago',       // 게더링 기준 시간대 (Bryan/College Station)
+};
+
+// ---------------------------------------------------------------------
+// 2) i18n — 모든 UI 문자열
+// ---------------------------------------------------------------------
+const i18n = {
+  en: {
+    app_tagline: 'Student Volunteer Movement',
+    // auth
+    login: 'Log in', signup: 'Sign up', logout: 'Log out',
+    email: 'Email', password: 'Password', password_hint: 'At least 6 characters',
+    name: 'Name', school: 'School', phone: 'Phone',
+    forgot_password: 'Forgot password?', send_reset: 'Send reset link', back_to_login: 'Back to log in',
+    reset_sent: 'Check your email for a password reset link.',
+    new_password: 'New password', set_password: 'Set new password', password_updated: 'Password updated.',
+    signup_check_email: 'Almost there! Check your email to confirm your account, then log in.',
+    signup_done: 'Welcome to SVM!',
+    auth_welcome: 'Reviving the movement that sent 20,000 students to the nations — starting in Bryan/College Station.',
+    // tabs
+    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
+    // roles
+    role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin',
+    // home
+    hello: 'Hi, {name}', hello_anon: 'Welcome',
+    next_gathering: 'Next Mission Gathering',
+    gathering_every: 'Every Sunday · 2:00–4:00 PM · Church',
+    concepts_title: 'How SVM works',
+    c1_t: 'Pay only for your flight', c1_d: 'Room and board are supported on the field. Students cover only the airfare.',
+    c2_t: 'Stay as long as you want', c2_d: 'Go for a month, and if you want to stay longer, just extend your flight — no extra cost for room and board.',
+    c3_t: 'Go every break', c3_d: 'Not just once — keep going, every school break.',
+    c4_t: 'Meet every week', c4_d: 'Sundays 2–4 PM at church in person; connect and train in the app during the week.',
+    featured_testimony: 'Featured testimony', my_application: 'My application', todays_training: "Today's language training",
+    // countries
+    countries_title: 'Mission fields', countries_sub: 'Explore each country before you apply.',
+    sensitive: 'Sensitive', sensitive_banner: 'Security notice: This is a sensitive country. Do not share local believers\' names, faces, or exact locations (e.g. church addresses) anywhere — in chat, prayers, or testimonies.',
+    sec_intro: 'About', sec_ministry: 'Ministry — what you will actually do', sec_life: 'Daily life — weather & culture', sec_language: 'Language needed', sec_housing: 'Room & board',
+    enter_room: 'Enter country room', apply_here: 'Apply for this country',
+    no_countries: 'No countries yet. Run 03_국가_시드.sql in Supabase.',
+    back: 'Back', not_found: 'Not found.',
+    // train
+    train_title: 'Training',
+    train_lang_t: 'Language training', train_lang_d: 'Memorize the core gospel message in the local language — infinite repeat, listen, shadow, hide & self-test.',
+    train_course_t: 'Mission curriculum', train_course_d: 'Video lessons with written reflections. Track your progress.',
+    train_grad_t: 'Graduation', train_grad_d: 'Complete required lessons and pass a language self-test to earn your graduate badge.',
+    // community
+    community_title: 'Community',
+    com_rooms_t: 'My country rooms', com_rooms_d: 'Join as many rooms as you like. Joining a room is not the same as applying.',
+    com_teams_t: 'Teams', com_teams_d: 'Team board and project to-dos.',
+    com_prayer_t: 'Prayer requests', com_prayer_d: 'Pray for one another. Use initials only for local believers.',
+    com_testi_t: 'Testimonies', com_testi_d: 'Stories from the field (published after review).',
+    com_support_t: 'Support stories', com_support_d: 'Students who need help with airfare.',
+    // my
+    my_title: 'My page', profile: 'Profile', save: 'Save', saved: 'Saved.',
+    language_setting: 'Language', my_app_t: 'My application & extension', my_check_t: 'Packing checklist', my_att_t: 'Attendance record',
+    install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then "Add to Home Screen".',
+    graduate_badge: 'Graduate badge',
+    // admin
+    admin_title: 'Admin', admin_members: 'Members', admin_settings: 'Settings', admin_countries: 'Countries',
+    set_require_grad: 'Only graduates can apply', set_require_grad_d: 'Off: anyone can apply. On: only graduate members can submit applications.',
+    set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
+    col_sensitive: 'Sensitive', col_active: 'Active',
+    search_members: 'Search name, email, school', members_count: '{n} members', role_changed: 'Role updated.',
+    admin_more: 'Coming next: application approvals, testimony review, graduation approvals, content & gatherings.',
+    // misc
+    coming_soon: 'Coming soon', phase: 'Phase {n}', loading: 'Loading…', error_generic: 'Something went wrong. Please try again.',
+    setup_title: 'Setup needed', setup_body: 'Open index.html and set SUPABASE_URL and SUPABASE_ANON_KEY in CONFIG (Supabase → Project Settings → API).',
+    offline: 'You are offline.',
+  },
+  ko: {
+    app_tagline: '학생자원운동',
+    login: '로그인', signup: '회원가입', logout: '로그아웃',
+    email: '이메일', password: '비밀번호', password_hint: '6자 이상',
+    name: '이름', school: '학교', phone: '연락처',
+    forgot_password: '비밀번호를 잊으셨나요?', send_reset: '재설정 링크 보내기', back_to_login: '로그인으로 돌아가기',
+    reset_sent: '비밀번호 재설정 링크를 이메일로 보냈습니다.',
+    new_password: '새 비밀번호', set_password: '새 비밀번호 설정', password_updated: '비밀번호가 변경되었습니다.',
+    signup_check_email: '거의 다 됐어요! 이메일에서 인증 링크를 누른 뒤 로그인하세요.',
+    signup_done: 'SVM에 오신 것을 환영합니다!',
+    auth_welcome: '2만 명의 대학생을 열방으로 보낸 그 운동을 — 브라이언 컬리지 스테이션에서 다시 시작합니다.',
+    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
+    role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
+    hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
+    next_gathering: '다음 미션 게더링',
+    gathering_every: '매주 주일 · 오후 2:00–4:00 · 교회',
+    concepts_title: 'SVM은 이렇게 갑니다',
+    c1_t: '비행기 값만 낸다', c1_d: '선교지에서 숙식을 자체 후원합니다. 학생은 항공권만 부담합니다.',
+    c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가는 없습니다.',
+    c3_t: '방학마다 간다', c3_d: '한 번이 아니라, 방학마다 지속적으로 갑니다.',
+    c4_t: '매주 모인다', c4_d: '매주 주일 오후 2–4시 교회에서 모이고, 주중에는 앱에서 소통하고 훈련합니다.',
+    featured_testimony: '추천 간증', my_application: '내 신청 상태', todays_training: '오늘의 언어 훈련',
+    countries_title: '선교지', countries_sub: '신청 전에 각 나라를 둘러보세요.',
+    sensitive: '민감 국가', sensitive_banner: '보안 안내: 민감 국가입니다. 채팅·기도 제목·후기 어디에도 현지 성도의 실명, 얼굴, 정확한 장소(교회 위치 등)를 올리지 마세요.',
+    sec_intro: '소개', sec_ministry: '사역 소개 — 실제로 하는 일', sec_life: '현지 생활 — 날씨와 문화', sec_language: '필요한 언어', sec_housing: '숙식 안내',
+    enter_room: '나라방 들어가기', apply_here: '이 나라로 신청하기',
+    no_countries: '등록된 나라가 없습니다. Supabase에서 03_국가_시드.sql을 실행하세요.',
+    back: '뒤로', not_found: '찾을 수 없습니다.',
+    train_title: '훈련',
+    train_lang_t: '언어 훈련', train_lang_d: '핵심 복음 메시지를 현지어로 완벽 암기 — 무한 반복, 듣기, 따라하기, 가리기, 자가 테스트.',
+    train_course_t: '선교 교육', train_course_d: '영상 강의 시청 후 소감을 작성합니다. 진행률을 확인하세요.',
+    train_grad_t: '수료', train_grad_d: '필수 강의를 모두 마치고 언어 자가 테스트를 통과하면 수료 배지를 받습니다.',
+    community_title: '커뮤니티',
+    com_rooms_t: '내 나라방', com_rooms_d: '원하는 만큼 여러 나라방에 참여하세요. 방 참여는 신청과 별개입니다.',
+    com_teams_t: '팀', com_teams_d: '팀 게시판과 프로젝트 할 일.',
+    com_prayer_t: '기도 제목', com_prayer_d: '서로를 위해 기도해요. 현지 성도 이름은 이니셜로만 적어주세요.',
+    com_testi_t: '간증', com_testi_d: '선교지에서 온 이야기 (검토 후 공개).',
+    com_support_t: '후원 사연', com_support_d: '항공권 후원이 필요한 학생들의 사연.',
+    my_title: '마이페이지', profile: '프로필', save: '저장', saved: '저장되었습니다.',
+    language_setting: '언어', my_app_t: '내 신청 · 연장', my_check_t: '준비물 체크리스트', my_att_t: '출석 기록',
+    install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 "홈 화면에 추가"를 선택하세요.',
+    graduate_badge: '수료 배지',
+    admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
+    set_require_grad: '수료 회원만 신청 가능', set_require_grad_d: '끄면 누구나 신청 가능, 켜면 수료 회원만 신청서를 제출할 수 있습니다.',
+    set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
+    col_sensitive: '민감', col_active: '노출',
+    search_members: '이름, 이메일, 학교 검색', members_count: '회원 {n}명', role_changed: '등급이 변경되었습니다.',
+    admin_more: '다음 단계: 신청 승인, 후기 승인/추천, 수료 승인, 콘텐츠·게더링 관리.',
+    coming_soon: '준비 중', phase: '{n}단계', loading: '불러오는 중…', error_generic: '문제가 발생했습니다. 다시 시도해주세요.',
+    setup_title: '설정이 필요합니다', setup_body: 'index.html의 CONFIG에 SUPABASE_URL과 SUPABASE_ANON_KEY를 입력하세요 (Supabase → Project Settings → API).',
+    offline: '오프라인 상태입니다.',
+  },
+};
+
+// ---------------------------------------------------------------------
+// 3) 상태 & 유틸
+// ---------------------------------------------------------------------
+const state = {
+  lang: safeGet('svm_lang') || ((navigator.language || '').startsWith('ko') ? 'ko' : 'en'),
+  session: null,
+  profile: null,
+  settings: {},
+  countries: null,
+  authMode: 'login',      // login | signup | forgot | recovery
+  adminTab: 'members',
+  adminMembers: null,
+  adminSearch: '',
+  installPrompt: null,
+};
+
+function safeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function safeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+
+function t(key, vars) {
+  let s = (i18n[state.lang] && i18n[state.lang][key]) ?? i18n.en[key] ?? key;
+  if (vars) for (const k in vars) s = s.replaceAll('{' + k + '}', vars[k]);
+  return s;
+}
+function esc(v) {
+  return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+// 줄바꿈 유지 텍스트
+function para(v) { return esc(v).replace(/\n/g, '<br>'); }
+// 국가 콘텐츠: 현재 언어 우선, 없으면 영어
+function loc(obj, field) {
+  if (!obj) return '';
+  if (state.lang === 'ko') return obj[field + '_ko'] || obj[field] || '';
+  return obj[field] || obj[field + '_ko'] || '';
+}
+// extra_sections 항목: { title_en, title_ko, body_en, body_ko }
+function locPair(obj, field) {
+  const ko = obj[field + '_ko'], en = obj[field + '_en'] ?? obj[field];
+  return (state.lang === 'ko' ? (ko || en) : (en || ko)) || '';
+}
+function countryName(c) { return state.lang === 'ko' ? (c.name_ko || c.name_en) : (c.name_en || c.name_ko); }
+function flag(code) {
+  if (!code || code.length !== 2) return '🌏';
+  return String.fromCodePoint(...[...code.toUpperCase()].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
+}
+function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === 'graduate' ? '🎓 ' : ''}${esc(t('role_' + role))}</span>`; }
+function isAdmin() { return state.profile?.role === 'admin'; }
+
+let toastTimer;
+function toast(msg, isError) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+}
+function errMsg(e) { return (e && (e.message || e.error_description)) || t('error_generic'); }
+
+function setLang(lang) {
+  state.lang = lang;
+  safeSet('svm_lang', lang);
+  document.documentElement.lang = lang;
+  if (state.profile && state.profile.lang !== lang) {
+    state.profile.lang = lang;
+    sb.from('profiles').update({ lang }).eq('id', state.profile.id).then(() => {});
+  }
+  render();
+}
+function langToggle(dark) {
+  return `<div class="lang-toggle ${dark ? 'dark' : ''}" role="group" aria-label="Language">
+    <button type="button" data-lang="en" class="${state.lang === 'en' ? 'active' : ''}">EN</button>
+    <button type="button" data-lang="ko" class="${state.lang === 'ko' ? 'active' : ''}">한국어</button>
+  </div>`;
+}
+
+// 날짜 포맷 (게더링 기준 시간대)
+function fmtDate(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return d.toLocaleDateString(state.lang === 'ko' ? 'ko-KR' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+function fmtTime(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  const d = new Date(2000, 0, 1, h, m);
+  return d.toLocaleTimeString(state.lang === 'ko' ? 'ko-KR' : 'en-US', { hour: 'numeric', minute: '2-digit' });
+}
+// 게더링 시간대 기준 오늘 날짜 (YYYY-MM-DD)
+function todayInTZ() {
+  return new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+}
+function nextSunday() {
+  const [y, m, d] = todayInTZ().split('-').map(Number);
+  const base = new Date(Date.UTC(y, m - 1, d));
+  const add = (7 - base.getUTCDay()) % 7;
+  base.setUTCDate(base.getUTCDate() + add);
+  return base.toISOString().slice(0, 10);
+}
+
+// ---------------------------------------------------------------------
+// 4) Supabase
+// ---------------------------------------------------------------------
+const configured = !CONFIG.SUPABASE_URL.includes('YOUR-PROJECT') && !CONFIG.SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
+const sb = configured ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : null;
+
+async function loadProfile() {
+  if (!state.session) { state.profile = null; return; }
+  const uid = state.session.user.id;
+  let { data, error } = await sb.from('profiles').select('*').eq('id', uid).maybeSingle();
+  if (!data && !error) {
+    // 트리거 이전에 가입한 계정 등 — 프로필이 없으면 생성
+    const meta = state.session.user.user_metadata || {};
+    ({ data, error } = await sb.from('profiles')
+      .insert({ id: uid, email: state.session.user.email, name: meta.name || null, school: meta.school || null, phone: meta.phone || null, lang: state.lang })
+      .select().single());
+  }
+  if (error) { toast(errMsg(error), true); return; }
+  state.profile = data;
+  if (data.lang && data.lang !== state.lang) {
+    state.lang = data.lang; safeSet('svm_lang', data.lang); document.documentElement.lang = data.lang;
+  }
+}
+async function loadSettings() {
+  const { data } = await sb.from('app_settings').select('key,value');
+  state.settings = Object.fromEntries((data || []).map(r => [r.key, r.value]));
+}
+async function loadCountries(force) {
+  if (state.countries && !force) return state.countries;
+  const { data, error } = await sb.from('countries').select('*').order('sort_order').order('id');
+  if (error) { toast(errMsg(error), true); state.countries = []; }
+  else state.countries = data;
+  return state.countries;
+}
+
+// ---------------------------------------------------------------------
+// 5) 라우팅
+// ---------------------------------------------------------------------
+const TABS = [
+  { id: 'home', icon: '<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>' },
+  { id: 'countries', icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18"/>' },
+  { id: 'train', icon: '<path d="M4 5h11a3 3 0 0 1 3 3v12H7a3 3 0 0 1-3-3z"/><path d="M4 17a3 3 0 0 1 3-3h11"/>' },
+  { id: 'community', icon: '<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M15 14.5c3 0 6 1.8 6 5.5"/>' },
+  { id: 'my', icon: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>' },
+  { id: 'admin', icon: '<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>', adminOnly: true },
+];
+
+function parseRoute() {
+  const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/').filter(Boolean);
+  return { tab: parts[0] || 'home', param: parts[1] ? decodeURIComponent(parts[1]) : null };
+}
+function go(path) { location.hash = '#/' + path; }
+
+// ---------------------------------------------------------------------
+// 6) 렌더링
+// ---------------------------------------------------------------------
+const app = document.getElementById('app');
+let renderSeq = 0;
+
+async function render() {
+  const seq = ++renderSeq;
+  document.documentElement.lang = state.lang;
+
+  if (!configured) { app.innerHTML = viewSetup(); bindCommon(); return; }
+  if (!state.session || state.authMode === 'recovery') { app.innerHTML = viewAuth(); bindAuth(); bindCommon(); return; }
+  if (!state.profile) { app.innerHTML = loaderHTML(); return; }
+
+  let { tab, param } = parseRoute();
+  if (!TABS.some(x => x.id === tab) || (tab === 'admin' && !isAdmin())) tab = 'home';
+
+  app.innerHTML = shell(tab, loaderHTML());
+  bindCommon();
+  let body;
+  try {
+    body = await VIEWS[tab](param);
+  } catch (e) {
+    console.error(e);
+    body = `<div class="card">${esc(t('error_generic'))}</div>`;
+  }
+  if (seq !== renderSeq) return;   // 더 최신 렌더가 시작됨
+  document.getElementById('view').innerHTML = body;
+  bindCommon();
+  BINDERS[tab]?.(param);
+}
+
+function loaderHTML() { return `<div class="loader"><div class="spinner"></div>${esc(t('loading'))}</div>`; }
+
+function shell(tab, inner) {
+  const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
+  return `
+  <header class="topbar">
+    <div class="brand"><img class="brand-img" src="icons/icon.svg" alt=""><div>SVM<small>${esc(t('app_tagline'))}</small></div></div>
+    ${langToggle(false)}
+  </header>
+  <main id="view">${inner}</main>
+  <nav class="tabbar" aria-label="Main">
+    <div class="tabbar-inner">
+      ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.icon}</svg>
+        <span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
+    </div>
+  </nav>`;
+}
+
+function soonCard(title, desc, phaseN, icon) {
+  return `<div class="card soon">
+    <div class="row between" style="flex-wrap:wrap;gap:6px;margin-bottom:4px"><h3 style="margin:0">${icon ? icon + ' ' : ''}${esc(title)}</h3><span class="badge soon">${esc(t('phase', { n: phaseN }))}</span></div>
+    <p class="muted small" style="margin:0">${esc(desc)}</p>
+  </div>`;
+}
+
+// ---------- Setup ----------
+function viewSetup() {
+  return `<div class="auth-wrap">
+    <div class="auth-head"><img class="auth-logo" src="icons/icon.svg" alt="SVM"><h1>${esc(t('setup_title'))}</h1></div>
+    <div class="card"><p>${esc(t('setup_body'))}</p>
+<pre class="code">const CONFIG = {
+  SUPABASE_URL: 'https://xxxx.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOi...',
+};</pre></div>
+    <div style="text-align:center">${langToggle(true)}</div>
+  </div>`;
+}
+
+// ---------- Auth ----------
+function viewAuth() {
+  const m = state.authMode;
+  let form;
+  if (m === 'login') {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>${esc(t('password'))}</span><input type="password" name="password" autocomplete="current-password" required></label>
+      <button class="btn block" type="submit">${esc(t('login'))}</button>
+      <div style="text-align:center;margin-top:10px"><button type="button" class="link-btn" data-mode="forgot">${esc(t('forgot_password'))}</button></div>
+    </form>`;
+  } else if (m === 'signup') {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" autocomplete="name" required></label>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>${esc(t('password'))} <span class="muted">(${esc(t('password_hint'))})</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" autocomplete="organization"></label>
+      <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" autocomplete="tel"></label>
+      <button class="btn block gold" type="submit">${esc(t('signup'))}</button>
+    </form>`;
+  } else if (m === 'forgot') {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <button class="btn block" type="submit">${esc(t('send_reset'))}</button>
+      <div style="text-align:center;margin-top:10px"><button type="button" class="link-btn" data-mode="login">${esc(t('back_to_login'))}</button></div>
+    </form>`;
+  } else {
+    form = `<form id="auth-form" novalidate>
+      <label class="field"><span>${esc(t('new_password'))} <span class="muted">(${esc(t('password_hint'))})</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <button class="btn block" type="submit">${esc(t('set_password'))}</button>
+    </form>`;
+  }
+  const seg = (m === 'login' || m === 'signup') ? `<div class="tabs-seg" role="tablist">
+      <button type="button" role="tab" data-mode="login" class="${m === 'login' ? 'active' : ''}">${esc(t('login'))}</button>
+      <button type="button" role="tab" data-mode="signup" class="${m === 'signup' ? 'active' : ''}">${esc(t('signup'))}</button>
+    </div>` : `<h2 style="margin-top:0">${esc(m === 'forgot' ? t('forgot_password') : t('set_password'))}</h2>`;
+  return `<div class="auth-wrap">
+    <div class="auth-head">
+      <img class="auth-logo" src="icons/icon.svg" alt="SVM">
+      <h1 style="margin-bottom:4px">SVM</h1>
+      <p class="muted" style="margin-bottom:6px">${esc(t('app_tagline'))}</p>
+      <p class="small muted">${esc(t('auth_welcome'))}</p>
+    </div>
+    <div class="card">${seg}${form}</div>
+    <div style="text-align:center">${langToggle(true)}</div>
+  </div>`;
+}
+
+function bindAuth() {
+  app.querySelectorAll('[data-mode]').forEach(b => b.onclick = () => { state.authMode = b.dataset.mode; render(); });
+  const form = document.getElementById('auth-form');
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const f = Object.fromEntries(new FormData(form));
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      const redirectTo = location.origin + location.pathname;
+      if (state.authMode === 'login') {
+        const { error } = await sb.auth.signInWithPassword({ email: f.email.trim(), password: f.password });
+        if (error) throw error;
+      } else if (state.authMode === 'signup') {
+        const { data, error } = await sb.auth.signUp({
+          email: f.email.trim(), password: f.password,
+          options: {
+            emailRedirectTo: redirectTo,
+            data: { name: f.name.trim(), school: (f.school || '').trim(), phone: (f.phone || '').trim(), lang: state.lang },
+          },
+        });
+        if (error) throw error;
+        if (data.session) toast(t('signup_done'));
+        else { toast(t('signup_check_email')); state.authMode = 'login'; render(); }
+      } else if (state.authMode === 'forgot') {
+        const { error } = await sb.auth.resetPasswordForEmail(f.email.trim(), { redirectTo });
+        if (error) throw error;
+        toast(t('reset_sent')); state.authMode = 'login'; render();
+      } else if (state.authMode === 'recovery') {
+        const { error } = await sb.auth.updateUser({ password: f.password });
+        if (error) throw error;
+        toast(t('password_updated')); state.authMode = 'login'; render();
+      }
+    } catch (err) {
+      toast(errMsg(err), true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+}
+
+function bindCommon() {
+  app.querySelectorAll('[data-lang]').forEach(b => b.onclick = () => setLang(b.dataset.lang));
+  app.querySelectorAll('[data-soon]').forEach(b => b.onclick = () => toast(t('coming_soon') + ' · ' + t('phase', { n: b.dataset.soon })));
+}
+
+// ---------- Views ----------
+const VIEWS = {
+  async home() {
+    const p = state.profile;
+    const today = todayInTZ();
+    const { data: g } = await sb.from('gatherings').select('*').gte('date', today).order('date').limit(1).maybeSingle();
+    const gDate = g?.date || nextSunday();
+    const gStart = (g?.start_time || '14:00').slice(0, 5);
+    const gEnd = (g?.end_time || '16:00').slice(0, 5);
+    const gLoc = g?.location || state.settings.gathering_location || 'Church';
+    const concepts = [1, 2, 3, 4].map(n => `<div class="concept"><div class="num">${n}</div>
+      <div><h3>${esc(t('c' + n + '_t'))}</h3><p class="muted small" style="margin:0">${esc(t('c' + n + '_d'))}</p></div></div>`).join('');
+    return `
+      <div class="row between" style="margin-bottom:12px">
+        <h1 style="margin:0">${esc(p.name ? t('hello', { name: p.name }) : t('hello_anon'))}</h1>
+        ${roleBadge(p.role)}
+      </div>
+      <div class="card hero">
+        <div class="small muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.6px">${esc(t('next_gathering'))}</div>
+        <h2 style="margin:6px 0 2px;color:#fff">${esc(fmtDate(gDate))}</h2>
+        <div>${esc(fmtTime(gStart))} – ${esc(fmtTime(gEnd))} · ${esc(gLoc)}</div>
+        ${g?.title ? `<div class="small muted" style="margin-top:6px">${esc(g.title)}</div>` : ''}
+        <div class="small muted" style="margin-top:10px">${esc(t('gathering_every'))}</div>
+      </div>
+      ${soonCard(t('todays_training'), t('train_lang_d'), 3, '🗣️')}
+      ${soonCard(t('my_application'), t('my_app_t'), 2, '✈️')}
+      ${soonCard(t('featured_testimony'), t('com_testi_d'), 4, '✨')}
+      <h2>${esc(t('concepts_title'))}</h2>
+      <div class="card stack">${concepts}</div>`;
+  },
+
+  async countries(code) {
+    const list = await loadCountries();
+    if (code) return viewCountryDetail(list.find(c => c.code === code.toUpperCase()));
+    if (!list.length) return `<h1>${esc(t('countries_title'))}</h1><div class="card muted">${esc(t('no_countries'))}</div>`;
+    return `
+      <h1>${esc(t('countries_title'))}</h1>
+      <p class="muted">${esc(t('countries_sub'))}</p>
+      <div class="grid2">
+        ${list.map(c => `<a class="country-card" href="#/countries/${esc(c.code)}">
+          <div class="row between"><span class="flag" aria-hidden="true">${flag(c.code)}</span>
+            ${c.is_sensitive ? `<span class="badge sensitive">🔒 ${esc(t('sensitive'))}</span>` : ''}</div>
+          <strong>${esc(countryName(c))}</strong>
+          <span class="muted small">${esc(loc(c, 'intro')).slice(0, 70)}${loc(c, 'intro').length > 70 ? '…' : ''}</span>
+        </a>`).join('')}
+      </div>`;
+  },
+
+  async train() {
+    return `<h1>${esc(t('train_title'))}</h1>
+      ${soonCard(t('train_lang_t'), t('train_lang_d'), 3, '🗣️')}
+      ${soonCard(t('train_course_t'), t('train_course_d'), 3, '🎬')}
+      ${soonCard(t('train_grad_t'), t('train_grad_d'), 3, '🎓')}`;
+  },
+
+  async community() {
+    return `<h1>${esc(t('community_title'))}</h1>
+      ${soonCard(t('com_rooms_t'), t('com_rooms_d'), 2, '💬')}
+      ${soonCard(t('com_prayer_t'), t('com_prayer_d'), 4, '🙏')}
+      ${soonCard(t('com_testi_t'), t('com_testi_d'), 4, '✨')}
+      ${soonCard(t('com_teams_t'), t('com_teams_d'), 4, '👥')}
+      ${soonCard(t('com_support_t'), t('com_support_d'), 4, '🤝')}`;
+  },
+
+  async my() {
+    const p = state.profile;
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+    return `<h1>${esc(t('my_title'))}</h1>
+      <div class="card">
+        <div class="row between" style="margin-bottom:12px">
+          <div><h3 style="margin:0">${esc(p.name || p.email)}</h3><div class="muted small">${esc(p.email)}</div></div>
+          ${roleBadge(p.role)}
+        </div>
+        ${p.role === 'graduate' ? `<div class="banner info">🎓 ${esc(t('graduate_badge'))}</div>` : ''}
+        <form id="profile-form">
+          <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(p.name)}" autocomplete="name"></label>
+          <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" value="${esc(p.school)}"></label>
+          <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" value="${esc(p.phone)}" autocomplete="tel"></label>
+          <button class="btn" type="submit">${esc(t('save'))}</button>
+        </form>
+      </div>
+      <div class="card row between"><strong>${esc(t('language_setting'))}</strong>${langToggle(true)}</div>
+      ${soonCard(t('my_app_t'), t('apply_here'), 2, '✈️')}
+      ${soonCard(t('my_check_t'), t('my_check_t'), 4, '🧳')}
+      ${soonCard(t('my_att_t'), t('gathering_every'), 4, '📅')}
+      <div class="card stack">
+        <button class="btn ghost block ${state.installPrompt ? '' : 'hidden'}" id="install-btn">📲 ${esc(t('install_app'))}</button>
+        ${isIOS ? `<p class="small muted" style="margin:0">📲 ${esc(t('install_ios'))}</p>` : ''}
+        <button class="btn danger block" id="logout-btn">${esc(t('logout'))}</button>
+      </div>`;
+  },
+
+  async admin() {
+    const tab = state.adminTab;
+    const seg = `<div class="tabs-seg" role="tablist">
+      ${['members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
+    </div>`;
+    let body = '';
+    if (tab === 'members') {
+      if (!state.adminMembers) {
+        const { data, error } = await sb.from('profiles').select('id,name,email,school,role,created_at').order('created_at', { ascending: false });
+        if (error) throw error;
+        state.adminMembers = data;
+      }
+      body = `<input type="text" id="member-search" placeholder="${esc(t('search_members'))}" value="${esc(state.adminSearch)}" style="margin-bottom:12px">
+        <div class="card" id="member-list">${memberListHTML()}</div>`;
+    } else if (tab === 'settings') {
+      await loadSettings();
+      const s = state.settings;
+      const sw = (key, title, desc) => `<div class="list-item">
+        <div class="meta" style="white-space:normal"><strong>${esc(title)}</strong><p class="muted small" style="margin:2px 0 0">${esc(desc)}</p></div>
+        <label class="switch"><input type="checkbox" data-setting="${key}" ${s[key] === true ? 'checked' : ''} aria-label="${esc(title)}"><span></span></label>
+      </div>`;
+      body = `<div class="card">
+        ${sw('require_graduation_to_apply', t('set_require_grad'), t('set_require_grad_d'))}
+        ${sw('sensitive_photo_block', t('set_photo_block'), t('set_photo_block_d'))}
+      </div>`;
+    } else {
+      const list = await loadCountries(true);
+      body = `<div class="card">
+        <div class="list-item small muted"><span>${esc(t('admin_countries'))}</span><span class="row" style="gap:18px"><span>${esc(t('col_sensitive'))}</span><span>${esc(t('col_active'))}</span></span></div>
+        ${list.map(c => `<div class="list-item">
+          <div class="meta row"><span class="flag" style="font-size:22px">${flag(c.code)}</span><strong>${esc(countryName(c))}</strong></div>
+          <div class="row" style="gap:12px">
+            <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_sensitive" ${c.is_sensitive ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_sensitive'))}"><span></span></label>
+            <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_active" ${c.is_active ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_active'))}"><span></span></label>
+          </div>
+        </div>`).join('')}
+      </div>`;
+    }
+    return `<h1>${esc(t('admin_title'))}</h1>${seg}${body}
+      <p class="muted small">${esc(t('admin_more'))}</p>`;
+  },
+};
+
+function viewCountryDetail(c) {
+  if (!c) return `<a href="#/countries" class="link-btn">← ${esc(t('back'))}</a><div class="card">${esc(t('not_found'))}</div>`;
+  const sections = [
+    ['sec_intro', 'intro'], ['sec_ministry', 'ministry'], ['sec_life', 'daily_life'],
+    ['sec_language', 'language'], ['sec_housing', 'housing'],
+  ].filter(([, f]) => loc(c, f));
+  const extras = (Array.isArray(c.extra_sections) ? c.extra_sections : []).filter(x => x && (locPair(x, 'title') || locPair(x, 'body')));
+  return `
+    <a href="#/countries" class="link-btn" style="padding-left:0">← ${esc(t('back'))}</a>
+    ${c.is_sensitive ? `<div class="banner" style="margin-top:8px">🔒 ${esc(t('sensitive_banner'))}</div>` : ''}
+    <div class="row" style="margin:8px 0 14px"><span class="flag" style="font-size:44px">${flag(c.code)}</span>
+      <div><h1 style="margin:0">${esc(countryName(c))}</h1>
+      ${c.is_sensitive ? `<span class="badge sensitive">🔒 ${esc(t('sensitive'))}</span>` : ''}</div></div>
+    ${sections.map(([k, f]) => `<div class="card"><div class="section-title">${esc(t(k))}</div><p style="margin:0">${para(loc(c, f))}</p></div>`).join('')}
+    ${extras.map(x => `<div class="card"><div class="section-title">${esc(locPair(x, 'title'))}</div><p style="margin:0">${para(locPair(x, 'body'))}</p></div>`).join('')}
+    <div class="grid2" style="margin-top:8px">
+      <button class="btn ghost" data-soon="2">💬 ${esc(t('enter_room'))}</button>
+      <button class="btn gold" data-soon="2">✈️ ${esc(t('apply_here'))}</button>
+    </div>`;
+}
+
+function memberListHTML() {
+  const q = state.adminSearch.trim().toLowerCase();
+  const list = (state.adminMembers || []).filter(m => !q || [m.name, m.email, m.school].some(v => (v || '').toLowerCase().includes(q)));
+  return `<div class="small muted" style="margin-bottom:4px">${esc(t('members_count', { n: list.length }))}</div>` +
+    list.map(m => `<div class="list-item">
+      <div class="meta"><div><strong>${esc(m.name || '—')}</strong></div>
+        <div class="small muted">${esc(m.email)}${m.school ? ' · ' + esc(m.school) : ''}</div></div>
+      <select data-role-for="${esc(m.id)}" style="width:auto;min-width:120px" ${m.id === state.profile.id ? 'disabled' : ''} aria-label="Role">
+        ${['member', 'graduate', 'admin'].map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}
+      </select>
+    </div>`).join('');
+}
+function bindMemberList() {
+  app.querySelectorAll('[data-role-for]').forEach(sel => sel.onchange = async () => {
+    const id = sel.dataset.roleFor, role = sel.value;
+    const prev = state.adminMembers.find(m => m.id === id);
+    sel.disabled = true;
+    const { error } = await sb.from('profiles').update({ role }).eq('id', id);
+    sel.disabled = false;
+    if (error) { toast(errMsg(error), true); sel.value = prev.role; return; }
+    prev.role = role;
+    toast(t('role_changed'));
+  });
+}
+
+const BINDERS = {
+  my() {
+    const form = document.getElementById('profile-form');
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      const f = Object.fromEntries(new FormData(form));
+      const patch = { name: f.name.trim() || null, school: f.school.trim() || null, phone: f.phone.trim() || null };
+      const { data, error } = await sb.from('profiles').update(patch).eq('id', state.profile.id).select().single();
+      if (error) return toast(errMsg(error), true);
+      state.profile = data;
+      toast(t('saved'));
+      render();
+    };
+    document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
+    const ib = document.getElementById('install-btn');
+    if (ib) ib.onclick = async () => {
+      if (!state.installPrompt) return;
+      state.installPrompt.prompt();
+      await state.installPrompt.userChoice;
+      state.installPrompt = null;
+      ib.classList.add('hidden');
+    };
+  },
+  admin() {
+    app.querySelectorAll('[data-admin-tab]').forEach(b => b.onclick = () => { state.adminTab = b.dataset.adminTab; render(); });
+    const search = document.getElementById('member-search');
+    if (search) {
+      search.oninput = () => {
+        state.adminSearch = search.value;
+        document.getElementById('member-list').innerHTML = memberListHTML();
+        bindMemberList();
+      };
+      bindMemberList();
+    }
+    app.querySelectorAll('[data-setting]').forEach(cb => cb.onchange = async () => {
+      const { error } = await sb.from('app_settings').upsert({ key: cb.dataset.setting, value: cb.checked });
+      if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
+      state.settings[cb.dataset.setting] = cb.checked;
+      toast(t('saved'));
+    });
+    app.querySelectorAll('[data-country]').forEach(cb => cb.onchange = async () => {
+      const { error } = await sb.from('countries').update({ [cb.dataset.field]: cb.checked }).eq('id', cb.dataset.country);
+      if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
+      state.countries = null;   // 다음에 다시 불러오기
+      toast(t('saved'));
+    });
+  },
+};
+
+// ---------------------------------------------------------------------
+// 7) 시작
+// ---------------------------------------------------------------------
+async function onSession(session) {
+  const prevUser = state.session?.user?.id;
+  state.session = session;
+  if (!session) {
+    state.profile = null; state.adminMembers = null; state.countries = null;
+    render();
+    return;
+  }
+  if (prevUser !== session.user.id || !state.profile) {
+    render();   // 로더 표시
+    await Promise.all([loadProfile(), loadSettings()]);
+  }
+  render();
+}
+
+async function init() {
+  document.documentElement.lang = state.lang;
+  if (!configured) { render(); return; }
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') { state.authMode = 'recovery'; state.session = session; render(); return; }
+    if (event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') { state.session = session; return; }
+    if (event === 'SIGNED_IN' && state.session?.user?.id === session?.user?.id && state.profile) return;
+    // INITIAL_SESSION / SIGNED_IN / SIGNED_OUT
+    // 콜백 안에서 Supabase 호출 시 데드락 방지 — 다음 틱에 처리
+    setTimeout(() => onSession(session), 0);
+  });
+}
+
+window.addEventListener('hashchange', () => { if (state.session && state.profile) render(); window.scrollTo(0, 0); });
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); state.installPrompt = e; document.getElementById('install-btn')?.classList.remove('hidden'); });
+window.addEventListener('offline', () => toast(t('offline'), true));
+
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+
+init();
+</script>
+</body>
+</html>
