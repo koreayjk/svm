@@ -25,7 +25,7 @@
 | 회원 등급 (member · graduate · admin) + 배지 | ✅ |
 | i18n (EN / 한국어 토글, 프로필에 저장) | ✅ |
 | 하단 탭: Home · Countries · Train · Community · My · Admin(관리자만) | ✅ |
-| 홈: 가장 가까운 모임(주일 게더링 / 금요 트레이닝 나이트), 내가 품은 나라, 핵심 컨셉 5가지 | ✅ |
+| 홈: 다음 주일 미션 게더링(매주 오후 2–4시), 내가 품은 나라, 핵심 컨셉 5가지 | ✅ |
 | 나라 목록·상세: 5개 섹션, 제공/준비 고정 블록, 파송 시즌, INTO THE WORLD, 민감 국가 배너 | ✅ (나라방·신청 버튼은 2단계) |
 | **내 나라에 이름 쓰기** — 품은 사람 수 + "이름 성이니셜" 목록 (민감 국가는 숫자만) | ✅ |
 | 관리자: 회원 등급 변경, `require_graduation_to_apply` / 민감국가 사진 차단 설정, 국가 민감도·노출 on/off | ✅ |
@@ -60,7 +60,7 @@ icons/                 앱 아이콘 (로고 기반)
 landing.html           예전 주소 → 홈페이지로 이동
 sql/01_스키마.sql       테이블 · 트리거
 sql/02_RLS.sql          헬퍼 함수 · RLS 정책 · Realtime · Storage 버킷
-sql/03_국가_시드.sql     7개국 · 기본 설정(제공/준비 항목·파송 시즌) · 공통 준비물 · 주일·금요 모임
+sql/03_국가_시드.sql     7개국 · 기본 설정(제공/준비 항목·파송 시즌) · 공통 준비물 · 주일 미션 게더링
 sql/04_관리자_지정.sql   관리자 지정
 ```
 
@@ -146,7 +146,7 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 
 ## 확인이 필요한 값
 - 11/20 컨퍼런스 장소: 지금은 "오후 6시 입장 · venue announced soon" 입니다 (`events` 행, `conference/index.html`, 홈페이지 문구 수정).
-- 금요 트레이닝 나이트 시간: 명세에 "금요일 밤"만 있어 **오후 7–9시**로 넣었습니다 (`03_국가_시드.sql`, `app/index.html` 의 `DEFAULTS.gatherings.friday`).
+- 정기 모임은 매주 주일 오후 2–4시 미션 게더링 하나입니다 (금요 모임 없음). 시간은 `app/index.html` 의 `DEFAULTS.gatherings.sunday`.
 - 국가별 소개·생활 문구는 초안입니다. 실제 내용으로 교체하세요.
 
 ## 다음 단계 (2단계, ~10/29)

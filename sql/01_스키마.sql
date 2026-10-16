@@ -237,7 +237,7 @@ create table if not exists public.team_posts (
 -- ---------------------------------------------------------------------
 -- ⑤ 오프라인 연결 — 주간 모임
 --   sunday: 주일 미션 게더링 (오후 2–4시, 교회)
---   friday: 금요 트레이닝 나이트 (DNA2 제자훈련, PST 전도훈련, 캠퍼스 아웃리치)
+--   friday: 현재 쓰지 않음 (금요 모임 없음, 나중을 위해 값만 허용)
 -- ---------------------------------------------------------------------
 create table if not exists public.gatherings (
   id             bigint generated always as identity primary key,
