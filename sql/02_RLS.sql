@@ -253,7 +253,15 @@ alter table public.events                     enable row level security;
 do $$
 declare r record;
 begin
-  for r in select policyname, tablename from pg_policies where schemaname = 'public' loop
+  -- SVM 테이블의 정책만 다시 만듭니다 (같은 Supabase 프로젝트를 쓰는 다른 사이트의 정책은 건드리지 않음)
+  for r in select policyname, tablename from pg_policies
+           where schemaname = 'public' and tablename = any (array[
+             'profiles','countries','country_photos','nation_pledges','room_members','messages','applications',
+             'application_status_history','application_extensions','gospel_messages','gospel_sentences',
+             'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
+             'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
+             'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events'])
+  loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
 end $$;
