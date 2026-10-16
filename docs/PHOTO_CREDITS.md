@@ -30,3 +30,5 @@ SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`asse
 ## 세계지도
 `assets/world-dots.svg` — [Natural Earth](https://www.naturalearthdata.com/) 1:110m 육지 데이터(퍼블릭 도메인)를
 [world-atlas](https://github.com/topojson/world-atlas)(ISC) 형식으로 받아 점 지도로 변환했습니다.
+
+- `assets/images/` (컨퍼런스 사진: hero, register-bg, tents-*, tile-*, band-pano) — 이전 mc2026 컨퍼런스 사이트에서 쓰던 이미지를 그대로 옮겼습니다. 실제 행사 사진이 생기면 교체하세요.
