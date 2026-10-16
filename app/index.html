@@ -639,7 +639,6 @@ const DEFAULTS = {
   mission_seasons: { en: 'December · January · May–August (and anytime else)', ko: '12월 · 1월 · 5–8월 (그 외에도 언제든)' },
   gatherings: {
     sunday: { dow: 0, start: '14:00', end: '16:00' },
-    friday: { dow: 5, start: '19:00', end: '21:00' },
   },
 };
 
@@ -668,13 +667,13 @@ const i18n = {
     // home
     hello: 'Hi, {name}', hello_anon: 'Welcome',
     next_meeting: 'Next meeting', then: 'Then',
-    g_sunday: 'Sunday Mission Gathering', g_friday: 'Friday Training Night',
-    g_sunday_d: 'Worship · mission message · team building · teaching practice', g_friday_d: 'DNA2 discipleship · PST evangelism · campus outreach',
+    g_sunday: 'Sunday Mission Gathering',
+    g_sunday_d: 'Worship · mission message · team building · teaching practice',
     today: 'Today', concepts_title: 'How SVM works',
     c1_t: 'Pay only for your flight', c1_d: 'Housing, meals, ministry costs and local staff support are provided by the field through local giving. No organization fees.',
     c2_t: 'Stay as long as you want', c2_d: 'Go for a month — want to stay longer? Just extend your flight. No extra cost for room and board. 1, 2, 3, 6 months, up to a year.',
     c3_t: 'Go every break', c3_d: 'Main sending seasons: December · January · May–August. Anytime else works too.',
-    c4_t: 'Trained, then sent', c4_d: 'Sunday Mission Gathering 2–4 PM + Friday Training Night (DNA2 discipleship, PST evangelism).',
+    c4_t: 'Trained, then sent', c4_d: 'Sunday Mission Gathering every week, 2–4 PM: worship, mission message, team building and teaching practice.',
     c5_t: 'A lifelong path', c5_d: 'Short-term (Into the World) → mid-term (1–2 years) → long-term (lifelong missions & church planting).',
     my_nations: 'Nations I carry', my_nations_empty: 'You haven’t signed a nation yet.', sign_a_nation: 'Sign your nation',
     featured_testimony: 'Featured testimony', my_application: 'My application', todays_training: "Today's language training",
@@ -708,7 +707,7 @@ const i18n = {
     my_title: 'My page', profile: 'Profile', save: 'Save', saved: 'Saved.',
     language_setting: 'Language', my_app_t: 'My application & extension', my_app_d: 'Track: Into the World · mid-term · long-term. Extensions: airfare change only, no extra room & board.',
     my_check_t: 'Packing checklist', my_check_d: 'Passport, visa, vaccinations, packing.',
-    my_att_t: 'Attendance record', my_att_d: 'Sunday gatherings and Friday training nights.',
+    my_att_t: 'Attendance record', my_att_d: 'Your Sunday Mission Gathering attendance.',
     install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then “Add to Home Screen”.',
     graduate_badge: 'Graduate badge',
     // admin
@@ -751,13 +750,13 @@ const i18n = {
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
     next_meeting: '다음 모임', then: '이어서',
-    g_sunday: '주일 미션 게더링', g_friday: '금요 트레이닝 나이트',
-    g_sunday_d: '예배 · 선교 말씀 · 팀 빌딩 · 티칭 연습', g_friday_d: 'DNA2 제자훈련 · PST 전도훈련 · 캠퍼스 아웃리치',
+    g_sunday: '주일 미션 게더링',
+    g_sunday_d: '예배 · 선교 말씀 · 팀 빌딩 · 티칭 연습',
     today: '오늘', concepts_title: 'SVM은 이렇게 갑니다',
     c1_t: '비행기 값만 낸다', c1_d: '숙소·식사·사역비·현지 스태프 지원은 선교지가 현지 후원으로 제공합니다. 단체 수수료 없음.',
     c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가 없음 — 1·2·3·6개월, 1년까지.',
     c3_t: '방학마다 간다', c3_d: '정규 파송 시즌: 12월 · 1월 · 5–8월. 그 외에도 언제든 가능합니다.',
-    c4_t: '훈련 후 파송', c4_d: '매주 주일 오후 2–4시 미션 게더링 + 금요일 밤 트레이닝 나이트(DNA2 제자훈련, PST 전도훈련).',
+    c4_t: '훈련 후 파송', c4_d: '매주 주일 오후 2–4시 미션 게더링: 예배, 선교 말씀, 팀 빌딩, 티칭 연습.',
     c5_t: '평생의 길', c5_d: '단기(Into the World) → 중기(1–2년) → 장기(평생 선교·교회 개척).',
     my_nations: '내가 품은 나라', my_nations_empty: '아직 이름을 쓴 나라가 없습니다.', sign_a_nation: '내 나라에 이름 쓰기',
     featured_testimony: '추천 간증', my_application: '내 신청 상태', todays_training: '오늘의 언어 훈련',
@@ -787,7 +786,7 @@ const i18n = {
     my_title: '마이페이지', profile: '프로필', save: '저장', saved: '저장되었습니다.',
     language_setting: '언어', my_app_t: '내 신청 · 연장', my_app_d: '트랙: 단기 Into the World · 중기 · 장기. 연장은 숙식비 추가 없이 항공권만 변경.',
     my_check_t: '준비물 체크리스트', my_check_d: '여권, 비자, 예방접종, 짐 꾸리기.',
-    my_att_t: '출석 기록', my_att_d: '주일 게더링과 금요 트레이닝 나이트.',
+    my_att_t: '출석 기록', my_att_d: '주일 미션 게더링 출석 기록.',
     install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 “홈 화면에 추가”를 선택하세요.',
     graduate_badge: '수료 배지',
     admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
@@ -1511,10 +1510,11 @@ async function upcomingMeetings() {
   const { data } = await sb.from('gatherings').select('*').gte('date', now.date)
     .order('date').order('start_time').limit(6);
   const fromDb = (data || []).filter(g => g.date > now.date || g.end_time.slice(0, 5) > now.time);
-  // 종류별로 가장 가까운 모임 (DB 에 없으면 정기 일정으로 계산)
-  const pick = type => fromDb.find(g => (g.type || 'sunday') === type) || nextRegular(type, now);
-  const list = [pick('sunday'), pick('friday')].map(g => ({ ...g, type: g.type || 'sunday' }));
-  list.sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+  // 정기 모임은 주일 미션 게더링 하나 — 이번 주와 다음 주 (DB 에 없으면 정기 일정으로 계산)
+  const sundays = fromDb.filter(g => (g.type || 'sunday') === 'sunday');
+  const first = sundays[0] || nextRegular('sunday', now);
+  const second = sundays.find(g => g.date > first.date) || { ...first, id: undefined, date: addDays(first.date, 7) };
+  const list = [first, second].map(g => ({ ...g, type: 'sunday' }));
   return { list, today: now.date };
 }
 function daysBetween(a, b) { return Math.round((Date.parse(b + 'T00:00:00Z') - Date.parse(a + 'T00:00:00Z')) / 86400000); }
@@ -1605,7 +1605,7 @@ const VIEWS = {
       <p class="muted small" style="margin:12px 0 0">${esc(t('g_' + next.type + '_d'))}</p>
       <div class="sep"></div>
       <div class="then">
-        <span class="ico-tile">${icon(after.type === 'friday' ? 'book' : 'people')}</span>
+        <span class="ico-tile">${icon('people')}</span>
         <div style="min-width:0"><div class="small muted">${esc(t('then'))} · ${esc(shortDate(after.date))} · <span class="num">${esc(timeRange(after))}</span></div>
           <div style="font-weight:700">${esc(after.title || t('g_' + after.type))}</div></div>
       </div>

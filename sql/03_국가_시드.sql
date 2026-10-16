@@ -1,6 +1,6 @@
 -- =====================================================================
 -- SVM App — 03_국가_시드.sql (명세 v2)
--- 초기 7개국 + 기본 앱 설정(제공/준비 항목, 파송 시즌) + 공통 준비물 + 주일·금요 모임 예시
+-- 초기 7개국 + 기본 앱 설정(제공/준비 항목, 파송 시즌) + 공통 준비물 + 주일 미션 게더링
 -- 내용은 초안입니다. 관리자 화면 또는 이 파일을 수정해 실제 내용으로 바꾸세요.
 -- 다시 실행하면 국가 기본 정보가 아래 값으로 덮어써집니다 (사진·채팅·이름 쓰기 등은 유지).
 -- =====================================================================
@@ -147,17 +147,14 @@ from (values
 ) as v(label_en, label_ko, sort_order)
 where not exists (select 1 from public.checklist_items where country_id is null);
 
--- 정기 모임 예시 — 다음 주일 미션 게더링 / 다음 금요 트레이닝 나이트 (없을 때만)
---   금요일 시간(오후 7–9시)은 예시입니다. 실제 시간으로 바꾸세요.
+-- 정기 모임 — 매주 주일 오후 2–4시 미션 게더링 하나뿐입니다 (다음 주일 행이 없을 때만 추가)
 insert into public.gatherings (type, date, start_time, end_time, location, title)
 select 'sunday', (current_date + ((7 - extract(dow from current_date)::int) % 7))::date,
        '14:00', '16:00', 'Church — Bryan/College Station, TX', 'Sunday Mission Gathering'
 where not exists (select 1 from public.gatherings where type = 'sunday' and date >= current_date);
 
-insert into public.gatherings (type, date, start_time, end_time, location, title)
-select 'friday', (current_date + ((12 - extract(dow from current_date)::int) % 7))::date,
-       '19:00', '21:00', 'Church — Bryan/College Station, TX', 'Friday Training Night — DNA2 · PST'
-where not exists (select 1 from public.gatherings where type = 'friday' and date >= current_date);
+-- 금요 모임은 없습니다 — 예전 시드로 들어간 금요 트레이닝 나이트 행을 지웁니다
+delete from public.gatherings where type = 'friday' and title = 'Friday Training Night — DNA2 · PST';
 
 -- 특별 이벤트: SVM 미션 컨퍼런스 2026 (발족식) — 11/20(금) 오후 6시 입장. 장소가 정해지면 location 을 수정하세요
 insert into public.events
