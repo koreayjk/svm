@@ -1,19 +1,20 @@
 # 임시 국가 사진 출처
 
 SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`assets/countries/*.jpg`, 1000×750 으로 줄여 저장).
-모두 [Pexels 라이선스](https://www.pexels.com/license/) — 상업·비상업 무료 사용, 출처 표기 의무 없음 (앱 나라 상세 화면에 사진가 이름을 함께 표시합니다).
+모두 [Pexels 라이선스](https://www.pexels.com/license/) — 무료 사용, 출처 표기 의무 없음 (앱 나라 상세 화면에 사진가 이름을 함께 표시합니다).
 
-선교지 보호 원칙에 따라 **사람 얼굴이 드러나지 않는 풍경·도시 사진**만 골랐습니다.
+**선교 활동 장면**이되, 선교지 보호 원칙에 따라 **얼굴이 식별되지 않는 사진**(손·뒷모습·실루엣)만 골랐습니다.
+스톡 사진이라 실제 해당 나라에서 찍은 사진은 아닙니다 — 각 나라 사역 내용(시드 문구)에 맞춘 대표 장면입니다.
 
-| 나라 | 파일 | 장면 | 사진가 | 원본 |
+| 나라 | 파일 | 장면 (사역) | 사진가 | 원본 |
 |---|---|---|---|---|
-| 한국 | `kr.jpg` | 광화문 (경복궁) | 대정 김 | https://www.pexels.com/photo/the-gwanghwamun-gate-of-the-gyeongbokgung-palace-6427160/ |
-| 필리핀 | `ph.jpg` | 바나우에 계단식 논 | Palu Malerba | https://www.pexels.com/photo/aerial-photography-of-rice-terraces-2516406/ |
-| 말레이시아 | `my.jpg` | 쿠알라룸푸르 스카이라인 | Yulia | https://www.pexels.com/photo/high-rise-buildings-of-kuala-lumpur-3815533/ |
-| 태국 | `th.jpg` | 치앙마이 계단식 논 | Pitipat Usanakornkul | https://www.pexels.com/photo/landscape-photo-of-beautiful-terrace-rice-field-in-chiang-mai-thailand-16592316/ |
-| 멕시코 | `mx.jpg` | 과나후아토 거리 | Willy Méndez | https://www.pexels.com/photo/vibrant-street-scene-in-guanajuato-mexico-29159332/ |
-| 일본 | `jp.jpg` | 후지산과 츄레이토 탑 | Regev Ace Subay | https://www.pexels.com/photo/pagoda-and-mount-fuji-in-spring-4336279/ |
-| 이집트 | `eg.jpg` | 카이로 나일강변 | Yasser Amin | https://www.pexels.com/photo/cairo-skyscrapers-on-the-nile-23314700/ |
+| 한국 | `kr.jpg` | 영어 수업, 손 든 학생들 뒷모습 | Max Fischer | https://www.pexels.com/photo/teacher-teaching-his-students-5212337/ |
+| 필리핀 | `ph.jpg` | 어린이 사역, 손 모은 아이들 (위에서) | Kampus Production | https://www.pexels.com/photo/children-having-an-activity-together-8813497/ |
+| 말레이시아 | `my.jpg` | 성경 공부 테이블 | Chris Liu | https://www.pexels.com/photo/top-view-of-the-bible-lying-on-a-table-22711047/ |
+| 태국 | `th.jpg` | 예배, 손 든 뒷모습 | Daniel Queiroz | https://www.pexels.com/photo/people-doing-worship-9831736/ |
+| 멕시코 | `mx.jpg` | 섬김·구제, 음식 상자 전달 | RDNE Stock project | https://www.pexels.com/photo/people-handing-over-a-brown-box-6646903/ |
+| 일본 | `jp.jpg` | 예배 실루엣 | Luis Quintero | https://www.pexels.com/photo/silhouette-of-a-man-worshiping-13899663/ |
+| 이집트 (민감) | `eg.jpg` | 성경 위 기도하는 손 — 사람 얼굴 없음 | Luis Quintero | https://www.pexels.com/photo/person-placing-hands-on-bible-2258251/ |
 
 ## 우리 사진으로 바꾸는 방법
 1. Supabase **Storage → country-photos** 버킷에 사진 업로드 → 공개 URL 복사
@@ -23,3 +24,5 @@ SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`asse
    select id, 'https://…/country-photos/korea-1.jpg', 0 from countries where code = 'KR';
    ```
 3. 앱을 새로고침하면 해당 나라만 우리 사진으로 바뀝니다 (나머지는 기본 사진 유지).
+
+> 우리 사진도 현지인 얼굴·실명·교회 위치가 드러나지 않게 골라 주세요. 특히 이집트 등 민감 국가.

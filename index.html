@@ -1204,15 +1204,15 @@ async function loadPhotos() {
   return state.photos;
 }
 // 임시 기본 사진 (Pexels 무료 라이선스) — 관리자가 country_photos 에 올린 사진이 있으면 그쪽이 우선
-//   사람 얼굴이 드러나지 않는 풍경·도시 사진만 사용 (선교지 보호 원칙)
+//   선교 활동 장면이되 얼굴이 식별되지 않는 사진만 사용 (손·뒷모습·실루엣 — 선교지 보호 원칙)
 const DEFAULT_PHOTOS = {
-  KR: { src: 'assets/countries/kr.jpg', by: '대정 김' },
-  PH: { src: 'assets/countries/ph.jpg', by: 'Palu Malerba' },
-  MY: { src: 'assets/countries/my.jpg', by: 'Yulia' },
-  TH: { src: 'assets/countries/th.jpg', by: 'Pitipat Usanakornkul' },
-  MX: { src: 'assets/countries/mx.jpg', by: 'Willy Méndez' },
-  JP: { src: 'assets/countries/jp.jpg', by: 'Regev Ace Subay' },
-  EG: { src: 'assets/countries/eg.jpg', by: 'Yasser Amin' },
+  KR: { src: 'assets/countries/kr.jpg', by: 'Max Fischer' },          // 영어 수업
+  PH: { src: 'assets/countries/ph.jpg', by: 'Kampus Production' },    // 어린이 사역
+  MY: { src: 'assets/countries/my.jpg', by: 'Chris Liu' },            // 성경 공부
+  TH: { src: 'assets/countries/th.jpg', by: 'Daniel Queiroz' },       // 예배
+  MX: { src: 'assets/countries/mx.jpg', by: 'RDNE Stock project' },   // 섬김·구제
+  JP: { src: 'assets/countries/jp.jpg', by: 'Luis Quintero' },        // 예배
+  EG: { src: 'assets/countries/eg.jpg', by: 'Luis Quintero' },        // 기도 (사람 얼굴 없음)
 };
 function photoFor(c) { return state.photos?.[c.id] || DEFAULT_PHOTOS[c.code]?.src || null; }
 function destInner(c, { hero = false } = {}) {
