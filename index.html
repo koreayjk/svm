@@ -478,6 +478,8 @@
   .dest::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13, 27, 58, 0) 38%, rgba(13, 27, 58, .74) 100%); }
   .dest .flag-big { position: absolute; z-index: -1; right: -10px; top: 14px; font-size: 118px; line-height: 1; transform: rotate(-9deg); filter: drop-shadow(0 14px 18px rgba(13, 27, 58, .2)); }
   .dest.has-photo .flag-big { display: none; }
+  .dest .credit { position: absolute; right: 14px; bottom: 10px; font-size: 10.5px; color: rgba(255, 255, 255, .62); }
+  .dest.has-photo::after { background: linear-gradient(180deg, rgba(13, 27, 58, .18) 0%, rgba(13, 27, 58, 0) 30%, rgba(13, 27, 58, 0) 42%, rgba(13, 27, 58, .78) 100%); }
   .dest .d-top { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 6px; flex-wrap: wrap; }
   .pill-w { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: rgba(255, 255, 255, .92); color: var(--navy); }
   .pill-w svg { width: 13px; height: 13px; }
@@ -1201,8 +1203,21 @@ async function loadPhotos() {
   (data || []).forEach(r => { if (!state.photos[r.country_id]) state.photos[r.country_id] = r.url; });
   return state.photos;
 }
+// 임시 기본 사진 (Pexels 무료 라이선스) — 관리자가 country_photos 에 올린 사진이 있으면 그쪽이 우선
+//   사람 얼굴이 드러나지 않는 풍경·도시 사진만 사용 (선교지 보호 원칙)
+const DEFAULT_PHOTOS = {
+  KR: { src: 'assets/countries/kr.jpg', by: '대정 김' },
+  PH: { src: 'assets/countries/ph.jpg', by: 'Palu Malerba' },
+  MY: { src: 'assets/countries/my.jpg', by: 'Yulia' },
+  TH: { src: 'assets/countries/th.jpg', by: 'Pitipat Usanakornkul' },
+  MX: { src: 'assets/countries/mx.jpg', by: 'Willy Méndez' },
+  JP: { src: 'assets/countries/jp.jpg', by: 'Regev Ace Subay' },
+  EG: { src: 'assets/countries/eg.jpg', by: 'Yasser Amin' },
+};
+function photoFor(c) { return state.photos?.[c.id] || DEFAULT_PHOTOS[c.code]?.src || null; }
 function destInner(c, { hero = false } = {}) {
-  const photo = state.photos?.[c.id];
+  const photo = photoFor(c);
+  const credit = !state.photos?.[c.id] && DEFAULT_PHOTOS[c.code] ? DEFAULT_PHOTOS[c.code].by : null;
   const n = state.pledgeCounts[c.id] || 0;
   const tags = [
     c.is_sensitive ? `<span class="pill-w warn">${icon('lock')}${esc(t('sensitive'))}</span>` : (hero ? `<span class="pill-w">${esc(t('itw_title'))}</span>` : ''),
@@ -1214,10 +1229,11 @@ function destInner(c, { hero = false } = {}) {
     <div class="d-bot">
       ${hero ? `<h1>${esc(countryName(c))}</h1>` : `<div class="d-name">${esc(countryName(c))}</div>`}
       <div class="d-meta">${icon('flame')}${n ? `<span class="num">${n}</span><span>${esc(t('carry_short'))}</span>` : `<span>${esc(t('carry_zero'))}</span>`}</div>
-    </div>`;
+    </div>
+    ${hero && credit ? `<span class="credit">Photo · ${esc(credit)} / Pexels</span>` : ''}`;
 }
 function destCard(c) {
-  return `<a class="dest ${state.photos?.[c.id] ? 'has-photo' : ''}" href="#/countries/${esc(c.code)}" style="${destStyle(c)}" aria-label="${esc(countryName(c))}">${destInner(c)}</a>`;
+  return `<a class="dest ${photoFor(c) ? 'has-photo' : ''}" href="#/countries/${esc(c.code)}" style="${destStyle(c)}" aria-label="${esc(countryName(c))}">${destInner(c)}</a>`;
 }
 
 const VIEWS = {
@@ -1432,7 +1448,7 @@ async function viewCountryDetail(c) {
   const tick = (cls) => `<i class="${cls}">${icon(cls === 'p' ? 'plus' : 'check')}</i>`;
 
   return `
-    <div class="dest hero ${state.photos?.[c.id] ? 'has-photo' : ''}" style="${destStyle(c)}">
+    <div class="dest hero ${photoFor(c) ? 'has-photo' : ''}" style="${destStyle(c)}">
       <a href="#/countries" class="back-fab" aria-label="${esc(t('back'))}">${icon('chevl')}</a>
       ${destInner(c, { hero: true })}
     </div>
