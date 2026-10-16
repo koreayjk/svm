@@ -24,7 +24,9 @@ create table if not exists public.profiles (
 -- ---------------------------------------------------------------------
 -- ① 나라별 현지 정보
 --   *_ko 컬럼: 한국어 버전 (비어 있으면 영어 컬럼을 표시)
+--   extra_provided: "선교지에서 제공" 블록에 국가별로 덧붙일 문구 (공통 항목은 app_settings.provided_items)
 --   extra_sections: 관리자가 추가하는 항목 [{ "title_en":..,"title_ko":..,"body_en":..,"body_ko":.. }]
+--   booth_meta: 2단계 메타버스 부스용 예비 컬럼 (지금은 비워 둠)
 -- ---------------------------------------------------------------------
 create table if not exists public.countries (
   id            bigint generated always as identity primary key,
@@ -37,7 +39,9 @@ create table if not exists public.countries (
   daily_life    text, daily_life_ko  text,
   language      text, language_ko    text,
   housing       text, housing_ko     text,
+  extra_provided text, extra_provided_ko text,
   extra_sections jsonb not null default '[]'::jsonb,
+  booth_meta    jsonb not null default '{}'::jsonb,
   sort_order    int not null default 0,
   is_active     boolean not null default true,
   created_at    timestamptz not null default now()
@@ -50,6 +54,15 @@ create table if not exists public.country_photos (
   caption     text,
   sort_order  int not null default 0
 );
+
+-- 내 나라에 이름 쓰기 (Sign Your Nation) — 신청과 별개의 가벼운 헌신 표시
+create table if not exists public.nation_pledges (
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (user_id, country_id)
+);
+create index if not exists nation_pledges_country_idx on public.nation_pledges(country_id);
 
 -- ---------------------------------------------------------------------
 -- ② 소통 — 나라별 방
@@ -79,6 +92,7 @@ create table if not exists public.applications (
   id               bigint generated always as identity primary key,
   user_id          uuid not null references public.profiles(id) on delete cascade,
   country_id       bigint not null references public.countries(id),
+  track            text not null default 'short' check (track in ('short','mid','long')),  -- 단기 Into the World / 중기 1–2년 / 장기
   start_date       date,
   duration_text    text,
   expected_return  date,
@@ -221,17 +235,21 @@ create table if not exists public.team_posts (
 );
 
 -- ---------------------------------------------------------------------
--- ⑤ 오프라인 연결 — 주간 미션 게더링
+-- ⑤ 오프라인 연결 — 주간 모임
+--   sunday: 주일 미션 게더링 (오후 2–4시, 교회)
+--   friday: 금요 트레이닝 나이트 (DNA2 제자훈련, PST 전도훈련, 캠퍼스 아웃리치)
 -- ---------------------------------------------------------------------
 create table if not exists public.gatherings (
   id             bigint generated always as identity primary key,
-  date           date not null unique,
+  type           text not null default 'sunday' check (type in ('sunday','friday')),
+  date           date not null,
   start_time     time not null default '14:00',
   end_time       time not null default '16:00',
   location       text,
   title          text,
   sermon_notes   text,
-  sharing_notes  text
+  sharing_notes  text,
+  unique (date, type)
 );
 
 create table if not exists public.attendance (
@@ -312,12 +330,36 @@ create table if not exists public.support_stories (
 );
 
 -- ---------------------------------------------------------------------
--- 앱 설정 (require_graduation_to_apply, sensitive_photo_block 등)
+-- 앱 설정 (require_graduation_to_apply, sensitive_photo_block,
+--          provided_items, prepare_items, mission_seasons 등)
 -- ---------------------------------------------------------------------
 create table if not exists public.app_settings (
   key    text primary key,
   value  jsonb not null
 );
+
+-- =====================================================================
+-- v1 → v2 업그레이드 (v1 SQL 을 이미 실행한 DB 용 — 새 DB 에서는 아무 일도 하지 않음)
+-- =====================================================================
+alter table public.countries    add column if not exists extra_provided    text;
+alter table public.countries    add column if not exists extra_provided_ko text;
+alter table public.countries    add column if not exists booth_meta        jsonb not null default '{}'::jsonb;
+alter table public.applications add column if not exists track             text not null default 'short';
+alter table public.gatherings   add column if not exists type              text not null default 'sunday';
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'applications_track_check') then
+    alter table public.applications add constraint applications_track_check check (track in ('short','mid','long'));
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'gatherings_type_check') then
+    alter table public.gatherings add constraint gatherings_type_check check (type in ('sunday','friday'));
+  end if;
+  if exists (select 1 from pg_constraint where conname = 'gatherings_date_key') then
+    alter table public.gatherings drop constraint gatherings_date_key;
+  end if;
+  if not exists (select 1 from pg_constraint where conname = 'gatherings_date_type_key') then
+    alter table public.gatherings add constraint gatherings_date_type_key unique (date, type);
+  end if;
+end $$;
 
 -- =====================================================================
 -- 공통 트리거

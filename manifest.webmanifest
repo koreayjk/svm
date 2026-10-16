@@ -1,13 +1,13 @@
 {
   "name": "SVM — Student Volunteer Movement",
   "short_name": "SVM",
-  "description": "Mission platform for the Student Volunteer Movement in Bryan/College Station.",
+  "description": "Called. Equipped. Sent. — Student Volunteer Movement, Bryan/College Station.",
   "start_url": "./index.html#/home",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f5f6fa",
-  "theme_color": "#1d2b53",
+  "background_color": "#F4F5F8",
+  "theme_color": "#0D1B3A",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },

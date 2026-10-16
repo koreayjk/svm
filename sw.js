@@ -1,10 +1,12 @@
 // SVM service worker — 앱 셸 캐시 (Supabase 등 외부 요청은 항상 네트워크)
 // index.html 을 수정해 배포할 때 VERSION 을 올리면 이전 캐시가 정리됩니다.
-const VERSION = 'svm-v1';
+const VERSION = 'svm-v2';
 const SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './assets/SVM_Logo.svg',
+  './assets/SVM_Logo_white.svg',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',

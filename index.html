@@ -3,198 +3,209 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SVM — Student Volunteer Movement</title>
-<meta name="description" content="SVM — Student Volunteer Movement, Bryan/College Station">
-<meta name="theme-color" content="#1d2b53">
+<title>SVM — Called. Equipped. Sent.</title>
+<meta name="description" content="SVM — Student Volunteer Movement, Bryan/College Station. Called. Equipped. Sent.">
+<meta name="theme-color" content="#0D1B3A">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SVM">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
+  /* ---------- Brand tokens (명세 v2 §2) ---------- */
   :root {
-    --navy: #1d2b53;
-    --navy-2: #2c3e74;
-    --gold: #e0a526;
-    --gold-soft: #fdf3dc;
-    --bg: #f5f6fa;
-    --card: #ffffff;
-    --text: #1b1f2a;
-    --muted: #6b7280;
-    --line: #e5e7eb;
-    --danger: #c0392b;
-    --danger-soft: #fdecea;
-    --ok: #1e8e5a;
-    --ok-soft: #e6f6ee;
-    --radius: 14px;
-    --tabbar-h: 64px;
+    --navy: #0D1B3A;
+    --navy-2: #1B2C55;
+    --orange: #F26722;
+    --orange-dark: #C4501A;
+    --orange-soft: #FEEFE6;
+    --bg: #F4F5F8;
+    --card: #FFFFFF;
+    --text: #0D1B3A;
+    --muted: #4A5568;
+    --muted-2: #5B6475;
+    --line: #DDE2EA;
+    --danger: #B42318;
+    --danger-soft: #FEF0EE;
+    --ok: #157F4F;
+    --radius: 18px;
+    --tabbar-h: 66px;
     --safe-b: env(safe-area-inset-bottom, 0px);
+    --font: "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", sans-serif;
+    --font-label: "Barlow Condensed", "Noto Sans KR", sans-serif;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
-    background: var(--bg); color: var(--text); line-height: 1.5;
+    font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.55;
     -webkit-font-smoothing: antialiased; -webkit-tap-highlight-color: transparent;
   }
   button, input, select, textarea { font: inherit; color: inherit; }
-  a { color: var(--navy-2); }
+  a { color: var(--orange-dark); }
   .hidden { display: none !important; }
+
+  /* ---------- Type ---------- */
+  h1 { font-size: 26px; font-weight: 900; line-height: 1.25; margin: 4px 0 12px; letter-spacing: -.3px; }
+  h2 { font-size: 19px; font-weight: 900; margin: 22px 0 10px; letter-spacing: -.2px; }
+  h3 { font-size: 16px; font-weight: 700; margin: 0 0 4px; }
+  p { margin: 0 0 10px; }
+  .muted { color: var(--muted); }
+  .small { font-size: 13.5px; }
+  .eyebrow {
+    font-family: var(--font-label); font-weight: 700; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 1.2px; color: var(--orange-dark);
+  }
+  .num { font-family: var(--font-label); font-weight: 700; }
+  .tagline { font-family: var(--font-label); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
   /* ---------- Top bar ---------- */
   .topbar {
-    position: sticky; top: 0; z-index: 20;
-    background: var(--navy); color: #fff;
+    position: sticky; top: 0; z-index: 20; background: var(--navy); color: #fff;
     padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px;
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .5px; }
-  .brand-img { width: 34px; height: 34px; border-radius: 9px; display: block; }
-  .brand small { display: block; font-weight: 500; font-size: 11px; opacity: .75; letter-spacing: 0; }
-  .lang-toggle {
-    display: inline-flex; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; overflow: hidden;
-  }
+  .topbar-inner { max-width: 640px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .topbar .logo { height: 30px; width: auto; display: block; }
+  .lang-toggle { display: inline-flex; border: 1px solid rgba(255,255,255,.3); border-radius: 999px; overflow: hidden; }
   .lang-toggle button {
-    background: transparent; border: 0; color: #fff; padding: 4px 10px; font-size: 13px; cursor: pointer;
+    background: transparent; border: 0; color: #fff; padding: 5px 11px; font-size: 13px; cursor: pointer; font-weight: 500;
   }
   .lang-toggle button.active { background: #fff; color: var(--navy); font-weight: 700; }
-  .lang-toggle.dark { border-color: var(--line); }
+  .lang-toggle.dark { border-color: var(--line); background: #fff; }
   .lang-toggle.dark button { color: var(--muted); }
   .lang-toggle.dark button.active { background: var(--navy); color: #fff; }
 
   /* ---------- Layout ---------- */
-  main {
-    max-width: 640px; margin: 0 auto;
-    padding: 16px 16px calc(var(--tabbar-h) + var(--safe-b) + 24px);
-  }
-  h1 { font-size: 24px; margin: 4px 0 12px; }
-  h2 { font-size: 18px; margin: 20px 0 10px; }
-  h3 { font-size: 16px; margin: 0 0 6px; }
-  p { margin: 0 0 10px; }
-  .muted { color: var(--muted); }
-  .small { font-size: 13px; }
+  main { max-width: 640px; margin: 0 auto; padding: 18px 16px calc(var(--tabbar-h) + var(--safe-b) + 28px); }
   .card {
-    background: var(--card); border-radius: var(--radius); padding: 16px;
-    box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.04);
-    margin-bottom: 12px;
+    background: var(--card); border-radius: var(--radius); padding: 18px; margin-bottom: 12px;
+    border: 1px solid var(--line);
   }
-  .card.hero { background: linear-gradient(135deg, var(--navy), var(--navy-2)); color: #fff; }
-  .card.hero .muted { color: rgba(255,255,255,.75); }
-  .card.soon { opacity: .9; border: 1px dashed var(--line); box-shadow: none; }
+  .card.dark { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .card.dark .muted { color: rgba(255,255,255,.72); }
+  .card.dark .eyebrow { color: var(--orange); }
+  .card.soon { background: transparent; border-style: dashed; }
   .row { display: flex; align-items: center; gap: 10px; }
   .row.between { justify-content: space-between; }
-  .stack > * + * { margin-top: 10px; }
+  .row.wrap { flex-wrap: wrap; }
+  .stack > * + * { margin-top: 14px; }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 360px) { .grid2 { grid-template-columns: 1fr; } }
+  .divider { border: 0; border-top: 1px solid rgba(255,255,255,.15); margin: 14px 0; }
 
   .badge {
-    display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px;
-    font-size: 12px; font-weight: 700; background: var(--line); color: var(--text); white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 999px;
+    font-size: 12px; font-weight: 700; background: var(--bg); color: var(--muted); white-space: nowrap;
   }
-  .badge.member { background: #e8edf9; color: var(--navy-2); }
-  .badge.graduate { background: var(--gold-soft); color: #8a5a00; }
+  .badge.member { background: #E9EDF5; color: var(--navy); }
+  .badge.graduate { background: var(--orange-soft); color: var(--orange-dark); }
   .badge.admin { background: var(--navy); color: #fff; }
   .badge.sensitive { background: var(--danger-soft); color: var(--danger); }
-  .badge.soon { background: #eef0f4; color: var(--muted); font-weight: 600; }
+  .badge.soon { font-family: var(--font-label); letter-spacing: .6px; text-transform: uppercase; font-size: 12.5px; }
 
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    border: 0; border-radius: 10px; padding: 11px 16px; font-weight: 700; cursor: pointer;
-    background: var(--navy); color: #fff; text-decoration: none; min-height: 44px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+    border: 0; border-radius: 12px; padding: 12px 16px; font-weight: 700; cursor: pointer;
+    background: var(--orange); color: #fff; text-decoration: none; min-height: 48px; font-size: 16px; line-height: 1.3;
   }
+  .btn:hover { background: var(--orange-dark); }
   .btn:disabled { opacity: .55; cursor: default; }
   .btn.block { width: 100%; }
-  .btn.gold { background: var(--gold); color: var(--navy); }
-  .btn.ghost { background: transparent; color: var(--navy); border: 1px solid var(--line); }
+  .btn.navy { background: var(--navy); }
+  .btn.navy:hover { background: var(--navy-2); }
+  .btn.ghost { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+  .btn.ghost:hover { border-color: var(--navy); }
+  .btn.on { background: var(--orange-soft); color: var(--orange-dark); border: 1px solid #F8C9AE; }
   .btn.danger { background: var(--danger-soft); color: var(--danger); }
-  .btn.small { padding: 6px 12px; min-height: 34px; font-size: 14px; }
-  .link-btn { background: none; border: 0; color: var(--navy-2); cursor: pointer; padding: 4px; text-decoration: underline; }
+  .btn.small { padding: 6px 12px; min-height: 36px; font-size: 14px; }
+  .link-btn { background: none; border: 0; color: var(--orange-dark); cursor: pointer; padding: 4px; font-weight: 500; text-decoration: underline; }
 
   label.field { display: block; margin-bottom: 12px; }
-  label.field > span { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; color: #374151; }
+  label.field > span { display: block; font-size: 13.5px; font-weight: 700; margin-bottom: 5px; }
   input[type=text], input[type=email], input[type=password], input[type=tel], select, textarea {
-    width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff;
-    min-height: 44px;
+    width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; min-height: 48px;
   }
-  input:focus, select:focus, textarea:focus { outline: 2px solid var(--gold); outline-offset: 1px; border-color: transparent; }
+  input:focus, select:focus, textarea:focus, .btn:focus-visible, a:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
 
   .banner {
-    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; font-size: 14px;
-    background: var(--danger-soft); color: #7a1f16; border: 1px solid #f5c2bc;
+    border-radius: 14px; padding: 12px 14px; margin-bottom: 12px; font-size: 14px;
+    background: var(--danger-soft); color: #7A1B12; border: 1px solid #F6C9C2;
   }
-  .banner.info { background: var(--gold-soft); color: #6b4700; border-color: #f1d99a; }
 
   /* ---------- Auth ---------- */
-  .auth-wrap {
-    min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-    max-width: 420px; margin: 0 auto; padding: 24px 16px;
-  }
+  .auth-wrap { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; max-width: 420px; margin: 0 auto; padding: 28px 16px; }
   .auth-head { text-align: center; margin-bottom: 20px; }
-  .auth-logo { width: 72px; height: 72px; border-radius: 18px; display: block; margin: 0 auto 12px; }
-  .tabs-seg { display: flex; background: #e9ecf3; border-radius: 10px; padding: 3px; margin-bottom: 16px; }
-  .tabs-seg button {
-    flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 8px; font-weight: 600; cursor: pointer; color: var(--muted);
-  }
-  .tabs-seg button.active { background: #fff; color: var(--navy); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .auth-head .logo { width: 180px; height: auto; display: block; margin: 0 auto 14px; }
+  .auth-head .tagline { color: var(--orange-dark); font-size: 17px; margin-bottom: 8px; }
+  .tabs-seg { display: flex; background: var(--bg); border-radius: 12px; padding: 4px; margin-bottom: 16px; }
+  .tabs-seg button { flex: 1; border: 0; background: transparent; padding: 9px; border-radius: 9px; font-weight: 700; cursor: pointer; color: var(--muted); }
+  .tabs-seg button.active { background: var(--navy); color: #fff; }
 
   /* ---------- Concepts ---------- */
   .concept { display: flex; gap: 12px; align-items: flex-start; }
-  .concept .num {
-    flex: 0 0 28px; height: 28px; border-radius: 50%; background: var(--gold-soft); color: #8a5a00;
-    display: grid; place-items: center; font-weight: 800; font-size: 14px;
+  .concept .n {
+    flex: 0 0 30px; height: 30px; border-radius: 50%; background: var(--orange-soft); color: var(--orange-dark);
+    display: grid; place-items: center; font-family: var(--font-label); font-weight: 700; font-size: 17px;
   }
 
   /* ---------- Countries ---------- */
   .country-card {
     display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit;
-    background: var(--card); border-radius: var(--radius); padding: 14px;
-    box-shadow: 0 1px 2px rgba(16,24,40,.06); border: 1px solid transparent;
+    background: var(--card); border-radius: var(--radius); padding: 14px; border: 1px solid var(--line);
   }
-  .country-card:active { border-color: var(--gold); }
+  .country-card:hover, .country-card:active { border-color: var(--navy); }
   .flag { font-size: 30px; line-height: 1; }
-  .section-title { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); font-weight: 700; margin: 0 0 4px; }
+  .section-title { font-family: var(--font-label); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted-2); font-weight: 700; margin: 0 0 6px; }
+  .checks { list-style: none; padding: 0; margin: 0; }
+  .checks li { display: flex; gap: 8px; align-items: flex-start; padding: 3px 0; }
+  .checks li::before { content: "✓"; color: var(--orange); font-weight: 900; }
+  .checks.prep li::before { content: "•"; color: var(--navy); }
+  .pledge-names { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pledge-names span { background: var(--bg); border-radius: 999px; padding: 3px 10px; font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; background: var(--bg); text-decoration: none; color: var(--navy); font-weight: 700; font-size: 14px; border: 1px solid var(--line); }
 
-  /* ---------- Lists ---------- */
+  /* ---------- Lists / switches ---------- */
   .list-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .list-item:last-child { border-bottom: 0; }
   .list-item .meta { min-width: 0; }
   .list-item .meta div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .switch { position: relative; width: 46px; height: 28px; flex: 0 0 auto; }
   .switch input { opacity: 0; width: 0; height: 0; }
-  .switch span { position: absolute; inset: 0; background: #cfd4de; border-radius: 999px; transition: .2s; cursor: pointer; }
+  .switch span { position: absolute; inset: 0; background: #C9D0DC; border-radius: 999px; transition: .2s; cursor: pointer; }
   .switch span::before { content: ""; position: absolute; width: 22px; height: 22px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
-  .switch input:checked + span { background: var(--ok); }
+  .switch input:checked + span { background: var(--orange); }
   .switch input:checked + span::before { transform: translateX(18px); }
-  .switch input:focus-visible + span { outline: 2px solid var(--gold); }
+  .switch input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 2px; }
 
   /* ---------- Tab bar ---------- */
-  .tabbar {
-    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
-    background: #fff; border-top: 1px solid var(--line);
-    padding-bottom: var(--safe-b);
-  }
-  .tabbar-inner { max-width: 640px; margin: 0 auto; display: flex; height: var(--tabbar-h); }
+  .tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: #fff; border-top: 1px solid var(--line); padding-bottom: var(--safe-b); }
+  .tabbar-inner { max-width: 640px; margin: 0 auto; display: flex; height: var(--tabbar-h); padding: 0 4px; }
   .tabbar a {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
-    color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 600;
+    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+    color: var(--muted-2); text-decoration: none; font-size: 11px; font-weight: 700; min-width: 0;
   }
-  .tabbar a svg { width: 24px; height: 24px; }
+  .tabbar a .ico { width: 44px; height: 30px; border-radius: 999px; display: grid; place-items: center; }
+  .tabbar a svg { width: 22px; height: 22px; }
   .tabbar a.active { color: var(--navy); }
-  .tabbar a.active svg { stroke: var(--gold); }
+  .tabbar a.active .ico { background: var(--navy); color: #fff; }
 
   /* ---------- Toast / loader ---------- */
   .toast {
     position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--tabbar-h) + var(--safe-b) + 16px);
-    background: #111827; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 14px; z-index: 50;
-    max-width: calc(100% - 32px); box-shadow: 0 6px 20px rgba(0,0,0,.2);
+    background: var(--navy); color: #fff; padding: 11px 16px; border-radius: 12px; font-size: 14px; z-index: 50;
+    max-width: calc(100% - 32px); box-shadow: 0 8px 24px rgba(13,27,58,.25);
   }
   .toast.error { background: var(--danger); }
   .loader { text-align: center; padding: 48px 0; color: var(--muted); }
-  .spinner { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--navy); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px; }
+  .spinner { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--orange); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 10px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  pre.code { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 10px; overflow-x: auto; font-size: 13px; }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }
+  pre.code { background: var(--navy); color: #E2E8F0; padding: 12px; border-radius: 12px; overflow-x: auto; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -204,18 +215,39 @@
 
 <script>
 /* =====================================================================
-   SVM App — Phase 1
-   로그인/회원가입 · 회원 등급 · i18n(EN/KO) · 하단 탭 내비게이션 · 관리자 기본 화면
+   SVM App — Phase 1 (명세 v2)
+   로그인/회원가입 · 회원 등급 · i18n(EN/KO) · 브랜드 · 하단 탭 · 관리자 기본 화면
+   + 국가 상세(제공/준비 블록·파송 시즌) + 내 나라에 이름 쓰기
    ===================================================================== */
 
 // ---------------------------------------------------------------------
 // 1) 설정 — Supabase 대시보드 > Project Settings > API 에서 복사해 넣으세요.
-//    anon key 는 공개되어도 괜찮은 키입니다 (데이터 보호는 RLS 가 담당).
+//    anon key 만 사용합니다 (공개되어도 괜찮은 키 — 데이터 보호는 RLS 가 담당).
+//    service_role key 는 절대 여기에 넣지 마세요.
 // ---------------------------------------------------------------------
 const CONFIG = {
   SUPABASE_URL: 'https://YOUR-PROJECT.supabase.co',
   SUPABASE_ANON_KEY: 'YOUR-ANON-KEY',
-  TIMEZONE: 'America/Chicago',       // 게더링 기준 시간대 (Bryan/College Station)
+  TIMEZONE: 'America/Chicago',       // 모임 기준 시간대 (Bryan/College Station)
+};
+
+// DB 에 값이 없을 때 쓰는 기본값 (app_settings 가 우선)
+const DEFAULTS = {
+  provided_items: [
+    { en: 'Housing and all meals', ko: '숙소와 모든 식사' },
+    { en: 'Ministry and activity costs', ko: '사역·활동 비용' },
+    { en: 'Local staff support and orientation', ko: '현지 스태프 지원과 오리엔테이션' },
+  ],
+  prepare_items: [
+    { en: 'Round-trip airfare', ko: '왕복 항공권' },
+    { en: 'Personal spending money and a valid passport', ko: '개인 용돈과 유효한 여권' },
+    { en: 'A heart ready to learn', ko: '배우려는 마음' },
+  ],
+  mission_seasons: { en: 'December · January · May–August (and anytime else)', ko: '12월 · 1월 · 5–8월 (그 외에도 언제든)' },
+  gatherings: {
+    sunday: { dow: 0, start: '14:00', end: '16:00' },
+    friday: { dow: 5, start: '19:00', end: '21:00' },
+  },
 };
 
 // ---------------------------------------------------------------------
@@ -223,36 +255,48 @@ const CONFIG = {
 // ---------------------------------------------------------------------
 const i18n = {
   en: {
-    app_tagline: 'Student Volunteer Movement',
+    tagline: 'Called. Equipped. Sent.',
+    app_name: 'Student Volunteer Movement',
     // auth
     login: 'Log in', signup: 'Sign up', logout: 'Log out',
     email: 'Email', password: 'Password', password_hint: 'At least 6 characters',
-    name: 'Name', school: 'School', phone: 'Phone',
+    name: 'Full name', name_hint: 'First and last name', school: 'School', phone: 'Phone',
     forgot_password: 'Forgot password?', send_reset: 'Send reset link', back_to_login: 'Back to log in',
     reset_sent: 'Check your email for a password reset link.',
     new_password: 'New password', set_password: 'Set new password', password_updated: 'Password updated.',
     signup_check_email: 'Almost there! Check your email to confirm your account, then log in.',
     signup_done: 'Welcome to SVM!',
-    auth_welcome: 'Reviving the movement that sent 20,000 students to the nations — starting in Bryan/College Station.',
+    auth_welcome: 'In 1886 a student prayer meeting sent 20,000+ students to the nations. We are reviving it in Bryan/College Station.',
+    signup_fast: 'Takes under a minute. You can add school and phone later.',
     // tabs
     tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
     // roles
     role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin',
     // home
     hello: 'Hi, {name}', hello_anon: 'Welcome',
-    next_gathering: 'Next Mission Gathering',
-    gathering_every: 'Every Sunday · 2:00–4:00 PM · Church',
-    concepts_title: 'How SVM works',
-    c1_t: 'Pay only for your flight', c1_d: 'Room and board are supported on the field. Students cover only the airfare.',
-    c2_t: 'Stay as long as you want', c2_d: 'Go for a month, and if you want to stay longer, just extend your flight — no extra cost for room and board.',
-    c3_t: 'Go every break', c3_d: 'Not just once — keep going, every school break.',
-    c4_t: 'Meet every week', c4_d: 'Sundays 2–4 PM at church in person; connect and train in the app during the week.',
+    next_meeting: 'Next meeting', then: 'Then',
+    g_sunday: 'Sunday Mission Gathering', g_friday: 'Friday Training Night',
+    g_sunday_d: 'Worship · mission message · team building · teaching practice', g_friday_d: 'DNA2 discipleship · PST evangelism · campus outreach',
+    today: 'Today', concepts_title: 'How SVM works',
+    c1_t: 'Pay only for your flight', c1_d: 'Housing, meals, ministry costs and local staff support are provided by the field through local giving. No organization fees.',
+    c2_t: 'Stay as long as you want', c2_d: 'Go for a month — want to stay longer? Just extend your flight. No extra cost for room and board. 1, 2, 3, 6 months, up to a year.',
+    c3_t: 'Go every break', c3_d: 'Main sending seasons: December · January · May–August. Anytime else works too.',
+    c4_t: 'Trained, then sent', c4_d: 'Sunday Mission Gathering 2–4 PM + Friday Training Night (DNA2 discipleship, PST evangelism).',
+    c5_t: 'A lifelong path', c5_d: 'Short-term (Into the World) → mid-term (1–2 years) → long-term (lifelong missions & church planting).',
+    my_nations: 'Nations I carry', my_nations_empty: 'You haven’t signed a nation yet.', sign_a_nation: 'Sign your nation',
     featured_testimony: 'Featured testimony', my_application: 'My application', todays_training: "Today's language training",
     // countries
     countries_title: 'Mission fields', countries_sub: 'Explore each country before you apply.',
-    sensitive: 'Sensitive', sensitive_banner: 'Security notice: This is a sensitive country. Do not share local believers\' names, faces, or exact locations (e.g. church addresses) anywhere — in chat, prayers, or testimonies.',
+    itw_title: 'INTO THE WORLD', itw_desc: 'Up to 5 English conversation classes a day · serve with local churches & missionaries · share the gospel & teach the Bible · build friendships with local young people · cross-cultural discipleship.',
+    seasons: 'Sending seasons',
+    sensitive: 'Sensitive', sensitive_banner: 'Security notice: This is a sensitive country. Do not share local believers’ names, faces, or exact locations (e.g. church addresses) anywhere — in chat, prayers, or testimonies.',
     sec_intro: 'About', sec_ministry: 'Ministry — what you will actually do', sec_life: 'Daily life — weather & culture', sec_language: 'Language needed', sec_housing: 'Room & board',
+    provided_title: 'Provided by the field', prepare_title: 'What you prepare',
     enter_room: 'Enter country room', apply_here: 'Apply for this country',
+    pledge_btn: 'Sign my name for this nation', pledged_btn: 'You carry this nation ✓',
+    pledge_title: 'Sign Your Nation', pledge_count: '{n} people carry this nation', pledge_count_one: '1 person carries this nation', pledge_count_zero: 'Be the first to carry this nation.',
+    pledge_hidden: 'Names are hidden for this country for security.', pledge_desc: 'A simple commitment to pray for and carry this nation — separate from applying.',
+    pledged_toast: 'Your name is written for {c}.', unpledged_toast: 'Removed.',
     no_countries: 'No countries yet. Run 03_국가_시드.sql in Supabase.',
     back: 'Back', not_found: 'Not found.',
     // train
@@ -269,8 +313,10 @@ const i18n = {
     com_support_t: 'Support stories', com_support_d: 'Students who need help with airfare.',
     // my
     my_title: 'My page', profile: 'Profile', save: 'Save', saved: 'Saved.',
-    language_setting: 'Language', my_app_t: 'My application & extension', my_check_t: 'Packing checklist', my_att_t: 'Attendance record',
-    install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then "Add to Home Screen".',
+    language_setting: 'Language', my_app_t: 'My application & extension', my_app_d: 'Track: Into the World · mid-term · long-term. Extensions: airfare change only, no extra room & board.',
+    my_check_t: 'Packing checklist', my_check_d: 'Passport, visa, vaccinations, packing.',
+    my_att_t: 'Attendance record', my_att_d: 'Sunday gatherings and Friday training nights.',
+    install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then “Add to Home Screen”.',
     graduate_badge: 'Graduate badge',
     // admin
     admin_title: 'Admin', admin_members: 'Members', admin_settings: 'Settings', admin_countries: 'Countries',
@@ -278,38 +324,50 @@ const i18n = {
     set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
     col_sensitive: 'Sensitive', col_active: 'Active',
     search_members: 'Search name, email, school', members_count: '{n} members', role_changed: 'Role updated.',
-    admin_more: 'Coming next: application approvals, testimony review, graduation approvals, content & gatherings.',
+    admin_more: 'Coming next: application approvals, testimony review, graduation approvals, content & meetings.',
     // misc
     coming_soon: 'Coming soon', phase: 'Phase {n}', loading: 'Loading…', error_generic: 'Something went wrong. Please try again.',
     setup_title: 'Setup needed', setup_body: 'Open index.html and set SUPABASE_URL and SUPABASE_ANON_KEY in CONFIG (Supabase → Project Settings → API).',
     offline: 'You are offline.',
   },
   ko: {
-    app_tagline: '학생자원운동',
+    tagline: 'Called. Equipped. Sent.',
+    app_name: '학생자원운동',
     login: '로그인', signup: '회원가입', logout: '로그아웃',
     email: '이메일', password: '비밀번호', password_hint: '6자 이상',
-    name: '이름', school: '학교', phone: '연락처',
+    name: '이름', name_hint: '이름과 성', school: '학교', phone: '연락처',
     forgot_password: '비밀번호를 잊으셨나요?', send_reset: '재설정 링크 보내기', back_to_login: '로그인으로 돌아가기',
     reset_sent: '비밀번호 재설정 링크를 이메일로 보냈습니다.',
     new_password: '새 비밀번호', set_password: '새 비밀번호 설정', password_updated: '비밀번호가 변경되었습니다.',
     signup_check_email: '거의 다 됐어요! 이메일에서 인증 링크를 누른 뒤 로그인하세요.',
     signup_done: 'SVM에 오신 것을 환영합니다!',
-    auth_welcome: '2만 명의 대학생을 열방으로 보낸 그 운동을 — 브라이언 컬리지 스테이션에서 다시 시작합니다.',
+    auth_welcome: '1886년 대학생 기도 모임에서 시작해 2만 명 이상을 열방으로 보낸 운동을, 브라이언/컬리지 스테이션에서 다시 일으킵니다.',
+    signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
     tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
-    next_gathering: '다음 미션 게더링',
-    gathering_every: '매주 주일 · 오후 2:00–4:00 · 교회',
-    concepts_title: 'SVM은 이렇게 갑니다',
-    c1_t: '비행기 값만 낸다', c1_d: '선교지에서 숙식을 자체 후원합니다. 학생은 항공권만 부담합니다.',
-    c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가는 없습니다.',
-    c3_t: '방학마다 간다', c3_d: '한 번이 아니라, 방학마다 지속적으로 갑니다.',
-    c4_t: '매주 모인다', c4_d: '매주 주일 오후 2–4시 교회에서 모이고, 주중에는 앱에서 소통하고 훈련합니다.',
+    next_meeting: '다음 모임', then: '이어서',
+    g_sunday: '주일 미션 게더링', g_friday: '금요 트레이닝 나이트',
+    g_sunday_d: '예배 · 선교 말씀 · 팀 빌딩 · 티칭 연습', g_friday_d: 'DNA2 제자훈련 · PST 전도훈련 · 캠퍼스 아웃리치',
+    today: '오늘', concepts_title: 'SVM은 이렇게 갑니다',
+    c1_t: '비행기 값만 낸다', c1_d: '숙소·식사·사역비·현지 스태프 지원은 선교지가 현지 후원으로 제공합니다. 단체 수수료 없음.',
+    c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가 없음 — 1·2·3·6개월, 1년까지.',
+    c3_t: '방학마다 간다', c3_d: '정규 파송 시즌: 12월 · 1월 · 5–8월. 그 외에도 언제든 가능합니다.',
+    c4_t: '훈련 후 파송', c4_d: '매주 주일 오후 2–4시 미션 게더링 + 금요일 밤 트레이닝 나이트(DNA2 제자훈련, PST 전도훈련).',
+    c5_t: '평생의 길', c5_d: '단기(Into the World) → 중기(1–2년) → 장기(평생 선교·교회 개척).',
+    my_nations: '내가 품은 나라', my_nations_empty: '아직 이름을 쓴 나라가 없습니다.', sign_a_nation: '내 나라에 이름 쓰기',
     featured_testimony: '추천 간증', my_application: '내 신청 상태', todays_training: '오늘의 언어 훈련',
     countries_title: '선교지', countries_sub: '신청 전에 각 나라를 둘러보세요.',
+    itw_title: 'INTO THE WORLD', itw_desc: '하루 최대 5회 영어 회화 수업 · 현지 교회·선교사와 동역 · 복음 전하기와 성경 수업 · 현지 청년과의 관계 · 교차문화 제자훈련.',
+    seasons: '파송 시즌',
     sensitive: '민감 국가', sensitive_banner: '보안 안내: 민감 국가입니다. 채팅·기도 제목·후기 어디에도 현지 성도의 실명, 얼굴, 정확한 장소(교회 위치 등)를 올리지 마세요.',
     sec_intro: '소개', sec_ministry: '사역 소개 — 실제로 하는 일', sec_life: '현지 생활 — 날씨와 문화', sec_language: '필요한 언어', sec_housing: '숙식 안내',
+    provided_title: '선교지에서 제공', prepare_title: '내가 준비할 것',
     enter_room: '나라방 들어가기', apply_here: '이 나라로 신청하기',
+    pledge_btn: '이 나라에 이름 쓰기', pledged_btn: '이 나라를 품고 있어요 ✓',
+    pledge_title: '내 나라에 이름 쓰기', pledge_count: '{n}명이 이 나라를 품고 있습니다', pledge_count_one: '1명이 이 나라를 품고 있습니다', pledge_count_zero: '이 나라를 처음으로 품어 주세요.',
+    pledge_hidden: '보안을 위해 이 나라는 이름을 공개하지 않습니다.', pledge_desc: '이 나라를 위해 기도하고 마음에 품겠다는 가벼운 헌신 표시입니다 — 신청과는 별개예요.',
+    pledged_toast: '{c}에 이름을 썼습니다.', unpledged_toast: '취소되었습니다.',
     no_countries: '등록된 나라가 없습니다. Supabase에서 03_국가_시드.sql을 실행하세요.',
     back: '뒤로', not_found: '찾을 수 없습니다.',
     train_title: '훈련',
@@ -323,15 +381,17 @@ const i18n = {
     com_testi_t: '간증', com_testi_d: '선교지에서 온 이야기 (검토 후 공개).',
     com_support_t: '후원 사연', com_support_d: '항공권 후원이 필요한 학생들의 사연.',
     my_title: '마이페이지', profile: '프로필', save: '저장', saved: '저장되었습니다.',
-    language_setting: '언어', my_app_t: '내 신청 · 연장', my_check_t: '준비물 체크리스트', my_att_t: '출석 기록',
-    install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 "홈 화면에 추가"를 선택하세요.',
+    language_setting: '언어', my_app_t: '내 신청 · 연장', my_app_d: '트랙: 단기 Into the World · 중기 · 장기. 연장은 숙식비 추가 없이 항공권만 변경.',
+    my_check_t: '준비물 체크리스트', my_check_d: '여권, 비자, 예방접종, 짐 꾸리기.',
+    my_att_t: '출석 기록', my_att_d: '주일 게더링과 금요 트레이닝 나이트.',
+    install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 “홈 화면에 추가”를 선택하세요.',
     graduate_badge: '수료 배지',
     admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
     set_require_grad: '수료 회원만 신청 가능', set_require_grad_d: '끄면 누구나 신청 가능, 켜면 수료 회원만 신청서를 제출할 수 있습니다.',
     set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
     col_sensitive: '민감', col_active: '노출',
     search_members: '이름, 이메일, 학교 검색', members_count: '회원 {n}명', role_changed: '등급이 변경되었습니다.',
-    admin_more: '다음 단계: 신청 승인, 후기 승인/추천, 수료 승인, 콘텐츠·게더링 관리.',
+    admin_more: '다음 단계: 신청 승인, 후기 승인/추천, 수료 승인, 콘텐츠·모임 관리.',
     coming_soon: '준비 중', phase: '{n}단계', loading: '불러오는 중…', error_generic: '문제가 발생했습니다. 다시 시도해주세요.',
     setup_title: '설정이 필요합니다', setup_body: 'index.html의 CONFIG에 SUPABASE_URL과 SUPABASE_ANON_KEY를 입력하세요 (Supabase → Project Settings → API).',
     offline: '오프라인 상태입니다.',
@@ -347,7 +407,10 @@ const state = {
   profile: null,
   settings: {},
   countries: null,
-  authMode: 'login',      // login | signup | forgot | recovery
+  myPledges: new Set(),     // 내가 이름 쓴 country_id
+  pledgeCounts: {},         // country_id → count
+  // 처음 온 사람(발족식 QR)은 회원가입 화면부터, 로그인한 적 있으면 로그인 화면부터
+  authMode: safeGet('svm_returning') ? 'login' : 'signup',   // login | signup | forgot | recovery
   adminTab: 'members',
   adminMembers: null,
   adminSearch: '',
@@ -365,26 +428,30 @@ function t(key, vars) {
 function esc(v) {
   return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
-// 줄바꿈 유지 텍스트
 function para(v) { return esc(v).replace(/\n/g, '<br>'); }
-// 국가 콘텐츠: 현재 언어 우선, 없으면 영어
+// 국가 콘텐츠: field / field_ko — 현재 언어 우선, 없으면 다른 언어
 function loc(obj, field) {
   if (!obj) return '';
   if (state.lang === 'ko') return obj[field + '_ko'] || obj[field] || '';
   return obj[field] || obj[field + '_ko'] || '';
 }
-// extra_sections 항목: { title_en, title_ko, body_en, body_ko }
+// { en, ko } 또는 { title_en, title_ko } 형식
 function locPair(obj, field) {
-  const ko = obj[field + '_ko'], en = obj[field + '_en'] ?? obj[field];
+  if (!obj) return '';
+  const ko = field ? obj[field + '_ko'] : obj.ko;
+  const en = field ? (obj[field + '_en'] ?? obj[field]) : obj.en;
   return (state.lang === 'ko' ? (ko || en) : (en || ko)) || '';
 }
+function setting(key) { return state.settings[key] ?? DEFAULTS[key]; }
 function countryName(c) { return state.lang === 'ko' ? (c.name_ko || c.name_en) : (c.name_en || c.name_ko); }
+function countryById(id) { return (state.countries || []).find(c => c.id === id); }
 function flag(code) {
   if (!code || code.length !== 2) return '🌏';
   return String.fromCodePoint(...[...code.toUpperCase()].map(ch => 0x1F1E6 + ch.charCodeAt(0) - 65));
 }
 function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === 'graduate' ? '🎓 ' : ''}${esc(t('role_' + role))}</span>`; }
 function isAdmin() { return state.profile?.role === 'admin'; }
+function logo(white) { return `<img class="logo" src="assets/${white ? 'SVM_Logo_white' : 'SVM_Logo'}.svg" alt="SVM">`; }
 
 let toastTimer;
 function toast(msg, isError) {
@@ -413,26 +480,34 @@ function langToggle(dark) {
   </div>`;
 }
 
-// 날짜 포맷 (게더링 기준 시간대)
+// ---------- 날짜·시간 (모임 기준 시간대) ----------
+const dateLocale = () => (state.lang === 'ko' ? 'ko-KR' : 'en-US');
 function fmtDate(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
-  return d.toLocaleDateString(state.lang === 'ko' ? 'ko-KR' : 'en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+  return d.toLocaleDateString(dateLocale(), { weekday: 'long', month: 'long', day: 'numeric' });
 }
 function fmtTime(hhmm) {
   const [h, m] = hhmm.split(':').map(Number);
-  const d = new Date(2000, 0, 1, h, m);
-  return d.toLocaleTimeString(state.lang === 'ko' ? 'ko-KR' : 'en-US', { hour: 'numeric', minute: '2-digit' });
+  return new Date(2000, 0, 1, h, m).toLocaleTimeString(dateLocale(), { hour: 'numeric', minute: '2-digit' });
 }
-// 게더링 시간대 기준 오늘 날짜 (YYYY-MM-DD)
-function todayInTZ() {
-  return new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+function nowInTZ() {
+  const parts = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {
+    timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  }).formatToParts(new Date()).map(p => [p.type, p.value]));
+  return { date: `${parts.year}-${parts.month}-${parts.day}`, time: `${parts.hour}:${parts.minute}` };
 }
-function nextSunday() {
-  const [y, m, d] = todayInTZ().split('-').map(Number);
-  const base = new Date(Date.UTC(y, m - 1, d));
-  const add = (7 - base.getUTCDay()) % 7;
-  base.setUTCDate(base.getUTCDate() + add);
-  return base.toISOString().slice(0, 10);
+function addDays(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const x = new Date(Date.UTC(y, m - 1, d + n));
+  return x.toISOString().slice(0, 10);
+}
+function dow(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)).getUTCDay(); }
+// DB 에 예정된 모임이 없을 때: 정기 일정으로 다음 모임 계산
+function nextRegular(type, now) {
+  const g = DEFAULTS.gatherings[type];
+  let add = (g.dow - dow(now.date) + 7) % 7;
+  if (add === 0 && now.time >= g.end) add = 7;
+  return { type, date: addDays(now.date, add), start_time: g.start, end_time: g.end, location: null, title: null };
 }
 
 // ---------------------------------------------------------------------
@@ -449,7 +524,7 @@ async function loadProfile() {
     // 트리거 이전에 가입한 계정 등 — 프로필이 없으면 생성
     const meta = state.session.user.user_metadata || {};
     ({ data, error } = await sb.from('profiles')
-      .insert({ id: uid, email: state.session.user.email, name: meta.name || null, school: meta.school || null, phone: meta.phone || null, lang: state.lang })
+      .insert({ id: uid, email: state.session.user.email, name: meta.name || null, lang: state.lang })
       .select().single());
   }
   if (error) { toast(errMsg(error), true); return; }
@@ -469,6 +544,26 @@ async function loadCountries(force) {
   else state.countries = data;
   return state.countries;
 }
+async function loadPledges() {
+  const [mine, counts] = await Promise.all([
+    sb.from('nation_pledges').select('country_id').eq('user_id', state.profile.id),
+    sb.from('nation_pledge_counts').select('country_id,pledge_count'),
+  ]);
+  state.myPledges = new Set((mine.data || []).map(r => r.country_id));
+  state.pledgeCounts = Object.fromEntries((counts.data || []).map(r => [r.country_id, r.pledge_count]));
+}
+async function togglePledge(c) {
+  const on = state.myPledges.has(c.id);
+  const q = on
+    ? sb.from('nation_pledges').delete().eq('user_id', state.profile.id).eq('country_id', c.id)
+    : sb.from('nation_pledges').insert({ user_id: state.profile.id, country_id: c.id });
+  const { error } = await q;
+  if (error && error.code !== '23505') { toast(errMsg(error), true); return; }   // 23505 = 이미 있음
+  if (on) state.myPledges.delete(c.id); else state.myPledges.add(c.id);
+  state.pledgeCounts[c.id] = Math.max(0, (state.pledgeCounts[c.id] || 0) + (on ? -1 : 1));
+  toast(on ? t('unpledged_toast') : t('pledged_toast', { c: countryName(c) }));
+  render();
+}
 
 // ---------------------------------------------------------------------
 // 5) 라우팅
@@ -486,7 +581,6 @@ function parseRoute() {
   const parts = (location.hash.replace(/^#\/?/, '') || 'home').split('/').filter(Boolean);
   return { tab: parts[0] || 'home', param: parts[1] ? decodeURIComponent(parts[1]) : null };
 }
-function go(path) { location.hash = '#/' + path; }
 
 // ---------------------------------------------------------------------
 // 6) 렌더링
@@ -505,7 +599,14 @@ async function render() {
   let { tab, param } = parseRoute();
   if (!TABS.some(x => x.id === tab) || (tab === 'admin' && !isAdmin())) tab = 'home';
 
-  app.innerHTML = shell(tab, loaderHTML());
+  // 탭이 바뀌지 않았으면 기존 화면을 유지한 채 내용만 교체 (깜빡임 방지)
+  if (!document.getElementById('view') || app.dataset.tab !== tab) {
+    app.innerHTML = shell(tab, loaderHTML());
+    app.dataset.tab = tab;
+  } else {
+    app.querySelector('.topbar-inner').outerHTML = topbarInner();
+    app.querySelector('.tabbar').outerHTML = tabbarHTML(tab);
+  }
   bindCommon();
   let body;
   try {
@@ -522,26 +623,22 @@ async function render() {
 
 function loaderHTML() { return `<div class="loader"><div class="spinner"></div>${esc(t('loading'))}</div>`; }
 
-function shell(tab, inner) {
+function topbarInner() { return `<div class="topbar-inner"><a href="#/home" aria-label="SVM home">${logo(true)}</a>${langToggle(false)}</div>`; }
+function tabbarHTML(tab) {
   const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
-  return `
-  <header class="topbar">
-    <div class="brand"><img class="brand-img" src="icons/icon.svg" alt=""><div>SVM<small>${esc(t('app_tagline'))}</small></div></div>
-    ${langToggle(false)}
-  </header>
-  <main id="view">${inner}</main>
-  <nav class="tabbar" aria-label="Main">
-    <div class="tabbar-inner">
-      ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.icon}</svg>
-        <span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
-    </div>
-  </nav>`;
+  return `<nav class="tabbar" aria-label="Main"><div class="tabbar-inner">
+    ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
+      <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${x.icon}</svg></span>
+      <span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
+  </div></nav>`;
+}
+function shell(tab, inner) {
+  return `<header class="topbar">${topbarInner()}</header><main id="view">${inner}</main>${tabbarHTML(tab)}`;
 }
 
 function soonCard(title, desc, phaseN, icon) {
   return `<div class="card soon">
-    <div class="row between" style="flex-wrap:wrap;gap:6px;margin-bottom:4px"><h3 style="margin:0">${icon ? icon + ' ' : ''}${esc(title)}</h3><span class="badge soon">${esc(t('phase', { n: phaseN }))}</span></div>
+    <div class="row between wrap" style="gap:6px;margin-bottom:4px"><h3 style="margin:0">${icon ? icon + ' ' : ''}${esc(title)}</h3><span class="badge soon">${esc(t('phase', { n: phaseN }))}</span></div>
     <p class="muted small" style="margin:0">${esc(desc)}</p>
   </div>`;
 }
@@ -549,7 +646,7 @@ function soonCard(title, desc, phaseN, icon) {
 // ---------- Setup ----------
 function viewSetup() {
   return `<div class="auth-wrap">
-    <div class="auth-head"><img class="auth-logo" src="icons/icon.svg" alt="SVM"><h1>${esc(t('setup_title'))}</h1></div>
+    <div class="auth-head">${logo(false)}<h1>${esc(t('setup_title'))}</h1></div>
     <div class="card"><p>${esc(t('setup_body'))}</p>
 <pre class="code">const CONFIG = {
   SUPABASE_URL: 'https://xxxx.supabase.co',
@@ -565,42 +662,41 @@ function viewAuth() {
   let form;
   if (m === 'login') {
     form = `<form id="auth-form" novalidate>
-      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
       <label class="field"><span>${esc(t('password'))}</span><input type="password" name="password" autocomplete="current-password" required></label>
-      <button class="btn block" type="submit">${esc(t('login'))}</button>
+      <button class="btn block navy" type="submit">${esc(t('login'))}</button>
       <div style="text-align:center;margin-top:10px"><button type="button" class="link-btn" data-mode="forgot">${esc(t('forgot_password'))}</button></div>
     </form>`;
   } else if (m === 'signup') {
+    // 발족식 현장 흐름: 가입은 이름·이메일·비밀번호만 (학교·연락처는 마이 탭에서)
     form = `<form id="auth-form" novalidate>
-      <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" autocomplete="name" required></label>
-      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
+      <label class="field"><span>${esc(t('name'))} <span class="muted">(${esc(t('name_hint'))})</span></span><input type="text" name="name" autocomplete="name" required></label>
+      <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
       <label class="field"><span>${esc(t('password'))} <span class="muted">(${esc(t('password_hint'))})</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
-      <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" autocomplete="organization"></label>
-      <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" autocomplete="tel"></label>
-      <button class="btn block gold" type="submit">${esc(t('signup'))}</button>
+      <button class="btn block" type="submit">${esc(t('signup'))}</button>
+      <p class="small muted" style="margin:10px 0 0;text-align:center">${esc(t('signup_fast'))}</p>
     </form>`;
   } else if (m === 'forgot') {
     form = `<form id="auth-form" novalidate>
       <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" required></label>
-      <button class="btn block" type="submit">${esc(t('send_reset'))}</button>
+      <button class="btn block navy" type="submit">${esc(t('send_reset'))}</button>
       <div style="text-align:center;margin-top:10px"><button type="button" class="link-btn" data-mode="login">${esc(t('back_to_login'))}</button></div>
     </form>`;
   } else {
     form = `<form id="auth-form" novalidate>
       <label class="field"><span>${esc(t('new_password'))} <span class="muted">(${esc(t('password_hint'))})</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
-      <button class="btn block" type="submit">${esc(t('set_password'))}</button>
+      <button class="btn block navy" type="submit">${esc(t('set_password'))}</button>
     </form>`;
   }
   const seg = (m === 'login' || m === 'signup') ? `<div class="tabs-seg" role="tablist">
-      <button type="button" role="tab" data-mode="login" class="${m === 'login' ? 'active' : ''}">${esc(t('login'))}</button>
-      <button type="button" role="tab" data-mode="signup" class="${m === 'signup' ? 'active' : ''}">${esc(t('signup'))}</button>
+      <button type="button" role="tab" data-mode="signup" aria-selected="${m === 'signup'}" class="${m === 'signup' ? 'active' : ''}">${esc(t('signup'))}</button>
+      <button type="button" role="tab" data-mode="login" aria-selected="${m === 'login'}" class="${m === 'login' ? 'active' : ''}">${esc(t('login'))}</button>
     </div>` : `<h2 style="margin-top:0">${esc(m === 'forgot' ? t('forgot_password') : t('set_password'))}</h2>`;
   return `<div class="auth-wrap">
     <div class="auth-head">
-      <img class="auth-logo" src="icons/icon.svg" alt="SVM">
-      <h1 style="margin-bottom:4px">SVM</h1>
-      <p class="muted" style="margin-bottom:6px">${esc(t('app_tagline'))}</p>
-      <p class="small muted">${esc(t('auth_welcome'))}</p>
+      ${logo(false)}
+      <div class="tagline">${esc(t('tagline'))}</div>
+      <p class="small muted" style="margin:0">${esc(t('auth_welcome'))}</p>
     </div>
     <div class="card">${seg}${form}</div>
     <div style="text-align:center">${langToggle(true)}</div>
@@ -624,10 +720,7 @@ function bindAuth() {
       } else if (state.authMode === 'signup') {
         const { data, error } = await sb.auth.signUp({
           email: f.email.trim(), password: f.password,
-          options: {
-            emailRedirectTo: redirectTo,
-            data: { name: f.name.trim(), school: (f.school || '').trim(), phone: (f.phone || '').trim(), lang: state.lang },
-          },
+          options: { emailRedirectTo: redirectTo, data: { name: f.name.trim(), lang: state.lang } },
         });
         if (error) throw error;
         if (data.session) toast(t('signup_done'));
@@ -655,50 +748,88 @@ function bindCommon() {
 }
 
 // ---------- Views ----------
+function meetingLines(g) {
+  return `${esc(fmtDate(g.date))} · ${esc(fmtTime(g.start_time.slice(0, 5)))}–${esc(fmtTime(g.end_time.slice(0, 5)))}`;
+}
+
+async function upcomingMeetings() {
+  const now = nowInTZ();
+  const { data } = await sb.from('gatherings').select('*').gte('date', now.date)
+    .order('date').order('start_time').limit(6);
+  const fromDb = (data || []).filter(g => g.date > now.date || g.end_time.slice(0, 5) > now.time);
+  // 종류별로 가장 가까운 모임 (DB 에 없으면 정기 일정으로 계산)
+  const pick = type => fromDb.find(g => (g.type || 'sunday') === type) || nextRegular(type, now);
+  const list = [pick('sunday'), pick('friday')].map(g => ({ ...g, type: g.type || 'sunday' }));
+  list.sort((a, b) => (a.date + a.start_time).localeCompare(b.date + b.start_time));
+  return { list, today: now.date };
+}
+
 const VIEWS = {
   async home() {
     const p = state.profile;
-    const today = todayInTZ();
-    const { data: g } = await sb.from('gatherings').select('*').gte('date', today).order('date').limit(1).maybeSingle();
-    const gDate = g?.date || nextSunday();
-    const gStart = (g?.start_time || '14:00').slice(0, 5);
-    const gEnd = (g?.end_time || '16:00').slice(0, 5);
-    const gLoc = g?.location || state.settings.gathering_location || 'Church';
-    const concepts = [1, 2, 3, 4].map(n => `<div class="concept"><div class="num">${n}</div>
+    const [{ list, today }] = await Promise.all([upcomingMeetings(), loadCountries(), loadPledges()]);
+    const [next, after] = list;
+    const loc0 = next.location || setting('gathering_location') || 'Church';
+    const mine = [...state.myPledges].map(countryById).filter(Boolean);
+    const concepts = [1, 2, 3, 4, 5].map(n => `<div class="concept"><div class="n">${n}</div>
       <div><h3>${esc(t('c' + n + '_t'))}</h3><p class="muted small" style="margin:0">${esc(t('c' + n + '_d'))}</p></div></div>`).join('');
     return `
-      <div class="row between" style="margin-bottom:12px">
-        <h1 style="margin:0">${esc(p.name ? t('hello', { name: p.name }) : t('hello_anon'))}</h1>
+      <div class="row between" style="margin-bottom:14px">
+        <h1 style="margin:0">${esc(p.name ? t('hello', { name: p.name.split(/\s+/)[0] }) : t('hello_anon'))}</h1>
         ${roleBadge(p.role)}
       </div>
-      <div class="card hero">
-        <div class="small muted" style="font-weight:700;text-transform:uppercase;letter-spacing:.6px">${esc(t('next_gathering'))}</div>
-        <h2 style="margin:6px 0 2px;color:#fff">${esc(fmtDate(gDate))}</h2>
-        <div>${esc(fmtTime(gStart))} – ${esc(fmtTime(gEnd))} · ${esc(gLoc)}</div>
-        ${g?.title ? `<div class="small muted" style="margin-top:6px">${esc(g.title)}</div>` : ''}
-        <div class="small muted" style="margin-top:10px">${esc(t('gathering_every'))}</div>
+
+      <div class="card dark">
+        <div class="row between"><span class="eyebrow">${esc(t('next_meeting'))}</span>
+          ${next.date === today ? `<span class="badge graduate">${esc(t('today'))}</span>` : ''}</div>
+        <h2 style="margin:8px 0 2px;color:#fff">${esc(next.title || t('g_' + next.type))}</h2>
+        <div>${meetingLines(next)}</div>
+        <div class="muted small">${esc(loc0)}</div>
+        <div class="muted small" style="margin-top:6px">${esc(t('g_' + next.type + '_d'))}</div>
+        <hr class="divider">
+        <div class="small"><span class="muted">${esc(t('then'))}:</span> <strong>${esc(after.title || t('g_' + after.type))}</strong> · ${meetingLines(after)}</div>
       </div>
+
+      <div class="card">
+        <div class="row between" style="margin-bottom:8px"><h3 style="margin:0">🔥 ${esc(t('my_nations'))}</h3>
+          <a class="small" href="#/countries">${esc(t('sign_a_nation'))} →</a></div>
+        ${mine.length
+          ? `<div class="chips">${mine.map(c => `<a class="chip" href="#/countries/${esc(c.code)}">${flag(c.code)} ${esc(countryName(c))}</a>`).join('')}</div>`
+          : `<p class="muted small" style="margin:0">${esc(t('my_nations_empty'))}</p>`}
+      </div>
+
+      ${soonCard(t('my_application'), t('my_app_d'), 2, '✈️')}
       ${soonCard(t('todays_training'), t('train_lang_d'), 3, '🗣️')}
-      ${soonCard(t('my_application'), t('my_app_t'), 2, '✈️')}
       ${soonCard(t('featured_testimony'), t('com_testi_d'), 4, '✨')}
+
       <h2>${esc(t('concepts_title'))}</h2>
-      <div class="card stack">${concepts}</div>`;
+      <div class="card stack">${concepts}</div>
+      <p class="tagline" style="text-align:center;color:var(--orange-dark);margin-top:18px">${esc(t('tagline'))}</p>`;
   },
 
   async countries(code) {
-    const list = await loadCountries();
-    if (code) return viewCountryDetail(list.find(c => c.code === code.toUpperCase()));
-    if (!list.length) return `<h1>${esc(t('countries_title'))}</h1><div class="card muted">${esc(t('no_countries'))}</div>`;
+    const [list] = await Promise.all([loadCountries(), loadPledges()]);
+    if (code) return viewCountryDetail(list.find(c => c.code === code.toUpperCase() && c.is_active));
+    const active = list.filter(c => c.is_active);
+    if (!active.length) return `<h1>${esc(t('countries_title'))}</h1><div class="card muted">${esc(t('no_countries'))}</div>`;
     return `
       <h1>${esc(t('countries_title'))}</h1>
       <p class="muted">${esc(t('countries_sub'))}</p>
+      <div class="card dark">
+        <div class="eyebrow">${esc(t('itw_title'))}</div>
+        <p class="small" style="margin:6px 0 10px">${esc(t('itw_desc'))}</p>
+        <div class="small"><span class="muted">${esc(t('seasons'))}:</span> <strong>${esc(locPair(setting('mission_seasons')))}</strong></div>
+      </div>
       <div class="grid2">
-        ${list.map(c => `<a class="country-card" href="#/countries/${esc(c.code)}">
-          <div class="row between"><span class="flag" aria-hidden="true">${flag(c.code)}</span>
-            ${c.is_sensitive ? `<span class="badge sensitive">🔒 ${esc(t('sensitive'))}</span>` : ''}</div>
-          <strong>${esc(countryName(c))}</strong>
-          <span class="muted small">${esc(loc(c, 'intro')).slice(0, 70)}${loc(c, 'intro').length > 70 ? '…' : ''}</span>
-        </a>`).join('')}
+        ${active.map(c => {
+          const n = state.pledgeCounts[c.id] || 0;
+          return `<a class="country-card" href="#/countries/${esc(c.code)}">
+            <div class="row between"><span class="flag" aria-hidden="true">${flag(c.code)}</span>
+              ${c.is_sensitive ? `<span class="badge sensitive">🔒 ${esc(t('sensitive'))}</span>` : ''}</div>
+            <strong>${esc(countryName(c))}</strong>
+            <span class="muted small">🔥 <span class="num">${n}</span>${state.myPledges.has(c.id) ? ' · ✓' : ''}</span>
+          </a>`;
+        }).join('')}
       </div>`;
   },
 
@@ -720,25 +851,32 @@ const VIEWS = {
 
   async my() {
     const p = state.profile;
+    await Promise.all([loadCountries(), loadPledges()]);
+    const mine = [...state.myPledges].map(countryById).filter(Boolean);
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
     return `<h1>${esc(t('my_title'))}</h1>
       <div class="card">
-        <div class="row between" style="margin-bottom:12px">
-          <div><h3 style="margin:0">${esc(p.name || p.email)}</h3><div class="muted small">${esc(p.email)}</div></div>
+        <div class="row between" style="margin-bottom:14px">
+          <div style="min-width:0"><h3 style="margin:0">${esc(p.name || p.email)}</h3><div class="muted small">${esc(p.email)}</div></div>
           ${roleBadge(p.role)}
         </div>
-        ${p.role === 'graduate' ? `<div class="banner info">🎓 ${esc(t('graduate_badge'))}</div>` : ''}
         <form id="profile-form">
           <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(p.name)}" autocomplete="name"></label>
-          <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" value="${esc(p.school)}"></label>
+          <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" value="${esc(p.school)}" autocomplete="organization"></label>
           <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" value="${esc(p.phone)}" autocomplete="tel"></label>
-          <button class="btn" type="submit">${esc(t('save'))}</button>
+          <button class="btn navy" type="submit">${esc(t('save'))}</button>
         </form>
       </div>
+      <div class="card">
+        <h3>🔥 ${esc(t('my_nations'))}</h3>
+        ${mine.length
+          ? `<div class="chips">${mine.map(c => `<a class="chip" href="#/countries/${esc(c.code)}">${flag(c.code)} ${esc(countryName(c))}</a>`).join('')}</div>`
+          : `<p class="muted small" style="margin:0">${esc(t('my_nations_empty'))} <a href="#/countries">${esc(t('sign_a_nation'))} →</a></p>`}
+      </div>
       <div class="card row between"><strong>${esc(t('language_setting'))}</strong>${langToggle(true)}</div>
-      ${soonCard(t('my_app_t'), t('apply_here'), 2, '✈️')}
-      ${soonCard(t('my_check_t'), t('my_check_t'), 4, '🧳')}
-      ${soonCard(t('my_att_t'), t('gathering_every'), 4, '📅')}
+      ${soonCard(t('my_app_t'), t('my_app_d'), 2, '✈️')}
+      ${soonCard(t('my_check_t'), t('my_check_d'), 4, '🧳')}
+      ${soonCard(t('my_att_t'), t('my_att_d'), 4, '📅')}
       <div class="card stack">
         <button class="btn ghost block ${state.installPrompt ? '' : 'hidden'}" id="install-btn">📲 ${esc(t('install_app'))}</button>
         ${isIOS ? `<p class="small muted" style="margin:0">📲 ${esc(t('install_ios'))}</p>` : ''}
@@ -749,7 +887,7 @@ const VIEWS = {
   async admin() {
     const tab = state.adminTab;
     const seg = `<div class="tabs-seg" role="tablist">
-      ${['members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
+      ${['members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
     </div>`;
     let body = '';
     if (tab === 'members') {
@@ -758,7 +896,7 @@ const VIEWS = {
         if (error) throw error;
         state.adminMembers = data;
       }
-      body = `<input type="text" id="member-search" placeholder="${esc(t('search_members'))}" value="${esc(state.adminSearch)}" style="margin-bottom:12px">
+      body = `<input type="text" id="member-search" placeholder="${esc(t('search_members'))}" value="${esc(state.adminSearch)}" style="margin-bottom:12px" aria-label="${esc(t('search_members'))}">
         <div class="card" id="member-list">${memberListHTML()}</div>`;
     } else if (tab === 'settings') {
       await loadSettings();
@@ -789,24 +927,60 @@ const VIEWS = {
   },
 };
 
-function viewCountryDetail(c) {
-  if (!c) return `<a href="#/countries" class="link-btn">← ${esc(t('back'))}</a><div class="card">${esc(t('not_found'))}</div>`;
+async function viewCountryDetail(c) {
+  if (!c) return `<a href="#/countries" class="link-btn" style="padding-left:0">← ${esc(t('back'))}</a><div class="card">${esc(t('not_found'))}</div>`;
   const sections = [
     ['sec_intro', 'intro'], ['sec_ministry', 'ministry'], ['sec_life', 'daily_life'],
     ['sec_language', 'language'], ['sec_housing', 'housing'],
   ].filter(([, f]) => loc(c, f));
   const extras = (Array.isArray(c.extra_sections) ? c.extra_sections : []).filter(x => x && (locPair(x, 'title') || locPair(x, 'body')));
+  const provided = setting('provided_items') || [];
+  const prepare = setting('prepare_items') || [];
+  const extraProvided = loc(c, 'extra_provided');
+
+  // 이름 쓰기: 민감 국가는 숫자만 (이름 목록은 DB 뷰에서도 제외됨)
+  const n = state.pledgeCounts[c.id] || 0;
+  let names = [];
+  if (!c.is_sensitive && n > 0) {
+    const { data } = await sb.from('nation_pledge_names').select('display_name').eq('country_id', c.id)
+      .order('created_at', { ascending: false }).limit(60);
+    names = (data || []).map(r => r.display_name).filter(Boolean);
+  }
+  const pledged = state.myPledges.has(c.id);
+  const countText = n === 0 ? t('pledge_count_zero') : n === 1 ? t('pledge_count_one') : t('pledge_count', { n });
+
   return `
     <a href="#/countries" class="link-btn" style="padding-left:0">← ${esc(t('back'))}</a>
     ${c.is_sensitive ? `<div class="banner" style="margin-top:8px">🔒 ${esc(t('sensitive_banner'))}</div>` : ''}
-    <div class="row" style="margin:8px 0 14px"><span class="flag" style="font-size:44px">${flag(c.code)}</span>
+    <div class="row" style="margin:8px 0 14px"><span class="flag" style="font-size:46px">${flag(c.code)}</span>
       <div><h1 style="margin:0">${esc(countryName(c))}</h1>
       ${c.is_sensitive ? `<span class="badge sensitive">🔒 ${esc(t('sensitive'))}</span>` : ''}</div></div>
+
     ${sections.map(([k, f]) => `<div class="card"><div class="section-title">${esc(t(k))}</div><p style="margin:0">${para(loc(c, f))}</p></div>`).join('')}
+
+    <div class="card">
+      <div class="grid2" style="gap:16px">
+        <div><div class="section-title">${esc(t('provided_title'))}</div>
+          <ul class="checks">${provided.map(x => `<li>${esc(locPair(x))}</li>`).join('')}${extraProvided ? `<li>${esc(extraProvided)}</li>` : ''}</ul></div>
+        <div><div class="section-title">${esc(t('prepare_title'))}</div>
+          <ul class="checks prep">${prepare.map(x => `<li>${esc(locPair(x))}</li>`).join('')}</ul></div>
+      </div>
+      <p class="small" style="margin:12px 0 0"><span class="muted">${esc(t('seasons'))}:</span> <strong>${esc(locPair(setting('mission_seasons')))}</strong></p>
+    </div>
+
     ${extras.map(x => `<div class="card"><div class="section-title">${esc(locPair(x, 'title'))}</div><p style="margin:0">${para(locPair(x, 'body'))}</p></div>`).join('')}
-    <div class="grid2" style="margin-top:8px">
+
+    <div class="card">
+      <div class="eyebrow">🔥 ${esc(t('pledge_title'))}</div>
+      <p style="margin:6px 0 2px"><strong>${esc(countText)}</strong></p>
+      <p class="small muted" style="margin:0">${esc(c.is_sensitive ? t('pledge_hidden') : t('pledge_desc'))}</p>
+      ${names.length ? `<div class="pledge-names">${names.map(x => `<span>${esc(x)}</span>`).join('')}</div>` : ''}
+      <button class="btn block ${pledged ? 'on' : ''}" id="pledge-btn" style="margin-top:14px" aria-pressed="${pledged}">${esc(pledged ? t('pledged_btn') : t('pledge_btn'))}</button>
+    </div>
+
+    <div class="grid2">
       <button class="btn ghost" data-soon="2">💬 ${esc(t('enter_room'))}</button>
-      <button class="btn gold" data-soon="2">✈️ ${esc(t('apply_here'))}</button>
+      <button class="btn navy" data-soon="2">✈️ ${esc(t('apply_here'))}</button>
     </div>`;
 }
 
@@ -817,7 +991,7 @@ function memberListHTML() {
     list.map(m => `<div class="list-item">
       <div class="meta"><div><strong>${esc(m.name || '—')}</strong></div>
         <div class="small muted">${esc(m.email)}${m.school ? ' · ' + esc(m.school) : ''}</div></div>
-      <select data-role-for="${esc(m.id)}" style="width:auto;min-width:120px" ${m.id === state.profile.id ? 'disabled' : ''} aria-label="Role">
+      <select data-role-for="${esc(m.id)}" style="width:auto;min-width:124px" ${m.id === state.profile.id ? 'disabled' : ''} aria-label="Role">
         ${['member', 'graduate', 'admin'].map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}
       </select>
     </div>`).join('');
@@ -836,6 +1010,15 @@ function bindMemberList() {
 }
 
 const BINDERS = {
+  countries(code) {
+    const btn = document.getElementById('pledge-btn');
+    if (btn) btn.onclick = async () => {
+      btn.disabled = true;
+      const c = state.countries.find(x => x.code === code.toUpperCase());
+      await togglePledge(c);
+      btn.disabled = false;
+    };
+  },
   my() {
     const form = document.getElementById('profile-form');
     form.onsubmit = async (e) => {
@@ -892,9 +1075,12 @@ async function onSession(session) {
   state.session = session;
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
+    state.myPledges = new Set(); state.pledgeCounts = {};
+    delete app.dataset.tab;
     render();
     return;
   }
+  safeSet('svm_returning', '1');
   if (prevUser !== session.user.id || !state.profile) {
     render();   // 로더 표시
     await Promise.all([loadProfile(), loadSettings()]);
@@ -902,7 +1088,7 @@ async function onSession(session) {
   render();
 }
 
-async function init() {
+function init() {
   document.documentElement.lang = state.lang;
   if (!configured) { render(); return; }
   sb.auth.onAuthStateChange((event, session) => {

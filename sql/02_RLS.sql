@@ -94,6 +94,37 @@ create or replace view public.profile_names as
   select id, name, role from public.profiles;
 grant select on public.profile_names to authenticated;
 
+-- 이름 쓰기 표시용 짧은 이름: "이름 + 성 이니셜" (예: "Grace Kim" → "Grace K.")
+create or replace function public.short_name(full_name text)
+returns text
+language sql
+immutable
+as $$
+  select case
+    when full_name is null or btrim(full_name) = '' then null
+    when array_length(regexp_split_to_array(btrim(full_name), '\s+'), 1) = 1 then btrim(full_name)
+    else split_part(btrim(full_name), ' ', 1) || ' ' ||
+         upper(left((regexp_split_to_array(btrim(full_name), '\s+'))[array_length(regexp_split_to_array(btrim(full_name), '\s+'), 1)], 1)) || '.'
+  end;
+$$;
+
+-- 내 나라에 이름 쓰기 — 국가별 품은 사람 수 (민감 국가 포함, 숫자만)
+create or replace view public.nation_pledge_counts as
+  select c.id as country_id, count(p.user_id)::int as pledge_count
+  from public.countries c
+  left join public.nation_pledges p on p.country_id = c.id
+  group by c.id;
+grant select on public.nation_pledge_counts to anon, authenticated;
+
+-- 내 나라에 이름 쓰기 — 이름 목록 (민감 국가는 제외 → 숫자만 공개)
+create or replace view public.nation_pledge_names as
+  select p.country_id, public.short_name(pr.name) as display_name, p.created_at
+  from public.nation_pledges p
+  join public.countries c on c.id = p.country_id and not c.is_sensitive
+  join public.profiles pr on pr.id = p.user_id
+  where pr.name is not null and btrim(pr.name) <> '';
+grant select on public.nation_pledge_names to authenticated;
+
 -- ---------------------------------------------------------------------
 -- 보호 트리거 — RLS 만으로 막기 어려운 "컬럼 단위" 권한
 -- ---------------------------------------------------------------------
@@ -188,6 +219,7 @@ create trigger guard_feedback before insert or update on public.course_feedback
 alter table public.profiles                   enable row level security;
 alter table public.countries                  enable row level security;
 alter table public.country_photos             enable row level security;
+alter table public.nation_pledges             enable row level security;
 alter table public.room_members               enable row level security;
 alter table public.messages                   enable row level security;
 alter table public.applications               enable row level security;
@@ -255,6 +287,11 @@ create policy "teams: read"                   on public.teams            for sel
 create policy "teams: admin write"            on public.teams            for all using (public.is_admin()) with check (public.is_admin());
 create policy "team_members: read"            on public.team_members     for select to authenticated using (true);
 create policy "team_members: admin write"     on public.team_members     for all using (public.is_admin()) with check (public.is_admin());
+
+-- 내 나라에 이름 쓰기: 본인 행만 직접 조회·추가·삭제 (다른 사람은 위의 뷰로 숫자/이름만)
+create policy "pledges: self or admin read" on public.nation_pledges for select using (user_id = auth.uid() or public.is_admin());
+create policy "pledges: self add"           on public.nation_pledges for insert with check (user_id = auth.uid());
+create policy "pledges: self remove"        on public.nation_pledges for delete using (user_id = auth.uid() or public.is_admin());
 
 -- ② 나라방: 참여는 자유 (본인 행만), 메시지는 방 참여자가 작성, 관리자 삭제
 create policy "room_members: read"        on public.room_members for select to authenticated using (true);
