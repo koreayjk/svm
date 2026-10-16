@@ -687,7 +687,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Reset all demo data on this device?', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    members_unit: 'members', coming_title: 'Coming next', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
   },
   ko: {
     tagline: 'Called. Equipped. Sent.',
@@ -764,7 +764,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '이 기기의 데모 데이터를 모두 지울까요?', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    members_unit: '명', coming_title: '곧 열려요', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
   },
 };
 
@@ -1087,6 +1087,7 @@ function createDemoClient() {
 
 const configured = !CONFIG.SUPABASE_URL.includes('YOUR-PROJECT') && !CONFIG.SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
 const DEMO = !configured;   // 연결 정보가 없으면 데모 모드
+const CAN_DOWNLOAD = true;   // 파일 저장·공유가 막힌 미리보기 환경용 빌드에서는 false
 const sb = configured ? supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY) : createDemoClient();
 
 async function loadProfile() {
@@ -1750,8 +1751,8 @@ VIEWS.events = async function (id) {
     ${locPair(e, 'description') ? card(`<span class="eyebrow">${esc(t('ev_about'))}</span><p style="margin:8px 0 0">${para(locPair(e, 'description'))}</p>`) : ''}
     <div class="btn-row">
       ${e.link_url ? `<a class="btn block" href="${esc(e.link_url)}" target="_blank" rel="noopener">${icon('arrow')} ${esc(t('ev_register'))}</a>` : ''}
-      <button class="btn block navy" id="ics-btn" data-id="${e.id}">${icon('calendar')} ${esc(t('ev_add_cal'))}</button>
-      ${navigator.share ? `<button class="btn block light" id="share-btn">${esc(t('ev_share'))}</button>` : ''}
+      ${CAN_DOWNLOAD ? `<button class="btn block navy" id="ics-btn" data-id="${e.id}">${icon('calendar')} ${esc(t('ev_add_cal'))}</button>` : ''}
+      ${navigator.share && CAN_DOWNLOAD ? `<button class="btn block light" id="share-btn">${esc(t('ev_share'))}</button>` : ''}
     </div>`;
 };
 
@@ -1865,7 +1866,12 @@ const BINDERS = {
     };
     document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
     const dr = document.getElementById('demo-reset');
-    if (dr) dr.onclick = () => { if (confirm(t('demo_reset_q'))) { sb.reset(); location.hash = '#/home'; location.reload(); } };
+    // 두 번 눌러 확인 (브라우저 confirm 창 대신 화면 안에서 확인)
+    if (dr) dr.onclick = () => {
+      if (dr.dataset.armed) { sb.reset(); location.hash = '#/home'; location.reload(); return; }
+      dr.dataset.armed = '1'; dr.textContent = t('demo_reset_q'); dr.classList.replace('light', 'danger');
+      setTimeout(() => { if (dr.isConnected) { delete dr.dataset.armed; dr.textContent = t('demo_reset'); dr.classList.replace('danger', 'light'); } }, 4000);
+    };
     const ib = document.getElementById('install-btn');
     if (ib) ib.onclick = async () => {
       if (!state.installPrompt) return;
