@@ -330,6 +330,31 @@ create table if not exists public.support_stories (
 );
 
 -- ---------------------------------------------------------------------
+-- 특별 이벤트 (미션 컨퍼런스, 발족식, 수련회 등 — 매주 모임(gatherings)과 별개)
+--   is_featured: 홈 맨 위 큰 배너로 노출 (여러 개면 가장 가까운 것)
+--   all_day: 시간 미정/종일 이벤트는 날짜만 표시
+-- ---------------------------------------------------------------------
+create table if not exists public.events (
+  id              bigint generated always as identity primary key,
+  title_en        text not null,
+  title_ko        text,
+  subtitle_en     text,
+  subtitle_ko     text,
+  description_en  text,
+  description_ko  text,
+  starts_at       timestamptz not null,
+  ends_at         timestamptz,
+  all_day         boolean not null default false,
+  location        text,
+  image_url       text,
+  link_url        text,          -- 외부 등록/안내 페이지 (선택)
+  is_featured     boolean not null default false,
+  is_published    boolean not null default true,
+  created_at      timestamptz not null default now()
+);
+create index if not exists events_starts_idx on public.events(starts_at);
+
+-- ---------------------------------------------------------------------
 -- 앱 설정 (require_graduation_to_apply, sensitive_photo_block,
 --          provided_items, prepare_items, mission_seasons 등)
 -- ---------------------------------------------------------------------

@@ -158,3 +158,15 @@ insert into public.gatherings (type, date, start_time, end_time, location, title
 select 'friday', (current_date + ((12 - extract(dow from current_date)::int) % 7))::date,
        '19:00', '21:00', 'Church — Bryan/College Station, TX', 'Friday Training Night — DNA2 · PST'
 where not exists (select 1 from public.gatherings where type = 'friday' and date >= current_date);
+
+-- 특별 이벤트: SVM 미션 컨퍼런스 2026 (발족식) — 시간·장소가 정해지면 수정하세요
+insert into public.events
+  (title_en, title_ko, subtitle_en, subtitle_ko, description_en, description_ko,
+   starts_at, all_day, location, is_featured)
+select
+  'SVM Mission Conference 2026', 'SVM 미션 컨퍼런스 2026',
+  'Launch night of the Student Volunteer Movement', '학생자원운동 발족식',
+  E'The launch of SVM in Bryan/College Station.\nTent Village — walk the nation booths and sign your nation.\nSign up on site with the QR code, explore the fields, and apply.\nFirst look at the SVM metaverse mission space (teaser).',
+  E'브라이언/컬리지 스테이션 SVM 발족식.\n텐트 빌리지 — 나라별 부스를 돌며 내 나라에 이름 쓰기.\n현장 QR로 가입하고, 선교지를 둘러보고, 신청까지.\nSVM 메타버스 선교 공간 예고편 첫 공개.',
+  '2026-11-20 00:00:00 America/Chicago', true, 'Bryan/College Station, TX', true
+where not exists (select 1 from public.events where title_en = 'SVM Mission Conference 2026');

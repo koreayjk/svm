@@ -101,7 +101,17 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 - `language_progress.correct_count / wrong_count`, `practice_days` (연속 학습일)
 - `testimonies.prayer_id` (응답된 기도 → 간증 연결), `*.reviewed_at`
 
+## 이벤트 (컨퍼런스·발족식 등)
+매주 모임(`gatherings`)과 별도로 `events` 테이블에서 관리합니다. 11/20 SVM 미션 컨퍼런스는 시드에 들어 있습니다.
+- `is_featured = true` → 홈 맨 위 큰 배너 (D-day 카운트다운)
+- 나머지 다가오는 이벤트 → 홈 "다가오는 이벤트" 목록 (최대 3개) → "모두 보기"로 전체 목록
+- 상세 화면: 일시·장소·소개, `link_url` 이 있으면 등록 버튼, **캘린더에 추가**(.ics), 공유
+- 시간이 정해지지 않았으면 `all_day = true` → "시간 추후 안내"로 표시
+- 숨기기: `is_published = false` · 지난 이벤트는 자동으로 사라짐
+- 관리자 화면에서 이벤트 편집은 4단계(게더링·출석)와 함께 추가 예정 — 그전에는 SQL Editor 에서 수정
+
 ## 확인이 필요한 값
+- 11/20 컨퍼런스의 시간·정확한 장소: 지금은 "시간 추후 안내 · Bryan/College Station, TX" 입니다 (`events` 행 수정).
 - 금요 트레이닝 나이트 시간: 명세에 "금요일 밤"만 있어 **오후 7–9시**로 넣었습니다 (`03_국가_시드.sql`, `index.html` 의 `DEFAULTS.gatherings.friday`).
 - 국가별 소개·생활 문구는 초안입니다. 실제 내용으로 교체하세요.
 

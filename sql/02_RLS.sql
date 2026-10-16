@@ -245,6 +245,7 @@ alter table public.checklist_items            enable row level security;
 alter table public.checklist_progress         enable row level security;
 alter table public.support_stories            enable row level security;
 alter table public.app_settings               enable row level security;
+alter table public.events                     enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -271,6 +272,8 @@ create policy "photos: read"           on public.country_photos for select using
 create policy "photos: admin write"    on public.country_photos for all using (public.is_admin()) with check (public.is_admin());
 create policy "settings: read"         on public.app_settings   for select using (true);
 create policy "settings: admin write"  on public.app_settings   for all using (public.is_admin()) with check (public.is_admin());
+create policy "events: read"           on public.events         for select using (is_published or public.is_admin());
+create policy "events: admin write"    on public.events         for all using (public.is_admin()) with check (public.is_admin());
 
 -- 로그인 회원 읽기, 관리자만 쓰기
 create policy "gospel_messages: read"         on public.gospel_messages  for select to authenticated using (is_active or public.is_admin());

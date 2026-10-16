@@ -523,6 +523,37 @@
   @keyframes pop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
   .auth-title { font-size: 34px; font-weight: 900; letter-spacing: -.035em; line-height: 1.15; margin: 10px 0 8px; }
   @media (prefers-reduced-motion: reduce) { .orbit .bub { animation: none; } }
+  /* ---------- events ---------- */
+  .event-hero { position: relative; display: block; color: #fff; margin-bottom: 12px; }
+  .event-hero .core { padding: 22px; min-height: 230px; display: flex; flex-direction: column; }
+  .event-hero .ev-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; opacity: .55; }
+  .event-hero .ev-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .event-hero .ev-badge { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: 999px; font-size: 12.5px; font-weight: 700; background: var(--orange); color: #fff; }
+  .event-hero .ev-badge svg { width: 14px; height: 14px; }
+  .event-hero .ev-dd { font-family: var(--font-num); font-weight: 600; font-size: 46px; line-height: .85; text-align: right; font-variant-numeric: tabular-nums; }
+  .event-hero .ev-dd small { display: block; font-family: var(--font); font-size: 12px; font-weight: 500; color: rgba(255, 255, 255, .65); margin-top: 6px; }
+  .event-hero h2 { color: #fff; font-size: 25px; letter-spacing: -.03em; line-height: 1.2; margin-top: auto; padding-top: 22px; }
+  .event-hero .ev-sub { color: rgba(255, 255, 255, .78); font-size: 15px; margin-top: 4px; }
+  .event-hero .ev-when { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 14px; font-size: 14px; color: rgba(255, 255, 255, .85); }
+  .event-hero .ev-when span { display: inline-flex; align-items: center; gap: 5px; }
+  .event-hero .ev-when svg { width: 15px; height: 15px; color: #FF9A62; }
+  .event-hero:active { transform: scale(.985); }
+  .event-hero { transition: transform .35s var(--ease); }
+
+  .date-tile {
+    flex: 0 0 auto; width: 50px; border-radius: 13px; overflow: hidden; text-align: center; background: #fff;
+    box-shadow: 0 0 0 1px var(--separator), 0 2px 6px rgba(13, 27, 58, .06);
+  }
+  .date-tile .m { display: block; background: var(--orange); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 0 2px; }
+  .date-tile .d { display: block; font-family: var(--font-num); font-weight: 600; font-size: 24px; line-height: 1; padding: 5px 0 6px; color: var(--navy); }
+  a.list-row { color: inherit; }
+  a.list-row:active { opacity: .6; }
+  .list-row .chev { color: #A3ABB9; display: grid; }
+  .list-row .chev svg { width: 18px; height: 18px; }
+  .list-row.dated + .list-row.dated::before { left: 64px; }
+
+  .ev-facts .list-row .ico-tile { background: var(--orange-soft); color: var(--orange-dark); }
+  .btn-row { display: grid; gap: 10px; }
 </style>
 </head>
 <body>
@@ -656,7 +687,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    members_unit: 'members', coming_title: 'Coming next', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
   },
   ko: {
     tagline: 'Called. Equipped. Sent.',
@@ -733,7 +764,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    members_unit: '명', coming_title: '곧 열려요', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
   },
 };
 
@@ -749,6 +780,7 @@ const state = {
   myPledges: new Set(),     // 내가 이름 쓴 country_id
   pledgeCounts: {},         // country_id → count
   photos: null,             // country_id → 대표 사진 URL
+  events: null,             // 다가오는 특별 이벤트
   // 처음 온 사람(발족식 QR)은 회원가입 화면부터, 로그인한 적 있으면 로그인 화면부터
   authMode: safeGet('svm_returning') ? 'login' : 'signup',   // login | signup | forgot | recovery
   adminTab: 'members',
@@ -985,7 +1017,8 @@ async function render() {
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
   let { tab, param } = parseRoute();
-  if (!TABS.some(x => x.id === tab) || (tab === 'admin' && !isAdmin())) tab = 'home';
+  const SUB_ROUTES = ['events'];   // 탭이 아닌 하위 화면 (하단 탭은 홈으로 표시)
+  if ((!TABS.some(x => x.id === tab) && !SUB_ROUTES.includes(tab)) || (tab === 'admin' && !isAdmin())) tab = 'home';
   const routeKey = tab + '/' + (param || '') + '/' + state.lang;
   const routeChanged = routeKey !== lastRouteKey;
   lastRouteKey = routeKey;
@@ -1029,6 +1062,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 function islandHTML(tab) {
+  if (!TABS.some(x => x.id === tab)) tab = 'home';
   const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
   return `<nav class="island" aria-label="Main"><div class="island-inner">
     ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
@@ -1239,7 +1273,9 @@ function destCard(c) {
 const VIEWS = {
   async home() {
     const p = state.profile;
-    const [{ list, today }] = await Promise.all([upcomingMeetings(), loadCountries(), loadPledges(), loadPhotos()]);
+    const [{ list, today }, events] = await Promise.all([upcomingMeetings(), loadEvents(true), loadCountries(), loadPledges(), loadPhotos()]);
+    const featured = events.find(e => e.is_featured) || null;
+    const others = events.filter(e => e !== featured).slice(0, 3);
     const [next, after] = list;
     const where = next.location || setting('gathering_location') || 'Church';
     const d = daysBetween(today, next.date);
@@ -1290,6 +1326,7 @@ const VIEWS = {
           <div style="padding-top:8px">${roleTag(p.role)}</div>
         </div>
       </div>
+      ${featured ? eventHero(featured) : ''}
       <div class="bento" style="margin-bottom:12px">
         <a class="stat peach" href="#/countries"><span class="s-ico">${icon('flame')}</span>
           <div><div class="big">${totalNames.toLocaleString()}</div><div class="lbl">${esc(t('stat_names'))}</div></div></a>
@@ -1297,6 +1334,7 @@ const VIEWS = {
           <div><div class="big">${active.length}</div><div class="lbl">${esc(t('stat_fields'))}</div></div></a>
       </div>
       ${meeting}
+      ${others.length ? `<div class="section-head"><h2>${esc(t('ev_upcoming'))}</h2><a class="text-link" href="#/events">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(others.map(eventRow).join(''))}` : ''}
       <div class="section-head"><h2>${esc(t('countries_title'))}</h2><a class="text-link" href="#/countries">${esc(t('see_all'))} ${icon('chev')}</a></div>
       <div class="rail dest-rail">${active.map(destCard).join('')}</div>
       ${nations}
@@ -1421,6 +1459,97 @@ const VIEWS = {
     return `${pageHead(t('admin_title'))}${seg}${body}
       <p class="muted small" style="margin:14px 4px 0">${esc(t('admin_more'))}</p>`;
   },
+};
+
+// ---------------------------------------------------------------------
+// 특별 이벤트 (컨퍼런스·발족식 등) — 매주 모임(gatherings)과 별개
+// ---------------------------------------------------------------------
+async function loadEvents(force) {
+  if (state.events && !force) return state.events;
+  const since = new Date(Date.now() - 36 * 3600 * 1000).toISOString();   // 진행 중·당일 이벤트 포함
+  const { data } = await sb.from('events').select('*').eq('is_published', true)
+    .gte('starts_at', since).order('starts_at').limit(20);
+  const today = nowInTZ().date;
+  state.events = (data || []).filter(e => evDay(e.ends_at || e.starts_at) >= today);
+  return state.events;
+}
+function evDay(iso) { return new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); }
+function evDateLong(e) { return new Date(e.starts_at).toLocaleDateString(dateLocale(), { timeZone: CONFIG.TIMEZONE, weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }); }
+function evDateShort(e) { return new Date(e.starts_at).toLocaleDateString(dateLocale(), { timeZone: CONFIG.TIMEZONE, weekday: 'short', month: 'short', day: 'numeric' }); }
+function evTime(e) {
+  if (e.all_day) return t('ev_time_tbd');
+  const o = { timeZone: CONFIG.TIMEZONE, hour: 'numeric', minute: '2-digit' };
+  const a = new Date(e.starts_at).toLocaleTimeString(dateLocale(), o);
+  return e.ends_at ? `${a} – ${new Date(e.ends_at).toLocaleTimeString(dateLocale(), o)}` : a;
+}
+function evDday(e) { const d = daysBetween(nowInTZ().date, evDay(e.starts_at)); return d <= 0 ? 'D-DAY' : 'D-' + d; }
+function dateTile(e) {
+  const d = new Date(e.starts_at);
+  const m = d.toLocaleDateString('en-US', { timeZone: CONFIG.TIMEZONE, month: 'short' });
+  const day = d.toLocaleDateString('en-US', { timeZone: CONFIG.TIMEZONE, day: 'numeric' });
+  return `<span class="date-tile" aria-hidden="true"><span class="m">${esc(m)}</span><span class="d">${esc(day)}</span></span>`;
+}
+function eventHero(e) {
+  return `<a class="event-hero shell dark" href="#/events/${e.id}"><div class="core dark on-dark">
+      ${e.image_url ? `<img class="ev-img" src="${esc(e.image_url)}" alt="">` : ''}
+      <div class="ev-top">
+        <span class="ev-badge">${icon('spark')}${esc(t('ev_featured'))}</span>
+        <div class="ev-dd">${esc(evDday(e))}<small>${esc(evDateShort(e))}</small></div>
+      </div>
+      <h2>${esc(locPair(e, 'title'))}</h2>
+      ${locPair(e, 'subtitle') ? `<div class="ev-sub">${esc(locPair(e, 'subtitle'))}</div>` : ''}
+      <div class="ev-when"><span>${icon('calendar')}${esc(evDateShort(e))} · ${esc(evTime(e))}</span>${e.location ? `<span>${icon('pin')}${esc(e.location)}</span>` : ''}</div>
+      ${TORCH}
+    </div></a>`;
+}
+function eventRow(e) {
+  return `<a class="list-row dated" href="#/events/${e.id}">
+      ${dateTile(e)}
+      <div class="meta"><div class="t">${esc(locPair(e, 'title'))}</div><div class="d">${esc(evDateShort(e))} · ${esc(evTime(e))}${e.location ? ' · ' + esc(e.location) : ''}</div></div>
+      <span class="chev">${icon('chev')}</span>
+    </a>`;
+}
+// .ics 파일 — iPhone/Google/Outlook 캘린더에 추가
+function icsFor(e) {
+  const pad = n => String(n).padStart(2, '0');
+  const utc = d => `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+  const icsEsc = v => String(v || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\;');
+  let when;
+  if (e.all_day) {
+    const day = evDay(e.starts_at).replace(/-/g, '');
+    const next = addDays(evDay(e.ends_at || e.starts_at), 1).replace(/-/g, '');
+    when = `DTSTART;VALUE=DATE:${day}\r\nDTEND;VALUE=DATE:${next}`;
+  } else {
+    const st = new Date(e.starts_at), en = e.ends_at ? new Date(e.ends_at) : new Date(st.getTime() + 2 * 3600e3);
+    when = `DTSTART:${utc(st)}\r\nDTEND:${utc(en)}`;
+  }
+  return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//SVM//Events//EN', 'BEGIN:VEVENT',
+    `UID:svm-event-${e.id}@svm`, `DTSTAMP:${utc(new Date())}`, when,
+    `SUMMARY:${icsEsc(locPair(e, 'title'))}`, `DESCRIPTION:${icsEsc(locPair(e, 'description'))}`,
+    `LOCATION:${icsEsc(e.location)}`, 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+}
+
+VIEWS.events = async function (id) {
+  const list = await loadEvents(true);
+  const back = `<a href="#/home" class="back-pill">${icon('chevl')}${esc(t('tab_home'))}</a>`;
+  if (!id) {
+    return `<div style="padding-top:8px">${back}</div>${pageHead(t('ev_title'), t('ev_sub'))}
+      ${list.length ? card(list.map(eventRow).join('')) : card(`<p class="muted" style="margin:0">${esc(t('ev_none'))}</p>`)}`;
+  }
+  const e = list.find(x => String(x.id) === String(id));
+  if (!e) return `<div style="padding-top:8px">${back}</div><div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  return `<div style="padding-top:8px"><a href="#/events" class="back-pill">${icon('chevl')}${esc(t('ev_title'))}</a></div>
+    <div style="margin-top:10px">${eventHero(e).replace('<a class="event-hero', '<div class="event-hero').replace(/<\/a>$/, '</div>')}</div>
+    ${card(`<div class="ev-facts">
+        <div class="list-row"><span class="ico-tile">${icon('calendar')}</span><div class="meta"><div class="t">${esc(evDateLong(e))}</div><div class="d">${esc(evTime(e))}</div></div></div>
+        ${e.location ? `<div class="list-row"><span class="ico-tile">${icon('pin')}</span><div class="meta"><div class="t">${esc(e.location)}</div></div></div>` : ''}
+      </div>`)}
+    ${locPair(e, 'description') ? card(`<span class="eyebrow">${esc(t('ev_about'))}</span><p style="margin:8px 0 0">${para(locPair(e, 'description'))}</p>`) : ''}
+    <div class="btn-row">
+      ${e.link_url ? `<a class="btn block" href="${esc(e.link_url)}" target="_blank" rel="noopener">${icon('arrow')} ${esc(t('ev_register'))}</a>` : ''}
+      <button class="btn block navy" id="ics-btn" data-id="${e.id}">${icon('calendar')} ${esc(t('ev_add_cal'))}</button>
+      ${navigator.share ? `<button class="btn block light" id="share-btn">${esc(t('ev_share'))}</button>` : ''}
+    </div>`;
 };
 
 async function viewCountryDetail(c) {
@@ -1567,6 +1696,20 @@ const BINDERS = {
   },
 };
 
+BINDERS.events = function (id) {
+  const e = (state.events || []).find(x => String(x.id) === String(id));
+  if (!e) return;
+  const ics = document.getElementById('ics-btn');
+  if (ics) ics.onclick = () => {
+    const url = URL.createObjectURL(new Blob([icsFor(e)], { type: 'text/calendar;charset=utf-8' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: 'svm-event.ics' });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+  const sh = document.getElementById('share-btn');
+  if (sh) sh.onclick = () => navigator.share({ title: locPair(e, 'title'), text: `${locPair(e, 'title')} · ${evDateShort(e)}`, url: location.href }).catch(() => {});
+};
+
 // ---------------------------------------------------------------------
 // 7) 시작
 // ---------------------------------------------------------------------
@@ -1575,7 +1718,7 @@ async function onSession(session) {
   state.session = session;
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
-    state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null;
+    state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
     delete app.dataset.tab;
     render();
     return;
