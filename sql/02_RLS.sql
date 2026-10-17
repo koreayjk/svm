@@ -89,6 +89,42 @@ as $$
   select current_user in ('authenticated', 'anon');
 $$;
 
+-- 셀프 체크인: 모임 시간(시작 30분 전 ~ 종료 30분 후)에만 출석.
+--   주일 오후 모임 행이 아직 없으면 정기 일정(일 14:00–16:00)으로 만들어서 체크인 (관리자가 미리 만들 필요 없음)
+create or replace function public.self_check_in()
+returns bigint
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  g_id bigint;
+  local_now timestamp := now() at time zone 'America/Chicago';
+begin
+  if auth.uid() is null then
+    raise exception 'Please log in first.';
+  end if;
+  select id into g_id from public.gatherings
+   where (date + start_time - interval '30 minutes') <= local_now
+     and (date + end_time   + interval '30 minutes') >= local_now
+   order by date desc, start_time desc limit 1;
+  if g_id is null and extract(dow from local_now) = 0 and local_now::time between time '13:30' and time '16:30' then
+    insert into public.gatherings (type, date, start_time, end_time, location, title)
+    values ('sunday', local_now::date, '14:00', '16:00',
+            (select value #>> '{}' from public.app_settings where key = 'gathering_location'), 'Sunday Mission Gathering')
+    on conflict (date, type) do nothing
+    returning id into g_id;
+  end if;
+  if g_id is null then
+    raise exception 'Check-in opens 30 minutes before the gathering and closes 30 minutes after.';
+  end if;
+  insert into public.attendance (gathering_id, user_id) values (g_id, auth.uid()) on conflict do nothing;
+  return g_id;
+end;
+$$;
+revoke all on function public.self_check_in() from public, anon;
+grant execute on function public.self_check_in() to authenticated;
+
 -- 채팅·게시판 작성자 이름 표시용 공개 뷰 (전화번호·이메일은 노출하지 않음)
 create or replace view public.profile_names as
   select id, name, role from public.profiles;
