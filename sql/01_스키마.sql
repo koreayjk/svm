@@ -533,3 +533,24 @@ alter table public.application_status_history
 -- 3단계: 복음 메시지 뜻(한국어) · 강의 설명(한국어)
 alter table public.gospel_sentences add column if not exists source_ko      text;
 alter table public.courses          add column if not exists description_ko text;
+
+-- ---------------------------------------------------------------------
+-- 앱 안 알림 (신청·연장·수료·후기 결과, 리더 답글, 팀 추가) — DB 트리거가 만듦
+-- ---------------------------------------------------------------------
+create table if not exists public.notifications (
+  id          bigint generated always as identity primary key,
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  kind        text not null,
+  payload     jsonb not null default '{}'::jsonb,
+  link        text,
+  created_at  timestamptz not null default now(),
+  read_at     timestamptz
+);
+create index if not exists notifications_user_idx on public.notifications(user_id, created_at desc);
+
+-- 신청서 내부 메모 (관리자만 — 신청자에게 보이지 않음)
+create table if not exists public.application_notes (
+  application_id  bigint primary key references public.applications(id) on delete cascade,
+  note            text,
+  updated_at      timestamptz not null default now()
+);
