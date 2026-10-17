@@ -161,6 +161,75 @@ update public.gatherings set location = 'IM Friend Baptist Church · 408 E 24th 
 -- 금요 모임은 없습니다 — 예전 시드로 들어간 금요 트레이닝 나이트 행을 지웁니다
 delete from public.gatherings where type = 'friday' and title = 'Friday Training Night — DNA2 · PST';
 
+-- ③ 언어 훈련: 복음 메시지 예시 (5문장 × 7개 언어) — tools/gospel_sample.py 로 생성
+--   ⚠️ 예시 번역입니다. 현지 사역자가 검수한 문장으로 바꾸세요 (앱: 관리 → 훈련 → 복음 메시지 문장)
+insert into public.gospel_messages (title, base_text, sort_order)
+select 'The Good News (sample)', 'God loves you. All people have sinned and are separated from God. Jesus died on the cross for our sins and rose again. If you believe in Jesus, you receive forgiveness and eternal life. Will you receive Jesus today?', 1
+where not exists (select 1 from public.gospel_messages);
+
+with m as (select id from public.gospel_messages order by sort_order, id limit 1),
+base(seq, en, ko) as (values
+    (1, 'God loves you.', '하나님은 당신을 사랑하십니다.'),
+    (2, 'All people have sinned and are separated from God.', '모든 사람은 죄를 지어 하나님과 멀어졌습니다.'),
+    (3, 'Jesus died on the cross for our sins and rose again.', '예수님은 우리 죄를 위해 십자가에서 죽으시고 다시 살아나셨습니다.'),
+    (4, 'If you believe in Jesus, you receive forgiveness and eternal life.', '예수님을 믿으면 죄 용서와 영원한 생명을 받습니다.'),
+    (5, 'Will you receive Jesus today?', '오늘 예수님을 영접하시겠어요?')),
+loc(code, seq, local_text, pron) as (values
+    ('KR', 1, '하나님은 당신을 사랑하십니다.', 'Hananim-eun dangsin-eul saranghasimnida.'),
+    ('KR', 2, '모든 사람은 죄를 지어 하나님과 멀어졌습니다.', 'Modeun saram-eun joe-reul jieo Hananim-gwa meoreojyeotseumnida.'),
+    ('KR', 3, '예수님은 우리 죄를 위해 십자가에서 죽으시고 다시 살아나셨습니다.', 'Yesunim-eun uri joe-reul wihae sipjaga-eseo jugeusigo dasi sarananasyeotseumnida.'),
+    ('KR', 4, '예수님을 믿으면 죄 용서와 영원한 생명을 받습니다.', 'Yesunim-eul mideumyeon joe yongseo-wa yeongwonhan saengmyeong-eul batseumnida.'),
+    ('KR', 5, '오늘 예수님을 영접하시겠어요?', 'Oneul Yesunim-eul yeongjeophasigesseoyo?'),
+    ('PH', 1, 'Mahal ka ng Diyos.', 'ma-HAL ka nang dee-YOS'),
+    ('PH', 2, 'Lahat ng tao ay nagkasala at nahiwalay sa Diyos.', 'la-HAT nang TA-o ai nag-ka-sa-LA at na-hi-wa-LAI sa dee-YOS'),
+    ('PH', 3, 'Si Hesus ay namatay sa krus para sa ating mga kasalanan at muling nabuhay.', 'see HE-sus ai na-ma-TAI sa KROOS PA-ra sa A-ting ma-NGA ka-sa-LA-nan at MOO-ling na-BOO-hai'),
+    ('PH', 4, 'Kung sasampalataya ka kay Hesus, tatanggap ka ng kapatawaran at buhay na walang hanggan.', 'kung sa-sam-pa-la-ta-YA ka kai HE-sus, ta-tang-GAP ka nang ka-pa-ta-WA-ran at BOO-hai na wa-LANG hang-GAN'),
+    ('PH', 5, 'Tatanggapin mo ba si Hesus ngayon?', 'ta-tang-GA-pin mo ba see HE-sus nga-YON?'),
+    ('MY', 1, 'Tuhan mengasihi anda.', 'TOO-han meng-a-SEE-hee AN-da'),
+    ('MY', 2, 'Semua manusia telah berdosa dan terpisah daripada Tuhan.', 'se-MOO-a ma-NOO-sia te-LAH ber-DO-sa dan ter-PEE-sah da-ree-PA-da TOO-han'),
+    ('MY', 3, 'Yesus mati di kayu salib kerana dosa-dosa kita dan bangkit semula.', 'YE-sus MA-tee dee KA-yoo SA-lib ke-RA-na DO-sa DO-sa KEE-ta dan BANG-kit se-MOO-la'),
+    ('MY', 4, 'Jika anda percaya kepada Yesus, anda menerima pengampunan dan hidup yang kekal.', 'JEE-ka AN-da per-CHA-ya ke-PA-da YE-sus, AN-da me-ne-REE-ma peng-am-POO-nan dan HEE-dup yang ke-KAL'),
+    ('MY', 5, 'Adakah anda mahu menerima Yesus hari ini?', 'a-DA-kah AN-da MA-hoo me-ne-REE-ma YE-sus HA-ree EE-nee?'),
+    ('TH', 1, 'พระเจ้าทรงรักคุณ', 'Phra-jao song rak khun'),
+    ('TH', 2, 'ทุกคนทำบาปและแยกจากพระเจ้า', 'Thuk khon tham baap lae yaek jaak Phra-jao'),
+    ('TH', 3, 'พระเยซูสิ้นพระชนม์บนไม้กางเขนเพื่อบาปของเรา และทรงเป็นขึ้นมาใหม่', 'Phra-Yesu sin phra-chon bon mai-kaang-khen phuea baap khong rao, lae song pen khuen maa mai'),
+    ('TH', 4, 'ถ้าคุณเชื่อในพระเยซู คุณจะได้รับการอภัยบาปและชีวิตนิรันดร์', 'Thaa khun chuea nai Phra-Yesu, khun ja dai rap kaan a-phai baap lae chii-wit ni-ran'),
+    ('TH', 5, 'วันนี้คุณจะรับพระเยซูไหม', 'Wan-nii khun ja rap Phra-Yesu mai?'),
+    ('MX', 1, 'Dios te ama.', 'DYOS teh AH-mah'),
+    ('MX', 2, 'Todos hemos pecado y estamos separados de Dios.', 'TOH-dohs EH-mohs peh-KAH-doh ee ehs-TAH-mohs seh-pah-RAH-dohs deh DYOS'),
+    ('MX', 3, 'Jesús murió en la cruz por nuestros pecados y resucitó.', 'heh-SOOS moo-RYOH ehn lah KROOS pohr NWEHS-trohs peh-KAH-dohs ee reh-soo-see-TOH'),
+    ('MX', 4, 'Si crees en Jesús, recibes el perdón y la vida eterna.', 'see KREH-ehs ehn heh-SOOS, reh-SEE-behs ehl pehr-DOHN ee lah VEE-dah eh-TEHR-nah'),
+    ('MX', 5, '¿Quieres recibir a Jesús hoy?', 'KYEH-rehs reh-see-BEER ah heh-SOOS oy?'),
+    ('JP', 1, '神様はあなたを愛しています。', 'Kamisama wa anata o aishite imasu.'),
+    ('JP', 2, 'すべての人は罪を犯し、神様から離れています。', 'Subete no hito wa tsumi o okashi, Kamisama kara hanarete imasu.'),
+    ('JP', 3, 'イエス様は私たちの罪のために十字架で死に、よみがえられました。', 'Iesu-sama wa watashitachi no tsumi no tame ni jūjika de shini, yomigaeraremashita.'),
+    ('JP', 4, 'イエス様を信じるなら、罪の赦しと永遠のいのちを受けます。', 'Iesu-sama o shinjiru nara, tsumi no yurushi to eien no inochi o ukemasu.'),
+    ('JP', 5, '今日、イエス様を受け入れますか？', 'Kyō, Iesu-sama o ukeiremasu ka?'),
+    ('EG', 1, 'ربنا بيحبك.', 'Rabbena biyḥebbak.'),
+    ('EG', 2, 'كل الناس أخطأوا وبعدوا عن ربنا.', 'Koll en-nās akhṭa’u we be‘du ‘an Rabbena.'),
+    ('EG', 3, 'يسوع مات على الصليب علشان خطايانا وقام من الأموات.', 'Yasū‘ māt ‘ala eṣ-ṣalīb ‘ashān khaṭayāna we ’ām men el-amwāt.'),
+    ('EG', 4, 'لو آمنت بيسوع، هتاخد غفران الخطايا والحياة الأبدية.', 'Law āmant be-Yasū‘, hatākhod ghofrān el-khaṭāya wel-ḥayāh el-abadeyya.'),
+    ('EG', 5, 'تحب تقبل يسوع النهارده؟', 'Teḥebb te’bal Yasū‘ en-nahārda?'))
+insert into public.gospel_sentences (message_id, country_id, seq, source_text, source_ko, local_text, pronunciation)
+select m.id, c.id, b.seq, b.en, b.ko, l.local_text, l.pron
+from m cross join base b
+join loc l on l.seq = b.seq
+join public.countries c on c.code = l.code
+where not exists (select 1 from public.gospel_sentences s where s.message_id = m.id and s.country_id = c.id);
+
+
+-- ③ 선교 교육: 첫 강의 2개 (SVM 비전 영상) — 앱의 관리 → 훈련에서 추가·수정하세요
+insert into public.courses (title_en, title_ko, video_url, description, description_ko, sort_order, required)
+select v.* from (values
+  ('What is SVM? The vision', 'SVM은 무엇인가: 비전', 'https://www.youtube.com/watch?v=Ig5I70_UcXc',
+   'Watch the SVM vision. Then write: what stirred your heart, and what is one step you will take this week?',
+   'SVM 비전 영상을 보고 적어 보세요: 무엇이 마음을 움직였나요? 이번 주에 내딛을 한 걸음은 무엇인가요?', 1, true),
+  ('The call behind Mission Conference 2026', '미션 컨퍼런스 2026의 부르심', 'https://www.youtube.com/watch?v=YbZLqIe8NWE',
+   'Watch the call behind the launch. Then write: which nation is on your heart, and why?',
+   '발족식에 담긴 부르심을 보고 적어 보세요: 마음에 품은 나라는 어디이고, 왜인가요?', 2, true)
+) as v(title_en, title_ko, video_url, description, description_ko, sort_order, required)
+where not exists (select 1 from public.courses);
+
 -- 특별 이벤트: SVM 미션 컨퍼런스 2026 (발족식) — 11/20(금) 오후 6시 입장. 장소가 정해지면 location 을 수정하세요
 insert into public.events
   (title_en, title_ko, subtitle_en, subtitle_ko, description_en, description_ko,

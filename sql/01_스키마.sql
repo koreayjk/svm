@@ -142,7 +142,8 @@ create table if not exists public.gospel_sentences (
   message_id     bigint not null references public.gospel_messages(id) on delete cascade,
   country_id     bigint not null references public.countries(id) on delete cascade,
   seq            int not null default 0,
-  source_text    text not null,
+  source_text    text not null,          -- 뜻 (영어)
+  source_ko      text,                   -- 뜻 (한국어)
   local_text     text,
   pronunciation  text,
   audio_url      text
@@ -176,6 +177,7 @@ create table if not exists public.courses (
   title_ko     text,
   video_url    text,
   description  text,
+  description_ko text,
   sort_order   int not null default 0,
   required     boolean not null default true
 );
@@ -527,3 +529,7 @@ create trigger graduation_apply
 alter table public.application_status_history drop constraint if exists application_status_history_changed_by_fkey;
 alter table public.application_status_history
   add constraint application_status_history_changed_by_fkey foreign key (changed_by) references public.profiles(id) on delete set null;
+
+-- 3단계: 복음 메시지 뜻(한국어) · 강의 설명(한국어)
+alter table public.gospel_sentences add column if not exists source_ko      text;
+alter table public.courses          add column if not exists description_ko text;
