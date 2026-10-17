@@ -112,7 +112,7 @@ create table if not exists public.application_status_history (
   id              bigint generated always as identity primary key,
   application_id  bigint not null references public.applications(id) on delete cascade,
   status          text not null,
-  changed_by      uuid references public.profiles(id),
+  changed_by      uuid references public.profiles(id) on delete set null,   -- 처리한 관리자 (탈퇴해도 이력은 남김)
   changed_at      timestamptz not null default now()
 );
 
@@ -522,3 +522,8 @@ drop trigger if exists graduation_apply on public.graduation_requests;
 create trigger graduation_apply
   before update on public.graduation_requests
   for each row execute function public.graduation_apply();
+
+-- 회원 삭제 시 신청 이력의 changed_by 는 비워 둠 (예전 버전은 삭제가 막혔음)
+alter table public.application_status_history drop constraint if exists application_status_history_changed_by_fkey;
+alter table public.application_status_history
+  add constraint application_status_history_changed_by_fkey foreign key (changed_by) references public.profiles(id) on delete set null;

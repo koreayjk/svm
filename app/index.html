@@ -193,7 +193,7 @@
   /* ---------- forms ---------- */
   label.field { display: block; margin-bottom: 14px; }
   label.field > span { display: block; font-size: 13.5px; font-weight: 500; color: var(--muted-2); margin: 0 0 6px 4px; }
-  input[type=text], input[type=email], input[type=password], input[type=tel], select, textarea {
+  input[type=text], input[type=email], input[type=password], input[type=tel], input[type=date], select, textarea {
     width: 100%; min-height: 50px; padding: 13px 15px; border: 0; border-radius: var(--r-ctl);
     background: var(--fill); color: var(--text); font-size: 16.5px;
     transition: background-color .25s var(--ease), box-shadow .25s var(--ease);
@@ -208,9 +208,10 @@
   /* iOS segmented control */
   .seg { display: flex; padding: 3px; border-radius: 12px; background: var(--fill-2); margin-bottom: 20px; }
   .seg button {
-    flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 9px; cursor: pointer;
+    flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border: 0; background: transparent; padding: 8px; border-radius: 9px; cursor: pointer;
     font-weight: 500; font-size: 15px; color: var(--text); transition: background-color .3s var(--ease), box-shadow .3s var(--ease);
   }
+  .seg:has(button:nth-child(4)) button { flex: 1 1 auto; font-size: 14px; padding: 8px 6px; letter-spacing: -.01em; }
   .seg button.active { background: #fff; font-weight: 700; box-shadow: 0 1px 2px rgba(13, 27, 58, .1), 0 3px 8px rgba(13, 27, 58, .06); }
 
   .lang-toggle { display: inline-flex; padding: 2px; border-radius: 10px; background: var(--fill-2); }
@@ -302,6 +303,8 @@
     transition: background-color .3s var(--ease), color .2s var(--ease), transform .3s var(--ease);
   }
   .island a .ico { display: grid; place-items: center; height: 28px; }
+  @media (max-width: 374px) { .island a { font-size: 9.5px; } }
+  .island a > span:last-child { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; letter-spacing: -.01em; }
   .island a svg { width: 24px; height: 24px; }
   .island a:active { transform: scale(.92); transition-duration: .1s; }
   .island a.active { color: var(--orange-dark); background: var(--fill); font-weight: 700; }
@@ -411,6 +414,7 @@
   }
   .toast.error { background: rgba(180, 35, 24, .92); }
   .toast.no-nav { bottom: calc(var(--safe-b) + 24px); }
+  body:has(.composer) .toast:not(.no-nav) { bottom: calc(var(--safe-b) + var(--island-h) + 86px); }
   @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
 
   pre.code { background: var(--navy); color: #E2E8F0; padding: 14px; border-radius: 14px; overflow-x: auto; font-size: 13px; }
@@ -590,6 +594,134 @@
     .worldmap .home-ring { r: 15; stroke-width: 2.2; }
     .worldmap .pin-flag { font-size: 24px; transform: translateY(-6px); }
   }
+
+  /* =================================================================
+     Phase 2 — 나라방 채팅 · 신청 · 관리자 승인 · 현지 사진
+     ================================================================= */
+  textarea { min-height: 120px; resize: vertical; line-height: 1.5; }
+  input[type=date] { -webkit-appearance: none; appearance: none; }
+  .form-note { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: var(--muted); margin: 4px 0 16px; }
+  .form-note svg { flex: 0 0 auto; width: 18px; height: 18px; color: var(--orange-dark); margin-top: 1px; }
+
+  /* room */
+  .room-head { display: flex; align-items: center; gap: 12px; padding: 6px 0 16px; }
+  .room-head .flag-tile { font-size: 40px; }
+  .room-head h1 { font-size: 26px; }
+  .room-head .meta { flex: 1; min-width: 0; }
+  .chat { display: flex; flex-direction: column; gap: 3px; padding: 4px 0 8px; }
+  .msg { max-width: 84%; align-self: flex-start; }
+  .msg + .msg:not(.cont) { margin-top: 8px; }
+  .msg .who { font-size: 12.5px; font-weight: 500; color: var(--muted-2); margin: 0 0 3px 12px; }
+  .msg .bubble { display: inline-block; background: var(--surface); padding: 9px 14px; border-radius: 19px 19px 19px 7px; box-shadow: var(--shadow); font-size: 15.5px; line-height: 1.45; white-space: pre-wrap; }
+  .msg.cont .who { display: none; }
+  .msg.me { align-self: flex-end; text-align: right; }
+  .msg.me .who { display: none; }
+  .msg.me .bubble { background: var(--navy); color: #fff; border-radius: 19px 19px 7px 19px; text-align: left; }
+  .msg.gone .bubble { background: var(--fill); color: var(--muted-2); font-style: italic; box-shadow: none; }
+  .msg .foot { display: flex; gap: 8px; align-items: center; font-size: 11.5px; color: #8A93A3; margin: 3px 12px 0; }
+  .msg.me .foot { justify-content: flex-end; }
+  .msg .foot button { border: 0; background: none; padding: 0; color: #8A93A3; font-size: 11.5px; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+  .msg .foot button:hover { color: var(--danger); }
+  .day-sep { align-self: center; font-size: 12.5px; color: var(--muted-2); background: var(--fill); padding: 3px 11px; border-radius: 999px; margin: 14px 0 6px; }
+  .chat-empty { text-align: center; color: var(--muted); padding: 34px 0 10px; }
+  .composer {
+    position: fixed; z-index: var(--z-nav); left: 50%; transform: translateX(-50%);
+    bottom: calc(var(--safe-b) + var(--island-h) + 18px); width: min(560px, calc(100% - 24px));
+    display: flex; gap: 8px; align-items: flex-end; padding: 6px; border-radius: 26px;
+    background: rgba(255, 255, 255, .86); -webkit-backdrop-filter: blur(24px) saturate(1.8); backdrop-filter: blur(24px) saturate(1.8);
+    box-shadow: inset 0 0 0 .5px rgba(13, 27, 58, .1), 0 10px 30px -10px rgba(13, 27, 58, .22);
+  }
+  .composer textarea { min-height: 44px; max-height: 140px; height: 44px; padding: 10px 15px; border-radius: 20px; resize: none; font-size: 16px; background: var(--fill); }
+  .composer .btn { width: 44px; min-height: 44px; height: 44px; padding: 0; border-radius: 50%; flex: 0 0 auto; }
+  .chat-spacer { height: 92px; }
+  .unread { flex: 0 0 auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--orange); color: #fff; font-size: 12.5px; font-weight: 700; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
+  .list-row .chev { color: #B4BBC7; display: grid; place-items: center; }
+  .list-row .chev svg { width: 18px; height: 18px; }
+
+  /* application form */
+  .choice { display: grid; gap: 8px; margin-bottom: 16px; }
+  .choice label { display: flex; gap: 12px; align-items: flex-start; padding: 14px 15px; border-radius: 16px; background: var(--fill); cursor: pointer; transition: background-color .25s var(--ease), box-shadow .25s var(--ease); }
+  .choice input { accent-color: var(--orange); width: 19px; height: 19px; margin: 2px 0 0; flex: 0 0 auto; }
+  .choice label:has(input:checked) { background: var(--orange-soft); box-shadow: inset 0 0 0 1.5px var(--orange); }
+  .choice b { display: block; font-size: 15.5px; }
+  .choice .d { display: block; font-size: 14px; color: var(--muted); margin-top: 1px; }
+  .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 380px) { .field-pair { grid-template-columns: 1fr; } }
+
+  /* status */
+  .st { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: var(--fill); color: var(--navy); }
+  .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .st-approved { background: #E7F5EC; color: #146C3A; }
+  .st-preparing { background: var(--orange-soft); color: var(--orange-dark); }
+  .st-on_field { background: var(--orange); color: #fff; }
+  .st-returned { background: var(--navy); color: #fff; }
+  .st-rejected, .st-ext-rejected { background: var(--danger-soft); color: var(--danger); }
+  .st-ext-pending { background: var(--fill); color: var(--muted-2); }
+  .st-ext-approved { background: #E7F5EC; color: #146C3A; }
+  .on-dark .st-submitted { background: rgba(255, 255, 255, .14); color: #fff; }
+  .on-dark .st-returned { background: #fff; color: var(--navy); }
+  .on-dark .st-approved { background: #D5F0DF; }
+
+  .timeline { list-style: none; padding: 0; margin: 14px 0 0; }
+  .timeline li { position: relative; padding: 0 0 20px 32px; min-height: 22px; }
+  .timeline li:last-child { padding-bottom: 0; }
+  .timeline li::before { content: ""; position: absolute; left: 4px; top: 4px; width: 14px; height: 14px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 2px #C9CFDA; }
+  .timeline li:not(:last-child)::after { content: ""; position: absolute; left: 10px; top: 21px; bottom: 1px; width: 2px; background: #E3E7EE; }
+  .timeline li.done::before { background: var(--orange); box-shadow: none; }
+  .timeline li.done:not(:last-child)::after { background: var(--orange); opacity: .45; }
+  .timeline li.now::before { background: var(--orange); box-shadow: 0 0 0 5px rgba(242, 103, 34, .2); }
+  .timeline li.bad::before { background: var(--danger); box-shadow: 0 0 0 5px rgba(180, 35, 24, .15); }
+  .timeline li.todo { color: #8A93A3; }
+  .timeline b { display: block; font-size: 15.5px; font-weight: 700; }
+  .timeline li.todo b { font-weight: 500; }
+  .timeline span { font-size: 13.5px; color: var(--muted); }
+  .on-dark .timeline li::before { background: transparent; box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .35); }
+  .on-dark .timeline li:not(:last-child)::after { background: rgba(255, 255, 255, .16); }
+  .on-dark .timeline li.done::before, .on-dark .timeline li.now::before { background: var(--orange); }
+  .on-dark .timeline li.now::before { box-shadow: 0 0 0 5px rgba(242, 103, 34, .3); }
+  .on-dark .timeline li.bad::before { background: #F97066; box-shadow: 0 0 0 5px rgba(249, 112, 102, .25); }
+  .on-dark .timeline li.todo { color: rgba(255, 255, 255, .45); }
+  .on-dark .timeline span { color: rgba(255, 255, 255, .62); }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; font-size: 15px; margin: 0; }
+  .kv dt { color: var(--muted-2); }
+  .kv dd { margin: 0; font-weight: 500; text-align: right; overflow-wrap: anywhere; }
+  .quote { margin: 14px 0 0; padding: 14px 16px; border-radius: 16px; background: var(--fill); font-size: 15px; white-space: pre-wrap; }
+
+  /* admin applications */
+  .filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin: 0 -20px 10px; padding: 2px 20px 4px; }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters button { flex: 0 0 auto; border: 0; cursor: pointer; padding: 7px 13px; border-radius: 999px; background: var(--fill); color: var(--navy); font-size: 14px; font-weight: 500; }
+  .filters button.active { background: var(--navy); color: #fff; font-weight: 700; }
+  .filters button .n { font-family: var(--font-num); font-weight: 600; margin-left: 4px; opacity: .7; }
+  .adm-tools { display: flex; gap: 8px; margin-bottom: 12px; }
+  .adm-tools select { flex: 1; min-height: 44px; padding-top: 9px; padding-bottom: 9px; font-size: 15px; }
+  .adm-tools .btn { min-height: 44px; flex: 0 0 auto; }
+  details.adm-app { position: relative; }
+  details.adm-app + details.adm-app { border-top: 1px solid var(--separator); }
+  details.adm-app summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+  details.adm-app summary::-webkit-details-marker { display: none; }
+  details.adm-app summary .meta { flex: 1; min-width: 0; }
+  details.adm-app summary .t { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  details.adm-app summary .d { color: var(--muted); font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  details.adm-app .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--orange); flex: 0 0 auto; }
+  details.adm-app .body { padding: 2px 0 18px; }
+  details.adm-app[open] summary { padding-bottom: 14px; }
+  .ext-box { margin-top: 14px; padding: 14px; border-radius: 16px; background: var(--orange-soft); }
+  .ext-box .btn-row { margin-top: 10px; }
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .btn-row .btn { flex: 1; }
+  .history { list-style: none; padding: 0; margin: 10px 0 0; font-size: 13.5px; color: var(--muted); display: grid; gap: 4px; }
+
+  /* gallery */
+  .gallery { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; margin: 0 -20px 12px; padding: 0 20px; }
+  .gallery::-webkit-scrollbar { display: none; }
+  .gallery figure { position: relative; flex: 0 0 min(78%, 420px); aspect-ratio: 4 / 3; margin: 0; border-radius: 18px; overflow: hidden; scroll-snap-align: start; background: var(--fill); }
+  .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery figure button { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; background: rgba(13, 27, 58, .6); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+  .gallery figure button svg { width: 17px; height: 17px; }
+  .gallery-add { flex: 0 0 150px; aspect-ratio: 3 / 4; border-radius: 18px; display: grid; place-items: center; align-content: center; gap: 6px; text-align: center; padding: 12px; cursor: pointer; background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line); color: var(--navy); font-size: 14px; font-weight: 700; scroll-snap-align: start; }
+  .gallery-add svg { width: 26px; height: 26px; color: var(--orange); }
+  .gallery-add input { display: none; }
   .auth-hero { padding-top: calc(var(--safe-t) + 56px); }
   @media (prefers-reduced-motion: reduce) {
     .worldmap .arc { animation: none; stroke-dashoffset: 0; }
@@ -716,7 +848,7 @@ const i18n = {
     set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
     col_sensitive: 'Sensitive', col_active: 'Active',
     search_members: 'Search name, email, school', members_count: '{n} members', role_changed: 'Role updated.',
-    admin_more: 'Coming next: application approvals, testimony review, graduation approvals, content & meetings.',
+    admin_more: 'Coming next: testimony review, graduation approvals, content and meetings.',
     // misc
     coming_soon: 'Coming soon', phase: 'Phase {n}', loading: 'Loading…', error_generic: 'Something went wrong. Please try again.',
     setup_title: 'Setup needed', setup_body: 'Open index.html and set SUPABASE_URL and SUPABASE_ANON_KEY in CONFIG (Supabase → Project Settings → API).',
@@ -732,6 +864,45 @@ const i18n = {
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
     members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'Map: from Bryan/College Station to seven mission fields', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started',
+    // ② country rooms
+    room_members: '{n} members', room_members_one: '1 member', room_join: 'Join this room', room_leave: 'Leave room',
+    room_join_d: 'Talk with everyone who carries this nation. Joining a room is not the same as applying, so come and go anytime.',
+    room_joined_toast: 'You joined the {c} room.', room_left_toast: 'You left the room.',
+    room_empty: 'No messages yet. Say hello!', room_placeholder: 'Message', room_send: 'Send',
+    room_deleted: 'Message deleted', room_delete: 'Delete', room_safety: 'Never share local believers’ names, faces or exact locations.',
+    room_about: 'About {c}', rooms_mine: 'My country rooms', rooms_mine_empty: 'You haven’t joined a room yet. Pick a nation below.',
+    rooms_other: 'More rooms', rooms_join_short: 'Join', yesterday: 'Yesterday', you: 'You',
+    // ⑦ applications
+    apply_title: 'Apply to go', apply_sub: 'HQ in the US reviews every application. Only the approved roster and arrival dates are shared with the field.',
+    ap_country: 'Country', ap_track: 'Track',
+    tr_short: 'Short-term · Into the World', tr_short_d: 'One month or longer, in the main sending seasons.',
+    tr_mid: 'Mid-term · 1–2 years', tr_mid_d: 'Serve one to two years alongside a local church.',
+    tr_long: 'Long-term', tr_long_d: 'Lifelong missions and church planting.',
+    ap_start: 'Preferred departure', ap_duration: 'Expected length',
+    dur_1m: '1 month', dur_2m: '2 months', dur_3m: '3 months', dur_6m: '6 months', dur_12m: '1 year', dur_24m: '2 years', dur_long: 'Long-term (2+ years)',
+    ap_contact: 'Contact (phone or email)', ap_motivation: 'About you and why you want to go',
+    ap_motivation_ph: 'Your story, your church, and why this nation.',
+    ap_submit: 'Submit application', ap_submitted_toast: 'Application submitted. HQ will review it soon.',
+    ap_flight_note: 'You only pay for your flight. Room, board and ministry costs are covered by the field.',
+    ap_locked: 'Right now only graduate members can apply. Finish your training to earn the graduate badge.',
+    ap_existing: 'You already have an application for {c}.', ap_view: 'View my application',
+    ap_sensitive_note: 'Sensitive country: details about the field are shared in person after approval.',
+    ap_need: 'Please add a departure date, contact and a few sentences about you.',
+    st_submitted: 'Submitted', st_approved: 'Approved', st_rejected: 'Not approved', st_preparing: 'Preparing to go', st_on_field: 'On the field', st_returned: 'Returned',
+    apps_title: 'My applications', apps_empty: 'No applications yet. Explore a field and apply when you are ready.', apps_new: 'New application',
+    app_timeline: 'Status', app_details: 'Details', app_expected_return: 'Expected return', app_applied: 'Applied', app_hq_note: 'Note from HQ',
+    ext_title: 'Extend your stay', ext_note: 'No extra cost for room and board. Just change your return flight.',
+    ext_new_date: 'New return date', ext_reason: 'Reason (optional)', ext_submit: 'Request extension', ext_sent: 'Extension requested. HQ will review it.',
+    ext_pending: 'Pending', ext_approved: 'Approved', ext_rejected: 'Not approved', ext_history: 'Extension requests',
+    ext_only_on_field: 'You can request an extension once you are on the field.', ext_wait: 'Your extension request is being reviewed.', ext_to: 'Until {d}',
+    // admin
+    admin_applications: 'Applications', adm_all: 'All', adm_ext_pending: 'Extension requests', adm_export: 'Export CSV',
+    adm_all_countries: 'All countries', adm_note: 'Note (the applicant can see this)', adm_none: 'No applications here.',
+    adm_updated: 'Application updated.', adm_ext_approve: 'Approve', adm_ext_reject: 'Reject', adm_ext_req: 'Extension requested until {d}',
+    adm_history: 'History', adm_contact: 'Contact', adm_school: 'School', adm_status: 'Status',
+    // ① photos
+    gal_add: 'Add photo', gal_note: 'Only photos where local people cannot be identified. No faces, names or exact locations.',
+    gal_added: 'Photo added.', gal_removed: 'Photo removed.', gal_remove: 'Remove photo', gal_uploading: 'Uploading…',
   },
   ko: {
     tagline: 'Mobilizing · Training · Sending',
@@ -794,7 +965,7 @@ const i18n = {
     set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
     col_sensitive: '민감', col_active: '노출',
     search_members: '이름, 이메일, 학교 검색', members_count: '회원 {n}명', role_changed: '등급이 변경되었습니다.',
-    admin_more: '다음 단계: 신청 승인, 후기 승인/추천, 수료 승인, 콘텐츠·모임 관리.',
+    admin_more: '다음 단계: 후기 승인/추천, 수료 승인, 콘텐츠·모임 관리.',
     coming_soon: '준비 중', phase: '{n}단계', loading: '불러오는 중…', error_generic: '문제가 발생했습니다. 다시 시도해주세요.',
     setup_title: '설정이 필요합니다', setup_body: 'index.html의 CONFIG에 SUPABASE_URL과 SUPABASE_ANON_KEY를 입력하세요 (Supabase → Project Settings → API).',
     offline: '오프라인 상태입니다.',
@@ -809,6 +980,41 @@ const i18n = {
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
     members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '지도: 브라이언/컬리지 스테이션에서 7개 선교지로', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요',
+    room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
+    room_join_d: '이 나라를 품은 사람들과 이야기해요. 방 참여는 신청과 별개라서 언제든 나가고 들어올 수 있어요.',
+    room_joined_toast: '{c} 나라방에 참여했어요.', room_left_toast: '방에서 나갔어요.',
+    room_empty: '아직 메시지가 없어요. 먼저 인사해 보세요!', room_placeholder: '메시지', room_send: '보내기',
+    room_deleted: '삭제된 메시지', room_delete: '삭제', room_safety: '현지 성도의 실명·얼굴·정확한 위치는 올리지 마세요.',
+    room_about: '{c} 소개', rooms_mine: '내 나라방', rooms_mine_empty: '아직 참여한 방이 없어요. 아래에서 나라를 골라 보세요.',
+    rooms_other: '다른 나라방', rooms_join_short: '참여', yesterday: '어제', you: '나',
+    apply_title: '선교 신청', apply_sub: '모든 신청은 미국 본부가 검토합니다. 선교지에는 승인된 명단과 도착 일정만 공유됩니다.',
+    ap_country: '나라', ap_track: '트랙',
+    tr_short: '단기 · Into the World', tr_short_d: '1개월 이상, 정규 파송 시즌에 떠납니다.',
+    tr_mid: '중기 · 1–2년', tr_mid_d: '현지 교회와 함께 1–2년 섬깁니다.',
+    tr_long: '장기', tr_long_d: '평생 선교와 교회 개척.',
+    ap_start: '희망 출발일', ap_duration: '예상 기간',
+    dur_1m: '1개월', dur_2m: '2개월', dur_3m: '3개월', dur_6m: '6개월', dur_12m: '1년', dur_24m: '2년', dur_long: '장기 (2년 이상)',
+    ap_contact: '연락처 (전화번호 또는 이메일)', ap_motivation: '자기소개와 지원 동기',
+    ap_motivation_ph: '나의 이야기, 섬기는 교회, 이 나라를 품은 이유.',
+    ap_submit: '신청서 제출', ap_submitted_toast: '신청서가 제출되었습니다. 본부에서 곧 검토합니다.',
+    ap_flight_note: '학생은 항공권만 준비합니다. 숙식과 사역비는 선교지가 제공합니다.',
+    ap_locked: '지금은 수료 회원만 신청할 수 있어요. 훈련을 마치고 수료 배지를 받아 주세요.',
+    ap_existing: '{c}에 이미 신청한 내역이 있어요.', ap_view: '내 신청 보기',
+    ap_sensitive_note: '민감 국가입니다. 선교지 세부 내용은 승인 후 대면으로 안내합니다.',
+    ap_need: '출발일, 연락처, 자기소개를 입력해 주세요.',
+    st_submitted: '접수', st_approved: '승인', st_rejected: '반려', st_preparing: '출국 준비', st_on_field: '사역 중', st_returned: '귀국',
+    apps_title: '내 신청', apps_empty: '아직 신청 내역이 없어요. 선교지를 둘러보고 준비되면 신청하세요.', apps_new: '새로 신청하기',
+    app_timeline: '진행 상황', app_details: '신청 내용', app_expected_return: '귀국 예정일', app_applied: '신청일', app_hq_note: '본부 메모',
+    ext_title: '기간 연장', ext_note: '숙식비 추가 없음 · 항공권만 변경하면 됩니다.',
+    ext_new_date: '새 귀국 예정일', ext_reason: '사유 (선택)', ext_submit: '연장 신청', ext_sent: '연장 신청이 접수되었습니다. 본부에서 검토합니다.',
+    ext_pending: '검토 중', ext_approved: '승인', ext_rejected: '반려', ext_history: '연장 신청 내역',
+    ext_only_on_field: '사역 중일 때 연장을 신청할 수 있어요.', ext_wait: '연장 신청을 검토하고 있어요.', ext_to: '{d}까지',
+    admin_applications: '신청', adm_all: '전체', adm_ext_pending: '연장 요청', adm_export: 'CSV 내보내기',
+    adm_all_countries: '모든 나라', adm_note: '메모 (신청자에게도 보입니다)', adm_none: '해당하는 신청이 없습니다.',
+    adm_updated: '신청이 업데이트되었습니다.', adm_ext_approve: '승인', adm_ext_reject: '반려', adm_ext_req: '{d}까지 연장 요청',
+    adm_history: '이력', adm_contact: '연락처', adm_school: '학교', adm_status: '상태',
+    gal_add: '사진 추가', gal_note: '현지인이 식별되지 않는 사진만 올려 주세요. 얼굴·이름·정확한 위치 금지.',
+    gal_added: '사진이 추가되었습니다.', gal_removed: '사진이 삭제되었습니다.', gal_remove: '사진 삭제', gal_uploading: '올리는 중…',
   },
 };
 
@@ -827,7 +1033,13 @@ const state = {
   events: null,             // 다가오는 특별 이벤트
   // 처음 온 사람(발족식 QR)은 회원가입 화면부터, 로그인한 적 있으면 로그인 화면부터
   authMode: safeGet('svm_returning') ? 'login' : 'signup',   // login | signup | forgot | recovery
-  adminTab: 'members',
+  adminTab: 'applications',
+  rooms: null,              // 내가 참여한 나라방: country_id → last_read_at
+  room: null,               // 지금 보고 있는 방
+  roomSub: null,            // Realtime 구독
+  myApps: null,             // 내 신청
+  app: null,
+  adminApps: null, adminAppFilter: 'submitted', adminAppCountry: '', adminOpenApp: null,
   adminMembers: null,
   adminSearch: '',
   installPrompt: null,
@@ -937,10 +1149,12 @@ function nextRegular(type, now) {
 //   · 실제 운영 전환: CONFIG 에 Supabase URL/anon key 를 넣으면 자동으로 꺼집니다
 // ---------------------------------------------------------------------
 function createDemoClient() {
-  const KEY = 'svm_demo_db_v1';
+  const KEY = 'svm_demo_db_v2';
   const uid = () => 'demo-' + Math.random().toString(36).slice(2, 10);
   const nowIso = () => new Date().toISOString();
   const ago = d => new Date(Date.now() - d * 86400000).toISOString();
+  const day = d => ago(d).slice(0, 10);
+  const ahead = d => new Date(Date.now() + d * 86400000).toISOString().slice(0, 10);
 
   function seed() {
     const C = (id, code, name_en, name_ko, is_sensitive, intro, intro_ko, extra, extra_ko, life, life_ko, lang, lang_ko, housing, housing_ko) => ({
@@ -994,9 +1208,52 @@ function createDemoClient() {
     const nation_pledges = [];
     Object.entries(pledgeMap).forEach(([cid, idx]) => idx.forEach((i, k) => nation_pledges.push({ user_id: 'seed-' + i, country_id: Number(cid), created_at: ago(20 - k) })));
 
+    // ② 나라방 예시 — 방 참여자와 대화
+    const roomMap = { 1: [0, 2, 4, 6], 2: [1, 3, 5], 5: [1, 5, 9], 6: [0, 4], 7: [2, 8] };
+    const room_members = [];
+    Object.entries(roomMap).forEach(([cid, idx]) => idx.forEach(i => room_members.push({ user_id: 'seed-' + i, country_id: Number(cid), joined_at: ago(12), last_read_at: ago(1) })));
+    let mid = 1;
+    const M = (cid, who, d, body) => ({ id: mid++, country_id: cid, user_id: 'seed-' + who, body, created_at: ago(d), deleted: false });
+    const messages = [
+      M(1, 0, 3.1, 'Anyone going to Korea this January? I would love to plan together.'),
+      M(1, 2, 3.05, '저도요! 2개월 생각 중이에요. 매일 한국어로 복음 메시지 연습하고 있어요.'),
+      M(1, 4, 1.2, 'Please pray for our partner church’s English camp. They are expecting 60 students.'),
+      M(1, 6, 0.3, 'Praying with you 🙏'),
+      M(2, 1, 2.4, 'Pack light clothes. It is rainy season through November.'),
+      M(2, 3, 2.3, 'Thanks! Any tips for the kids’ program?'),
+      M(2, 5, 2.2, 'Bring simple crafts. Songs with motions work great.'),
+      M(5, 1, 1.6, 'Spanish study group on Tuesday nights at the library. Anyone in?'),
+      M(5, 9, 1.5, '¡Sí! I will bring flashcards.'),
+      M(6, 0, 4, 'English café ideas: board games, then a short Bible story at the end?'),
+      M(7, 2, 2, 'Reminder: no names or photos of local believers here, please. Pray for open doors.'),
+    ];
+    // ⑦ 신청 예시 — 관리자 화면 시연용
+    const A = (id, who, cid, track, status, start, dur, ret, d, motivation) => ({
+      id, user_id: 'seed-' + who, country_id: cid, track, start_date: start, duration_text: dur, expected_return: ret,
+      contact: people[who].toLowerCase().replace(' ', '.') + '@example.org', motivation, status, admin_note: null, created_at: ago(d), updated_at: ago(d),
+    });
+    const applications = [
+      A(1, 2, 1, 'short', 'approved', ahead(58), '2m', ahead(119), 10, 'I grew up in a Korean church in Houston and want to serve the campus ministry in Seoul.'),
+      A(2, 1, 2, 'short', 'submitted', ahead(79), '1m', ahead(110), 2, 'Kids ministry is my heart. My church in Bryan will pray for me every week.'),
+      A(3, 9, 5, 'mid', 'on_field', day(60), '12m', ahead(305), 120, 'I want to serve a full year with the church plant in Monterrey.'),
+      A(4, 4, 6, 'short', 'preparing', ahead(64), '1m', ahead(95), 25, 'Japan has so few believers. I want to help with the English café ministry.'),
+      A(5, 5, 4, 'short', 'returned', day(150), '2m', day(90), 200, 'Teaching English in village schools.'),
+    ];
+    const H = (aid, status, d) => ({ id: mid++, application_id: aid, status, changed_by: null, changed_at: ago(d) });
+    const application_status_history = [
+      H(1, 'submitted', 10), H(1, 'approved', 4),
+      H(2, 'submitted', 2),
+      H(3, 'submitted', 120), H(3, 'approved', 100), H(3, 'preparing', 80), H(3, 'on_field', 60),
+      H(4, 'submitted', 25), H(4, 'approved', 15), H(4, 'preparing', 6),
+      H(5, 'submitted', 200), H(5, 'approved', 180), H(5, 'preparing', 160), H(5, 'on_field', 150), H(5, 'returned', 90),
+    ];
+    const application_extensions = [
+      { id: mid++, application_id: 3, new_return_date: ahead(400), reason: 'The church asked me to stay through the Christmas outreach and spring camp.', status: 'pending', created_at: ago(1), reviewed_at: null },
+    ];
+
     return {
-      users: [], session: null, next: 100,
-      profiles, countries, nation_pledges,
+      users: [], session: null, next: 1000,
+      profiles, countries, nation_pledges, room_members, messages, applications, application_status_history, application_extensions,
       country_photos: [], gatherings: [],
       app_settings: [
         { key: 'require_graduation_to_apply', value: false },
@@ -1030,6 +1287,7 @@ function createDemoClient() {
   const shortName = n => { const p = String(n || '').trim().split(/\s+/).filter(Boolean); return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : (p[0] || null); };
   const views = {
     nation_pledge_counts: () => db.countries.map(c => ({ country_id: c.id, pledge_count: db.nation_pledges.filter(p => p.country_id === c.id).length })),
+    profile_names: () => db.profiles.map(p => ({ id: p.id, name: p.name, role: p.role })),
     nation_pledge_names: () => db.nation_pledges
       .filter(p => !db.countries.find(c => c.id === p.country_id)?.is_sensitive)
       .map(p => ({ country_id: p.country_id, display_name: shortName(db.profiles.find(x => x.id === p.user_id)?.name), created_at: p.created_at }))
@@ -1037,11 +1295,42 @@ function createDemoClient() {
   };
   const rows = t => views[t] ? views[t]() : (db[t] || (db[t] = []));
 
+  // 테이블 기본값 (DB default 와 같게)
+  const DEFAULT_ROW = {
+    messages: () => ({ deleted: false }),
+    room_members: () => ({ joined_at: nowIso(), last_read_at: nowIso() }),
+    applications: () => ({ status: 'submitted', admin_note: null, updated_at: nowIso() }),
+    application_extensions: () => ({ status: 'pending', reviewed_at: null }),
+  };
+  // DB 트리거 흉내 (신청 상태 이력 · 연장 승인 → 귀국 예정일) + Realtime 알림
+  function afterWrite(table, ev, row, old) {
+    const me = db.session || null;
+    if (table === 'applications') {
+      if (ev === 'INSERT') db.application_status_history.push({ id: db.next++, application_id: row.id, status: row.status, changed_by: me, changed_at: nowIso() });
+      else { row.updated_at = nowIso(); if (row.status !== old.status) db.application_status_history.push({ id: db.next++, application_id: row.id, status: row.status, changed_by: me, changed_at: nowIso() }); }
+    }
+    if (table === 'application_extensions' && ev === 'UPDATE' && row.status !== old.status && row.status !== 'pending') {
+      row.reviewed_at = nowIso();
+      if (row.status === 'approved') { const a = db.applications.find(x => x.id === row.application_id); if (a) a.expected_return = row.new_return_date; }
+    }
+    channels.forEach(ch => ch.subs.forEach(sub => {
+      if (sub.f.table !== table || (sub.f.event !== '*' && sub.f.event !== ev)) return;
+      const m = /^(\w+)=eq\.(.+)$/.exec(sub.f.filter || '');
+      if (m && String(row[m[1]]) !== m[2]) return;
+      const payload = { eventType: ev, new: JSON.parse(JSON.stringify(row)), old: old || {} };
+      setTimeout(() => sub.cb(payload), 0);
+    }));
+  }
+  const channels = [];
+
   class Query {
     constructor(table) { this.t = table; this.op = 'select'; this.f = []; this.o = []; this.n = null; this.mode = 'many'; this.ret = false; }
-    select() { if (this.op !== 'select') this.ret = true; return this; }
+    select(cols, opt) { if (this.op !== 'select') this.ret = true; if (opt?.count) { this.cnt = true; this.head = !!opt.head; } return this; }
     eq(k, v) { this.f.push(r => String(r[k]) === String(v)); return this; }
+    neq(k, v) { this.f.push(r => String(r[k]) !== String(v)); return this; }
     gte(k, v) { this.f.push(r => r[k] >= v); return this; }
+    gt(k, v) { this.f.push(r => r[k] > v); return this; }
+    in(k, list) { const set = new Set(list.map(String)); this.f.push(r => set.has(String(r[k]))); return this; }
     order(k, opt = {}) { this.o.push([k, opt.ascending !== false]); return this; }
     limit(n) { this.n = n; return this; }
     single() { this.mode = 'single'; return this; }
@@ -1054,20 +1343,25 @@ function createDemoClient() {
       const all = rows(this.t);
       const match = r => this.f.every(fn => fn(r));
       let out = [];
+      let total = 0;
       if (this.op === 'select') {
         out = all.filter(match);
         for (const [k, asc] of [...this.o].reverse()) out = [...out].sort((a, b) => (a[k] > b[k] ? 1 : a[k] < b[k] ? -1 : 0) * (asc ? 1 : -1));
+        total = out.length;
         if (this.n != null) out = out.slice(0, this.n);
       } else if (this.op === 'insert') {
         const list = Array.isArray(this.v) ? this.v : [this.v];
+        const COMPOSITE = { nation_pledges: ['user_id', 'country_id'], room_members: ['user_id', 'country_id'] };
         for (const r of list) {
-          if (this.t === 'nation_pledges' && all.some(p => p.user_id === r.user_id && p.country_id === r.country_id)) return { data: null, error: { code: '23505', message: 'duplicate' } };
-          const row = { created_at: nowIso(), ...r };
-          if (this.t !== 'profiles' && this.t !== 'nation_pledges' && row.id == null) row.id = db.next++;
+          const pk = COMPOSITE[this.t];
+          if (pk && all.some(p => pk.every(k => p[k] === r[k]))) return { data: null, error: { code: '23505', message: 'duplicate' } };
+          const row = { created_at: nowIso(), ...(DEFAULT_ROW[this.t] ? DEFAULT_ROW[this.t]() : {}), ...r };
+          if (!pk && this.t !== 'profiles' && row.id == null) row.id = db.next++;
           all.push(row); out.push(row);
+          afterWrite(this.t, 'INSERT', row, null);
         }
       } else if (this.op === 'update') {
-        all.filter(match).forEach(r => { Object.assign(r, this.v); out.push(r); });
+        all.filter(match).forEach(r => { const old = { ...r }; Object.assign(r, this.v); afterWrite(this.t, 'UPDATE', r, old); out.push(r); });
       } else if (this.op === 'upsert') {
         const pk = this.t === 'app_settings' ? 'key' : 'id';
         const ex = all.find(r => r[pk] === this.v[pk]);
@@ -1079,6 +1373,7 @@ function createDemoClient() {
       }
       if (this.op !== 'select') save();
       const data = JSON.parse(JSON.stringify(out));
+      if (this.cnt) return { data: this.head ? null : data, count: total, error: null };
       if (this.mode === 'single') return data[0] ? { data: data[0], error: null } : { data: null, error: { message: 'Not found' } };
       if (this.mode === 'maybe') return { data: data[0] ?? null, error: null };
       return { data: this.op === 'select' || this.ret ? data : null, error: null };
@@ -1094,6 +1389,11 @@ function createDemoClient() {
     demo: true,
     reset() { try { localStorage.removeItem(KEY); } catch (e) {} load(); },
     from: t => new Query(t),
+    channel(name) {
+      const ch = { name, subs: [], on(type, f, cb) { this.subs.push({ f, cb }); return this; }, subscribe(cb) { setTimeout(() => cb?.('SUBSCRIBED'), 0); return this; } };
+      channels.push(ch); return ch;
+    },
+    removeChannel(ch) { const i = channels.indexOf(ch); if (i >= 0) channels.splice(i, 1); return Promise.resolve('ok'); },
     auth: {
       onAuthStateChange(cb) {
         listeners.push(cb);
@@ -1216,6 +1516,8 @@ const ICON = {
   pin: '<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/>',
   download: '<path d="M12 4v11"/><path d="m7 10.5 5 5 5-5"/><path d="M5 20h14"/>',
   logout: '<path d="M14 4.5h3.5A1.5 1.5 0 0 1 19 6v12a1.5 1.5 0 0 1-1.5 1.5H14"/><path d="M10 16l4-4-4-4"/><path d="M14 12H4.5"/>',
+  send: '<path d="M4.5 12 19.5 5l-4 15-4-6.5z"/><path d="m11.5 13.5 8-8.5"/>',
+  trash: '<path d="M4.5 7h15"/><path d="M9.5 7V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v2"/><path d="M6.5 7l.9 11.6A1.6 1.6 0 0 0 9 20h6a1.6 1.6 0 0 0 1.6-1.4L17.5 7"/>',
 };
 function icon(name, extra = '') {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${extra}>${ICON[name] || ''}</svg>`;
@@ -1264,8 +1566,8 @@ async function render() {
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
   let { tab, param } = parseRoute();
-  const SUB_ROUTES = ['events'];   // 탭이 아닌 하위 화면 (하단 탭은 홈으로 표시)
-  if ((!TABS.some(x => x.id === tab) && !SUB_ROUTES.includes(tab)) || (tab === 'admin' && !isAdmin())) tab = 'home';
+  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin())) tab = 'home';
+  if (state.roomSub && !(tab === 'rooms' && param && param.toUpperCase() === state.roomSub.code)) closeRoomSub();
   const routeKey = tab + '/' + (param || '') + '/' + state.lang;
   const routeChanged = routeKey !== lastRouteKey;
   lastRouteKey = routeKey;
@@ -1308,8 +1610,10 @@ function headerHTML() {
 }
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
+// 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
+const SUB_TAB = { events: 'home', rooms: 'community', apply: 'countries', apps: 'my' };
 function islandHTML(tab) {
-  if (!TABS.some(x => x.id === tab)) tab = 'home';
+  tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
   const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
   return `<nav class="island" aria-label="Main"><div class="island-inner">
     ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
@@ -1581,7 +1885,8 @@ function destCard(c) {
 const VIEWS = {
   async home() {
     const p = state.profile;
-    const [{ list, today }, events] = await Promise.all([upcomingMeetings(), loadEvents(true), loadCountries(), loadPledges(), loadPhotos()]);
+    const [{ list, today }, events, , , , apps] = await Promise.all([upcomingMeetings(), loadEvents(true), loadCountries(), loadPledges(), loadPhotos(), loadMyApps()]);
+    const myApp = apps.find(a => ACTIVE_STATUSES.includes(a.status)) || apps[0] || null;
     const featured = events.find(e => e.is_featured) || null;
     const others = events.filter(e => e !== featured).slice(0, 3);
     const [next, after] = list;
@@ -1642,13 +1947,13 @@ const VIEWS = {
           <div><div class="big">${active.length}</div><div class="lbl">${esc(t('stat_fields'))}</div></div></a>
       </div>
       ${meeting}
+      ${myApp ? `<div class="section-head"><h2>${esc(t('my_application'))}</h2><a class="text-link" href="#/apps">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(appRow(myApp))}` : ''}
       ${others.length ? `<div class="section-head"><h2>${esc(t('ev_upcoming'))}</h2><a class="text-link" href="#/events">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(others.map(eventRow).join(''))}` : ''}
       <div class="section-head"><h2>${esc(t('countries_title'))}</h2><a class="text-link" href="#/countries">${esc(t('see_all'))} ${icon('chev')}</a></div>
       <div class="rail dest-rail">${active.map(destCard).join('')}</div>
       ${nations}
       <div class="section-head"><h2>${esc(t('coming_title'))}</h2></div>
-      ${card(soonRow('plane', t('my_application'), t('home_app_d'), 2)
-        + soonRow('voice', t('todays_training'), t('home_train_d'), 3)
+      ${card(soonRow('voice', t('todays_training'), t('home_train_d'), 3)
         + soonRow('spark', t('featured_testimony'), t('com_testi_d'), 4))}
       <div class="section-head"><h2>${esc(t('concepts_title'))}</h2><span class="small muted">${esc(t('swipe'))}</span></div>
       <div class="rail">${concepts}</div>
@@ -1687,8 +1992,9 @@ const VIEWS = {
 
   async community() {
     return `${pageHead(t('community_title'), t('community_sub'))}
+      ${await viewCommunityRooms()}
+      <div class="section-head"><h2>${esc(t('coming_title'))}</h2></div>
       ${card(`
-        ${soonRow('chat', t('com_rooms_t'), t('com_rooms_d'), 2)}
         ${soonRow('hands', t('com_prayer_t'), t('com_prayer_d'), 4)}
         ${soonRow('spark', t('com_testi_t'), t('com_testi_d'), 4)}
         ${soonRow('people', t('com_teams_t'), t('com_teams_d'), 4)}
@@ -1697,7 +2003,7 @@ const VIEWS = {
 
   async my() {
     const p = state.profile;
-    await Promise.all([loadCountries(), loadPledges()]);
+    const [, , apps] = await Promise.all([loadCountries(), loadPledges(), loadMyApps()]);
     const mine = [...state.myPledges].map(countryById).filter(Boolean);
     const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
     return `${pageHead(t('my_title'))}
@@ -1718,8 +2024,9 @@ const VIEWS = {
         <div style="margin-top:14px">${mine.length ? nationChips(mine) : `<p class="muted small" style="margin:0">${esc(t('my_nations_empty'))}</p>`}</div>
         <div style="margin-top:12px"><a class="text-link" href="#/countries">${esc(t('sign_a_nation'))} ${icon('arrow')}</a></div>`)}
       ${card(`<div class="row between"><div><h3>${esc(t('language_setting'))}</h3><div class="small muted">English · 한국어</div></div>${langToggle()}</div>`)}
+      <div class="section-head"><h2>${esc(t('apps_title'))}</h2>${apps.length ? `<a class="text-link" href="#/apps">${esc(t('see_all'))} ${icon('chev')}</a>` : ''}</div>
+      ${card(apps.length ? apps.slice(0, 3).map(appRow).join('') : `<p class="muted small" style="margin:0 0 12px">${esc(t('apps_empty'))}</p><a class="text-link" href="#/countries">${esc(t('countries_title'))} ${icon('arrow')}</a>`)}
       ${card(`
-        ${soonRow('plane', t('my_app_t'), t('my_app_d'), 2)}
         ${soonRow('bag', t('my_check_t'), t('my_check_d'), 4)}
         ${soonRow('calendar', t('my_att_t'), t('my_att_d'), 4)}`)}
       ${card(`<div class="stack">
@@ -1733,10 +2040,12 @@ const VIEWS = {
   async admin() {
     const tab = state.adminTab;
     const seg = `<div class="seg" role="tablist">
-      ${['members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
+      ${['applications', 'members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}</button>`).join('')}
     </div>`;
     let body = '';
-    if (tab === 'members') {
+    if (tab === 'applications') {
+      body = await adminApplicationsHTML();
+    } else if (tab === 'members') {
       if (!state.adminMembers) {
         const { data, error } = await sb.from('profiles').select('id,name,email,school,role,created_at').order('created_at', { ascending: false });
         if (error) throw error;
@@ -1882,6 +2191,9 @@ async function viewCountryDetail(c) {
     names = (data || []).map(r => r.display_name).filter(Boolean);
   }
   const pledged = state.myPledges.has(c.id);
+  const [photos, rooms, apps] = await Promise.all([loadCountryGallery(c.id), loadRooms(), loadMyApps()]);
+  state.gallery = { cid: c.id, photos };
+  const myApp = apps.find(a => a.country_id === c.id && ACTIVE_STATUSES.includes(a.status));
   const countLabel = n === 0 ? t('pledge_count_zero') : n === 1 ? t('pledge_label_one') : t('pledge_label');
   const tick = (cls) => `<i class="${cls}">${icon(cls === 'p' ? 'plus' : 'check')}</i>`;
 
@@ -1890,6 +2202,7 @@ async function viewCountryDetail(c) {
       <a href="#/countries" class="back-fab" aria-label="${esc(t('back'))}">${icon('chevl')}</a>
       ${destInner(c, { hero: true })}
     </div>
+    ${galleryHTML(c, photos)}
     ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
 
     ${card(sections.map(([k, f]) => `<div class="info-sec"><span class="eyebrow plain">${esc(t(k))}</span><p>${para(loc(c, f))}</p></div>`).join('')
@@ -1916,8 +2229,9 @@ async function viewCountryDetail(c) {
       ${TORCH}`, { dark: true })}
 
     <div class="action-row">
-      <button class="btn light" data-soon="2" aria-label="${esc(t('enter_room'))}">${icon('chat', 'width="19" height="19"')} ${esc(t('room_short'))}</button>
-      <button class="btn navy" data-soon="2" aria-label="${esc(t('apply_here'))}">${icon('plane', 'width="19" height="19"')} ${esc(t('apply_short'))}</button>
+      <a class="btn light" href="#/rooms/${esc(c.code)}" aria-label="${esc(t('enter_room'))}">${icon('chat', 'width="19" height="19"')} ${esc(t('room_short'))}${c.id in rooms ? ` ${icon('check', 'width="16" height="16"')}` : ''}</a>
+      ${myApp ? `<a class="btn navy" href="#/apps/${myApp.id}">${icon('plane', 'width="19" height="19"')} ${esc(t('ap_view'))}</a>`
+        : `<a class="btn navy" href="#/apply/${esc(c.code)}" aria-label="${esc(t('apply_here'))}">${icon('plane', 'width="19" height="19"')} ${esc(t('apply_short'))}</a>`}
     </div>`;
 }
 
@@ -1949,6 +2263,22 @@ function bindMemberList() {
 
 const BINDERS = {
   countries(code) {
+    const input = document.getElementById('photo-input');
+    const c0 = code && state.countries?.find(x => x.code === code.toUpperCase());
+    if (input && c0) input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      toast(t('gal_uploading'));
+      try { await addCountryPhoto(c0, file, (state.gallery?.photos.length || 0) + 1); toast(t('gal_added')); render(); }
+      catch (e) { toast(errMsg(e), true); }
+    };
+    app.querySelectorAll('[data-photo-del]').forEach(b => b.onclick = async () => {
+      // 두 번 눌러 확인
+      if (!b.dataset.armed) { b.dataset.armed = '1'; b.style.background = 'var(--danger)'; setTimeout(() => { delete b.dataset.armed; b.style.background = ''; }, 3000); return; }
+      const p = state.gallery?.photos.find(x => String(x.id) === b.dataset.photoDel);
+      if (!p) return;
+      try { await removeCountryPhoto(p); toast(t('gal_removed')); render(); } catch (e) { toast(errMsg(e), true); }
+    });
     const btn = document.getElementById('pledge-btn');
     if (btn) btn.onclick = async () => {
       btn.disabled = true;
@@ -1988,6 +2318,7 @@ const BINDERS = {
   },
   admin() {
     app.querySelectorAll('[data-admin-tab]').forEach(b => b.onclick = () => { state.adminTab = b.dataset.adminTab; render(); });
+    if (state.adminTab === 'applications') bindAdminApplications();
     const search = document.getElementById('member-search');
     if (search) {
       search.oninput = () => {
@@ -2027,6 +2358,578 @@ BINDERS.events = function (id) {
 };
 
 // ---------------------------------------------------------------------
+// ② 나라방 — 나라별 채팅 (Supabase Realtime). 방 참여 ≠ 신청
+// ---------------------------------------------------------------------
+const nameCache = {};   // user_id → { name, role } (profile_names 뷰: 이메일·전화번호 없음)
+async function loadNames(ids) {
+  const need = [...new Set(ids)].filter(id => id && !(id in nameCache));
+  if (!need.length) return;
+  const { data } = await sb.from('profile_names').select('id,name,role').in('id', need);
+  (data || []).forEach(r => { nameCache[r.id] = r; });
+  need.forEach(id => { if (!(id in nameCache)) nameCache[id] = null; });
+}
+// 채팅에서는 "이름 + 성 이니셜"만 (예: Grace K.)
+function shortName(n) {
+  const p = String(n || '').trim().split(/\s+/).filter(Boolean);
+  return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : (p[0] || '—');
+}
+async function loadRooms() {
+  const { data } = await sb.from('room_members').select('country_id,last_read_at').eq('user_id', state.profile.id);
+  state.rooms = Object.fromEntries((data || []).map(r => [r.country_id, r.last_read_at]));
+  return state.rooms;
+}
+async function roomMemberCounts() {
+  const { data } = await sb.from('room_members').select('country_id');
+  const counts = {};
+  (data || []).forEach(r => { counts[r.country_id] = (counts[r.country_id] || 0) + 1; });
+  return counts;
+}
+async function roomSummary(cid, since) {
+  const [last, unread] = await Promise.all([
+    sb.from('messages').select('body,user_id,created_at').eq('country_id', cid).eq('deleted', false).order('created_at', { ascending: false }).limit(1),
+    since ? sb.from('messages').select('id', { count: 'exact', head: true }).eq('country_id', cid).eq('deleted', false)
+      .gt('created_at', since).neq('user_id', state.profile.id) : Promise.resolve({ count: 0 }),
+  ]);
+  return { last: last.data?.[0] || null, unread: unread.count || 0 };
+}
+function membersLabel(n) { return n === 1 ? t('room_members_one') : t('room_members', { n }); }
+function msgTime(iso) { return new Date(iso).toLocaleTimeString(dateLocale(), { hour: 'numeric', minute: '2-digit' }); }
+function msgDay(iso) {
+  const d = new Date(iso), today = new Date(), y = new Date(Date.now() - 86400000);
+  if (d.toDateString() === today.toDateString()) return t('today');
+  if (d.toDateString() === y.toDateString()) return t('yesterday');
+  return d.toLocaleDateString(dateLocale(), { weekday: 'short', month: 'short', day: 'numeric' });
+}
+function msgHTML(m, prev) {
+  const me = m.user_id === state.profile.id;
+  const newDay = !prev || new Date(prev.created_at).toDateString() !== new Date(m.created_at).toDateString();
+  const cont = !newDay && prev && prev.user_id === m.user_id && (new Date(m.created_at) - new Date(prev.created_at)) < 5 * 60e3;
+  const who = me ? t('you') : shortName(nameCache[m.user_id]?.name);
+  const canDelete = isAdmin() && !m.deleted;
+  return `${newDay ? `<div class="day-sep">${esc(msgDay(m.created_at))}</div>` : ''}
+    <div class="msg ${me ? 'me' : ''} ${cont ? 'cont' : ''} ${m.deleted ? 'gone' : ''}" data-msg="${m.id}">
+      <div class="who">${esc(who)}</div>
+      <div class="bubble">${m.deleted ? esc(t('room_deleted')) : esc(m.body)}</div>
+      <div class="foot"><span>${esc(msgTime(m.created_at))}</span>${canDelete ? `<button type="button" data-del-msg="${m.id}">${esc(t('room_delete'))}</button>` : ''}</div>
+    </div>`;
+}
+function chatHTML(list) {
+  if (!list.length) return `<div class="chat-empty">${icon('chat', 'width="30" height="30" style="color:#B4BBC7"')}<p style="margin:8px 0 0">${esc(t('room_empty'))}</p></div>`;
+  return list.map((m, i) => msgHTML(m, list[i - 1])).join('');
+}
+function closeRoomSub() {
+  if (state.roomSub) { try { sb.removeChannel(state.roomSub.ch); } catch (e) {} }
+  state.roomSub = null;
+}
+// 읽음 표시: 서버 시각 기준(마지막 메시지 시각)으로 저장해 기기 시계 차이 영향을 없앰
+function markRoomRead(cid, iso) {
+  if (!(cid in (state.rooms || {})) || !iso) return;
+  if (state.rooms[cid] && state.rooms[cid] >= iso) return;
+  state.rooms[cid] = iso;
+  sb.from('room_members').update({ last_read_at: iso }).eq('user_id', state.profile.id).eq('country_id', cid).then(() => {});
+}
+
+VIEWS.rooms = async function (code) {
+  const list = await loadCountries();
+  const c = code && list.find(x => x.code === code.toUpperCase() && x.is_active);
+  const back = `<div style="padding-top:8px"><a href="#/community" class="back-pill">${icon('chevl')}${esc(t('community_title'))}</a></div>`;
+  if (!c) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const [rooms, msgs, members] = await Promise.all([
+    loadRooms(),
+    sb.from('messages').select('id,user_id,body,created_at,deleted').eq('country_id', c.id).order('created_at', { ascending: false }).limit(80),
+    sb.from('room_members').select('user_id', { count: 'exact', head: true }).eq('country_id', c.id),
+  ]);
+  const joined = c.id in rooms;
+  const items = (msgs.data || []).reverse();
+  await loadNames(items.map(m => m.user_id));
+  state.room = { id: c.id, code: c.code, list: items };
+  return `${back}
+    <div class="room-head">
+      <span class="flag-tile" aria-hidden="true">${flag(c.code)}</span>
+      <div class="meta"><h1>${esc(countryName(c))}</h1>
+        <div class="small muted">${esc(membersLabel(members.count || 0))} · <a href="#/countries/${esc(c.code)}">${esc(t('room_about', { c: countryName(c) }))}</a></div></div>
+      ${joined ? `<button class="btn light small" id="room-leave">${esc(t('room_leave'))}</button>` : ''}
+    </div>
+    ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
+    ${joined ? '' : card(`<p style="margin:0 0 14px">${esc(t('room_join_d'))}</p>
+      <button class="btn block" id="room-join">${icon('chat')} ${esc(t('room_join'))}</button>`)}
+    <div class="chat" id="chat" aria-live="polite">${chatHTML(items)}</div>
+    ${joined ? `<p class="small muted" style="text-align:center;margin:6px 0 0">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('room_safety'))}</p>
+      <form class="composer" id="composer">
+        <textarea name="body" rows="1" maxlength="1000" placeholder="${esc(t('room_placeholder'))}" aria-label="${esc(t('room_placeholder'))}" required></textarea>
+        <button class="btn" type="submit" aria-label="${esc(t('room_send'))}">${icon('send')}</button>
+      </form>
+      <div class="chat-spacer"></div>` : ''}`;
+};
+
+BINDERS.rooms = function (code) {
+  const room = state.room;
+  if (!room || !code || room.code !== code.toUpperCase()) return;
+  const chat = document.getElementById('chat');
+  const atBottom = () => window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 160;
+  const toBottom = () => window.scrollTo(0, document.documentElement.scrollHeight);
+  if (room.id in (state.rooms || {})) toBottom();
+  const last = room.list[room.list.length - 1];
+  if (last) markRoomRead(room.id, last.created_at);
+
+  const redraw = () => { chat.innerHTML = chatHTML(room.list); bindDeletes(); };
+  const bindDeletes = () => chat.querySelectorAll('[data-del-msg]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const { error } = await sb.from('messages').update({ deleted: true }).eq('id', b.dataset.delMsg);
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    const m = room.list.find(x => String(x.id) === b.dataset.delMsg);
+    if (m) m.deleted = true;
+    redraw();
+  });
+  bindDeletes();
+
+  const addMessage = async (m) => {
+    if (room.list.some(x => x.id === m.id)) return;
+    const stick = atBottom() || m.user_id === state.profile.id;
+    await loadNames([m.user_id]);
+    room.list.push(m);
+    room.list.sort((a, b) => a.created_at.localeCompare(b.created_at));
+    if (!document.getElementById('chat')) return;
+    redraw();
+    if (stick) toBottom();
+    markRoomRead(room.id, m.created_at);
+  };
+
+  // Realtime: 이 방의 새 메시지·삭제
+  if (!state.roomSub || state.roomSub.code !== room.code) {
+    closeRoomSub();
+    const ch = sb.channel('room-' + room.id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages', filter: 'country_id=eq.' + room.id }, (payload) => {
+        if (state.room?.id !== room.id) return;
+        const m = payload.new;
+        if (payload.eventType === 'INSERT' && m?.id) addMessage(m);
+        else if (payload.eventType === 'UPDATE' && m?.id) {
+          const ex = room.list.find(x => x.id === m.id);
+          if (ex) { ex.deleted = m.deleted; if (document.getElementById('chat')) redraw(); }
+        }
+      })
+      .subscribe();
+    state.roomSub = { code: room.code, ch };
+  }
+
+  const join = document.getElementById('room-join');
+  if (join) join.onclick = async () => {
+    join.disabled = true;
+    const { error } = await sb.from('room_members').insert({ user_id: state.profile.id, country_id: room.id });
+    if (error && error.code !== '23505') { join.disabled = false; return toast(errMsg(error), true); }
+    toast(t('room_joined_toast', { c: countryName(countryById(room.id)) }));
+    render();
+  };
+  const leave = document.getElementById('room-leave');
+  if (leave) leave.onclick = async () => {
+    leave.disabled = true;
+    const { error } = await sb.from('room_members').delete().eq('user_id', state.profile.id).eq('country_id', room.id);
+    if (error) { leave.disabled = false; return toast(errMsg(error), true); }
+    toast(t('room_left_toast'));
+    render();
+  };
+
+  const form = document.getElementById('composer');
+  if (!form) return;
+  const ta = form.querySelector('textarea');
+  const fit = () => { ta.style.height = '44px'; ta.style.height = Math.min(140, ta.scrollHeight) + 'px'; };
+  ta.addEventListener('input', fit);
+  ta.addEventListener('keydown', (e) => {
+    // 데스크톱: Enter 로 보내기, Shift+Enter 는 줄바꿈 (한글 조합 중에는 보내지 않음)
+    if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) { e.preventDefault(); form.requestSubmit(); }
+  });
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = ta.value.trim();
+    if (!body) return;
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    const { data, error } = await sb.from('messages').insert({ country_id: room.id, user_id: state.profile.id, body }).select().single();
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    ta.value = ''; fit(); ta.focus();
+    addMessage(data);
+  };
+};
+
+async function viewCommunityRooms() {
+  const [list, rooms, counts] = await Promise.all([loadCountries(), loadRooms(), roomMemberCounts()]);
+  const active = list.filter(c => c.is_active);
+  const mine = active.filter(c => c.id in rooms);
+  const others = active.filter(c => !(c.id in rooms));
+  const sums = await Promise.all(mine.map(c => roomSummary(c.id, rooms[c.id])));
+  await loadNames(sums.map(x => x.last?.user_id).filter(Boolean));
+  const mineRows = mine.map((c, i) => {
+    const { last, unread } = sums[i];
+    const preview = last ? `${last.user_id === state.profile.id ? t('you') : shortName(nameCache[last.user_id]?.name)}: ${last.body}` : membersLabel(counts[c.id] || 0);
+    return `<a class="list-row" href="#/rooms/${esc(c.code)}">
+      <span class="flag-tile" style="font-size:30px" aria-hidden="true">${flag(c.code)}</span>
+      <div class="meta"><div class="t">${esc(countryName(c))}</div><div class="d ellip">${esc(preview)}</div></div>
+      ${unread ? `<span class="unread" aria-label="${unread} new">${unread > 99 ? '99+' : unread}</span>` : ''}
+      <span class="chev">${icon('chev')}</span></a>`;
+  }).join('');
+  const otherRows = others.map(c => `<a class="list-row" href="#/rooms/${esc(c.code)}">
+      <span class="flag-tile" style="font-size:30px" aria-hidden="true">${flag(c.code)}</span>
+      <div class="meta"><div class="t">${esc(countryName(c))}</div><div class="d">${esc(membersLabel(counts[c.id] || 0))}</div></div>
+      <span class="tag">${esc(t('rooms_join_short'))}</span><span class="chev">${icon('chev')}</span></a>`).join('');
+  return `<div class="section-head" style="margin-top:4px"><h2>${esc(t('rooms_mine'))}</h2></div>
+    ${card(mine.length ? mineRows : `<p class="muted small" style="margin:0">${esc(t('rooms_mine_empty'))}</p>`)}
+    ${others.length ? `<div class="section-head"><h2>${esc(t('rooms_other'))}</h2></div>${card(otherRows)}` : ''}
+    <p class="small muted" style="margin:10px 4px 0">${esc(t('com_rooms_d'))}</p>`;
+}
+
+// ---------------------------------------------------------------------
+// ⑦ 신청 & 매칭 — 신청서 · 내 신청 타임라인 · 연장 신청
+// ---------------------------------------------------------------------
+const APP_FLOW = ['submitted', 'approved', 'preparing', 'on_field', 'returned'];
+const ACTIVE_STATUSES = ['submitted', 'approved', 'preparing', 'on_field'];
+const DURATIONS = { short: ['1m', '2m', '3m', '6m'], mid: ['12m', '24m'], long: ['long'] };
+const DUR_MONTHS = { '1m': 1, '2m': 2, '3m': 3, '6m': 6, '12m': 12, '24m': 24 };
+function statusTag(s) { return `<span class="st st-${esc(s)}">${esc(t('st_' + s))}</span>`; }
+function durLabel(d) { return d ? (i18n[state.lang]['dur_' + d] || i18n.en['dur_' + d] || d) : '—'; }
+function fmtDay(dateStr) { return dateStr ? new Date(dateStr + 'T12:00:00').toLocaleDateString(dateLocale(), { year: 'numeric', month: 'short', day: 'numeric' }) : '—'; }
+function addMonths(dateStr, n) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const x = new Date(Date.UTC(y, m - 1 + n, d));
+  return x.toISOString().slice(0, 10);
+}
+function canApply() { return !(state.settings.require_graduation_to_apply === true) || ['graduate', 'admin'].includes(state.profile.role); }
+async function loadMyApps() {
+  const { data } = await sb.from('applications').select('*').eq('user_id', state.profile.id).order('created_at', { ascending: false });
+  state.myApps = data || [];
+  return state.myApps;
+}
+function appRow(a) {
+  const c = countryById(a.country_id);
+  return `<a class="list-row" href="#/apps/${a.id}">
+    <span class="flag-tile" style="font-size:30px" aria-hidden="true">${c ? flag(c.code) : '🌏'}</span>
+    <div class="meta"><div class="t">${esc(c ? countryName(c) : '—')}</div><div class="d">${esc(t('tr_' + a.track))} · ${esc(fmtDay(a.start_date))}</div></div>
+    ${statusTag(a.status)}<span class="chev">${icon('chev')}</span></a>`;
+}
+
+VIEWS.apply = async function (code) {
+  const [list, apps] = await Promise.all([loadCountries(), loadMyApps(), loadSettings()]);
+  const active = list.filter(c => c.is_active);
+  const c = code ? active.find(x => x.code === code.toUpperCase()) : null;
+  const back = `<div style="padding-top:8px"><a href="${c ? '#/countries/' + esc(c.code) : '#/apps'}" class="back-pill">${icon('chevl')}${esc(c ? countryName(c) : t('apps_title'))}</a></div>`;
+  const head = back + pageHead(t('apply_title'), t('apply_sub'));
+  if (!canApply()) return head + card(`<div class="row top" style="gap:12px"><span class="ico-tile orange">${icon('cap')}</span><p style="margin:0">${esc(t('ap_locked'))}</p></div>`);
+  const existing = c && apps.find(a => a.country_id === c.id && ACTIVE_STATUSES.includes(a.status));
+  if (existing) return head + card(`<p style="margin:0 0 14px">${esc(t('ap_existing', { c: countryName(c) }))}</p>${appRow(existing)}`);
+  const today = nowInTZ().date;
+  const contact = state.profile.phone || state.profile.email || '';
+  return head + card(`<form id="apply-form" novalidate>
+      <label class="field"><span>${esc(t('ap_country'))}</span>
+        <select name="country_id" required>${active.map(x => `<option value="${x.id}" ${c && c.id === x.id ? 'selected' : ''}>${flag(x.code)} ${esc(countryName(x))}</option>`).join('')}</select></label>
+      <div id="ap-sensitive">${c?.is_sensitive ? `<div class="form-note">${icon('lock')}<span>${esc(t('ap_sensitive_note'))}</span></div>` : ''}</div>
+      <label class="field" style="margin-bottom:8px"><span>${esc(t('ap_track'))}</span></label>
+      <div class="choice">${['short', 'mid', 'long'].map((k, i) => `<label><input type="radio" name="track" value="${k}" ${i === 0 ? 'checked' : ''}>
+        <span><b>${esc(t('tr_' + k))}</b><span class="d">${esc(t('tr_' + k + '_d'))}</span></span></label>`).join('')}</div>
+      <div id="ap-seasons" style="margin:-4px 0 18px"><div class="small muted">${esc(t('seasons'))}</div>${seasonsChips()}</div>
+      <div class="field-pair">
+        <label class="field"><span>${esc(t('ap_start'))}</span><input type="date" name="start_date" min="${today}" required></label>
+        <label class="field"><span>${esc(t('ap_duration'))}</span><select name="duration_text" id="ap-dur"></select></label>
+      </div>
+      <label class="field"><span>${esc(t('ap_contact'))}</span><input type="text" name="contact" value="${esc(contact)}" autocomplete="tel" required maxlength="200"></label>
+      <label class="field"><span>${esc(t('ap_motivation'))}</span><textarea name="motivation" required maxlength="3000" placeholder="${esc(t('ap_motivation_ph'))}"></textarea></label>
+      <div class="form-note">${icon('plane')}<span>${esc(t('ap_flight_note'))}</span></div>
+      <button class="btn block" type="submit">${esc(t('ap_submit'))}</button>
+    </form>`);
+};
+
+BINDERS.apply = function () {
+  const form = document.getElementById('apply-form');
+  if (!form) return;
+  const dur = document.getElementById('ap-dur');
+  const sync = () => {
+    const track = form.track.value;
+    const keep = dur.value;
+    dur.innerHTML = DURATIONS[track].map(d => `<option value="${d}">${esc(durLabel(d))}</option>`).join('');
+    if (DURATIONS[track].includes(keep)) dur.value = keep;
+    document.getElementById('ap-seasons').classList.toggle('hidden', track !== 'short');
+    const c = countryById(Number(form.country_id.value));
+    document.getElementById('ap-sensitive').innerHTML = c?.is_sensitive ? `<div class="form-note">${icon('lock')}<span>${esc(t('ap_sensitive_note'))}</span></div>` : '';
+  };
+  form.querySelectorAll('[name=track]').forEach(r => r.onchange = sync);
+  form.country_id.onchange = sync;
+  sync();
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(form));
+    if (!f.start_date || !f.contact.trim() || f.motivation.trim().length < 10) return toast(t('ap_need'), true);
+    const months = DUR_MONTHS[f.duration_text];
+    const row = {
+      user_id: state.profile.id, country_id: Number(f.country_id), track: f.track,
+      start_date: f.start_date, duration_text: f.duration_text,
+      expected_return: months ? addMonths(f.start_date, months) : null,
+      contact: f.contact.trim(), motivation: f.motivation.trim(),
+    };
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    const { data, error } = await sb.from('applications').insert(row).select().single();
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    state.myApps = null;
+    toast(t('ap_submitted_toast'));
+    location.hash = '#/apps/' + data.id;
+  };
+};
+
+VIEWS.apps = async function (id) {
+  const [, apps] = await Promise.all([loadCountries(), loadMyApps()]);
+  if (!id) {
+    return `<div style="padding-top:8px"><a href="#/my" class="back-pill">${icon('chevl')}${esc(t('tab_my'))}</a></div>
+      ${pageHead(t('apps_title'))}
+      ${card(apps.length ? apps.map(appRow).join('') : `<p class="muted" style="margin:0">${esc(t('apps_empty'))}</p>`)}
+      <a class="btn block navy" href="#/countries" style="margin-top:4px">${icon('plane')} ${esc(t('apps_new'))}</a>`;
+  }
+  const back = `<div style="padding-top:8px"><a href="#/apps" class="back-pill">${icon('chevl')}${esc(t('apps_title'))}</a></div>`;
+  const a = apps.find(x => String(x.id) === String(id));
+  if (!a) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const c = countryById(a.country_id);
+  const [hist, exts] = await Promise.all([
+    sb.from('application_status_history').select('status,changed_at').eq('application_id', a.id).order('changed_at'),
+    sb.from('application_extensions').select('*').eq('application_id', a.id).order('created_at', { ascending: false }),
+  ]);
+  const when = {};
+  (hist.data || []).forEach(h => { when[h.status] = h.changed_at; });
+  const dateOf = s => when[s] ? new Date(when[s]).toLocaleDateString(dateLocale(), { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+  let steps;
+  if (a.status === 'rejected') {
+    steps = `<li class="done"><b>${esc(t('st_submitted'))}</b><span>${esc(dateOf('submitted'))}</span></li>
+      <li class="bad"><b>${esc(t('st_rejected'))}</b><span>${esc(dateOf('rejected'))}</span></li>`;
+  } else {
+    const cur = APP_FLOW.indexOf(a.status);
+    steps = APP_FLOW.map((s, i) => `<li class="${i < cur ? 'done' : i === cur ? (s === 'returned' ? 'done' : 'now') : 'todo'}"><b>${esc(t('st_' + s))}</b>${i <= cur ? `<span>${esc(dateOf(s))}</span>` : ''}</li>`).join('');
+  }
+  const extList = exts.data || [];
+  const pending = extList.some(x => x.status === 'pending');
+  const minDate = a.expected_return && a.expected_return > nowInTZ().date ? addDays(a.expected_return, 1) : addDays(nowInTZ().date, 1);
+  const extCard = card(`<span class="eyebrow plain">${icon('calendar', 'width="14" height="14"')} ${esc(t('ext_title'))}</span>
+      <div class="form-note" style="margin-top:12px">${icon('plane')}<span>${esc(t('ext_note'))}</span></div>
+      ${a.status !== 'on_field' ? `<p class="small muted" style="margin:0">${esc(t('ext_only_on_field'))}</p>`
+        : pending ? `<p class="small" style="margin:0">${esc(t('ext_wait'))}</p>`
+        : `<form id="ext-form" novalidate>
+            <label class="field"><span>${esc(t('ext_new_date'))}</span><input type="date" name="new_return_date" min="${minDate}" required></label>
+            <label class="field"><span>${esc(t('ext_reason'))}</span><input type="text" name="reason" maxlength="500"></label>
+            <button class="btn block navy" type="submit">${esc(t('ext_submit'))}</button></form>`}
+      ${extList.length ? `<div class="sep"></div><div class="small muted" style="margin-bottom:6px">${esc(t('ext_history'))}</div>
+        ${extList.map(x => `<div class="list-row no-ico"><div class="meta"><div class="t">${esc(t('ext_to', { d: fmtDay(x.new_return_date) }))}</div>${x.reason ? `<div class="d">${esc(x.reason)}</div>` : ''}</div>
+          <span class="st st-ext-${esc(x.status)}">${esc(t('ext_' + x.status))}</span></div>`).join('')}` : ''}`);
+  state.app = a;
+  return `${back}
+    ${card(`<div class="row between top">
+        <div class="row" style="gap:12px"><span class="flag-tile" style="font-size:40px" aria-hidden="true">${c ? flag(c.code) : '🌏'}</span>
+          <div><h1 style="font-size:24px;color:#fff">${esc(c ? countryName(c) : '—')}</h1><div class="small muted">${esc(t('tr_' + a.track))}</div></div></div>
+        ${statusTag(a.status)}</div>
+      <div class="sep"></div>
+      <span class="eyebrow">${esc(t('app_timeline'))}</span>
+      <ol class="timeline">${steps}</ol>
+      ${TORCH}`, { dark: true })}
+    ${card(`<span class="eyebrow plain">${esc(t('app_details'))}</span>
+      <dl class="kv" style="margin-top:12px">
+        <dt>${esc(t('ap_start'))}</dt><dd>${esc(fmtDay(a.start_date))}</dd>
+        <dt>${esc(t('ap_duration'))}</dt><dd>${esc(durLabel(a.duration_text))}</dd>
+        <dt>${esc(t('app_expected_return'))}</dt><dd>${esc(fmtDay(a.expected_return))}</dd>
+        <dt>${esc(t('ap_contact'))}</dt><dd>${esc(a.contact || '—')}</dd>
+        <dt>${esc(t('app_applied'))}</dt><dd>${esc(fmtDay(a.created_at.slice(0, 10)))}</dd>
+      </dl>
+      ${a.motivation ? `<div class="quote">${esc(a.motivation)}</div>` : ''}
+      ${a.admin_note ? `<div class="sep"></div><span class="eyebrow plain">${esc(t('app_hq_note'))}</span><p style="margin:8px 0 0">${para(a.admin_note)}</p>` : ''}`)}
+    ${['approved', 'preparing', 'on_field'].includes(a.status) ? extCard : ''}`;
+};
+
+BINDERS.apps = function (id) {
+  const form = document.getElementById('ext-form');
+  if (!form || !state.app || String(state.app.id) !== String(id)) return;
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const f = Object.fromEntries(new FormData(form));
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    const { error } = await sb.from('application_extensions').insert({ application_id: state.app.id, new_return_date: f.new_return_date, reason: f.reason.trim() || null });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    toast(t('ext_sent'));
+    render();
+  };
+};
+
+// ---------------------------------------------------------------------
+// 관리자 — 신청 승인 · 연장 승인 · 국가별 명단 내보내기
+// ---------------------------------------------------------------------
+async function loadAdminApps() {
+  const [apps, profs, exts, hist] = await Promise.all([
+    sb.from('applications').select('*').order('created_at', { ascending: false }),
+    sb.from('profiles').select('id,name,email,phone,school'),
+    sb.from('application_extensions').select('*').order('created_at', { ascending: false }),
+    sb.from('application_status_history').select('application_id,status,changed_at').order('changed_at'),
+  ]);
+  const err = apps.error || profs.error || exts.error || hist.error;
+  if (err) throw err;
+  const pmap = Object.fromEntries((profs.data || []).map(p => [p.id, p]));
+  state.adminApps = (apps.data || []).map(a => ({
+    ...a, person: pmap[a.user_id] || {},
+    exts: (exts.data || []).filter(x => x.application_id === a.id),
+    hist: (hist.data || []).filter(h => h.application_id === a.id),
+  }));
+  return state.adminApps;
+}
+function adminAppsFiltered() {
+  const f = state.adminAppFilter, cid = state.adminAppCountry;
+  return (state.adminApps || []).filter(a => (!cid || String(a.country_id) === cid)
+    && (f === 'all' || (f === 'ext' ? a.exts.some(x => x.status === 'pending') : a.status === f)));
+}
+function adminAppHTML(a) {
+  const c = countryById(a.country_id);
+  const pend = a.exts.find(x => x.status === 'pending');
+  const open = String(state.adminOpenApp) === String(a.id);
+  return `<details class="adm-app" data-app="${a.id}" ${open ? 'open' : ''}>
+    <summary>
+      <span class="avatar sm" aria-hidden="true">${esc(initials(a.person.name || a.person.email))}</span>
+      <div class="meta"><div class="t">${esc(a.person.name || a.person.email || '—')}</div>
+        <div class="d">${c ? flag(c.code) + ' ' + esc(countryName(c)) : '—'} · ${esc(t('tr_' + a.track))} · ${esc(fmtDay(a.start_date))}</div></div>
+      ${pend ? '<span class="dot" aria-hidden="true"></span>' : ''}${statusTag(a.status)}
+    </summary>
+    <div class="body">
+      <dl class="kv">
+        <dt>${esc(t('email'))}</dt><dd>${esc(a.person.email || '—')}</dd>
+        <dt>${esc(t('adm_contact'))}</dt><dd>${esc(a.contact || a.person.phone || '—')}</dd>
+        ${a.person.school ? `<dt>${esc(t('adm_school'))}</dt><dd>${esc(a.person.school)}</dd>` : ''}
+        <dt>${esc(t('ap_duration'))}</dt><dd>${esc(durLabel(a.duration_text))}</dd>
+        <dt>${esc(t('app_applied'))}</dt><dd>${esc(fmtDay(a.created_at.slice(0, 10)))}</dd>
+      </dl>
+      ${a.motivation ? `<div class="quote">${esc(a.motivation)}</div>` : ''}
+      ${pend ? `<div class="ext-box"><b>${esc(t('adm_ext_req', { d: fmtDay(pend.new_return_date) }))}</b>
+        ${pend.reason ? `<p class="small" style="margin:4px 0 0">${esc(pend.reason)}</p>` : ''}
+        <div class="btn-row"><button class="btn small" data-ext="${pend.id}" data-ext-to="approved">${esc(t('adm_ext_approve'))}</button>
+          <button class="btn small danger" data-ext="${pend.id}" data-ext-to="rejected">${esc(t('adm_ext_reject'))}</button></div></div>` : ''}
+      <form data-app-form="${a.id}" style="margin-top:16px">
+        <div class="field-pair">
+          <label class="field"><span>${esc(t('adm_status'))}</span>
+            <select name="status">${[...APP_FLOW.slice(0, 4), 'returned', 'rejected'].map(s => `<option value="${s}" ${a.status === s ? 'selected' : ''}>${esc(t('st_' + s))}</option>`).join('')}</select></label>
+          <label class="field"><span>${esc(t('app_expected_return'))}</span><input type="date" name="expected_return" value="${esc(a.expected_return || '')}"></label>
+        </div>
+        <label class="field"><span>${esc(t('adm_note'))}</span><textarea name="admin_note" style="min-height:80px" maxlength="2000">${esc(a.admin_note || '')}</textarea></label>
+        <button class="btn navy block" type="submit">${esc(t('save'))}</button>
+      </form>
+      ${a.hist.length ? `<div class="small muted" style="margin-top:14px">${esc(t('adm_history'))}</div>
+        <ul class="history">${a.hist.map(h => `<li>${esc(new Date(h.changed_at).toLocaleDateString(dateLocale(), { month: 'short', day: 'numeric', year: 'numeric' }))} · ${esc(t('st_' + h.status))}</li>`).join('')}</ul>` : ''}
+    </div>
+  </details>`;
+}
+async function adminApplicationsHTML() {
+  // 항상 새로 불러옴 (회원이 방금 보낸 신청·연장 요청도 바로 보이게)
+  const [apps] = await Promise.all([loadAdminApps(), loadCountries()]);
+  const count = s => apps.filter(a => (!state.adminAppCountry || String(a.country_id) === state.adminAppCountry)
+    && (s === 'all' || (s === 'ext' ? a.exts.some(x => x.status === 'pending') : a.status === s))).length;
+  const keys = ['submitted', 'approved', 'preparing', 'on_field', 'ext', 'returned', 'rejected', 'all'];
+  const label = k => k === 'all' ? t('adm_all') : k === 'ext' ? t('adm_ext_pending') : t('st_' + k);
+  const list = adminAppsFiltered();
+  return `<div class="filters" role="tablist">${keys.map(k => `<button type="button" role="tab" data-app-filter="${k}" class="${state.adminAppFilter === k ? 'active' : ''}" aria-selected="${state.adminAppFilter === k}">${esc(label(k))}<span class="n">${count(k)}</span></button>`).join('')}</div>
+    <div class="adm-tools">
+      <select id="app-country" aria-label="${esc(t('ap_country'))}"><option value="">${esc(t('adm_all_countries'))}</option>
+        ${(state.countries || []).map(c => `<option value="${c.id}" ${state.adminAppCountry === String(c.id) ? 'selected' : ''}>${flag(c.code)} ${esc(countryName(c))}</option>`).join('')}</select>
+      ${CAN_DOWNLOAD ? `<button class="btn light small" id="app-export" ${list.length ? '' : 'disabled'}>${icon('download')} ${esc(t('adm_export'))}</button>` : ''}
+    </div>
+    ${card(list.length ? list.map(adminAppHTML).join('') : `<p class="muted" style="margin:0">${esc(t('adm_none'))}</p>`)}`;
+}
+function rosterCSV(list) {
+  const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+  const head = ['Country', 'Name', 'Email', 'Phone', 'School', 'Track', 'Status', 'Departure', 'Length', 'Expected return', 'Contact', 'Applied'];
+  const rows = list.map(a => {
+    const c = countryById(a.country_id);
+    return [c ? c.name_en : '', a.person.name, a.person.email, a.person.phone, a.person.school, i18n.en['tr_' + a.track], i18n.en['st_' + a.status],
+      a.start_date, i18n.en['dur_' + a.duration_text] || a.duration_text, a.expected_return, a.contact, a.created_at.slice(0, 10)];
+  });
+  return '﻿' + [head, ...rows].map(r => r.map(q).join(',')).join('\r\n');
+}
+function bindAdminApplications() {
+  app.querySelectorAll('[data-app-filter]').forEach(b => b.onclick = () => { state.adminAppFilter = b.dataset.appFilter; render(); });
+  const sel = document.getElementById('app-country');
+  if (sel) sel.onchange = () => { state.adminAppCountry = sel.value; render(); };
+  app.querySelectorAll('details.adm-app').forEach(d => d.addEventListener('toggle', () => { if (d.open) state.adminOpenApp = d.dataset.app; else if (state.adminOpenApp === d.dataset.app) state.adminOpenApp = null; }));
+  app.querySelectorAll('[data-app-form]').forEach(form => form.onsubmit = async (e) => {
+    e.preventDefault();
+    const f = Object.fromEntries(new FormData(form));
+    const btn = form.querySelector('button');
+    btn.disabled = true;
+    const { error } = await sb.from('applications').update({ status: f.status, expected_return: f.expected_return || null, admin_note: f.admin_note.trim() || null }).eq('id', form.dataset.appForm);
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    state.adminOpenApp = form.dataset.appForm;
+    toast(t('adm_updated'));
+    render();
+  });
+  app.querySelectorAll('[data-ext]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    const { error } = await sb.from('application_extensions').update({ status: b.dataset.extTo }).eq('id', b.dataset.ext);
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    toast(t('adm_updated'));
+    render();
+  });
+  const ex = document.getElementById('app-export');
+  if (ex) ex.onclick = () => {
+    const c = state.adminAppCountry ? countryById(Number(state.adminAppCountry)) : null;
+    const name = `svm-roster-${c ? c.code.toLowerCase() : 'all'}-${state.adminAppFilter}-${nowInTZ().date}.csv`;
+    const url = URL.createObjectURL(new Blob([rosterCSV(adminAppsFiltered())], { type: 'text/csv;charset=utf-8' }));
+    const a = Object.assign(document.createElement('a'), { href: url, download: name });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+}
+
+// ---------------------------------------------------------------------
+// ① 현지 사진 갤러리 — 관리자 업로드 (Storage: country-photos)
+// ---------------------------------------------------------------------
+async function loadCountryGallery(cid) {
+  const { data } = await sb.from('country_photos').select('id,url,caption,sort_order').eq('country_id', cid).order('sort_order').order('id');
+  return data || [];
+}
+// 올리기 전에 긴 변 1600px JPEG 로 줄임 (데이터·로딩 절약)
+async function resizeImage(file, max = 1600) {
+  const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = URL.createObjectURL(file); });
+  const scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(img.naturalWidth * scale); cv.height = Math.round(img.naturalHeight * scale);
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+  URL.revokeObjectURL(img.src);
+  return new Promise(res => cv.toBlob(res, 'image/jpeg', 0.85));
+}
+async function addCountryPhoto(c, file, sortOrder) {
+  const blob = await resizeImage(file, DEMO ? 1000 : 1600);
+  let url;
+  if (DEMO) {
+    url = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(blob); });
+  } else {
+    const path = `${c.code.toLowerCase()}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.jpg`;
+    const { error } = await sb.storage.from('country-photos').upload(path, blob, { contentType: 'image/jpeg', upsert: false });
+    if (error) throw error;
+    url = sb.storage.from('country-photos').getPublicUrl(path).data.publicUrl;
+  }
+  const { error } = await sb.from('country_photos').insert({ country_id: c.id, url, sort_order: sortOrder });
+  if (error) throw error;
+  state.photos = null;
+}
+async function removeCountryPhoto(p) {
+  const { error } = await sb.from('country_photos').delete().eq('id', p.id);
+  if (error) throw error;
+  const m = !DEMO && /\/country-photos\/(.+)$/.exec(p.url);
+  if (m) await sb.storage.from('country-photos').remove([decodeURIComponent(m[1])]);
+  state.photos = null;
+}
+function galleryHTML(c, photos) {
+  if (!photos.length && !isAdmin()) return '';
+  return `<div class="gallery" aria-label="${esc(countryName(c))}">
+      ${photos.map(p => `<figure><img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy">
+        ${isAdmin() ? `<button type="button" data-photo-del="${p.id}" aria-label="${esc(t('gal_remove'))}">${icon('trash')}</button>` : ''}</figure>`).join('')}
+      ${isAdmin() ? `<label class="gallery-add">${icon('plus')}<span>${esc(t('gal_add'))}</span><input type="file" accept="image/*" id="photo-input"></label>` : ''}
+    </div>
+    ${isAdmin() ? `<div class="form-note" style="margin-top:-2px">${icon('lock')}<span>${esc(t('gal_note'))}</span></div>` : ''}`;
+}
+
+// ---------------------------------------------------------------------
 // 7) 시작
 // ---------------------------------------------------------------------
 async function onSession(session) {
@@ -2035,6 +2938,7 @@ async function onSession(session) {
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
     state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
+    closeRoomSub(); state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
     if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
     delete app.dataset.tab;
     render();
