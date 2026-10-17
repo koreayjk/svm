@@ -126,9 +126,6 @@ revoke all on function public.self_check_in() from public, anon;
 grant execute on function public.self_check_in() to authenticated;
 
 -- 채팅·게시판 작성자 이름 표시용 공개 뷰 (전화번호·이메일은 노출하지 않음)
-create or replace view public.profile_names as
-  select id, name, role from public.profiles;
-grant select on public.profile_names to authenticated;
 
 -- 이름 쓰기 표시용 짧은 이름: "이름 + 성 이니셜" (예: "Grace Kim" → "Grace K.")
 create or replace function public.short_name(full_name text)
@@ -143,6 +140,11 @@ as $$
          upper(left((regexp_split_to_array(btrim(full_name), '\s+'))[array_length(regexp_split_to_array(btrim(full_name), '\s+'), 1)], 1)) || '.'
   end;
 $$;
+
+-- 채팅·게시판 작성자 이름: "이름 + 성 이니셜"만 (전체 이름·이메일·전화번호는 노출하지 않음)
+create or replace view public.profile_names as
+  select id, public.short_name(name) as name, role from public.profiles;
+grant select on public.profile_names to authenticated;
 
 -- 내 나라에 이름 쓰기 — 국가별 품은 사람 수 (민감 국가 포함, 숫자만)
 create or replace view public.nation_pledge_counts as
@@ -283,6 +285,8 @@ alter table public.support_stories            enable row level security;
 alter table public.app_settings               enable row level security;
 alter table public.events                     enable row level security;
 alter table public.conference_registrations   enable row level security;
+alter table public.notifications              enable row level security;
+alter table public.application_notes          enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -297,7 +301,8 @@ begin
              'application_status_history','application_extensions','gospel_messages','gospel_sentences',
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
-             'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations'])
+             'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
+             'notifications','application_notes'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -323,6 +328,13 @@ create policy "events: admin write"    on public.events         for all using (p
 -- 컨퍼런스 등록: 누구나 제출(insert)만, 조회·수정·삭제는 관리자
 create policy "registrations: public insert" on public.conference_registrations for insert to anon, authenticated
   with check (event_key = 'mc2026');
+-- 알림: 본인 것만 읽고 '읽음' 표시. 만들기는 트리거(security definer)만
+create policy "notifications: own read"   on public.notifications for select using (user_id = auth.uid());
+create policy "notifications: own update" on public.notifications for update using (user_id = auth.uid()) with check (user_id = auth.uid());
+create policy "notifications: own delete" on public.notifications for delete using (user_id = auth.uid());
+-- 신청서 내부 메모: 관리자만
+create policy "application_notes: admin" on public.application_notes for all using (public.is_admin()) with check (public.is_admin());
+
 create policy "registrations: admin manage"  on public.conference_registrations for all using (public.is_admin()) with check (public.is_admin());
 
 -- 로그인 회원 읽기, 관리자만 쓰기
@@ -460,7 +472,72 @@ do $$ begin
                      where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'messages') then
     alter publication supabase_realtime add table public.messages;
   end if;
+  if exists (select 1 from pg_publication where pubname = 'supabase_realtime')
+     and not exists (select 1 from pg_publication_tables
+                     where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'notifications') then
+    alter publication supabase_realtime add table public.notifications;
+  end if;
 end $$;
+
+-- =====================================================================
+-- 앱 안 알림 트리거 — 관리자가 상태를 바꾸거나 답글을 달면 회원에게 알림
+-- =====================================================================
+create or replace function public.notify_changes()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if tg_table_name = 'applications' and new.status is distinct from old.status then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (new.user_id, 'app_status', jsonb_build_object('status', new.status, 'country_id', new.country_id), '#/apps/' || new.id);
+  elsif tg_table_name = 'application_extensions' and new.status is distinct from old.status and new.status <> 'pending' then
+    insert into public.notifications (user_id, kind, payload, link)
+    select a.user_id, 'ext_status', jsonb_build_object('status', new.status, 'date', new.new_return_date), '#/apps/' || a.id
+      from public.applications a where a.id = new.application_id;
+  elsif tg_table_name = 'graduation_requests' and new.status is distinct from old.status and new.status <> 'pending' then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (new.user_id, 'grad_status', jsonb_build_object('status', new.status), '#/train');
+  elsif tg_table_name = 'testimonies' and new.status is distinct from old.status and new.status <> 'pending' then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (new.user_id, 'testi_status', jsonb_build_object('status', new.status, 'title', new.title), '#/testimonies');
+  elsif tg_table_name = 'support_stories' and new.status is distinct from old.status and new.status <> 'pending' then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (new.user_id, 'support_status', jsonb_build_object('status', new.status, 'title', new.title), '#/support');
+  elsif tg_table_name = 'course_feedback' and new.admin_comment is not null and new.admin_comment is distinct from old.admin_comment then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (new.user_id, 'feedback_reply', jsonb_build_object('course_id', new.course_id), '#/course/' || new.course_id);
+  end if;
+  return new;
+end;
+$$;
+
+create or replace function public.notify_team_added()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.notifications (user_id, kind, payload, link)
+  select new.user_id, 'team_added', jsonb_build_object('team', t.name), '#/teams/' || new.team_id
+    from public.teams t where t.id = new.team_id;
+  return new;
+end;
+$$;
+
+do $$
+declare tb text;
+begin
+  foreach tb in array array['applications','application_extensions','graduation_requests','testimonies','support_stories','course_feedback'] loop
+    execute format('drop trigger if exists notify_changes on public.%I', tb);
+    execute format('create trigger notify_changes after update on public.%I for each row execute function public.notify_changes()', tb);
+  end loop;
+end $$;
+drop trigger if exists notify_team_added on public.team_members;
+create trigger notify_team_added after insert on public.team_members
+  for each row execute function public.notify_team_added();
 
 -- =====================================================================
 -- Storage 버킷 & 정책
