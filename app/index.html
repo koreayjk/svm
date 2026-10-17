@@ -4706,7 +4706,7 @@ function bindAdminEvents() {
     const v = Object.fromEntries(new FormData(f));
     if (!v.title_en.trim() || !v.starts) return toast(t('ev_f_need'), true);
     const link = v.link_url.trim(), img = v.image_url.trim();
-    // 같은 사이트 안의 상대 경로(../conference/…)도 허용
+    // 같은 사이트 안의 상대 경로(예: 컨퍼런스 등록 페이지)도 허용
     if (link && !safeUrl(link) && !/^(\.\.\/|\/|#)/.test(link)) return toast(t('sup_bad_link'), true);
     if (img && !safeUrl(img)) return toast(t('sup_bad_link'), true);
     const allDay = !!v.all_day;
