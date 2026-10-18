@@ -21,6 +21,29 @@ as $$
   select exists (select 1 from public.profiles where id = auth.uid() and role = 'admin');
 $$;
 
+-- 이 나라의 SVM 리더인가?
+create or replace function public.is_country_leader(cid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.country_leaders where country_id = cid and user_id = auth.uid());
+$$;
+-- 이 신청서를 맡은 사람인가? (관리자 또는 그 나라 리더)
+create or replace function public.can_manage_application(aid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select public.is_admin() or exists (
+    select 1 from public.applications a join public.country_leaders l on l.country_id = a.country_id
+    where a.id = aid and l.user_id = auth.uid());
+$$;
+
 create or replace function public.my_role()
 returns text
 language sql
@@ -291,6 +314,8 @@ alter table public.application_insurance      enable row level security;
 alter table public.content_reports            enable row level security;
 alter table public.user_blocks                enable row level security;
 alter table public.device_tokens              enable row level security;
+alter table public.country_leaders            enable row level security;
+alter table public.application_messages       enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -306,7 +331,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -314,6 +339,10 @@ end $$;
 
 -- profiles
 create policy "profiles: self or admin read"  on public.profiles for select using (id = auth.uid() or public.is_admin());
+-- 나라 리더는 자기 나라에 신청한 학생의 연락처를 봄
+create policy "profiles: country leader reads applicants" on public.profiles for select using (
+  exists (select 1 from public.applications a where a.user_id = profiles.id and public.is_country_leader(a.country_id))
+);
 create policy "profiles: self insert"         on public.profiles for insert with check (id = auth.uid());
 create policy "profiles: self or admin update" on public.profiles for update using (id = auth.uid() or public.is_admin())
                                                                          with check (id = auth.uid() or public.is_admin());
@@ -337,10 +366,11 @@ create policy "notifications: own read"   on public.notifications for select usi
 create policy "notifications: own update" on public.notifications for update using (user_id = auth.uid()) with check (user_id = auth.uid());
 create policy "notifications: own delete" on public.notifications for delete using (user_id = auth.uid());
 -- 신청서 내부 메모: 관리자만
-create policy "application_notes: admin" on public.application_notes for all using (public.is_admin()) with check (public.is_admin());
+create policy "application_notes: admin or leader" on public.application_notes for all
+  using (public.can_manage_application(application_id)) with check (public.can_manage_application(application_id));
 
 -- 여행자 보험: 본인(승인 이후 신청서만) 제출·다시 제출, 관리자 확인
-create policy "insurance: self or admin read" on public.application_insurance for select using (user_id = auth.uid() or public.is_admin());
+create policy "insurance: self or admin read" on public.application_insurance for select using (user_id = auth.uid() or public.can_manage_application(application_id));
 create policy "insurance: self submit" on public.application_insurance for insert with check (
   user_id = auth.uid() and status = 'submitted' and admin_note is null and reviewed_at is null
   and exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()
@@ -349,7 +379,7 @@ create policy "insurance: self submit" on public.application_insurance for inser
 create policy "insurance: self resubmit" on public.application_insurance for update
   using (user_id = auth.uid())
   with check (user_id = auth.uid() and status = 'submitted' and reviewed_at is null);
-create policy "insurance: admin update" on public.application_insurance for update using (public.is_admin()) with check (public.is_admin());
+create policy "insurance: admin update" on public.application_insurance for update using (public.can_manage_application(application_id)) with check (public.can_manage_application(application_id));
 create policy "insurance: admin delete" on public.application_insurance for delete using (public.is_admin());
 
 -- 신고: 회원은 보내기만, 관리자만 보고 처리 / 차단: 본인 것만
@@ -447,26 +477,44 @@ create policy "messages: admin update" on public.messages for update using (publ
 create policy "messages: admin delete" on public.messages for delete using (public.is_admin());
 
 -- ⑦ 신청: 본인 + 관리자만 조회, 상태 변경은 관리자(미국 본부)만
-create policy "applications: self or admin read" on public.applications for select using (user_id = auth.uid() or public.is_admin());
+create policy "applications: self or admin read" on public.applications for select using (user_id = auth.uid() or public.is_admin() or public.is_country_leader(country_id));
 create policy "applications: self submit"        on public.applications for insert with check (
   user_id = auth.uid() and status = 'submitted' and admin_note is null and public.can_apply()
 );
 create policy "applications: admin update"       on public.applications for update using (public.is_admin()) with check (public.is_admin());
+-- 나라 리더: 자기 나라 신청서만 처리 (다른 나라로 옮길 수는 없음)
+create policy "applications: leader update"      on public.applications for update using (public.is_country_leader(country_id)) with check (public.is_country_leader(country_id));
 create policy "applications: admin delete"       on public.applications for delete using (public.is_admin());
 
 create policy "app_history: self or admin read" on public.application_status_history for select using (
-  public.is_admin() or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid())
+  public.can_manage_application(application_id) or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid())
 );
 
 create policy "extensions: self or admin read" on public.application_extensions for select using (
-  public.is_admin() or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid())
+  public.can_manage_application(application_id) or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid())
 );
 create policy "extensions: self request" on public.application_extensions for insert with check (
   status = 'pending'
   and exists (select 1 from public.applications a
               where a.id = application_id and a.user_id = auth.uid() and a.status = 'on_field')
 );
-create policy "extensions: admin update" on public.application_extensions for update using (public.is_admin()) with check (public.is_admin());
+create policy "extensions: admin update" on public.application_extensions for update using (public.can_manage_application(application_id)) with check (public.can_manage_application(application_id));
+
+-- 나라 리더 목록: 로그인한 회원 누구나 보기 (학생이 내 리더를 알 수 있게), 지정은 관리자만
+create policy "country_leaders: members read" on public.country_leaders for select to authenticated using (true);
+create policy "country_leaders: admin write"  on public.country_leaders for all using (public.is_admin()) with check (public.is_admin());
+
+-- 신청서 대화: 신청한 학생, 그 나라 리더, 관리자만 읽고 씀 (본인 이름으로만)
+create policy "app_messages: read" on public.application_messages for select using (
+  public.can_manage_application(application_id)
+  or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid())
+);
+create policy "app_messages: send" on public.application_messages for insert with check (
+  user_id = auth.uid() and (
+    public.can_manage_application(application_id)
+    or exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()))
+);
+create policy "app_messages: own delete" on public.application_messages for delete using (user_id = auth.uid() or public.is_admin());
 create policy "extensions: admin delete" on public.application_extensions for delete using (public.is_admin());
 
 -- ③ 학습 기록: 본인 전체, 관리자 조회
@@ -620,6 +668,48 @@ begin
 end;
 $$;
 
+-- 신청서 대화 알림: 리더가 쓰면 학생에게, 학생이 쓰면 그 나라 리더(없으면 관리자)에게
+create or replace function public.notify_app_message()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare a record;
+begin
+  select id, user_id, country_id into a from public.applications where id = new.application_id;
+  if a.id is null then return new; end if;
+  if new.user_id is distinct from a.user_id then
+    insert into public.notifications (user_id, kind, payload, link)
+    values (a.user_id, 'leader_msg', jsonb_build_object('country_id', a.country_id), '#/apps/' || a.id);
+  else
+    insert into public.notifications (user_id, kind, payload, link)
+    select l.user_id, 'student_msg', jsonb_build_object('country_id', a.country_id), '#/lead/' || a.id
+      from public.country_leaders l where l.country_id = a.country_id;
+    if not found then
+      insert into public.notifications (user_id, kind, payload, link)
+      select p.id, 'student_msg', jsonb_build_object('country_id', a.country_id), '#/lead/' || a.id
+        from public.profiles p where p.role = 'admin';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+-- 새 신청서가 들어오면 그 나라 리더에게
+create or replace function public.notify_new_application()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.notifications (user_id, kind, payload, link)
+  select l.user_id, 'new_app', jsonb_build_object('country_id', new.country_id), '#/lead/' || new.id
+    from public.country_leaders l where l.country_id = new.country_id and l.user_id <> new.user_id;
+  return new;
+end;
+$$;
+
 create or replace function public.notify_team_added()
 returns trigger
 language plpgsql
@@ -645,6 +735,12 @@ end $$;
 drop trigger if exists notify_report on public.content_reports;
 create trigger notify_report after insert on public.content_reports
   for each row execute function public.notify_report();
+drop trigger if exists notify_app_message on public.application_messages;
+create trigger notify_app_message after insert on public.application_messages
+  for each row execute function public.notify_app_message();
+drop trigger if exists notify_new_application on public.applications;
+create trigger notify_new_application after insert on public.applications
+  for each row execute function public.notify_new_application();
 drop trigger if exists notify_team_added on public.team_members;
 create trigger notify_team_added after insert on public.team_members
   for each row execute function public.notify_team_added();
@@ -691,7 +787,8 @@ do $$ begin
     create policy "svm: insurance own upload" on storage.objects for insert to authenticated
       with check (bucket_id = 'insurance-docs' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: insurance own or admin read" on storage.objects for select to authenticated
-      using (bucket_id = 'insurance-docs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));
+      using (bucket_id = 'insurance-docs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()
+        or exists (select 1 from public.application_insurance i where i.file_path = name and public.can_manage_application(i.application_id))));
     create policy "svm: insurance own remove" on storage.objects for delete to authenticated
       using (bucket_id = 'insurance-docs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));
   end if;

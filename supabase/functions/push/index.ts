@@ -34,7 +34,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "rp_kind_prayer": "Prayer request",
     "rp_kind_testimony": "Testimony",
     "rp_kind_team_post": "Team post",
-    "rp_kind_user": "Member"
+    "rp_kind_user": "Member",
+    "nt_leader_msg": "Your country leader sent you a message.",
+    "nt_student_msg": "A student sent you a message.",
+    "nt_new_app": "New application for {c}."
   },
   "ko": {
     "nt_app": "{c} 신청: {s}",
@@ -62,7 +65,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "rp_kind_prayer": "기도 제목",
     "rp_kind_testimony": "간증",
     "rp_kind_team_post": "팀 게시글",
-    "rp_kind_user": "회원"
+    "rp_kind_user": "회원",
+    "nt_leader_msg": "나라 리더가 메시지를 보냈어요.",
+    "nt_student_msg": "학생이 메시지를 보냈어요.",
+    "nt_new_app": "{c} 새 신청서가 들어왔어요."
   }
 };
 
@@ -88,6 +94,9 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'feedback_reply': return t('nt_reply');
     case 'team_added': return t('nt_team', { x: p.team || '' });
     case 'report_new': return t('nt_report', { k: t('rp_kind_' + (p.kind || 'user')) });
+    case 'leader_msg': return t('nt_leader_msg');
+    case 'student_msg': return t('nt_student_msg');
+    case 'new_app': return t('nt_new_app', { c: country });
     default: return t('nt_generic');
   }
 }

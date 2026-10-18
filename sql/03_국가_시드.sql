@@ -22,8 +22,8 @@ values
    '대중교통이 편리한 도시 생활. 사계절이 뚜렷하며 여름은 덥고 습하고 겨울은 춥습니다.',
    'Korean (greetings and the gospel message). English for classes.',
    '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.',
-   'Host-church housing with all meals provided.',
-   '현지 교회 숙소, 모든 식사 제공.'),
+   'Simple host-church housing; meals shared with the church.',
+   '현지 교회 숙소, 현지 교회와 소박하게 함께 식사.'),
 
   ('PH', 'Philippines', '필리핀', false, 2,
    'A warm, open culture with many churches eager for young workers.',
@@ -34,8 +34,8 @@ values
    '열대 기후 — 연중 덥고 6~11월은 우기. 가족 중심의 공동체 생활.',
    'Tagalog/Filipino; English is widely spoken.',
    '타갈로그어(필리핀어). 영어가 널리 통용됩니다.',
-   'Mission house or host family, with all meals provided.',
-   '선교관 또는 홈스테이, 모든 식사 제공.'),
+   'Mission house or host family; simple shared meals.',
+   '선교관 또는 홈스테이, 현지 교회와 소박하게 함께 식사.'),
 
   ('MY', 'Malaysia', '말레이시아', false, 3,
    'A multi-ethnic nation where Malay, Chinese and Indian cultures meet.',
@@ -46,8 +46,8 @@ values
    '연중 덥고 습함. 다양한 음식 문화, 단정한 복장이 필요합니다.',
    'Malay; English and Chinese are commonly used.',
    '말레이어. 영어와 중국어도 많이 사용됩니다.',
-   'Church guest rooms or mission house, with all meals provided.',
-   '교회 게스트룸 또는 선교관, 모든 식사 제공.'),
+   'Church guest room or mission house; simple shared meals.',
+   '교회 게스트룸 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
 
   ('TH', 'Thailand', '태국', false, 4,
    'The "Land of Smiles" — a Buddhist-majority country with a growing church.',
@@ -58,8 +58,8 @@ values
    '열대 기후: 더운 철(3~5월), 우기(6~10월), 시원한 철(11~2월). 어른과 왕실에 대한 존중이 중요합니다.',
    'Thai.',
    '태국어.',
-   'Mission center or host church, with all meals provided.',
-   '선교센터 또는 현지 교회, 모든 식사 제공.'),
+   'Mission center or host church; simple shared meals.',
+   '선교센터 또는 현지 교회, 현지 교회와 소박하게 함께 식사.'),
 
   ('MX', 'Mexico', '멕시코', false, 5,
    'A close neighbor with vibrant churches and great openness to the gospel.',
@@ -70,8 +70,8 @@ values
    '지역마다 기후가 다름 — 북부는 건조하고 덥고, 중부 고원은 온화합니다. 가족과 환대가 중심인 문화.',
    'Spanish.',
    '스페인어.',
-   'Host families or church facilities, with all meals provided.',
-   '홈스테이 또는 교회 시설, 모든 식사 제공.'),
+   'Host families or church rooms; simple shared meals.',
+   '홈스테이 또는 교회 시설, 현지 교회와 소박하게 함께 식사.'),
 
   ('JP', 'Japan', '일본', false, 6,
    'Less than 1% of Japan is Christian — one of the largest unreached peoples.',
@@ -82,8 +82,8 @@ values
    '깨끗하고 질서 있으며 시간을 잘 지키는 사회. 사계절, 습한 여름.',
    'Japanese.',
    '일본어.',
-   'Church housing or mission house, with all meals provided.',
-   '교회 숙소 또는 선교관, 모든 식사 제공.'),
+   'Church housing or mission house; simple shared meals.',
+   '교회 숙소 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
 
   ('EG', 'Egypt', '이집트', true, 7,
    'One of the oldest Christian communities in the world lives here.',
@@ -114,11 +114,11 @@ insert into public.app_settings (key, value) values
   ('require_graduation_to_apply', 'false'::jsonb),   -- 초반에는 누구나 신청 가능
   ('sensitive_photo_block',       'true'::jsonb),    -- 민감 국가 후기 사진 업로드 차단
   ('gathering_location',          '"IM Friend Baptist Church · 408 E 24th St, Bryan, TX 77803"'::jsonb),
-  -- 국가 페이지 고정 블록: 선교지에서 제공
+  -- 국가 페이지 고정 블록: 현지에서의 생활 (선교지는 특별히 준비하지 않음 — 있는 그대로 함께)
   ('provided_items', '[
-     {"en": "Housing and all meals",                       "ko": "숙소와 모든 식사"},
-     {"en": "Ministry and activity costs",                 "ko": "사역·활동 비용"},
-     {"en": "Local staff support and orientation",         "ko": "현지 스태프 지원과 오리엔테이션"}
+     {"en": "Life with the local church, as they live",          "ko": "현지 교회와 함께, 그들이 사는 그대로"},
+     {"en": "Simple local meals and a shared room or homestay",  "ko": "소박한 현지 음식, 함께 쓰는 방이나 홈스테이"},
+     {"en": "Your SVM country leader looks after you",           "ko": "SVM 나라 리더가 돌봐 줍니다"}
    ]'::jsonb),
   -- 국가 페이지 고정 블록: 내가 준비할 것
   ('prepare_items', '[
@@ -132,6 +132,14 @@ insert into public.app_settings (key, value) values
      "ko": "12월 · 1월 · 5–8월 (그 외에도 언제든)"
    }'::jsonb)
 on conflict (key) do nothing;
+
+-- 예전 문구("숙소와 모든 식사" 제공)로 저장돼 있으면 새 문구로 바꿈 (관리자가 직접 고친 내용은 그대로)
+update public.app_settings set value = '[
+     {"en": "Life with the local church, as they live",          "ko": "현지 교회와 함께, 그들이 사는 그대로"},
+     {"en": "Simple local meals and a shared room or homestay",  "ko": "소박한 현지 음식, 함께 쓰는 방이나 홈스테이"},
+     {"en": "Your SVM country leader looks after you",           "ko": "SVM 나라 리더가 돌봐 줍니다"}
+   ]'::jsonb
+ where key = 'provided_items' and value::text like '%Housing and all meals%';
 
 -- 모든 국가 공통 준비물 (country_id = null)
 insert into public.checklist_items (country_id, label_en, label_ko, sort_order)

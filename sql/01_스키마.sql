@@ -609,3 +609,22 @@ create table if not exists public.device_tokens (
   updated_at  timestamptz not null default now()
 );
 create index if not exists device_tokens_user_idx on public.device_tokens(user_id);
+
+-- 나라 리더 — 나라마다 그 나라 학생을 돌보고 선교지와 연락하는 SVM 리더
+--   학생은 선교지에 직접 연락하지 않고 나라 리더와 이야기합니다. 필요하면 리더가 미팅을 잡고 함께 참여.
+create table if not exists public.country_leaders (
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (country_id, user_id)
+);
+
+-- 신청서마다 학생 ↔ 나라 리더(와 관리자) 대화
+create table if not exists public.application_messages (
+  id              bigint generated always as identity primary key,
+  application_id  bigint not null references public.applications(id) on delete cascade,
+  user_id         uuid references public.profiles(id) on delete set null,
+  body            text not null check (length(body) between 1 and 2000),
+  created_at      timestamptz not null default now()
+);
+create index if not exists application_messages_app_idx on public.application_messages(application_id, created_at);

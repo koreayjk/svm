@@ -716,6 +716,19 @@
   .report + .report { border-top: 1px solid var(--separator); margin-top: 14px; padding-top: 14px; }
   @media (prefers-reduced-motion: reduce) { .sheet, .sheet-back, .sheet-back.out, .sheet-back.out .sheet { animation: none; } }
 
+  /* application thread · country leaders */
+  .thread-list { display: grid; gap: 10px; margin: 8px 0 12px; }
+  .tmsg .who { font-size: 12px; color: var(--hint); margin: 0 4px 3px; }
+  .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
+  .tmsg.me { text-align: right; }
+  .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .thread-form { display: flex; gap: 8px; align-items: flex-end; }
+  .thread-form textarea { min-height: 46px; padding: 11px 14px; font-size: 15px; }
+  .thread-form .btn { flex: 0 0 auto; min-height: 46px; }
+  .leader-row { align-items: flex-start; flex-wrap: wrap; }
+  .chip-x { border: 0; background: none; padding: 0 0 0 6px; font-size: 16px; line-height: 1; color: var(--muted-2); cursor: pointer; }
+  .chip-x:hover { color: var(--danger); }
+
   /* travel insurance */
   .due-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 6px 12px; border-radius: 999px; background: var(--orange-soft); color: var(--orange-dark); font-size: 13.5px; font-weight: 700; }
   .due-chip.late { background: var(--danger-soft); color: var(--danger); }
@@ -955,9 +968,9 @@ const CONFIG = Object.assign({
 // DB 에 값이 없을 때 쓰는 기본값 (app_settings 가 우선)
 const DEFAULTS = {
   provided_items: [
-    { en: 'Housing and all meals', ko: '숙소와 모든 식사' },
-    { en: 'Ministry and activity costs', ko: '사역·활동 비용' },
-    { en: 'Local staff support and orientation', ko: '현지 스태프 지원과 오리엔테이션' },
+    { en: 'Life with the local church, as they live', ko: '현지 교회와 함께, 그들이 사는 그대로' },
+    { en: 'Simple local meals and a shared room or homestay', ko: '소박한 현지 음식, 함께 쓰는 방이나 홈스테이' },
+    { en: 'Your SVM country leader looks after you', ko: 'SVM 나라 리더가 돌봐 줍니다' },
   ],
   prepare_items: [
     { en: 'Round-trip airfare', ko: '왕복 항공권' },
@@ -1010,7 +1023,7 @@ const i18n = {
     g_sunday: 'Sunday Mission Gathering',
     g_sunday_d: 'Worship · mission message · team building · teaching practice',
     today: 'Today', concepts_title: 'How SVM works',
-    c1_t: 'Pay only for your flight', c1_d: 'Housing, meals, ministry costs and local staff support are provided by the field through local giving. No organization fees.',
+    c1_t: 'Pay only for your flight', c1_d: 'You live with the local church the way they already live: a shared room or homestay and simple local meals. No program fees.',
     c2_t: 'Stay as long as you want', c2_d: 'Go for a month — want to stay longer? Just extend your flight. No extra cost for room and board. 1, 2, 3, 6 months, up to a year.',
     c3_t: 'Go every break', c3_d: 'Main sending seasons: December · January · May–August. Anytime else works too.',
     c4_t: 'Trained, then sent', c4_d: 'Sunday Mission Gathering every week, 2–4 PM: worship, mission message, team building and teaching practice.',
@@ -1022,8 +1035,8 @@ const i18n = {
     itw_title: 'INTO THE WORLD', itw_desc: 'Up to 5 English conversation classes a day · serve with local churches & missionaries · share the gospel & teach the Bible · build friendships with local young people · cross-cultural discipleship.',
     seasons: 'Sending seasons',
     sensitive: 'Sensitive', sensitive_banner: 'Security notice: This is a sensitive country. Do not share local believers’ names, faces, or exact locations (e.g. church addresses) anywhere — in chat, prayers, or testimonies.',
-    sec_intro: 'About', sec_ministry: 'Ministry — what you will actually do', sec_life: 'Daily life — weather & culture', sec_language: 'Language needed', sec_housing: 'Room & board',
-    provided_title: 'Provided by the field', prepare_title: 'What you prepare',
+    sec_intro: 'About', sec_ministry: 'Ministry — what you will actually do', sec_life: 'Daily life — weather & culture', sec_language: 'Language needed', sec_housing: 'Where you stay and eat',
+    provided_title: 'How you live there', prepare_title: 'What you prepare',
     enter_room: 'Enter country room', apply_here: 'Apply for this country',
     pledge_btn: 'Sign my name', pledged_btn: 'You carry this nation',
     pledge_title: 'Sign Your Nation', pledge_count: '{n} people carry this nation', pledge_count_one: '1 person carries this nation', pledge_count_zero: 'Be the first to carry this nation.',
@@ -1090,7 +1103,7 @@ const i18n = {
     ap_contact: 'Contact (phone or email)', ap_motivation: 'About you and why you want to go',
     ap_motivation_ph: 'Your story, your church, and why this nation.',
     ap_submit: 'Submit application', ap_submitted_toast: 'Application submitted. HQ will review it soon.',
-    ap_flight_note: 'You only pay for your flight. Room, board and ministry costs are covered by the field.',
+    ap_flight_note: 'You only pay for your flight. You live simply with the local church, and your SVM country leader handles everything with the field.',
     ap_locked: 'Right now only graduate members can apply. Finish your training to earn the graduate badge.',
     ap_existing: 'You already have an application for {c}.', ap_view: 'View my application',
     ap_sensitive_note: 'Sensitive country: details about the field are shared in person after approval.',
@@ -1098,6 +1111,12 @@ const i18n = {
     st_submitted: 'Submitted', st_approved: 'Approved', st_rejected: 'Not approved', st_preparing: 'Preparing to go', st_on_field: 'On the field', st_returned: 'Returned',
     apps_title: 'My applications', apps_empty: 'No applications yet. Explore a field and apply when you are ready.', apps_new: 'New application',
     app_timeline: 'Status', app_details: 'Details', app_expected_return: 'Expected return', app_applied: 'Applied', app_hq_note: 'Note from HQ',
+    ld_title: 'My students', ld_sub: 'Applications for the countries you lead. You are the contact between your students and the field.', ld_link_d: 'Leader for {c}',
+    ld_yours: 'Your SVM country leader', ld_none_yet: 'HQ will assign your country leader soon. Until then, write here and HQ will answer.',
+    ld_note: 'Talk with your country leader here. You do not need to contact the field yourself; when a meeting is helpful, your leader sets it up and joins you.',
+    th_title: 'Conversation', th_ph: 'Write a message', th_send: 'Send', th_none: 'No messages yet.', th_staff: 'Talk with the student here. Students do not contact the field directly; set up and join any meeting with the field.',
+    adm_leaders: 'Country leaders', adm_leaders_d: 'Each leader looks after the students of their country and is the only contact with the field.', adm_leader_add: 'Add a leader', adm_leader_none: 'No leader yet',
+    nt_leader_msg: 'Your country leader sent you a message.', nt_student_msg: 'A student sent you a message.', nt_new_app: 'New application for {c}.',
     ins_title: 'Travel insurance', ins_required: 'Required', ins_lead: 'Personal travel medical insurance is required for every INTO THE WORLD participant. Enroll and upload your policy certificate at least 7 days before departure.',
     ins_due: 'Submit by {d}', ins_due_late: 'Overdue · was due {d}', ins_rec: 'Recommended coverage',
     ins_cov_med: 'Medical expenses', ins_cov_med_d: 'Overseas illness and injury, $50,000 to $100,000+',
@@ -1234,7 +1253,7 @@ const i18n = {
     g_sunday: '주일 미션 게더링',
     g_sunday_d: '예배 · 선교 말씀 · 팀 빌딩 · 티칭 연습',
     today: '오늘', concepts_title: 'SVM은 이렇게 갑니다',
-    c1_t: '비행기 값만 낸다', c1_d: '숙소·식사·사역비·현지 스태프 지원은 선교지가 현지 후원으로 제공합니다. 단체 수수료 없음.',
+    c1_t: '비행기 값만 낸다', c1_d: '현지 교회가 사는 그대로 함께 지냅니다. 함께 쓰는 방이나 홈스테이, 소박한 현지 음식. 참가비 없음.',
     c2_t: '원하는 만큼 머문다', c2_d: '1개월로 갔다가 더 있고 싶으면 항공권만 연장하세요. 숙식비 추가 없음 — 1·2·3·6개월, 1년까지.',
     c3_t: '방학마다 간다', c3_d: '정규 파송 시즌: 12월 · 1월 · 5–8월. 그 외에도 언제든 가능합니다.',
     c4_t: '훈련 후 파송', c4_d: '매주 주일 오후 2–4시 미션 게더링: 예배, 선교 말씀, 팀 빌딩, 티칭 연습.',
@@ -1245,8 +1264,8 @@ const i18n = {
     itw_title: 'INTO THE WORLD', itw_desc: '하루 최대 5회 영어 회화 수업 · 현지 교회·선교사와 동역 · 복음 전하기와 성경 수업 · 현지 청년과의 관계 · 교차문화 제자훈련.',
     seasons: '파송 시즌',
     sensitive: '민감 국가', sensitive_banner: '보안 안내: 민감 국가입니다. 채팅·기도 제목·후기 어디에도 현지 성도의 실명, 얼굴, 정확한 장소(교회 위치 등)를 올리지 마세요.',
-    sec_intro: '소개', sec_ministry: '사역 소개 — 실제로 하는 일', sec_life: '현지 생활 — 날씨와 문화', sec_language: '필요한 언어', sec_housing: '숙식 안내',
-    provided_title: '선교지에서 제공', prepare_title: '내가 준비할 것',
+    sec_intro: '소개', sec_ministry: '사역 소개 — 실제로 하는 일', sec_life: '현지 생활 — 날씨와 문화', sec_language: '필요한 언어', sec_housing: '숙소와 식사',
+    provided_title: '현지에서의 생활', prepare_title: '내가 준비할 것',
     enter_room: '나라방 들어가기', apply_here: '이 나라로 신청하기',
     pledge_btn: '이 나라에 이름 쓰기', pledged_btn: '이 나라를 품고 있어요',
     pledge_title: '내 나라에 이름 쓰기', pledge_count: '{n}명이 이 나라를 품고 있습니다', pledge_count_one: '1명이 이 나라를 품고 있습니다', pledge_count_zero: '이 나라를 처음으로 품어 주세요.',
@@ -1306,7 +1325,7 @@ const i18n = {
     ap_contact: '연락처 (전화번호 또는 이메일)', ap_motivation: '자기소개와 지원 동기',
     ap_motivation_ph: '나의 이야기, 섬기는 교회, 이 나라를 품은 이유.',
     ap_submit: '신청서 제출', ap_submitted_toast: '신청서가 제출되었습니다. 본부에서 곧 검토합니다.',
-    ap_flight_note: '학생은 항공권만 준비합니다. 숙식과 사역비는 선교지가 제공합니다.',
+    ap_flight_note: '학생은 항공권만 준비합니다. 현지 교회와 소박하게 함께 지내며, 선교지와의 연락은 SVM 나라 리더가 맡습니다.',
     ap_locked: '지금은 수료 회원만 신청할 수 있어요. 훈련을 마치고 수료 배지를 받아 주세요.',
     ap_existing: '{c}에 이미 신청한 내역이 있어요.', ap_view: '내 신청 보기',
     ap_sensitive_note: '민감 국가입니다. 선교지 세부 내용은 승인 후 대면으로 안내합니다.',
@@ -1314,6 +1333,12 @@ const i18n = {
     st_submitted: '접수', st_approved: '승인', st_rejected: '반려', st_preparing: '출국 준비', st_on_field: '사역 중', st_returned: '귀국',
     apps_title: '내 신청', apps_empty: '아직 신청 내역이 없어요. 선교지를 둘러보고 준비되면 신청하세요.', apps_new: '새로 신청하기',
     app_timeline: '진행 상황', app_details: '신청 내용', app_expected_return: '귀국 예정일', app_applied: '신청일', app_hq_note: '본부 메모',
+    ld_title: '내 학생', ld_sub: '내가 맡은 나라의 신청서입니다. 학생과 선교지 사이의 연락은 리더가 맡습니다.', ld_link_d: '{c} 리더',
+    ld_yours: '내 SVM 나라 리더', ld_none_yet: '곧 본부에서 나라 리더를 정해 드립니다. 그때까지는 여기에 쓰시면 본부가 답합니다.',
+    ld_note: '나라 리더와 여기서 이야기하세요. 선교지에는 직접 연락하지 않아도 됩니다. 함께 이야기할 일이 있으면 리더가 미팅을 잡고 같이 참여합니다.',
+    th_title: '대화', th_ph: '메시지 쓰기', th_send: '보내기', th_none: '아직 메시지가 없습니다.', th_staff: '학생과 여기서 이야기하세요. 학생은 선교지에 직접 연락하지 않습니다. 선교지와의 미팅은 리더가 잡고 함께 참여합니다.',
+    adm_leaders: '나라 리더', adm_leaders_d: '리더는 자기 나라 학생들을 돌보고, 선교지와의 유일한 연락 창구가 됩니다.', adm_leader_add: '리더 추가', adm_leader_none: '아직 리더 없음',
+    nt_leader_msg: '나라 리더가 메시지를 보냈어요.', nt_student_msg: '학생이 메시지를 보냈어요.', nt_new_app: '{c} 새 신청서가 들어왔어요.',
     ins_title: '여행자 보험', ins_required: '필수', ins_lead: 'INTO THE WORLD 참가자는 모두 개인 여행자 의료보험에 가입해야 합니다. 출발 최소 7일 전까지 보험 증서를 올려 주세요.',
     ins_due: '{d}까지 제출', ins_due_late: '제출 기한 지남 · {d}까지였어요', ins_rec: '권장 보장 내용',
     ins_cov_med: '해외 의료비', ins_cov_med_d: '해외 질병·상해 치료, $50,000–$100,000 이상',
@@ -1476,6 +1501,7 @@ function flag(code) {
 }
 function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === 'graduate' ? '🎓 ' : ''}${esc(t('role_' + role))}</span>`; }
 function isAdmin() { return state.profile?.role === 'admin'; }
+function isLeader() { return !!(state.leaderOf && state.leaderOf.size); }
 function logo(white) { return `<img class="logo" src="../assets/${white ? 'SVM_Logo_white' : 'SVM_Logo'}.svg" alt="SVM">`; }
 
 let toastTimer;
@@ -1569,27 +1595,27 @@ function createDemoClient() {
       C(1, 'KR', 'South Korea', '한국', false, 'Partner churches across Korea welcome students to serve alongside local congregations.', '한국 전역의 협력 교회들이 학생들과 함께 지역 교회를 섬깁니다.',
         'In Korea: campus outreach and English camps with partner churches.', '한국에서는: 협력 교회와 함께하는 캠퍼스 전도와 영어 캠프.',
         'Fast-paced city life with excellent public transit. Four distinct seasons.', '대중교통이 편리한 도시 생활. 사계절이 뚜렷합니다.',
-        'Korean (greetings and the gospel message). English for classes.', '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.', 'Host-church housing with all meals provided.', '현지 교회 숙소, 모든 식사 제공.'),
+        'Korean (greetings and the gospel message). English for classes.', '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.', 'Simple host-church housing; meals shared with the church.', '현지 교회 숙소, 현지 교회와 소박하게 함께 식사.'),
       C(2, 'PH', 'Philippines', '필리핀', false, 'A warm, open culture with many churches eager for young workers.', '따뜻하고 열린 문화, 젊은 사역자를 기다리는 교회가 많습니다.',
         "In the Philippines: village evangelism and children's programs.", '필리핀에서는: 마을 전도와 어린이 프로그램.',
         'Tropical — hot year-round with a rainy season (June–November).', '열대 기후 — 연중 덥고 6~11월은 우기.',
-        'Tagalog/Filipino; English is widely spoken.', '타갈로그어(필리핀어). 영어가 널리 통용됩니다.', 'Mission house or host family, with all meals provided.', '선교관 또는 홈스테이, 모든 식사 제공.'),
+        'Tagalog/Filipino; English is widely spoken.', '타갈로그어(필리핀어). 영어가 널리 통용됩니다.', 'Mission house or host family; simple shared meals.', '선교관 또는 홈스테이, 현지 교회와 소박하게 함께 식사.'),
       C(3, 'MY', 'Malaysia', '말레이시아', false, 'A multi-ethnic nation where Malay, Chinese and Indian cultures meet.', '말레이·중국·인도 문화가 어우러진 다민족 국가입니다.',
         'In Malaysia: student ministry and community care.', '말레이시아에서는: 학생 사역과 지역 돌봄.',
         'Hot and humid year-round. Modest dress is expected.', '연중 덥고 습함. 단정한 복장이 필요합니다.',
-        'Malay; English and Chinese are commonly used.', '말레이어. 영어와 중국어도 많이 사용됩니다.', 'Church guest rooms or mission house, with all meals provided.', '교회 게스트룸 또는 선교관, 모든 식사 제공.'),
+        'Malay; English and Chinese are commonly used.', '말레이어. 영어와 중국어도 많이 사용됩니다.', 'Church guest room or mission house; simple shared meals.', '교회 게스트룸 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
       C(4, 'TH', 'Thailand', '태국', false, 'The "Land of Smiles" — a Buddhist-majority country with a growing church.', '"미소의 나라" — 불교 국가이지만 교회가 성장하고 있습니다.',
         'In Thailand: school English classes and village visits.', '태국에서는: 학교 영어 수업과 마을 방문.',
         'Hot season (Mar–May), rainy season (Jun–Oct), cool season (Nov–Feb).', '더운 철(3~5월), 우기(6~10월), 시원한 철(11~2월).',
-        'Thai.', '태국어.', 'Mission center or host church, with all meals provided.', '선교센터 또는 현지 교회, 모든 식사 제공.'),
+        'Thai.', '태국어.', 'Mission center or host church; simple shared meals.', '선교센터 또는 현지 교회, 현지 교회와 소박하게 함께 식사.'),
       C(5, 'MX', 'Mexico', '멕시코', false, 'A close neighbor with vibrant churches and great openness to the gospel.', '가까운 이웃 나라, 활기찬 교회와 복음에 대한 열린 마음.',
         'In Mexico: street and village evangelism and VBS.', '멕시코에서는: 거리·마을 전도와 여름성경학교.',
         'Climate varies by region. Family and hospitality are central.', '지역마다 기후가 다릅니다. 가족과 환대가 중심인 문화.',
-        'Spanish.', '스페인어.', 'Host families or church facilities, with all meals provided.', '홈스테이 또는 교회 시설, 모든 식사 제공.'),
+        'Spanish.', '스페인어.', 'Host families or church rooms; simple shared meals.', '홈스테이 또는 교회 시설, 현지 교회와 소박하게 함께 식사.'),
       C(6, 'JP', 'Japan', '일본', false, 'Less than 1% of Japan is Christian — one of the largest unreached peoples.', '기독교인이 1% 미만 — 가장 큰 미전도 종족 중 하나입니다.',
         'In Japan: English cafés with small local churches.', '일본에서는: 작은 지역 교회와 함께하는 영어 카페.',
         'Clean, orderly and punctual society. Four seasons.', '깨끗하고 질서 있으며 시간을 잘 지키는 사회. 사계절.',
-        'Japanese.', '일본어.', 'Church housing or mission house, with all meals provided.', '교회 숙소 또는 선교관, 모든 식사 제공.'),
+        'Japanese.', '일본어.', 'Church housing or mission house; simple shared meals.', '교회 숙소 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
       C(7, 'EG', 'Egypt', '이집트', true, 'One of the oldest Christian communities in the world lives here.', '세계에서 가장 오래된 기독교 공동체 중 하나가 있는 곳입니다.',
         '', '',
         'Hot, dry desert climate. Modest dress and discretion are essential.', '덥고 건조한 사막 기후. 단정한 복장과 신중함이 꼭 필요합니다.',
@@ -1696,7 +1722,7 @@ function createDemoClient() {
     prayers.forEach((p, i) => [0, 2, 4, 6, 8, 10].slice(0, 6 - i * 2).forEach(u => prayer_reactions.push({ prayer_id: p.id, user_id: 'seed-' + u, created_at: ago(1) })));
     const support_stories = [
       { id: mid++, user_id: 'seed-4', title: 'Flight to Tokyo for December', link_url: 'https://example.org/give', status: 'approved', created_at: ago(5),
-        story: 'I am joining the English café team in Japan for a month. Room and board are covered by the church there. I need help with about $900 of my flight.' },
+        story: 'I am joining the English café team in Japan for a month. I will live with the church family there. I need help with about $900 of my flight.' },
     ];
     const checklist_items = [
       ['Passport (valid 6+ months after return)', '여권 (귀국일 기준 6개월 이상 유효)'], ['Visa / entry requirements checked', '비자·입국 요건 확인'],
@@ -1812,6 +1838,15 @@ function createDemoClient() {
       if (table === 'course_feedback' && row.admin_comment && row.admin_comment !== old.admin_comment) notify(row.user_id, 'feedback_reply', { course_id: row.course_id }, '#/course/' + row.course_id);
     }
     if (ev === 'INSERT' && table === 'content_reports') db.profiles.filter(p => p.role === 'admin').forEach(p => notify(p.id, 'report_new', { kind: row.target_kind, reason: row.reason }, '#/admin'));
+    if (ev === 'INSERT' && table === 'application_messages') {
+      const a = db.applications.find(x => x.id === row.application_id);
+      if (a && row.user_id !== a.user_id) notify(a.user_id, 'leader_msg', { country_id: a.country_id }, '#/apps/' + a.id);
+      else if (a) {
+        const ls = (db.country_leaders || []).filter(l => l.country_id === a.country_id).map(l => l.user_id);
+        (ls.length ? ls : db.profiles.filter(p => p.role === 'admin').map(p => p.id)).forEach(u => notify(u, 'student_msg', { country_id: a.country_id }, '#/lead/' + a.id));
+      }
+    }
+    if (ev === 'INSERT' && table === 'applications') (db.country_leaders || []).filter(l => l.country_id === row.country_id && l.user_id !== row.user_id).forEach(l => notify(l.user_id, 'new_app', { country_id: row.country_id }, '#/lead/' + row.id));
     if (ev === 'INSERT' && table === 'team_members') notify(row.user_id, 'team_added', { team: db.teams.find(x => x.id === row.team_id)?.name }, '#/teams/' + row.team_id);
     channels.forEach(ch => ch.subs.forEach(sub => {
       if (sub.f.table !== table || (sub.f.event !== '*' && sub.f.event !== ev)) return;
@@ -1854,7 +1889,7 @@ function createDemoClient() {
       } else if (this.op === 'insert') {
         const list = Array.isArray(this.v) ? this.v : [this.v];
         const COMPOSITE = { nation_pledges: ['user_id', 'country_id'], room_members: ['user_id', 'country_id'], language_progress: ['user_id', 'sentence_id'], practice_days: ['user_id', 'day'],
-          attendance: ['gathering_id', 'user_id'], user_blocks: ['blocker_id', 'blocked_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
+          attendance: ['gathering_id', 'user_id'], country_leaders: ['country_id', 'user_id'], user_blocks: ['blocker_id', 'blocked_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
         const UNIQUE = { application_insurance: ['application_id'], gatherings: ['date', 'type'], course_feedback: ['user_id', 'course_id'], countries: ['code'] };
         for (const r of list) {
           const pk = COMPOSITE[this.t], uq = pk || UNIQUE[this.t];
@@ -2112,7 +2147,7 @@ async function render() {
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
   let { tab, param } = parseRoute();
-  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin())) tab = 'home';
+  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin()) || (tab === 'lead' && !isAdmin() && !isLeader())) tab = 'home';
   if (state.roomSub && !(tab === 'rooms' && param && param.toUpperCase() === state.roomSub.code)) { closeRoomSub(); badgeTimer = 0; }
   if (tab !== 'learn' && player.playing) stopAudio();
   if (progressQueue.size) flushProgress();
@@ -2161,7 +2196,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { lead: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2498,7 +2533,9 @@ const VIEWS = {
     const [, , apps] = await Promise.all([loadCountries(), loadPledges(), loadMyApps()]);
     const mine = [...state.myPledges].map(countryById).filter(Boolean);
     const isIOS = !NATIVE && /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+    const leadOf = [...(state.leaderOf || [])].map(countryById).filter(Boolean);
     return `${pageHead(t('my_title'))}
+      ${leadOf.length ? card(`<a class="list-row" href="#/lead"><span class="ico-tile orange">${icon('people')}</span><div class="meta"><div class="t">${esc(t('ld_title'))}</div><div class="d">${esc(t('ld_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${card(`
         <div class="row" style="gap:14px;margin-bottom:20px">
           <span class="avatar" aria-hidden="true">${esc(initials(p.name || p.email))}</span>
@@ -2534,6 +2571,7 @@ const VIEWS = {
   },
 
   async admin() {
+    state.leadScope = null;
     const tab = state.adminTab;
     const todo = adminTodoHTML(await loadAdminTodo());
     const seg = `<div class="filters admin-tabs" role="tablist">
@@ -2579,7 +2617,7 @@ const VIEWS = {
           <div class="meta"><div class="t">${esc(countryName(c))}</div><div class="d num">${esc(c.code)}</div></div>
           <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_sensitive" ${c.is_sensitive ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_sensitive'))}"><span></span></label>
           <label class="switch"><input type="checkbox" data-country="${c.id}" data-field="is_active" ${c.is_active ? 'checked' : ''} aria-label="${esc(countryName(c))} ${esc(t('col_active'))}"><span></span></label>
-        </div>`).join('')}`) + adminCountryEditorHTML(list);
+        </div>`).join('')}`) + await adminLeadersHTML(list) + adminCountryEditorHTML(list);
     }
     return `${pageHead(t('admin_title'))}${todo}${seg}${body}`;
   },
@@ -2842,7 +2880,7 @@ const BINDERS = {
     if (state.adminTab === 'teams') bindAdminTeams();
     if (state.adminTab === 'settings') bindAdminChecklist();
     if (state.adminTab === 'events') bindAdminEvents();
-    if (state.adminTab === 'countries') bindAdminCountryEditor();
+    if (state.adminTab === 'countries') { bindAdminCountryEditor(); bindAdminLeaders(); }
     const search = document.getElementById('member-search');
     if (search) {
       search.oninput = () => {
@@ -3406,6 +3444,7 @@ VIEWS.apps = async function (id) {
       </dl>
       ${a.motivation ? `<div class="quote">${esc(a.motivation)}</div>` : ''}
       ${a.admin_note ? `<div class="sep"></div><span class="eyebrow plain">${esc(t('app_hq_note'))}</span><p style="margin:8px 0 0">${para(a.admin_note)}</p>` : ''}`)}
+    ${a.status !== 'rejected' ? await leaderCardHTML(a) : ''}
     ${['approved', 'preparing', 'on_field'].includes(a.status) ? insuranceCardHTML(a, state.appIns) + extCard : ''}`;
 };
 
@@ -3510,6 +3549,7 @@ function bindInsurance() {
 
 BINDERS.apps = function (id) {
   bindInsurance();
+  bindThreads();
   const form = document.getElementById('ext-form');
   if (!form || !state.app || String(state.app.id) !== String(id)) return;
   form.onsubmit = async (e) => {
@@ -3527,22 +3567,114 @@ BINDERS.apps = function (id) {
 };
 
 // ---------------------------------------------------------------------
+// 나라 리더 — 나라마다 학생을 돌보고 선교지와 연락하는 SVM 리더
+//   학생은 선교지에 직접 연락하지 않고, 신청서 화면에서 리더와 이야기합니다.
+// ---------------------------------------------------------------------
+async function loadLeaders(force) {
+  if (state.leaders && !force) return state.leaders;
+  const { data } = await sb.from('country_leaders').select('country_id,user_id');
+  state.leaders = data || [];
+  state.leaderOf = new Set(state.leaders.filter(l => l.user_id === state.profile?.id).map(l => l.country_id));
+  await loadNames(state.leaders.map(l => l.user_id));
+  return state.leaders;
+}
+const leadersOf = cid => (state.leaders || []).filter(l => l.country_id === cid).map(l => l.user_id);
+async function leaderCardHTML(a) {
+  await loadLeaders();
+  const { data } = await sb.from('application_messages').select('*').eq('application_id', a.id).order('created_at');
+  await loadNames((data || []).map(m => m.user_id));
+  const ls = leadersOf(a.country_id);
+  return card(`<span class="eyebrow plain">${icon('people', 'width="14" height="14"')} ${esc(t('ld_yours'))}</span>
+    ${ls.length ? `<div class="chips" style="margin:12px 0 0">${ls.map(u => `<span class="chip" style="padding-left:8px"><span class="avatar" style="width:24px;height:24px;font-size:10.5px">${esc(initials(nameCache[u]?.name))}</span>${esc(shortName(nameCache[u]?.name))}</span>`).join('')}</div>` : `<p class="small muted" style="margin:10px 0 0">${esc(t('ld_none_yet'))}</p>`}
+    <div class="form-note" style="margin:12px 0 0">${icon('chat')}<span>${esc(t('ld_note'))}</span></div>
+    ${threadHTML(a.id, data || [], false)}`);
+}
+// 신청서 대화 (학생 화면과 리더·관리자 화면이 같이 씀)
+function threadHTML(appId, list, staff) {
+  const me = state.profile.id;
+  return `<div class="thread" data-thread="${appId}">
+    ${staff ? `<div class="small muted" style="margin:16px 0 8px">${icon('chat', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('th_title'))} · ${esc(t('th_staff'))}</div>` : '<div class="sep"></div>'}
+    <div class="thread-list">${list.length ? list.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
+        <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
+        <div class="bubble">${esc(m.body)}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+    <form class="thread-form" data-thread-form="${appId}"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
+      <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>
+  </div>`;
+}
+function bindThreads() {
+  app.querySelectorAll('[data-thread-form]').forEach(f => f.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = f.body.value.trim(); if (!body) return;
+    const btn = f.querySelector('button'); btn.disabled = true;
+    const { error } = await sb.from('application_messages').insert({ application_id: Number(f.dataset.threadForm), user_id: state.profile.id, body });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    state.adminOpenApp = f.dataset.threadForm;
+    render();
+  });
+}
+VIEWS.lead = async function (id) {
+  if (id) state.adminOpenApp = id;
+  await loadLeaders(true);
+  state.leadScope = isAdmin() ? null : state.leaderOf;
+  const leadOf = [...(state.leaderOf || [])].map(countryById).filter(Boolean);
+  return `${backLink('#/my', t('tab_my'))}${pageHead(t('ld_title'), t('ld_sub'))}
+    ${leadOf.length ? `<div class="chips" style="margin:-6px 0 14px">${leadOf.map(c => `<span class="chip">${flag(c.code)} ${esc(countryName(c))}</span>`).join('')}</div>` : ''}
+    ${await adminApplicationsHTML()}`;
+};
+BINDERS.lead = function () { bindAdminApplications(); };
+
+async function adminLeadersHTML(list) {
+  await loadLeaders(true);
+  const people = await allProfiles();
+  const pmap = Object.fromEntries(people.map(p => [p.id, p]));
+  return `<div class="section-head"><h2>${esc(t('adm_leaders'))}</h2></div>
+    ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t('adm_leaders_d'))}</p>
+      ${list.filter(c => c.is_active).map(c => { const ls = leadersOf(c.id); return `<div class="list-row no-ico leader-row">
+        <span class="flag-tile" style="font-size:24px" aria-hidden="true">${flag(c.code)}</span>
+        <div class="meta"><div class="t">${esc(countryName(c))}</div>
+          <div class="chips" style="margin-top:6px">${ls.length ? ls.map(u => `<span class="chip">${esc(pmap[u]?.name || pmap[u]?.email || '—')}<button type="button" class="chip-x" data-leader-del="${c.id}" data-user="${esc(u)}" aria-label="${esc(t('adm_delete'))}">×</button></span>`).join('') : `<span class="small muted">${esc(t('adm_leader_none'))}</span>`}</div></div>
+        <select data-leader-add="${c.id}" aria-label="${esc(t('adm_leader_add'))} · ${esc(countryName(c))}" style="max-width:170px;min-height:40px;padding:8px 12px;font-size:14px">
+          <option value="">+ ${esc(t('adm_leader_add'))}</option>${people.filter(p => !ls.includes(p.id)).map(p => `<option value="${esc(p.id)}">${esc(p.name || p.email)}</option>`).join('')}</select>
+      </div>`; }).join('')}`)}`;
+}
+function bindAdminLeaders() {
+  app.querySelectorAll('[data-leader-add]').forEach(sel => sel.onchange = async () => {
+    if (!sel.value) return;
+    const { error } = await sb.from('country_leaders').insert({ country_id: Number(sel.dataset.leaderAdd), user_id: sel.value });
+    if (error) return toast(errMsg(error), true);
+    toast(t('adm_updated')); render();
+  });
+  app.querySelectorAll('[data-leader-del]').forEach(b => b.onclick = async () => {
+    const { error } = await sb.from('country_leaders').delete().eq('country_id', Number(b.dataset.leaderDel)).eq('user_id', b.dataset.user);
+    if (error) return toast(errMsg(error), true);
+    toast(t('adm_updated')); render();
+  });
+}
+
+// ---------------------------------------------------------------------
 // 관리자 — 신청 승인 · 연장 승인 · 국가별 명단 내보내기
 // ---------------------------------------------------------------------
 async function loadAdminApps() {
-  const [apps, profs, exts, hist, notes, ins] = await Promise.all([
+  const [apps, profs, exts, hist, notes, ins, msgs] = await Promise.all([
     sb.from('applications').select('*').order('created_at', { ascending: false }),
     sb.from('profiles').select('id,name,email,phone,school'),
     sb.from('application_extensions').select('*').order('created_at', { ascending: false }),
     sb.from('application_status_history').select('application_id,status,changed_at').order('changed_at'),
     sb.from('application_notes').select('application_id,note'),
     sb.from('application_insurance').select('*'),
+    sb.from('application_messages').select('*').order('created_at').limit(2000),
   ]);
+  state.appThreads = {};
+  (msgs.data || []).forEach(m => { (state.appThreads[m.application_id] = state.appThreads[m.application_id] || []).push(m); });
+  await loadNames((msgs.data || []).map(m => m.user_id));
   const nmap = Object.fromEntries((notes.data || []).map(n => [n.application_id, n.note]));
   const err = apps.error || profs.error || exts.error || hist.error;
   if (err) throw err;
   const pmap = Object.fromEntries((profs.data || []).map(p => [p.id, p]));
-  state.adminApps = (apps.data || []).map(a => ({
+  // 나라 리더 화면: 맡은 나라만 (서버 권한과 같게 — 데모에서도)
+  const scope = state.leadScope;
+  state.adminApps = (apps.data || []).filter(a => !scope || scope.has(a.country_id)).map(a => ({
     ...a, person: pmap[a.user_id] || {}, note: nmap[a.id] || '', ins: (ins.data || []).find(x => x.application_id === a.id) || null,
     exts: (exts.data || []).filter(x => x.application_id === a.id),
     hist: (hist.data || []).filter(h => h.application_id === a.id),
@@ -3595,6 +3727,7 @@ function adminAppHTML(a) {
         <div class="btn-row"><button class="btn small" data-ext="${pend.id}" data-ext-to="approved">${esc(t('adm_ext_approve'))}</button>
           <button class="btn small danger" data-ext="${pend.id}" data-ext-to="rejected">${esc(t('adm_ext_reject'))}</button></div></div>` : ''}
       ${adminInsHTML(a)}
+      ${threadHTML(a.id, (state.appThreads || {})[a.id] || [], true)}
       <form data-app-form="${a.id}" style="margin-top:16px">
         <div class="field-pair">
           <label class="field"><span>${esc(t('adm_status'))}</span>
@@ -3621,7 +3754,7 @@ async function adminApplicationsHTML() {
   return `<div class="filters" role="tablist">${keys.map(k => `<button type="button" role="tab" data-app-filter="${k}" class="${state.adminAppFilter === k ? 'active' : ''}" aria-selected="${state.adminAppFilter === k}">${esc(label(k))}<span class="n">${count(k)}</span></button>`).join('')}</div>
     <div class="adm-tools">
       <select id="app-country" aria-label="${esc(t('ap_country'))}"><option value="">${esc(t('adm_all_countries'))}</option>
-        ${(state.countries || []).map(c => `<option value="${c.id}" ${state.adminAppCountry === String(c.id) ? 'selected' : ''}>${flag(c.code)} ${esc(countryName(c))}</option>`).join('')}</select>
+        ${(state.countries || []).filter(c => !state.leadScope || state.leadScope.has(c.id)).map(c => `<option value="${c.id}" ${state.adminAppCountry === String(c.id) ? 'selected' : ''}>${flag(c.code)} ${esc(countryName(c))}</option>`).join('')}</select>
       ${CAN_DOWNLOAD ? `<button class="btn light small" id="app-export" ${list.length ? '' : 'disabled'}>${icon('download')} ${esc(t('adm_export'))}</button>` : ''}
     </div>
     ${card(list.length ? list.map(adminAppHTML).join('') : `<p class="muted" style="margin:0">${esc(t('adm_none'))}</p>`)}`;
@@ -3659,6 +3792,7 @@ function bindAdminApplications() {
     toast(t('adm_updated'));
     render();
   });
+  bindThreads();
   app.querySelectorAll('[data-ins-file]').forEach(b => b.onclick = () => openInsuranceFile((state.adminApps || []).find(x => String(x.id) === b.dataset.insFile)?.ins?.file_path));
   app.querySelectorAll('[data-ins]').forEach(b => b.onclick = async () => {
     const note = app.querySelector(`[data-ins-note="${b.dataset.ins}"]`)?.value.trim() || null;
@@ -5354,10 +5488,13 @@ function notifText(n) {
     case 'support_status': return t(p.status === 'approved' ? 'nt_sup_ok' : 'nt_sup_no', { x: p.title || '' });
     case 'feedback_reply': return t('nt_reply');
     case 'team_added': return t('nt_team', { x: p.team || '' });
+    case 'leader_msg': return t('nt_leader_msg');
+    case 'student_msg': return t('nt_student_msg');
+    case 'new_app': return t('nt_new_app', { c: c ? countryName(c) : '' });
     default: return t('nt_generic');
   }
 }
-const NOTIF_ICON = { report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
+const NOTIF_ICON = { leader_msg: 'chat', student_msg: 'chat', new_app: 'plane', report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
 
 VIEWS.notifications = async function () {
   await loadCountries();
@@ -5414,7 +5551,7 @@ async function onSession(session) {
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
     state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
-    closeRoomSub(); unsubscribeNotifications(); state.blocked = new Set(); state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
+    closeRoomSub(); unsubscribeNotifications(); state.blocked = new Set(); state.leaderOf = new Set(); state.leaders = null; state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
     if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
     delete app.dataset.tab;
     render();
@@ -5424,7 +5561,7 @@ async function onSession(session) {
   if (prevUser !== session.user.id || !state.profile) {
     render();   // 로더 표시
     await Promise.all([loadProfile(), loadSettings()]);
-    await loadBlocks();
+    await Promise.all([loadBlocks(), loadLeaders()]);
     subscribeNotifications();
     nativeRegister();
     badgeTimer = 0;
