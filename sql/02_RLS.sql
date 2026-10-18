@@ -287,6 +287,7 @@ alter table public.events                     enable row level security;
 alter table public.conference_registrations   enable row level security;
 alter table public.notifications              enable row level security;
 alter table public.application_notes          enable row level security;
+alter table public.application_insurance      enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -302,7 +303,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes'])
+             'notifications','application_notes','application_insurance'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -334,6 +335,19 @@ create policy "notifications: own update" on public.notifications for update usi
 create policy "notifications: own delete" on public.notifications for delete using (user_id = auth.uid());
 -- 신청서 내부 메모: 관리자만
 create policy "application_notes: admin" on public.application_notes for all using (public.is_admin()) with check (public.is_admin());
+
+-- 여행자 보험: 본인(승인 이후 신청서만) 제출·다시 제출, 관리자 확인
+create policy "insurance: self or admin read" on public.application_insurance for select using (user_id = auth.uid() or public.is_admin());
+create policy "insurance: self submit" on public.application_insurance for insert with check (
+  user_id = auth.uid() and status = 'submitted' and admin_note is null and reviewed_at is null
+  and exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()
+              and a.status in ('approved','preparing','on_field'))
+);
+create policy "insurance: self resubmit" on public.application_insurance for update
+  using (user_id = auth.uid())
+  with check (user_id = auth.uid() and status = 'submitted' and reviewed_at is null);
+create policy "insurance: admin update" on public.application_insurance for update using (public.is_admin()) with check (public.is_admin());
+create policy "insurance: admin delete" on public.application_insurance for delete using (public.is_admin());
 
 create policy "registrations: admin manage"  on public.conference_registrations for all using (public.is_admin()) with check (public.is_admin());
 
@@ -489,25 +503,43 @@ security definer
 set search_path = public
 as $$
 begin
-  if tg_table_name = 'applications' and new.status is distinct from old.status then
-    insert into public.notifications (user_id, kind, payload, link)
-    values (new.user_id, 'app_status', jsonb_build_object('status', new.status, 'country_id', new.country_id), '#/apps/' || new.id);
-  elsif tg_table_name = 'application_extensions' and new.status is distinct from old.status and new.status <> 'pending' then
-    insert into public.notifications (user_id, kind, payload, link)
-    select a.user_id, 'ext_status', jsonb_build_object('status', new.status, 'date', new.new_return_date), '#/apps/' || a.id
-      from public.applications a where a.id = new.application_id;
-  elsif tg_table_name = 'graduation_requests' and new.status is distinct from old.status and new.status <> 'pending' then
-    insert into public.notifications (user_id, kind, payload, link)
-    values (new.user_id, 'grad_status', jsonb_build_object('status', new.status), '#/train');
-  elsif tg_table_name = 'testimonies' and new.status is distinct from old.status and new.status <> 'pending' then
-    insert into public.notifications (user_id, kind, payload, link)
-    values (new.user_id, 'testi_status', jsonb_build_object('status', new.status, 'title', new.title), '#/testimonies');
-  elsif tg_table_name = 'support_stories' and new.status is distinct from old.status and new.status <> 'pending' then
-    insert into public.notifications (user_id, kind, payload, link)
-    values (new.user_id, 'support_status', jsonb_build_object('status', new.status, 'title', new.title), '#/support');
-  elsif tg_table_name = 'course_feedback' and new.admin_comment is not null and new.admin_comment is distinct from old.admin_comment then
-    insert into public.notifications (user_id, kind, payload, link)
-    values (new.user_id, 'feedback_reply', jsonb_build_object('course_id', new.course_id), '#/course/' || new.course_id);
+  -- 테이블마다 컬럼이 달라서, 테이블 이름으로 먼저 나눈 뒤 각 테이블의 컬럼만 읽습니다
+  if tg_table_name = 'applications' then
+    if new.status is distinct from old.status then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'app_status', jsonb_build_object('status', new.status, 'country_id', new.country_id), '#/apps/' || new.id);
+    end if;
+  elsif tg_table_name = 'application_extensions' then
+    if new.status is distinct from old.status and new.status <> 'pending' then
+      insert into public.notifications (user_id, kind, payload, link)
+      select a.user_id, 'ext_status', jsonb_build_object('status', new.status, 'date', new.new_return_date), '#/apps/' || a.id
+        from public.applications a where a.id = new.application_id;
+    end if;
+  elsif tg_table_name = 'application_insurance' then
+    if new.status is distinct from old.status and new.status <> 'submitted' then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'ins_status', jsonb_build_object('status', new.status), '#/apps/' || new.application_id);
+    end if;
+  elsif tg_table_name = 'graduation_requests' then
+    if new.status is distinct from old.status and new.status <> 'pending' then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'grad_status', jsonb_build_object('status', new.status), '#/train');
+    end if;
+  elsif tg_table_name = 'testimonies' then
+    if new.status is distinct from old.status and new.status <> 'pending' then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'testi_status', jsonb_build_object('status', new.status, 'title', new.title), '#/testimonies');
+    end if;
+  elsif tg_table_name = 'support_stories' then
+    if new.status is distinct from old.status and new.status <> 'pending' then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'support_status', jsonb_build_object('status', new.status, 'title', new.title), '#/support');
+    end if;
+  elsif tg_table_name = 'course_feedback' then
+    if new.admin_comment is not null and new.admin_comment is distinct from old.admin_comment then
+      insert into public.notifications (user_id, kind, payload, link)
+      values (new.user_id, 'feedback_reply', jsonb_build_object('course_id', new.course_id), '#/course/' || new.course_id);
+    end if;
   end if;
   return new;
 end;
@@ -530,7 +562,7 @@ $$;
 do $$
 declare tb text;
 begin
-  foreach tb in array array['applications','application_extensions','graduation_requests','testimonies','support_stories','course_feedback'] loop
+  foreach tb in array array['applications','application_extensions','application_insurance','graduation_requests','testimonies','support_stories','course_feedback'] loop
     execute format('drop trigger if exists notify_changes on public.%I', tb);
     execute format('create trigger notify_changes after update on public.%I for each row execute function public.notify_changes()', tb);
   end loop;
@@ -544,14 +576,17 @@ create trigger notify_team_added after insert on public.team_members
 --   country-photos : 국가 사진 (관리자 업로드, 공개)
 --   audio          : 복음 메시지 음성 (관리자 업로드, 공개)
 --   testimony-photos : 후기 사진 (회원은 본인 폴더 {user_id}/... 에만 업로드)
+--   insurance-docs   : 여행자 보험 증서 (비공개 — 본인 폴더만 올리고 보기, 관리자는 모두 보기)
 -- =====================================================================
 do $$ begin
   if exists (select 1 from information_schema.tables where table_schema = 'storage' and table_name = 'buckets') then
     insert into storage.buckets (id, name, public) values
       ('country-photos', 'country-photos', true),
       ('audio', 'audio', true),
-      ('testimony-photos', 'testimony-photos', true)
+      ('testimony-photos', 'testimony-photos', true),
+      ('insurance-docs', 'insurance-docs', false)
     on conflict (id) do nothing;
+    update storage.buckets set public = false where id = 'insurance-docs';
 
     drop policy if exists "svm: public read"          on storage.objects;
     drop policy if exists "svm: admin upload"         on storage.objects;
@@ -559,6 +594,9 @@ do $$ begin
     drop policy if exists "svm: admin remove"         on storage.objects;
     drop policy if exists "svm: member testimony upload" on storage.objects;
     drop policy if exists "svm: member testimony remove" on storage.objects;
+    drop policy if exists "svm: insurance own upload" on storage.objects;
+    drop policy if exists "svm: insurance own or admin read" on storage.objects;
+    drop policy if exists "svm: insurance own remove" on storage.objects;
 
     create policy "svm: public read" on storage.objects for select
       using (bucket_id in ('country-photos','audio','testimony-photos'));
@@ -572,5 +610,11 @@ do $$ begin
       with check (bucket_id = 'testimony-photos' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: member testimony remove" on storage.objects for delete to authenticated
       using (bucket_id = 'testimony-photos' and (storage.foldername(name))[1] = auth.uid()::text);
+    create policy "svm: insurance own upload" on storage.objects for insert to authenticated
+      with check (bucket_id = 'insurance-docs' and (storage.foldername(name))[1] = auth.uid()::text);
+    create policy "svm: insurance own or admin read" on storage.objects for select to authenticated
+      using (bucket_id = 'insurance-docs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));
+    create policy "svm: insurance own remove" on storage.objects for delete to authenticated
+      using (bucket_id = 'insurance-docs' and ((storage.foldername(name))[1] = auth.uid()::text or public.is_admin()));
   end if;
 end $$;
