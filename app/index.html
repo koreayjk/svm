@@ -1955,7 +1955,11 @@ function createDemoClient() {
 const configured = !CONFIG.SUPABASE_URL.includes('YOUR-PROJECT') && !CONFIG.SUPABASE_ANON_KEY.includes('YOUR-ANON-KEY');
 const FORCE_DEMO = /[?&]demo\b/.test(location.search);   // app/?demo — 실제 DB와 분리된 체험용
 const DEMO = !configured || FORCE_DEMO;   // 연결 정보가 없으면 데모 모드
-const CAN_DOWNLOAD = true;   // 파일 저장·공유가 막힌 미리보기 환경용 빌드에서는 false
+// 구글플레이·앱스토어 앱(Capacitor)으로 실행 중인지 — 웹에서는 false
+const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const Native = NATIVE ? window.Capacitor.Plugins : {};
+const WEB_APP_URL = 'https://koreayjk.github.io/svm/app/';   // 이메일 링크(비밀번호 재설정 등)가 돌아올 주소
+const CAN_DOWNLOAD = !NATIVE;   // 파일 저장·공유가 막힌 환경(미리보기 빌드·앱 안)에서는 false
 const sb = DEMO ? createDemoClient() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
 async function loadProfile() {
@@ -2312,7 +2316,7 @@ function bindAuth() {
     const btn = form.querySelector('button[type=submit]');
     btn.disabled = true;
     try {
-      const redirectTo = location.origin + location.pathname;
+      const redirectTo = NATIVE ? WEB_APP_URL : location.origin + location.pathname;
       if (state.authMode === 'login') {
         const { error } = await sb.auth.signInWithPassword({ email: f.email.trim(), password: f.password });
         if (error) throw error;
@@ -2539,7 +2543,7 @@ const VIEWS = {
     const p = state.profile;
     const [, , apps] = await Promise.all([loadCountries(), loadPledges(), loadMyApps()]);
     const mine = [...state.myPledges].map(countryById).filter(Boolean);
-    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
+    const isIOS = !NATIVE && /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
     return `${pageHead(t('my_title'))}
       ${card(`
         <div class="row" style="gap:14px;margin-bottom:20px">
@@ -2849,7 +2853,7 @@ const BINDERS = {
       toast(t('saved'));
       render();
     };
-    document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
+    document.getElementById('logout-btn').onclick = async () => { await nativeUnregister(); await sb.auth.signOut(); };
     document.getElementById('blocked-btn').onclick = openBlockedSheet;
     document.getElementById('delete-account').onclick = openDeleteSheet;
     const dr = document.getElementById('demo-reset');
@@ -3051,6 +3055,7 @@ function openDeleteSheet() {
           const paths = (data || []).map(o => `${state.profile.id}/${o.name}`);
           if (paths.length) await sb.storage.from(bucket).remove(paths).catch(() => {});
         }
+        await nativeUnregister();
         const { error } = await sb.rpc('delete_my_account');
         if (error) throw error;
         closeSheet(true);
@@ -3908,6 +3913,11 @@ function speakOnce(s, code, rate) {
       a.play().catch(done);
       return;
     }
+    // 스토어 앱: 폰의 음성 엔진 사용 (안드로이드 웹뷰에는 speechSynthesis 가 없음)
+    if (NATIVE && Native.TextToSpeech && s.local_text) {
+      Native.TextToSpeech.speak({ text: s.local_text, lang: TTS_LANG[code] || 'en-US', rate, category: 'playback' }).then(done, done);
+      return;
+    }
     if (!('speechSynthesis' in window) || !s.local_text) return;
     const u = new SpeechSynthesisUtterance(s.local_text);
     u.lang = TTS_LANG[code] || 'en-US';
@@ -3920,6 +3930,7 @@ function speakOnce(s, code, rate) {
 function stopAudio() {
   player.token++; player.playing = false;
   try { speechSynthesis.cancel(); } catch (e) {}
+  if (NATIVE) Native.TextToSpeech?.stop().catch(() => {});
   if (player.audio) { player.audio.pause(); player.audio = null; }
   document.querySelectorAll('.sent.playing').forEach(el => el.classList.remove('playing'));
   const b = document.getElementById('play-all');
@@ -4055,7 +4066,7 @@ VIEWS.learn = async function (code) {
       <p class="small muted" id="mode-desc" style="margin:0 4px 12px">${esc(t('mode_' + state.learn.mode + '_d'))}</p>
       ${card(`<div id="learn-body">${learnBodyHTML()}</div>`)}
       ${/sample/i.test(msg?.title || '') ? `<div class="form-note">${icon('spark')}<span>${esc(t('learn_sample'))}</span></div>` : ''}
-      ${tts && 'speechSynthesis' in window && sentences.every(s => !s.audio_url) ? `<p class="small muted" id="tts-note" style="margin:6px 4px 0"></p>` : ''}`}`;
+      ${tts && !NATIVE && 'speechSynthesis' in window && sentences.every(s => !s.audio_url) ? `<p class="small muted" id="tts-note" style="margin:6px 4px 0"></p>` : ''}`}`;
 };
 
 BINDERS.learn = function () {
@@ -5353,6 +5364,8 @@ function refreshBadgesSoon() {
 }
 function badgeHTML(n) { return n ? `<i class="nbadge" aria-label="${n}">${n > 99 ? '99+' : n}</i>` : ''; }
 function paintBadges() {
+  // 앱 아이콘 숫자 (스토어 앱에서만)
+  if (NATIVE && Native.Badge) Native.Badge.set({ count: (state.notifUnread || 0) + (state.chatUnread || 0) }).catch(() => {});
   const bell = document.querySelector('.bell');
   if (bell) bell.innerHTML = `${icon('bell')}${badgeHTML(state.notifUnread)}`;
   const com = document.querySelector('.island a[href="#/community"] .ico');
@@ -5372,6 +5385,7 @@ function subscribeNotifications() {
 function unsubscribeNotifications() {
   if (state.notifSub) { try { sb.removeChannel(state.notifSub); } catch (e) {} }
   state.notifSub = null; state.notifUnread = 0; state.chatUnread = 0;
+  if (NATIVE && Native.Badge) Native.Badge.clear().catch(() => {});
 }
 function notifText(n) {
   const p = n.payload || {};
@@ -5458,6 +5472,7 @@ async function onSession(session) {
     await Promise.all([loadProfile(), loadSettings()]);
     await loadBlocks();
     subscribeNotifications();
+    nativeRegister();
     badgeTimer = 0;
   }
   render();
@@ -5479,7 +5494,55 @@ window.addEventListener('hashchange', () => { if (state.session && state.profile
 window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); state.installPrompt = e; document.getElementById('install-btn')?.classList.remove('hidden'); });
 window.addEventListener('offline', () => toast(t('offline'), true));
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+// ---------------------------------------------------------------------
+// 스토어 앱 연동 — 푸시 알림(Firebase Cloud Messaging), 아이콘 숫자, 안드로이드 뒤로 가기
+// ---------------------------------------------------------------------
+async function nativeRegister() {
+  if (!NATIVE || DEMO || !Native.FirebaseMessaging || !state.profile) return;
+  const FM = Native.FirebaseMessaging;
+  try {
+    let perm = await FM.checkPermissions();
+    if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await FM.requestPermissions();
+    if (perm.receive !== 'granted') return;
+    const { token } = await FM.getToken();
+    if (token) await saveDeviceToken(token);
+    if (!state.fmListening) {
+      state.fmListening = true;
+      FM.addListener('tokenReceived', e => { if (e.token) saveDeviceToken(e.token); });
+      // 알림을 눌러 앱을 열면 해당 화면으로
+      FM.addListener('notificationActionPerformed', e => {
+        const link = e?.notification?.data?.link;
+        if (link && /^#\/[\w\/-]*$/.test(link)) location.hash = link;
+      });
+      // 앱이 열려 있을 때 온 알림은 화면 안 알림(실시간)으로 이미 보이므로 숫자만 새로
+      FM.addListener('notificationReceived', () => { badgeTimer = 0; refreshBadgesSoon(); });
+    }
+  } catch (e) { /* 알림을 못 켜도 앱은 그대로 사용 */ }
+}
+async function saveDeviceToken(token) {
+  state.deviceToken = token;
+  // supabase 응답은 실패해도 throw 하지 않음 (error 로 돌려줌) — 알림 등록 실패는 조용히 넘어감
+  await sb.rpc('register_device', { p_token: token, p_platform: window.Capacitor.getPlatform(), p_lang: state.lang });
+}
+async function nativeUnregister() {
+  if (!NATIVE || DEMO || !state.deviceToken) return;
+  await sb.rpc('unregister_device', { p_token: state.deviceToken });
+  state.deviceToken = null;
+}
+if (NATIVE) {
+  document.documentElement.classList.add('native', 'native-' + window.Capacitor.getPlatform());
+  Native.App?.addListener('appStateChange', ({ isActive }) => { if (isActive && state.profile) { badgeTimer = 0; refreshBadgesSoon(); } });
+  // 안드로이드 뒤로 가기: 시트 닫기 → 이전 화면 → 홈에서는 앱 종료
+  Native.App?.addListener('backButton', () => {
+    if (document.querySelector('.sheet-back')) return closeSheet();
+    if (location.hash && location.hash !== '#/home' && location.hash !== '#/') return history.back();
+    Native.App.exitApp();
+  });
+  Native.StatusBar?.setStyle({ style: 'LIGHT' }).catch(() => {});
+  setTimeout(() => Native.SplashScreen?.hide().catch(() => {}), 400);
+}
+
+if (!NATIVE && 'serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 

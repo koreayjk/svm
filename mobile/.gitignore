@@ -1,0 +1,14 @@
+node_modules/
+www/
+# Firebase 설정 파일은 각자 Firebase 콘솔에서 받아 넣습니다 (저장소에 올리지 않음)
+android/app/google-services.json
+ios/App/App/GoogleService-Info.plist
+# 빌드 결과물
+android/app/build/
+android/build/
+android/.gradle/
+ios/App/build/
+ios/DerivedData/
+*.keystore
+*.jks
+ios/App/CapApp-SPM/symlinks/

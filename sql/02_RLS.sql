@@ -290,6 +290,7 @@ alter table public.application_notes          enable row level security;
 alter table public.application_insurance      enable row level security;
 alter table public.content_reports            enable row level security;
 alter table public.user_blocks                enable row level security;
+alter table public.device_tokens              enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -305,7 +306,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -381,6 +382,32 @@ end;
 $$;
 revoke all on function public.delete_my_account() from public, anon;
 grant execute on function public.delete_my_account() to authenticated;
+
+-- 푸시 기기: 본인 것만 보기. 등록·해제는 아래 함수로만 (같은 폰에서 다른 사람이 로그인하면 토큰을 넘겨받음)
+create policy "device_tokens: own read" on public.device_tokens for select using (user_id = auth.uid());
+create or replace function public.register_device(p_token text, p_platform text, p_lang text)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if auth.uid() is null or coalesce(length(p_token), 0) < 10 or length(p_token) > 4096 then return; end if;
+  insert into public.device_tokens (token, user_id, platform, lang, updated_at)
+  values (p_token, auth.uid(), case when p_platform in ('ios','android','web') then p_platform end, left(p_lang, 5), now())
+  on conflict (token) do update set user_id = excluded.user_id, platform = excluded.platform, lang = excluded.lang, updated_at = now();
+end;
+$$;
+create or replace function public.unregister_device(p_token text)
+returns void
+language sql
+security definer
+set search_path = public
+as $$ delete from public.device_tokens where token = p_token and user_id = auth.uid(); $$;
+revoke all on function public.register_device(text, text, text) from public, anon;
+revoke all on function public.unregister_device(text) from public, anon;
+grant execute on function public.register_device(text, text, text) to authenticated;
+grant execute on function public.unregister_device(text) to authenticated;
 
 create policy "registrations: admin manage"  on public.conference_registrations for all using (public.is_admin()) with check (public.is_admin());
 
