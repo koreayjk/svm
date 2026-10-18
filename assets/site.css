@@ -540,3 +540,17 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
   .hero .ctas .btn.has-ico { position: relative; padding-inline: 50px; }
   .hero .ctas .btn.has-ico .b-ico { position: absolute; right: 7px; top: 7px; }
 }
+
+/* ---------- before you go: travel insurance ---------- */
+.safety-band { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; padding: 20px 24px; border-radius: 20px; background: var(--navy); color: var(--on-dark-muted); font-size: 16px; box-shadow: inset 4px 0 0 var(--orange); }
+.safety-band .lbl { font-family: var(--font-num); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 14px; color: #FFB38A; }
+.safety-band b { color: #fff; }
+.safety-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.sf-card { background: var(--surface); border-radius: var(--r-card); padding: 26px; box-shadow: 0 0 0 6px rgba(255, 255, 255, .55), 0 0 0 7px rgba(13, 27, 58, .05), 0 18px 40px -22px rgba(40, 52, 110, .35); }
+.sf-card i { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--orange-soft); color: var(--orange-dark); margin-bottom: 16px; }
+.sf-card i svg { width: 22px; height: 22px; }
+.sf-card h3 { font-size: 19px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 6px; }
+.sf-card p { color: var(--muted); font-size: 15.5px; }
+.sf-card b { color: var(--text); }
+.sf-how { margin-top: 20px; color: var(--muted); font-size: 15.5px; max-width: 46em; }
+@media (max-width: 860px) { .safety-grid { grid-template-columns: 1fr; } }

@@ -674,6 +674,19 @@
   .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 380px) { .field-pair { grid-template-columns: 1fr; } }
 
+  /* travel insurance */
+  .due-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 6px 12px; border-radius: 999px; background: var(--orange-soft); color: var(--orange-dark); font-size: 13.5px; font-weight: 700; }
+  .due-chip.late { background: var(--danger-soft); color: var(--danger); }
+  .form-note.warn { background: var(--danger-soft); color: var(--danger); margin: 12px 0 0; padding: 12px 14px; border-radius: 14px; }
+  .form-note.warn svg { color: var(--danger); }
+  .file-in { width: 100%; padding: 12px 14px; border-radius: var(--r-ctl); background: var(--fill); font-size: 14.5px; color: var(--muted); }
+  .file-in::file-selector-button { margin-right: 12px; border: 0; border-radius: 999px; padding: 7px 14px; background: var(--navy); color: #fff; font: inherit; font-weight: 700; font-size: 13.5px; cursor: pointer; }
+  .ins-box { margin-top: 12px; }
+  .ins-flags { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 4px; font-size: 13.5px; color: var(--muted-2); }
+  .ins-flags li { display: flex; gap: 6px; align-items: center; }
+  .ins-flags li.ok { color: #146C3A; font-weight: 500; }
+  .ins-flags svg { width: 15px; height: 15px; }
+
   /* status */
   .st { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12.5px; font-weight: 700; white-space: nowrap; background: var(--fill); color: var(--navy); }
   .st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
@@ -1031,6 +1044,17 @@ const i18n = {
     st_submitted: 'Submitted', st_approved: 'Approved', st_rejected: 'Not approved', st_preparing: 'Preparing to go', st_on_field: 'On the field', st_returned: 'Returned',
     apps_title: 'My applications', apps_empty: 'No applications yet. Explore a field and apply when you are ready.', apps_new: 'New application',
     app_timeline: 'Status', app_details: 'Details', app_expected_return: 'Expected return', app_applied: 'Applied', app_hq_note: 'Note from HQ',
+    ins_title: 'Travel insurance', ins_required: 'Required', ins_lead: 'Personal travel medical insurance is required for every INTO THE WORLD participant. Enroll and upload your policy certificate at least 7 days before departure.',
+    ins_due: 'Submit by {d}', ins_due_late: 'Overdue · was due {d}', ins_rec: 'Recommended coverage',
+    ins_cov_med: 'Medical expenses', ins_cov_med_d: 'Overseas illness and injury, $50,000 to $100,000+',
+    ins_cov_evac: 'Emergency evacuation', ins_cov_evac_d: 'Medical evacuation, $250,000+',
+    ins_cov_vol: 'Mission and volunteer activity', ins_cov_vol_d: 'Covers accidents during volunteer and mission work, not only tourism',
+    ins_provider: 'Insurance company', ins_policy: 'Policy number', ins_start: 'Coverage starts', ins_end: 'Coverage ends',
+    ins_file: 'Policy certificate (PDF or photo, up to 10 MB)', ins_confirm: 'My plan includes', ins_submit: 'Submit certificate', ins_replace: 'Replace',
+    ins_view: 'View', ins_sent: 'Certificate submitted. HQ will check it.', ins_file_big: 'The file is too large. Please keep it under 10 MB.', ins_file_need: 'Please attach your policy certificate.',
+    ins_st_submitted: 'Under review', ins_st_verified: 'Verified', ins_st_needs_fix: 'Needs changes', ins_none: 'Not submitted', ins_demo_file: 'In demo mode large files are not stored.',
+    ins_fix_note: 'What needs to change (sent to the student)', adm_ins_ok: 'Verify', adm_ins_fix: 'Ask for changes', adm_ins_open: 'Open certificate', adm_ins_pending: 'Insurance to check',
+    todo_ins: 'insurance certificates to check', todo_ins_1: 'insurance certificate to check', nt_ins_ok: 'Your travel insurance was verified.', nt_ins_fix: 'Your travel insurance needs changes. Tap to see what HQ said.',
     ext_title: 'Extend your stay', ext_note: 'No extra cost for room and board. Just change your return flight.',
     ext_new_date: 'New return date', ext_reason: 'Reason (optional)', ext_submit: 'Request extension', ext_sent: 'Extension requested. HQ will review it.',
     ext_pending: 'Pending', ext_approved: 'Approved', ext_rejected: 'Not approved', ext_history: 'Extension requests',
@@ -1224,6 +1248,17 @@ const i18n = {
     st_submitted: '접수', st_approved: '승인', st_rejected: '반려', st_preparing: '출국 준비', st_on_field: '사역 중', st_returned: '귀국',
     apps_title: '내 신청', apps_empty: '아직 신청 내역이 없어요. 선교지를 둘러보고 준비되면 신청하세요.', apps_new: '새로 신청하기',
     app_timeline: '진행 상황', app_details: '신청 내용', app_expected_return: '귀국 예정일', app_applied: '신청일', app_hq_note: '본부 메모',
+    ins_title: '여행자 보험', ins_required: '필수', ins_lead: 'INTO THE WORLD 참가자는 모두 개인 여행자 의료보험에 가입해야 합니다. 출발 최소 7일 전까지 보험 증서를 올려 주세요.',
+    ins_due: '{d}까지 제출', ins_due_late: '제출 기한 지남 · {d}까지였어요', ins_rec: '권장 보장 내용',
+    ins_cov_med: '해외 의료비', ins_cov_med_d: '해외 질병·상해 치료, $50,000–$100,000 이상',
+    ins_cov_evac: '응급 후송', ins_cov_evac_d: '응급 의료 후송, $250,000 이상',
+    ins_cov_vol: '선교·봉사 활동', ins_cov_vol_d: '관광뿐 아니라 봉사·선교 활동 중 사고도 보장',
+    ins_provider: '보험사', ins_policy: '증권 번호', ins_start: '보장 시작일', ins_end: '보장 종료일',
+    ins_file: '보험 증서 (PDF 또는 사진, 10MB 이하)', ins_confirm: '내 보험에 포함된 보장', ins_submit: '증서 제출하기', ins_replace: '교체하기',
+    ins_view: '증서 보기', ins_sent: '증서를 제출했어요. 본부에서 확인합니다.', ins_file_big: '파일이 너무 커요. 10MB 이하로 올려 주세요.', ins_file_need: '보험 증서를 첨부해 주세요.',
+    ins_st_submitted: '확인 중', ins_st_verified: '확인 완료', ins_st_needs_fix: '수정 필요', ins_none: '미제출', ins_demo_file: '데모 모드에서는 큰 파일을 저장하지 않습니다.',
+    ins_fix_note: '수정할 내용 (학생에게 전달됨)', adm_ins_ok: '확인 완료', adm_ins_fix: '수정 요청', adm_ins_open: '증서 열기', adm_ins_pending: '보험 확인',
+    todo_ins: '확인할 보험 증서', nt_ins_ok: '여행자 보험이 확인되었습니다.', nt_ins_fix: '여행자 보험 수정이 필요해요. 눌러서 본부 메모를 확인하세요.',
     ext_title: '기간 연장', ext_note: '숙식비 추가 없음 · 항공권만 변경하면 됩니다.',
     ext_new_date: '새 귀국 예정일', ext_reason: '사유 (선택)', ext_submit: '연장 신청', ext_sent: '연장 신청이 접수되었습니다. 본부에서 검토합니다.',
     ext_pending: '검토 중', ext_approved: '승인', ext_rejected: '반려', ext_history: '연장 신청 내역',
@@ -1667,6 +1702,7 @@ function createDemoClient() {
     room_members: () => ({ joined_at: nowIso(), last_read_at: nowIso() }),
     applications: () => ({ status: 'submitted', admin_note: null, updated_at: nowIso() }),
     application_extensions: () => ({ status: 'pending', reviewed_at: null }),
+    application_insurance: () => ({ status: 'submitted', admin_note: null, reviewed_at: null, submitted_at: nowIso(), covers_medical: false, covers_evacuation: false, covers_volunteer: false }),
     graduation_requests: () => ({ status: 'pending', reviewed_at: null }),
     notifications: () => ({ payload: {}, read_at: null }),
     testimonies: () => ({ status: 'pending', featured: false, photos: [], prayer_id: null }),
@@ -1702,6 +1738,7 @@ function createDemoClient() {
       const changed = row.status !== old.status;
       if (table === 'applications' && changed) notify(row.user_id, 'app_status', { status: row.status, country_id: row.country_id }, '#/apps/' + row.id);
       if (table === 'application_extensions' && changed && row.status !== 'pending') notify(db.applications.find(a => a.id === row.application_id)?.user_id, 'ext_status', { status: row.status, date: row.new_return_date }, '#/apps/' + row.application_id);
+      if (table === 'application_insurance' && changed && row.status !== 'submitted') notify(row.user_id, 'ins_status', { status: row.status }, '#/apps/' + row.application_id);
       if (table === 'graduation_requests' && changed && row.status !== 'pending') notify(row.user_id, 'grad_status', { status: row.status }, '#/train');
       if (table === 'testimonies' && changed && row.status !== 'pending') notify(row.user_id, 'testi_status', { status: row.status, title: row.title }, '#/testimonies');
       if (table === 'support_stories' && changed && row.status !== 'pending') notify(row.user_id, 'support_status', { status: row.status, title: row.title }, '#/support');
@@ -1750,7 +1787,7 @@ function createDemoClient() {
         const list = Array.isArray(this.v) ? this.v : [this.v];
         const COMPOSITE = { nation_pledges: ['user_id', 'country_id'], room_members: ['user_id', 'country_id'], language_progress: ['user_id', 'sentence_id'], practice_days: ['user_id', 'day'],
           attendance: ['gathering_id', 'user_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
-        const UNIQUE = { gatherings: ['date', 'type'], course_feedback: ['user_id', 'course_id'], countries: ['code'] };
+        const UNIQUE = { application_insurance: ['application_id'], gatherings: ['date', 'type'], course_feedback: ['user_id', 'course_id'], countries: ['code'] };
         for (const r of list) {
           const pk = COMPOSITE[this.t], uq = pk || UNIQUE[this.t];
           const probe = { ...(DEFAULT_ROW[this.t] ? DEFAULT_ROW[this.t]() : {}), ...r };
@@ -3146,10 +3183,12 @@ VIEWS.apps = async function (id) {
   const a = apps.find(x => String(x.id) === String(id));
   if (!a) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   const c = countryById(a.country_id);
-  const [hist, exts] = await Promise.all([
+  const [hist, exts, insq] = await Promise.all([
     sb.from('application_status_history').select('status,changed_at').eq('application_id', a.id).order('changed_at'),
     sb.from('application_extensions').select('*').eq('application_id', a.id).order('created_at', { ascending: false }),
+    sb.from('application_insurance').select('*').eq('application_id', a.id).maybeSingle(),
   ]);
+  state.appIns = insq.data || null;
   const when = {};
   (hist.data || []).forEach(h => { when[h.status] = h.changed_at; });
   const dateOf = s => when[s] ? new Date(when[s]).toLocaleDateString(dateLocale(), { month: 'short', day: 'numeric', year: 'numeric' }) : '';
@@ -3195,10 +3234,110 @@ VIEWS.apps = async function (id) {
       </dl>
       ${a.motivation ? `<div class="quote">${esc(a.motivation)}</div>` : ''}
       ${a.admin_note ? `<div class="sep"></div><span class="eyebrow plain">${esc(t('app_hq_note'))}</span><p style="margin:8px 0 0">${para(a.admin_note)}</p>` : ''}`)}
-    ${['approved', 'preparing', 'on_field'].includes(a.status) ? extCard : ''}`;
+    ${['approved', 'preparing', 'on_field'].includes(a.status) ? insuranceCardHTML(a, state.appIns) + extCard : ''}`;
 };
 
+// ---------------------------------------------------------------------
+// 여행자 보험 — INTO THE WORLD 필수, 출발 7일 전까지 증서 제출 (비공개 저장소)
+// ---------------------------------------------------------------------
+const INS_BUCKET = 'insurance-docs';
+const INS_MAX = 10 * 1024 * 1024;
+const INS_COVER = [['covers_medical', 'ins_cov_med'], ['covers_evacuation', 'ins_cov_evac'], ['covers_volunteer', 'ins_cov_vol']];
+const INS_ST = { submitted: 'submitted', verified: 'approved', needs_fix: 'rejected' };   // 상태 → 태그 색
+function insTag(ins) { return ins ? `<span class="st st-${INS_ST[ins.status]}">${esc(t('ins_st_' + ins.status))}</span>` : `<span class="st">${esc(t('ins_none'))}</span>`; }
+function insDue(a) { return a.start_date ? addDays(a.start_date, -7) : null; }
+async function uploadInsuranceFile(file) {
+  if (DEMO) {
+    if (file.size > 1.5 * 1024 * 1024) { toast(t('ins_demo_file')); return 'demo:' + file.name; }
+    return new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(file); });
+  }
+  const ext = ((file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5)) || 'pdf';
+  const path = `${state.profile.id}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}.${ext}`;
+  const { error } = await sb.storage.from(INS_BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+  if (error) throw error;
+  return path;
+}
+// 비공개 파일은 5분짜리 서명 링크로 엽니다 (팝업 차단을 피하려고 창을 먼저 열어 둠)
+async function openInsuranceFile(path) {
+  if (!path || path.startsWith('demo:')) return toast(t('ins_demo_file'));
+  const w = window.open('', '_blank');
+  let url;
+  if (path.startsWith('data:')) url = URL.createObjectURL(await (await fetch(path)).blob());
+  else {
+    const { data, error } = await sb.storage.from(INS_BUCKET).createSignedUrl(path, 300);
+    if (error) { if (w) w.close(); return toast(errMsg(error), true); }
+    url = data.signedUrl;
+  }
+  if (w) w.location.href = url; else location.href = url;
+}
+function insuranceCardHTML(a, ins) {
+  const due = insDue(a), today = nowInTZ().date;
+  const late = due && today > due && (!ins || ins.status === 'needs_fix');
+  const editing = !ins || ins.status === 'needs_fix' || state.insEdit === a.id;
+  const v = ins || {};
+  const cov = INS_COVER.map(([k, key]) => `<label><input type="checkbox" name="${k}" ${v[k] ? 'checked' : ''}><span><b>${esc(t(key))}</b><span class="d">${esc(t(key + '_d'))}</span></span></label>`).join('');
+  const form = `<form id="ins-form" novalidate style="margin-top:16px">
+      <label class="field"><span>${esc(t('ins_provider'))} *</span><input type="text" name="provider" maxlength="120" required value="${esc(v.provider || '')}" autocomplete="off"></label>
+      <label class="field"><span>${esc(t('ins_policy'))}</span><input type="text" name="policy_number" maxlength="80" value="${esc(v.policy_number || '')}" autocomplete="off"></label>
+      <div class="field-pair">
+        <label class="field"><span>${esc(t('ins_start'))}</span><input type="date" name="coverage_start" value="${esc(v.coverage_start || a.start_date || '')}"></label>
+        <label class="field"><span>${esc(t('ins_end'))}</span><input type="date" name="coverage_end" value="${esc(v.coverage_end || a.expected_return || '')}"></label>
+      </div>
+      <div class="small muted" style="margin:0 0 8px 4px">${esc(t('ins_confirm'))}</div>
+      <div class="choice">${cov}</div>
+      <label class="field"><span>${esc(t('ins_file'))} *</span><input type="file" name="file" accept="application/pdf,image/*" class="file-in"></label>
+      <button class="btn block" type="submit">${icon('shield')} ${esc(t('ins_submit'))}</button>
+    </form>`;
+  const summary = ins ? `<div class="list-row no-ico" style="margin-top:12px"><div class="meta"><div class="t">${esc(ins.provider)}${ins.policy_number ? ` · ${esc(ins.policy_number)}` : ''}</div>
+        <div class="d">${esc(fmtDay(ins.coverage_start))} – ${esc(fmtDay(ins.coverage_end))}</div></div>${insTag(ins)}</div>
+      ${ins.admin_note && ins.status === 'needs_fix' ? `<div class="form-note warn">${icon('spark')}<span>${esc(ins.admin_note)}</span></div>` : ''}
+      <div class="btn-row" style="margin-top:12px"><button type="button" class="btn light small" data-ins-open>${icon('download')} ${esc(t('ins_view'))}</button>
+        ${!editing ? `<button type="button" class="btn light small" data-ins-edit>${esc(t('ins_replace'))}</button>` : ''}</div>` : '';
+  return card(`<div class="row between top"><span class="eyebrow plain">${icon('shield', 'width="14" height="14"')} ${esc(t('ins_title'))}</span>${ins?.status === 'verified' ? '' : `<span class="st st-on_field">${esc(t('ins_required'))}</span>`}</div>
+    ${!ins || ins.status !== 'verified' ? `<p class="small muted" style="margin:10px 0 0">${esc(t('ins_lead'))}</p>` : ''}
+    ${due && (!ins || ins.status !== 'verified') ? `<div class="due-chip ${late ? 'late' : ''}">${icon('calendar', 'width="15" height="15"')} ${esc(t(late ? 'ins_due_late' : 'ins_due', { d: fmtDay(due) }))}</div>` : ''}
+    ${summary}
+    ${editing ? `${ins ? '<div class="sep"></div>' : ''}${form}` : ''}`);
+}
+function bindInsurance() {
+  const a = state.app; if (!a) return;
+  app.querySelector('[data-ins-open]')?.addEventListener('click', () => openInsuranceFile(state.appIns?.file_path));
+  app.querySelector('[data-ins-edit]')?.addEventListener('click', () => { state.insEdit = a.id; render(); });
+  const form = document.getElementById('ins-form');
+  if (!form) return;
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+    const file = form.file.files[0];
+    if (!file && !state.appIns) return toast(t('ins_file_need'), true);
+    if (file && file.size > INS_MAX) return toast(t('ins_file_big'), true);
+    const btn = form.querySelector('button[type=submit]');
+    btn.disabled = true;
+    try {
+      const path = file ? await uploadInsuranceFile(file) : state.appIns.file_path;
+      const f = new FormData(form);
+      const row = {
+        application_id: a.id, user_id: state.profile.id, provider: f.get('provider').trim(), policy_number: f.get('policy_number').trim() || null,
+        coverage_start: f.get('coverage_start') || null, coverage_end: f.get('coverage_end') || null, file_path: path,
+        covers_medical: !!f.get('covers_medical'), covers_evacuation: !!f.get('covers_evacuation'), covers_volunteer: !!f.get('covers_volunteer'),
+        status: 'submitted', admin_note: null, reviewed_at: null, submitted_at: new Date().toISOString(),
+      };
+      const old = state.appIns?.file_path;
+      const { error } = state.appIns
+        ? await sb.from('application_insurance').update(row).eq('application_id', a.id)
+        : await sb.from('application_insurance').insert(row);
+      if (error) throw error;
+      // 바꾼 증서의 옛 파일은 지움 (실패해도 진행)
+      if (!DEMO && file && old && old !== path) sb.storage.from(INS_BUCKET).remove([old]).then(() => {}, () => {});
+      state.insEdit = null;
+      toast(t('ins_sent'));
+      render();
+    } catch (err) { btn.disabled = false; toast(errMsg(err), true); }
+  };
+}
+
 BINDERS.apps = function (id) {
+  bindInsurance();
   const form = document.getElementById('ext-form');
   if (!form || !state.app || String(state.app.id) !== String(id)) return;
   form.onsubmit = async (e) => {
@@ -3219,19 +3358,20 @@ BINDERS.apps = function (id) {
 // 관리자 — 신청 승인 · 연장 승인 · 국가별 명단 내보내기
 // ---------------------------------------------------------------------
 async function loadAdminApps() {
-  const [apps, profs, exts, hist, notes] = await Promise.all([
+  const [apps, profs, exts, hist, notes, ins] = await Promise.all([
     sb.from('applications').select('*').order('created_at', { ascending: false }),
     sb.from('profiles').select('id,name,email,phone,school'),
     sb.from('application_extensions').select('*').order('created_at', { ascending: false }),
     sb.from('application_status_history').select('application_id,status,changed_at').order('changed_at'),
     sb.from('application_notes').select('application_id,note'),
+    sb.from('application_insurance').select('*'),
   ]);
   const nmap = Object.fromEntries((notes.data || []).map(n => [n.application_id, n.note]));
   const err = apps.error || profs.error || exts.error || hist.error;
   if (err) throw err;
   const pmap = Object.fromEntries((profs.data || []).map(p => [p.id, p]));
   state.adminApps = (apps.data || []).map(a => ({
-    ...a, person: pmap[a.user_id] || {}, note: nmap[a.id] || '',
+    ...a, person: pmap[a.user_id] || {}, note: nmap[a.id] || '', ins: (ins.data || []).find(x => x.application_id === a.id) || null,
     exts: (exts.data || []).filter(x => x.application_id === a.id),
     hist: (hist.data || []).filter(h => h.application_id === a.id),
   }));
@@ -3240,7 +3380,23 @@ async function loadAdminApps() {
 function adminAppsFiltered() {
   const f = state.adminAppFilter, cid = state.adminAppCountry;
   return (state.adminApps || []).filter(a => (!cid || String(a.country_id) === cid)
-    && (f === 'all' || (f === 'ext' ? a.exts.some(x => x.status === 'pending') : a.status === f)));
+    && (f === 'all' || (f === 'ext' ? a.exts.some(x => x.status === 'pending') : f === 'ins' ? a.ins?.status === 'submitted' : a.status === f)));
+}
+function adminInsHTML(a) {
+  if (!['approved', 'preparing', 'on_field'].includes(a.status) && !a.ins) return '';
+  const ins = a.ins, due = insDue(a);
+  if (!ins) return `<div class="ext-box ins-box"><div class="row between"><b>${icon('shield', 'width="15" height="15" style="vertical-align:-2px"')} ${esc(t('ins_title'))}</b>${insTag(null)}</div>
+    ${due ? `<p class="small muted" style="margin:6px 0 0">${esc(t(nowInTZ().date > due ? 'ins_due_late' : 'ins_due', { d: fmtDay(due) }))}</p>` : ''}</div>`;
+  const flags = INS_COVER.map(([k, key]) => `<li class="${ins[k] ? 'ok' : ''}">${ins[k] ? icon('check') : '–'} ${esc(t(key))}</li>`).join('');
+  return `<div class="ext-box ins-box"><div class="row between"><b>${icon('shield', 'width="15" height="15" style="vertical-align:-2px"')} ${esc(t('ins_title'))}</b>${insTag(ins)}</div>
+    <p class="small" style="margin:6px 0 0">${esc(ins.provider)}${ins.policy_number ? ` · ${esc(ins.policy_number)}` : ''} · ${esc(fmtDay(ins.coverage_start))} – ${esc(fmtDay(ins.coverage_end))}</p>
+    <ul class="ins-flags">${flags}</ul>
+    <button type="button" class="btn light small" data-ins-file="${a.id}">${icon('download')} ${esc(t('adm_ins_open'))}</button>
+    ${ins.status === 'submitted' ? `<label class="field" style="margin:12px 0 8px"><span>${esc(t('ins_fix_note'))}</span><input type="text" maxlength="500" data-ins-note="${a.id}"></label>
+      <div class="btn-row"><button class="btn small" data-ins="${a.id}" data-ins-to="verified">${esc(t('adm_ins_ok'))}</button>
+        <button class="btn small danger" data-ins="${a.id}" data-ins-to="needs_fix">${esc(t('adm_ins_fix'))}</button></div>`
+      : ins.admin_note ? `<p class="small muted" style="margin:8px 0 0">${esc(ins.admin_note)}</p>` : ''}
+  </div>`;
 }
 function adminAppHTML(a) {
   const c = countryById(a.country_id);
@@ -3251,7 +3407,7 @@ function adminAppHTML(a) {
       <span class="avatar sm" aria-hidden="true">${esc(initials(a.person.name || a.person.email))}</span>
       <div class="meta"><div class="t">${esc(a.person.name || a.person.email || '—')}</div>
         <div class="d">${c ? flag(c.code) + ' ' + esc(countryName(c)) : '—'} · ${esc(t('tr_' + a.track))} · ${esc(fmtDay(a.start_date))}</div></div>
-      ${pend ? '<span class="dot" aria-hidden="true"></span>' : ''}${statusTag(a.status)}
+      ${pend || a.ins?.status === 'submitted' ? '<span class="dot" aria-hidden="true"></span>' : ''}${statusTag(a.status)}
     </summary>
     <div class="body">
       <dl class="kv">
@@ -3266,6 +3422,7 @@ function adminAppHTML(a) {
         ${pend.reason ? `<p class="small" style="margin:4px 0 0">${esc(pend.reason)}</p>` : ''}
         <div class="btn-row"><button class="btn small" data-ext="${pend.id}" data-ext-to="approved">${esc(t('adm_ext_approve'))}</button>
           <button class="btn small danger" data-ext="${pend.id}" data-ext-to="rejected">${esc(t('adm_ext_reject'))}</button></div></div>` : ''}
+      ${adminInsHTML(a)}
       <form data-app-form="${a.id}" style="margin-top:16px">
         <div class="field-pair">
           <label class="field"><span>${esc(t('adm_status'))}</span>
@@ -3285,9 +3442,9 @@ async function adminApplicationsHTML() {
   // 항상 새로 불러옴 (회원이 방금 보낸 신청·연장 요청도 바로 보이게)
   const [apps] = await Promise.all([loadAdminApps(), loadCountries()]);
   const count = s => apps.filter(a => (!state.adminAppCountry || String(a.country_id) === state.adminAppCountry)
-    && (s === 'all' || (s === 'ext' ? a.exts.some(x => x.status === 'pending') : a.status === s))).length;
-  const keys = ['submitted', 'approved', 'preparing', 'on_field', 'ext', 'returned', 'rejected', 'all'];
-  const label = k => k === 'all' ? t('adm_all') : k === 'ext' ? t('adm_ext_pending') : t('st_' + k);
+    && (s === 'all' || (s === 'ext' ? a.exts.some(x => x.status === 'pending') : s === 'ins' ? a.ins?.status === 'submitted' : a.status === s))).length;
+  const keys = ['submitted', 'approved', 'preparing', 'on_field', 'ext', 'ins', 'returned', 'rejected', 'all'];
+  const label = k => k === 'all' ? t('adm_all') : k === 'ext' ? t('adm_ext_pending') : k === 'ins' ? t('adm_ins_pending') : t('st_' + k);
   const list = adminAppsFiltered();
   return `<div class="filters" role="tablist">${keys.map(k => `<button type="button" role="tab" data-app-filter="${k}" class="${state.adminAppFilter === k ? 'active' : ''}" aria-selected="${state.adminAppFilter === k}">${esc(label(k))}<span class="n">${count(k)}</span></button>`).join('')}</div>
     <div class="adm-tools">
@@ -3299,11 +3456,12 @@ async function adminApplicationsHTML() {
 }
 function rosterCSV(list) {
   const q = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const head = ['Country', 'Name', 'Email', 'Phone', 'School', 'Track', 'Status', 'Departure', 'Length', 'Expected return', 'Contact', 'Applied'];
+  const head = ['Country', 'Name', 'Email', 'Phone', 'School', 'Track', 'Status', 'Departure', 'Length', 'Expected return', 'Contact', 'Applied', 'Insurance', 'Insurer', 'Policy no.'];
   const rows = list.map(a => {
     const c = countryById(a.country_id);
     return [c ? c.name_en : '', a.person.name, a.person.email, a.person.phone, a.person.school, i18n.en['tr_' + a.track], i18n.en['st_' + a.status],
-      a.start_date, i18n.en['dur_' + a.duration_text] || a.duration_text, a.expected_return, a.contact, a.created_at.slice(0, 10)];
+      a.start_date, i18n.en['dur_' + a.duration_text] || a.duration_text, a.expected_return, a.contact, a.created_at.slice(0, 10),
+      a.ins ? i18n.en['ins_st_' + a.ins.status] : 'Not submitted', a.ins?.provider, a.ins?.policy_number];
   });
   return '﻿' + [head, ...rows].map(r => r.map(q).join(',')).join('\r\n');
 }
@@ -3326,6 +3484,17 @@ function bindAdminApplications() {
     }
     btn.disabled = false;
     state.adminOpenApp = form.dataset.appForm;
+    toast(t('adm_updated'));
+    render();
+  });
+  app.querySelectorAll('[data-ins-file]').forEach(b => b.onclick = () => openInsuranceFile((state.adminApps || []).find(x => String(x.id) === b.dataset.insFile)?.ins?.file_path));
+  app.querySelectorAll('[data-ins]').forEach(b => b.onclick = async () => {
+    const note = app.querySelector(`[data-ins-note="${b.dataset.ins}"]`)?.value.trim() || null;
+    if (b.dataset.insTo === 'needs_fix' && !note) { app.querySelector(`[data-ins-note="${b.dataset.ins}"]`)?.focus(); return toast(t('ins_fix_note'), true); }
+    b.disabled = true;
+    const { error } = await sb.from('application_insurance').update({ status: b.dataset.insTo, admin_note: note, reviewed_at: new Date().toISOString() }).eq('application_id', b.dataset.ins);
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    state.adminOpenApp = b.dataset.ins;
     toast(t('adm_updated'));
     render();
   });
@@ -4961,6 +5130,7 @@ function notifText(n) {
   switch (n.kind) {
     case 'app_status': return t('nt_app', { c: c ? countryName(c) : '', s: t('st_' + p.status) });
     case 'ext_status': return t(p.status === 'approved' ? 'nt_ext_ok' : 'nt_ext_no', { d: fmtDay(p.date) });
+    case 'ins_status': return t(p.status === 'verified' ? 'nt_ins_ok' : 'nt_ins_fix');
     case 'grad_status': return t(p.status === 'approved' ? 'nt_grad_ok' : 'nt_grad_no');
     case 'testi_status': return t(p.status === 'approved' ? 'nt_testi_ok' : 'nt_testi_no', { x: p.title || '' });
     case 'support_status': return t(p.status === 'approved' ? 'nt_sup_ok' : 'nt_sup_no', { x: p.title || '' });
@@ -4969,7 +5139,7 @@ function notifText(n) {
     default: return t('nt_generic');
   }
 }
-const NOTIF_ICON = { app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
+const NOTIF_ICON = { ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
 
 VIEWS.notifications = async function () {
   await loadCountries();
@@ -4994,16 +5164,16 @@ BINDERS.notifications = function () {
 // ---------------------------------------------------------------------
 async function loadAdminTodo() {
   const c = (table, col, val) => sb.from(table).select('id', { count: 'exact', head: true }).eq(col, val);
-  const [apps, ext, grad, testi, sup] = await Promise.all([
+  const [apps, ext, grad, testi, sup, ins] = await Promise.all([
     c('applications', 'status', 'submitted'), c('application_extensions', 'status', 'pending'), c('graduation_requests', 'status', 'pending'),
-    c('testimonies', 'status', 'pending'), c('support_stories', 'status', 'pending'),
+    c('testimonies', 'status', 'pending'), c('support_stories', 'status', 'pending'), c('application_insurance', 'status', 'submitted'),
   ]);
-  state.adminTodo = { apps: apps.count || 0, ext: ext.count || 0, grad: grad.count || 0, testi: testi.count || 0, sup: sup.count || 0 };
+  state.adminTodo = { apps: apps.count || 0, ext: ext.count || 0, grad: grad.count || 0, testi: testi.count || 0, sup: sup.count || 0, ins: ins.count || 0 };
   return state.adminTodo;
 }
 function adminTodoHTML(td) {
   const items = [
-    ['apps', 'applications', 'submitted', 'plane', 'todo_apps'], ['ext', 'applications', 'ext', 'calendar', 'todo_ext'],
+    ['apps', 'applications', 'submitted', 'plane', 'todo_apps'], ['ext', 'applications', 'ext', 'calendar', 'todo_ext'], ['ins', 'applications', 'ins', 'shield', 'todo_ins'],
     ['grad', 'training', null, 'cap', 'todo_grad'], ['testi', 'posts', null, 'spark', 'todo_testi'], ['sup', 'posts', null, 'gift', 'todo_sup'],
   ].filter(([k]) => td[k] > 0);
   if (!items.length) return `<div class="todo-none">${icon('check')} ${esc(t('todo_none'))}</div>`;
@@ -5012,7 +5182,7 @@ function adminTodoHTML(td) {
 }
 function adminTabBadge(k) {
   const td = state.adminTodo || {};
-  const n = k === 'applications' ? (td.apps || 0) + (td.ext || 0) : k === 'training' ? td.grad || 0 : k === 'posts' ? (td.testi || 0) + (td.sup || 0) : 0;
+  const n = k === 'applications' ? (td.apps || 0) + (td.ext || 0) + (td.ins || 0) : k === 'training' ? td.grad || 0 : k === 'posts' ? (td.testi || 0) + (td.sup || 0) : 0;
   return n ? `<span class="tab-n">${n}</span>` : '';
 }
 

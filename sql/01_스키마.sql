@@ -554,3 +554,23 @@ create table if not exists public.application_notes (
   note            text,
   updated_at      timestamptz not null default now()
 );
+
+-- 여행자 보험 (Into the World 참가자 필수 · 출발 7일 전까지 증서 제출)
+--   증서 파일은 비공개 버킷 insurance-docs/{user_id}/... 에 저장, 본인과 관리자만 열람
+create table if not exists public.application_insurance (
+  application_id     bigint primary key references public.applications(id) on delete cascade,
+  user_id            uuid not null references public.profiles(id) on delete cascade,
+  provider           text not null,
+  policy_number      text,
+  coverage_start     date,
+  coverage_end       date,
+  covers_medical     boolean not null default false,   -- 해외 의료비 $50,000–100,000+
+  covers_evacuation  boolean not null default false,   -- 응급 후송 $250,000+
+  covers_volunteer   boolean not null default false,   -- 봉사·선교 활동 중 사고 보장
+  file_path          text not null,
+  status             text not null default 'submitted' check (status in ('submitted','verified','needs_fix')),
+  admin_note         text,
+  submitted_at       timestamptz not null default now(),
+  reviewed_at        timestamptz
+);
+create index if not exists application_insurance_user_idx on public.application_insurance(user_id);
