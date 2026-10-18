@@ -67,10 +67,10 @@
     v.appendChild(b);
   });
 
-  // 세계지도 (assets/worldmap.js): 아메리카가 가운데, 좌우로 끌어서 돌리기, 보내는 곳 3곳 → 선교지
+  // 세계지도 (assets/worldmap.js): 아메리카가 가운데, 보내는 곳 3곳에서 비행기 5대가 선교지를 오감
   const map = document.getElementById('map');
   if (map && window.SVMWorldMap) {
-    const wm = SVMWorldMap.mount(map, { base: BASE, lang: 'en', label: 'World map: SVM sends from Bryan/College Station, Seoul and Manila to seven mission fields, with more nations marked. Drag left or right to turn the globe.' });
+    const wm = SVMWorldMap.mount(map, { base: BASE, lang: 'en', label: 'World map: SVM sends from Bryan/College Station, Seoul and Manila to seven mission fields, with more nations marked.' });
     document.addEventListener('svm:lang', e => wm && wm.setLang(e.detail));
   }
 

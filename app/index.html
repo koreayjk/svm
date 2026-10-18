@@ -579,15 +579,18 @@
   .ev-facts .list-row .ico-tile { background: var(--orange-soft); color: var(--orange-dark); }
   .btn-row { display: grid; gap: 10px; }
   /* ---------- auth world map ---------- */
-  /* 지도: 가운데 정렬 (넓은 화면에서도 쏠리지 않게), 좌우 끝은 흐리게 — 끌면 이어짐 */
+  /* 지도: 가운데 정렬 (넓은 화면에서도 쏠리지 않게), 세계 전체가 한 화면에 */
   .map-wrap { position: relative; margin: 0 max(-24px, calc((100% - 1180px) / 2)) 4px; aspect-ratio: 1080 / 336; overflow: hidden;
-    -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
-  .worldmap.draggable { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; outline: none; }
-  .worldmap.draggable.grabbing { cursor: grabbing; }
-  .worldmap .arc-kr, .worldmap .arc-ph { opacity: .55; stroke-width: 1.3; }
+}
   .worldmap .home-label { font-size: 12px; font-weight: 700; fill: var(--navy); }
+
+/* ---------- world map: whole world on one screen, five planes fly out and back ---------- */
+  .worldmap .trail { fill: none; stroke: var(--orange); stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: 0; transition: opacity .6s ease; }
+  .worldmap .field.hit .pin { animation: wm-hit .9s ease-out; transform-box: fill-box; transform-origin: center; }
+  .worldmap .field.hit .home { animation: wm-hit .9s ease-out; transform-box: fill-box; transform-origin: center; }
+  @keyframes wm-hit { 0% { transform: scale(1); } 35% { transform: scale(1.7); } 100% { transform: scale(1); } }
   .map-legend .lg-hub { background: var(--navy); box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(13, 27, 58, .3); }
-  .map-legend .drag-hint { width: 100%; justify-content: center; opacity: .75; }
+
   .map-wrap::after { content: ""; position: absolute; inset: auto 0 0; height: 18%; background: linear-gradient(180deg, rgba(242, 243, 248, 0), rgba(242, 243, 248, .9)); pointer-events: none; }
   .worldmap { display: block; width: 100%; height: 100%; }
   .worldmap .dots { opacity: .2; }
@@ -612,9 +615,8 @@
   @media (max-width: 520px) {
     .map-wrap { margin: 0 -18px 10px; }
     .worldmap .home-label { display: none; }
-    .worldmap .arc-kr, .worldmap .arc-ph { stroke-width: 1.6; }
     .worldmap .dots { opacity: .26; }
-    .worldmap .arc { stroke-width: 2.2; }
+    .worldmap .trail { stroke-width: 3; }
     .worldmap .pin { r: 7; stroke-width: 2.4; }
     .worldmap .future { r: 5.2; }
     .worldmap .plane-shape { transform: scale(1.9); }
@@ -1068,7 +1070,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station, Seoul and Manila to seven mission fields. Drag left or right to turn the globe.', map_hubs: 'Sending from Bryan/College Station · Seoul · Manila', map_drag: '← Drag to turn the globe →', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
+    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station, Seoul and Manila to seven mission fields.', map_hubs: 'Sending from Bryan/College Station · Seoul · Manila', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
     // ② country rooms
     room_members: '{n} members', room_members_one: '1 member', room_join: 'Join this room', room_leave: 'Leave room',
     room_join_d: 'Talk with everyone who carries this nation. Joining a room is not the same as applying, so come and go anytime.',
@@ -1286,7 +1288,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.',
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션, 서울, 마닐라에서 7개 선교지로 보냅니다. 좌우로 끌어 지구를 돌려 볼 수 있습니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션 · 서울 · 마닐라', map_drag: '← 끌어서 지구 돌려 보기 →', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
+    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션, 서울, 마닐라에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션 · 서울 · 마닐라', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
     room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
     room_join_d: '이 나라를 품은 사람들과 이야기해요. 방 참여는 신청과 별개라서 언제든 나가고 들어올 수 있어요.',
     room_joined_toast: '{c} 나라방에 참여했어요.', room_left_toast: '방에서 나갔어요.',
@@ -2237,7 +2239,7 @@ function viewAuth() {
   return `<div class="auth-hero">
       ${langToggle()}
       <div class="map-wrap" id="auth-map"></div>
-      <div class="map-legend"><span><i class="lg-hub"></i>${esc(t('map_hubs'))}</span><span><i class="lg-now"></i>${esc(t('map_now'))}</span><span><i class="lg-future"></i>${esc(t('map_future'))}</span><span class="drag-hint">${esc(t('map_drag'))}</span></div>
+      <div class="map-legend"><span><i class="lg-hub"></i>${esc(t('map_hubs'))}</span><span><i class="lg-now"></i>${esc(t('map_now'))}</span><span><i class="lg-future"></i>${esc(t('map_future'))}</span></div>
       <img class="logo auth-logo-main" src="../assets/SVM_Logo.svg" alt="SVM">
       <div class="tagline">${esc(t('tagline'))}</div>
       <h1 class="auth-title">${esc(t('auth_title'))}</h1>
