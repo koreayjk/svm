@@ -1,6 +1,6 @@
 // SVM 세계지도 — 홈페이지 · 앱 로그인 화면 · 스토어 앱이 함께 씁니다.
 //   · 아메리카가 가운데인 세계지도 한 장을 화면에 다 보여 줍니다.
-//   · 보내는 곳 3곳(브라이언/컬리지 스테이션 · 서울 · 마닐라)에서 비행기 5대가
+//   · 브라이언/컬리지 스테이션에서 비행기 5대가
 //     한 나라에 갔다가 돌아오고, 이어서 다른 나라로 갑니다. 날고 있는 길만 잠깐 그려집니다.
 // 사용: SVMWorldMap.mount(element, { assets: '../assets/', lang: 'ko', label: '지도 설명' })  (assets: world-dots.svg 가 있는 폴더)
 (function () {
@@ -12,10 +12,8 @@
   // 보내는 곳
   const HUBS = {
     US: { lat: 30.63, lon: -96.33, en: 'Bryan/College Station', ko: '브라이언/컬리지 스테이션' },
-    KR: { lat: 37.57, lon: 126.98, en: 'Seoul', ko: '서울' },
-    PH: { lat: 14.6, lon: 120.98, en: 'Manila', ko: '마닐라' },
   };
-  // 지금 파송 중인 선교지 (한국·필리핀은 보내는 곳이면서 선교지)
+  // 지금 파송 중인 선교지
   const FIELDS = {
     MX: [19.43, -99.13], EG: [30.04, 31.24], TH: [13.75, 100.5], MY: [3.14, 101.69],
     PH: [14.6, 120.98], KR: [37.57, 126.98], JP: [35.68, 139.69],
@@ -24,9 +22,9 @@
   const FLIGHTS = [
     ['US', ['MX', 'EG', 'JP']],
     ['US', ['PH', 'TH', 'MY']],
-    ['KR', ['JP', 'TH', 'MY']],
-    ['PH', ['MY', 'KR', 'TH']],
-    ['US', ['EG', 'KR', 'MX']],
+    ['US', ['KR', 'MX', 'TH']],
+    ['US', ['JP', 'MY', 'EG']],
+    ['US', ['EG', 'PH', 'KR']],
   ];
   // 앞으로 갈 나라들 — 은은한 점
   const FUTURE = [
@@ -74,7 +72,7 @@
     }).join('');
     const hubs = Object.entries(HUBS).map(([code, h]) => {
       const [x, y] = xy(h.lat, h.lon);
-      // 이름: 브라이언은 오른쪽 위(멕시코 국기와 안 겹치게), 서울은 국기 위, 마닐라는 아래
+      // 이름: 브라이언은 오른쪽 위(멕시코 국기와 안 겹치게)
       const [lx, ly, anchor] = code === 'US' ? [x + 9, y - 7, 'start'] : code === 'KR' ? [x, y - 27, 'middle'] : [x, y + 19, 'middle'];
       return `<g class="field hub" data-c="${code}"><circle class="home-ring" cx="${f(x)}" cy="${f(y)}" r="10"/><circle class="home" cx="${f(x)}" cy="${f(y)}" r="5.2"/>
         ${code !== 'US' ? `<text class="pin-flag hub-flag" x="${f(x)}" y="${f(y - 10)}">${flag(code)}</text>` : ''}
