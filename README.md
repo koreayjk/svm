@@ -157,7 +157,8 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 - 관리 → 이벤트에서 추가·수정·숨기기 (시간은 브라이언/컬리지 스테이션 기준으로 입력)
 
 ## 확인이 필요한 값
-- 11/20 컨퍼런스 장소: 지금은 "오후 6시 입장 · venue announced soon" 입니다 (`events` 행, `conference/index.html`, 홈페이지 문구 수정).
+- 11/20 컨퍼런스 장소: 지금은 "오후 6시 입장 · venue announced soon" 입니다 (`events` 행, `conference/index.html`, 홈페이지 문구 수정). 장소가 정해지면 `conference/index.html` 맨 위 검색용 정보(`application/ld+json`의 `location`)에도 장소 이름과 주소를 넣어 주세요.
+- 검색 등록: [Google Search Console](https://search.google.com/search-console)에 `https://koreayjk.github.io/svm/` 를 추가하고 `sitemap.xml` 을 제출하면 홈페이지와 컨퍼런스가 더 빨리 검색됩니다. 컨퍼런스 페이지는 구글 "이벤트" 검색 결과에 나올 수 있게 만들어 두었습니다.
 - 정기 모임은 매주 주일 오후 2–4시 미션 게더링 하나입니다 (금요 모임 없음). 시간은 `app/index.html` 의 `DEFAULTS.gatherings.sunday`.
 - 국가별 소개·생활 문구는 초안입니다. 실제 내용으로 교체하세요.
 

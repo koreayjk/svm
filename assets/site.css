@@ -464,3 +464,64 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .foot-big a:hover { color: var(--orange-dark); }
 .foot-big .copy { grid-column: 1 / -1; padding-top: 18px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
 @media (max-width: 700px) { .foot-big .wrap { grid-template-columns: 1fr 1fr; } .foot-big .wrap > div:first-child { grid-column: 1 / -1; } }
+
+/* ---------- Apple-style feel: instant press feedback, soft reveals, accessibility preferences ---------- */
+.btn:active { transition-duration: .08s; }
+.lang button { transition: background-color .2s var(--ease), color .2s var(--ease), transform .3s var(--ease); }
+.lang button:active, .announce:active, .video button:active i { transform: scale(.94); transition-duration: .08s; }
+.video button:active i { transform: translate(-50%, -50%) scale(.94); }
+.announce { transition: box-shadow .25s var(--ease), transform .3s var(--ease); }
+.faq summary { transition: opacity .2s var(--ease); -webkit-tap-highlight-color: transparent; }
+.faq summary:active { opacity: .6; transition-duration: .08s; }
+/* FAQ answer eases in from the question that opened it */
+.faq details[open] p { animation: faq-in .35s var(--ease) both; }
+@keyframes faq-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .faq details[open] p { animation: none; }
+  .lang button:active, .announce:active, .btn:active { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .top { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .top.on-photo { background: var(--navy); }
+}
+@media (prefers-contrast: more) {
+  :root { --muted: #2D3748; --muted-2: #2D3748; --line: rgba(13, 27, 58, .35); }
+}
+
+/* ---------- Mobilize → Train → Send: asymmetric bento, the path builds to "Send" ---------- */
+.mts { grid-template-columns: repeat(12, 1fr); grid-template-rows: auto auto; gap: 14px; }
+.mts-card { grid-column: span 5; position: relative; }
+.mts-card:nth-child(2) { grid-column: 2 / span 5; }
+.mts-card.send {
+  grid-column: 7 / -1; grid-row: 1 / span 2; align-content: end; min-height: 100%; padding: 34px;
+  background: radial-gradient(120% 80% at 100% 0%, rgba(242, 103, 34, .28), transparent 55%), linear-gradient(160deg, #1B3266, var(--navy));
+  color: #fff; overflow: hidden;
+}
+.mts-card.send .n { color: #FFB38A; }
+.mts-card.send h3 { font-size: clamp(44px, 6vw, 76px); line-height: .95; letter-spacing: -.045em; color: #fff; }
+.mts-card.send .sub { color: #fff; }
+.mts-card.send p { color: rgba(255, 255, 255, .78); max-width: 30em; }
+.mts-card.send .isaiah { text-align: left; margin-top: 14px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .14); color: rgba(255, 255, 255, .7); }
+.mts-card.send .isaiah b { color: #fff; }
+.mts-card.send::after { /* faint flight path toward the corner */
+  content: ""; position: absolute; right: -60px; top: -60px; width: 260px; height: 260px; border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, .14); pointer-events: none;
+}
+/* concentric hairline "bezel" around the light cards — machined, not flat */
+.mts-card:not(.send), .how-item, .c4 { box-shadow: 0 0 0 6px rgba(255, 255, 255, .55), 0 0 0 7px rgba(13, 27, 58, .05), 0 18px 40px -22px rgba(40, 52, 110, .35); }
+@media (max-width: 860px) {
+  .mts { grid-template-columns: 1fr; }
+  .mts-card, .mts-card:nth-child(2), .mts-card.send { grid-column: auto; grid-row: auto; }
+  .mts-card.send { padding: 28px; }
+}
+
+/* ---------- button-in-button trailing arrow ---------- */
+.btn.has-ico { padding-right: 7px; gap: 12px; }
+.btn .b-ico { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, .18); transition: transform .45s var(--ease); }
+.btn .b-ico svg { width: 17px; height: 17px; }
+.btn.has-ico:hover .b-ico { transform: translateX(2px) scale(1.06); }
+
+/* ---------- scroll reveal: heavy, soft fade-up (JS adds .rv; no JS = always visible) ---------- */
+.rv { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--rv-d, 0s); }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
