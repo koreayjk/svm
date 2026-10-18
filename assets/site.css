@@ -525,3 +525,18 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .rv { opacity: 0; transform: translateY(28px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--rv-d, 0s); }
 .rv.in { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .rv { opacity: 1; transform: none; transition: none; } }
+
+/* ---------- three audiences: go · give · host ---------- */
+.aud { grid-template-columns: repeat(3, 1fr); }
+.aud-card.give { background: linear-gradient(170deg, #FFF4EC, #FDE6D6); }
+.aud-card.give .who i { background: var(--orange-ink); }
+.aud-card .aud-note { font-size: 14.5px; color: var(--muted-2); margin-top: auto; }
+.aud-card .btn { margin-top: auto; }
+.aud-card .aud-note + .btn { margin-top: 0; }
+@media (max-width: 1000px) { .aud { grid-template-columns: 1fr; } }
+.hero .ctas .btn.ghost { min-width: 0; }
+@media (max-width: 560px) {
+  .hero .ctas { flex-direction: column; align-items: stretch; max-width: 340px; margin-inline: auto; }
+  .hero .ctas .btn.has-ico { position: relative; padding-inline: 50px; }
+  .hero .ctas .btn.has-ico .b-ico { position: absolute; right: 7px; top: 7px; }
+}
