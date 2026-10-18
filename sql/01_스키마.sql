@@ -599,3 +599,13 @@ create table if not exists public.user_blocks (
   primary key (blocker_id, blocked_id),
   check (blocker_id <> blocked_id)
 );
+
+-- 스토어 앱 푸시 알림을 받을 기기 (Firebase Cloud Messaging 토큰)
+create table if not exists public.device_tokens (
+  token       text primary key,
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  platform    text check (platform in ('ios','android','web')),
+  lang        text,
+  updated_at  timestamptz not null default now()
+);
+create index if not exists device_tokens_user_idx on public.device_tokens(user_id);

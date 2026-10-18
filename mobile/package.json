@@ -1,0 +1,30 @@
+{
+  "name": "svm-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SVM app for Google Play and the App Store (Capacitor shell around app/index.html)",
+  "scripts": {
+    "web": "python3 ../tools/build_mobile_www.py",
+    "sync": "npm run web && npx cap sync",
+    "android": "npm run sync && npx cap open android",
+    "ios": "npm run sync && npx cap open ios",
+    "assets": "npx @capacitor/assets generate --iconBackgroundColor '#F4F5F8' --iconBackgroundColorDark '#0D1B3A' --splashBackgroundColor '#F4F5F8' --splashBackgroundColorDark '#0D1B3A'"
+  },
+  "dependencies": {
+    "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor-firebase/messaging": "^8.5.2",
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "@capawesome/capacitor-badge": "^8.0.4",
+    "@supabase/supabase-js": "2.45.4",
+    "firebase": "^12.19.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.3"
+  }
+}
