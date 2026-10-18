@@ -288,6 +288,8 @@ alter table public.conference_registrations   enable row level security;
 alter table public.notifications              enable row level security;
 alter table public.application_notes          enable row level security;
 alter table public.application_insurance      enable row level security;
+alter table public.content_reports            enable row level security;
+alter table public.user_blocks                enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -303,7 +305,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -348,6 +350,37 @@ create policy "insurance: self resubmit" on public.application_insurance for upd
   with check (user_id = auth.uid() and status = 'submitted' and reviewed_at is null);
 create policy "insurance: admin update" on public.application_insurance for update using (public.is_admin()) with check (public.is_admin());
 create policy "insurance: admin delete" on public.application_insurance for delete using (public.is_admin());
+
+-- 신고: 회원은 보내기만, 관리자만 보고 처리 / 차단: 본인 것만
+create policy "reports: member send" on public.content_reports for insert with check (
+  reporter_id = auth.uid() and status = 'open' and resolved_at is null
+  and (target_user_id is null or target_user_id <> auth.uid())
+);
+create policy "reports: admin read"   on public.content_reports for select using (public.is_admin());
+create policy "reports: admin update" on public.content_reports for update using (public.is_admin()) with check (public.is_admin());
+create policy "reports: admin delete" on public.content_reports for delete using (public.is_admin());
+create policy "blocks: own" on public.user_blocks for all using (blocker_id = auth.uid()) with check (blocker_id = auth.uid());
+
+-- 계정 삭제 (앱 안에서 본인이 직접 — 스토어 필수). 관련 기록은 외래키 on delete 로 함께 정리됩니다.
+--   저장소 파일(간증 사진·보험 증서)은 앱이 먼저 지운 뒤 이 함수를 부릅니다.
+create or replace function public.delete_my_account()
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare me uuid := auth.uid();
+begin
+  if me is null then raise exception 'not signed in'; end if;
+  if exists (select 1 from public.profiles where id = me and role = 'admin')
+     and (select count(*) from public.profiles where role = 'admin') <= 1 then
+    raise exception 'last_admin' using hint = 'Make another member an admin first.';
+  end if;
+  delete from auth.users where id = me;
+end;
+$$;
+revoke all on function public.delete_my_account() from public, anon;
+grant execute on function public.delete_my_account() to authenticated;
 
 create policy "registrations: admin manage"  on public.conference_registrations for all using (public.is_admin()) with check (public.is_admin());
 
@@ -545,6 +578,21 @@ begin
 end;
 $$;
 
+-- 새 신고가 들어오면 관리자 모두에게 알림
+create or replace function public.notify_report()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.notifications (user_id, kind, payload, link)
+  select p.id, 'report_new', jsonb_build_object('kind', new.target_kind, 'reason', new.reason), '#/admin'
+    from public.profiles p where p.role = 'admin';
+  return new;
+end;
+$$;
+
 create or replace function public.notify_team_added()
 returns trigger
 language plpgsql
@@ -567,6 +615,9 @@ begin
     execute format('create trigger notify_changes after update on public.%I for each row execute function public.notify_changes()', tb);
   end loop;
 end $$;
+drop trigger if exists notify_report on public.content_reports;
+create trigger notify_report after insert on public.content_reports
+  for each row execute function public.notify_report();
 drop trigger if exists notify_team_added on public.team_members;
 create trigger notify_team_added after insert on public.team_members
   for each row execute function public.notify_team_added();

@@ -674,6 +674,35 @@
   .field-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   @media (max-width: 380px) { .field-pair { grid-template-columns: 1fr; } }
 
+  /* sheets: report · block · delete account */
+  .sheet-back { position: fixed; inset: 0; z-index: calc(var(--z-toast) - 1); background: rgba(13, 27, 58, .32); display: flex; align-items: flex-end; justify-content: center; animation: sheet-fade .25s var(--ease) both; }
+  .sheet { width: min(560px, 100%); max-height: 88dvh; overflow-y: auto; background: var(--surface); border-radius: 26px 26px 0 0; padding: 10px 20px calc(20px + var(--safe-b)); box-shadow: 0 -12px 40px -16px rgba(13, 27, 58, .35); animation: sheet-up .38s var(--ease-out) both; }
+  .sheet-back.out { animation: sheet-fade-out .26s var(--ease) both; }
+  .sheet-back.out .sheet { animation: sheet-down .26s var(--ease) both; }
+  @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+  @keyframes sheet-down { from { transform: none; } to { transform: translateY(100%); } }
+  @keyframes sheet-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheet-fade-out { from { opacity: 1; } to { opacity: 0; } }
+  .sheet-grab { width: 38px; height: 5px; border-radius: 3px; background: var(--fill-2); margin: 0 auto 14px; }
+  .sheet-title { font-size: 20px; }
+  .sheet-actions { display: grid; margin: 14px 0 12px; border-radius: 16px; overflow: hidden; background: var(--fill); }
+  .sheet-btn { display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 0; background: none; font: inherit; font-size: 16.5px; font-weight: 500; color: var(--text); text-align: left; cursor: pointer; transition: background-color .15s var(--ease); }
+  .sheet-btn + .sheet-btn { box-shadow: inset 0 1px 0 var(--separator); }
+  .sheet-btn:active { background: var(--fill-2); }
+  .sheet-btn svg { width: 20px; height: 20px; color: var(--muted-2); }
+  .sheet-btn.danger, .sheet-btn.danger svg { color: var(--danger); }
+  .btn.danger-fill { background: var(--danger); color: #fff; }
+  .btn.danger-fill:hover { background: #9A1D14; }
+  .more-btn svg { width: 18px; height: 18px; }
+  .msg .more-btn { opacity: .55; }
+  button.list-row { width: 100%; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+  .del-link { color: var(--muted-2); font-weight: 500; font-size: 14px; }
+  .del-link:hover { color: var(--danger); }
+  .agree { display: flex; gap: 10px; align-items: flex-start; margin: 2px 4px 16px; font-size: 13.5px; line-height: 1.5; color: var(--muted); cursor: pointer; }
+  .agree input { accent-color: var(--orange); width: 18px; height: 18px; margin: 1px 0 0; flex: 0 0 auto; }
+  .report + .report { border-top: 1px solid var(--separator); margin-top: 14px; padding-top: 14px; }
+  @media (prefers-reduced-motion: reduce) { .sheet, .sheet-back, .sheet-back.out, .sheet-back.out .sheet { animation: none; } }
+
   /* travel insurance */
   .due-chip { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; padding: 6px 12px; border-radius: 999px; background: var(--orange-soft); color: var(--orange-dark); font-size: 13.5px; font-weight: 700; }
   .due-chip.late { background: var(--danger-soft); color: var(--danger); }
@@ -945,6 +974,18 @@ const i18n = {
     signup_check_email: 'Almost there. Check your email to confirm your account, then log in.',
     signup_done: 'Welcome to SVM.',
     auth_welcome: 'In 1886 a student prayer meeting sent 20,000+ students to the nations. We are reviving it in Bryan/College Station.',
+    more: 'More', rp_report: 'Report', rp_block: 'Block {x}', rp_title: 'Report this', rp_why: 'What is wrong with it?',
+    rp_spam: 'Spam or advertising', rp_harassment: 'Harassment, hate or bullying', rp_inappropriate: 'Sexual or inappropriate content', rp_safety: 'Puts someone on the field at risk', rp_other: 'Something else',
+    rp_detail: 'Anything else HQ should know (optional)', rp_send: 'Send report', rp_sent: 'Thank you. HQ will review it within 24 hours.',
+    bl_title: 'Block {x}?', bl_d: 'You will no longer see their messages, prayer requests, testimonies or team posts. They are not told. You can unblock them on your My page.',
+    bl_do: 'Block', bl_done: 'Blocked. Their posts are hidden for you.', bl_list: 'Blocked people', bl_none: 'You have not blocked anyone.', bl_unblock: 'Unblock', bl_unblocked: 'Unblocked.',
+    cancel: 'Cancel', terms: 'Terms of Use', legal: 'Terms and privacy',
+    agree_html: 'I agree to the <a href="{t}" target="_blank" rel="noopener">Terms of Use</a> and <a href="{p}" target="_blank" rel="noopener">Privacy</a>, including no abusive or objectionable content.',
+    del_account: 'Delete account', del_title: 'Delete your account?', del_d: 'This permanently deletes your profile, applications, insurance certificate, messages, prayer requests, testimonies, training progress and attendance. It cannot be undone.',
+    del_type: 'Type {w} to confirm', del_word: 'DELETE', del_do: 'Delete my account', del_done: 'Your account was deleted.', del_last_admin: 'You are the only admin. Make another member an admin first.',
+    adm_reports: 'Reports', adm_reports_none: 'No open reports.', adm_rp_remove: 'Remove content', adm_rp_dismiss: 'Dismiss', adm_rp_block_note: 'Reported by a member', adm_rp_resolved: '{n} handled',
+    rp_kind_message: 'Chat message', rp_kind_prayer: 'Prayer request', rp_kind_testimony: 'Testimony', rp_kind_team_post: 'Team post', rp_kind_user: 'Member',
+    todo_reports: 'reports to review', todo_reports_1: 'report to review', nt_report: 'New report to review: {k}.',
     signup_fast: 'Takes under a minute. You can add school and phone later.',
     // tabs
     tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
@@ -1160,6 +1201,18 @@ const i18n = {
     signup_check_email: '거의 다 됐어요. 이메일에서 인증 링크를 누른 뒤 로그인하세요.',
     signup_done: 'SVM에 오신 것을 환영합니다.',
     auth_welcome: '1886년 대학생 기도 모임에서 시작해 2만 명 이상을 열방으로 보낸 운동을, 브라이언/컬리지 스테이션에서 다시 일으킵니다.',
+    more: '더보기', rp_report: '신고하기', rp_block: '{x} 차단하기', rp_title: '신고하기', rp_why: '어떤 문제인가요?',
+    rp_spam: '스팸·광고', rp_harassment: '괴롭힘·혐오·따돌림', rp_inappropriate: '선정적이거나 부적절한 내용', rp_safety: '선교지 사람을 위험하게 함', rp_other: '기타',
+    rp_detail: '본부가 알아야 할 내용 (선택)', rp_send: '신고 보내기', rp_sent: '고맙습니다. 본부가 24시간 안에 확인합니다.',
+    bl_title: '{x}님을 차단할까요?', bl_d: '이 사람의 메시지, 기도 제목, 간증, 팀 게시글이 더 이상 보이지 않습니다. 상대에게는 알리지 않으며, 마이 탭에서 언제든 차단을 풀 수 있습니다.',
+    bl_do: '차단', bl_done: '차단했어요. 이 사람의 글은 보이지 않습니다.', bl_list: '차단한 사람', bl_none: '차단한 사람이 없습니다.', bl_unblock: '차단 해제', bl_unblocked: '차단을 풀었어요.',
+    cancel: '취소', terms: '이용약관', legal: '이용약관과 개인정보',
+    agree_html: '<a href="{t}" target="_blank" rel="noopener">이용약관</a>과 <a href="{p}" target="_blank" rel="noopener">개인정보 처리 안내</a>에 동의합니다. 욕설·혐오·부적절한 글은 올리지 않겠습니다.',
+    del_account: '계정 삭제', del_title: '계정을 삭제할까요?', del_d: '프로필, 신청서, 보험 증서, 메시지, 기도 제목, 간증, 훈련 기록, 출석이 모두 영구히 삭제되며 되돌릴 수 없습니다.',
+    del_type: '확인을 위해 {w} 를 입력하세요', del_word: '삭제', del_do: '계정 영구 삭제', del_done: '계정이 삭제되었습니다.', del_last_admin: '유일한 관리자입니다. 다른 회원을 관리자로 지정한 뒤 삭제해 주세요.',
+    adm_reports: '신고', adm_reports_none: '처리할 신고가 없습니다.', adm_rp_remove: '내용 삭제', adm_rp_dismiss: '문제 없음', adm_rp_block_note: '회원 신고', adm_rp_resolved: '처리 완료 {n}건',
+    rp_kind_message: '채팅 메시지', rp_kind_prayer: '기도 제목', rp_kind_testimony: '간증', rp_kind_team_post: '팀 게시글', rp_kind_user: '회원',
+    todo_reports: '확인할 신고', nt_report: '확인할 새 신고: {k}',
     signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
     tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
@@ -1702,6 +1755,7 @@ function createDemoClient() {
     room_members: () => ({ joined_at: nowIso(), last_read_at: nowIso() }),
     applications: () => ({ status: 'submitted', admin_note: null, updated_at: nowIso() }),
     application_extensions: () => ({ status: 'pending', reviewed_at: null }),
+    content_reports: () => ({ status: 'open', resolved_at: null, detail: null, excerpt: null }),
     application_insurance: () => ({ status: 'submitted', admin_note: null, reviewed_at: null, submitted_at: nowIso(), covers_medical: false, covers_evacuation: false, covers_volunteer: false }),
     graduation_requests: () => ({ status: 'pending', reviewed_at: null }),
     notifications: () => ({ payload: {}, read_at: null }),
@@ -1744,6 +1798,7 @@ function createDemoClient() {
       if (table === 'support_stories' && changed && row.status !== 'pending') notify(row.user_id, 'support_status', { status: row.status, title: row.title }, '#/support');
       if (table === 'course_feedback' && row.admin_comment && row.admin_comment !== old.admin_comment) notify(row.user_id, 'feedback_reply', { course_id: row.course_id }, '#/course/' + row.course_id);
     }
+    if (ev === 'INSERT' && table === 'content_reports') db.profiles.filter(p => p.role === 'admin').forEach(p => notify(p.id, 'report_new', { kind: row.target_kind, reason: row.reason }, '#/admin'));
     if (ev === 'INSERT' && table === 'team_members') notify(row.user_id, 'team_added', { team: db.teams.find(x => x.id === row.team_id)?.name }, '#/teams/' + row.team_id);
     channels.forEach(ch => ch.subs.forEach(sub => {
       if (sub.f.table !== table || (sub.f.event !== '*' && sub.f.event !== ev)) return;
@@ -1786,7 +1841,7 @@ function createDemoClient() {
       } else if (this.op === 'insert') {
         const list = Array.isArray(this.v) ? this.v : [this.v];
         const COMPOSITE = { nation_pledges: ['user_id', 'country_id'], room_members: ['user_id', 'country_id'], language_progress: ['user_id', 'sentence_id'], practice_days: ['user_id', 'day'],
-          attendance: ['gathering_id', 'user_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
+          attendance: ['gathering_id', 'user_id'], user_blocks: ['blocker_id', 'blocked_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
         const UNIQUE = { application_insurance: ['application_id'], gatherings: ['date', 'type'], course_feedback: ['user_id', 'course_id'], countries: ['code'] };
         for (const r of list) {
           const pk = COMPOSITE[this.t], uq = pk || UNIQUE[this.t];
@@ -1836,6 +1891,20 @@ function createDemoClient() {
     },
     // DB 함수 흉내: self_check_in — 데모에서는 시간 제한 없이 이번(또는 다음) 주일 모임에 출석
     async rpc(name) {
+      if (name === 'delete_my_account') {
+        const me = db.session; if (!me) return { data: null, error: { message: 'not signed in' } };
+        const prof = db.profiles.find(p => p.id === me);
+        if (prof?.role === 'admin' && db.profiles.filter(p => p.role === 'admin').length <= 1) return { data: null, error: { message: 'last_admin' } };
+        // 외래키 on delete cascade / set null 흉내
+        for (const k of Object.keys(db)) {
+          if (!Array.isArray(db[k]) || k === 'users' || k === 'profiles') continue;
+          if (k === 'content_reports') { db[k].forEach(r => { if (r.reporter_id === me) r.reporter_id = null; if (r.target_user_id === me) r.target_user_id = null; }); continue; }
+          db[k] = db[k].filter(r => r.user_id !== me && r.blocker_id !== me && r.blocked_id !== me);
+        }
+        db.profiles = db.profiles.filter(p => p.id !== me); db.users = db.users.filter(u => u.id !== me);
+        db.session = null; save(); emit('SIGNED_OUT', null);
+        return { data: null, error: null };
+      }
       if (name !== 'self_check_in') return { data: null, error: { message: 'Unknown function' } };
       const me = db.session; if (!me) return { data: null, error: { message: 'Please log in first.' } };
       const now = new Date(), local = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' }).format(now);
@@ -1974,6 +2043,7 @@ const ICON = {
   speaker: '<path d="M4.5 9.5h3l4.5-4v13l-4.5-4h-3z"/><path d="M15.5 9.2a4 4 0 0 1 0 5.6"/><path d="M18 6.6a7.5 7.5 0 0 1 0 10.8"/>',
   stop: '<rect x="6.5" y="6.5" width="11" height="11" rx="2.5"/>',
   send: '<path d="M4.5 12 19.5 5l-4 15-4-6.5z"/><path d="m11.5 13.5 8-8.5"/>',
+  more: '<circle cx="6" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
   trash: '<path d="M4.5 7h15"/><path d="M9.5 7V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v2"/><path d="M6.5 7l.9 11.6A1.6 1.6 0 0 0 9 20h6a1.6 1.6 0 0 0 1.6-1.4L17.5 7"/>',
 };
 // 빈 화면: 글자만 두지 않고 아이콘 + 짧은 안내
@@ -2112,6 +2182,7 @@ function viewSetup() {
 
 // ---------- Auth ----------
 const PRIVACY_URL = '../privacy/';
+const TERMS_URL = '../terms/';
 function viewAuth() {
   const m = state.authMode;
   let form;
@@ -2128,6 +2199,7 @@ function viewAuth() {
       <label class="field"><span>${esc(t('name'))} <span class="muted">· ${esc(t('name_hint'))}</span></span><input type="text" name="name" autocomplete="name" required></label>
       <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
       <label class="field"><span>${esc(t('password'))} <span class="muted">· ${esc(t('password_hint'))}</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <label class="agree"><input type="checkbox" name="agree" required><span>${t('agree_html', { t: TERMS_URL, p: PRIVACY_URL })}</span></label>
       <button class="btn block" type="submit">${esc(t('signup'))}</button>
       <p class="small muted auth-note">${esc(t('signup_fast'))}</p>
     </form>`;
@@ -2164,7 +2236,7 @@ function viewAuth() {
         <div><b>${esc(t('ap2_n'))}</b>${esc(t('ap2'))}</div>
         <div><b>${esc(t('ap3_n'))}</b>${esc(t('ap3'))}</div>
       </div>
-      <p class="auth-legal"><a href="${PRIVACY_URL}" target="_blank" rel="noopener">${esc(t('privacy'))}</a></p>
+      <p class="auth-legal"><a href="${TERMS_URL}" target="_blank" rel="noopener">${esc(t('terms'))}</a> · <a href="${PRIVACY_URL}" target="_blank" rel="noopener">${esc(t('privacy'))}</a></p>
     </div>`;
 }
 
@@ -2496,7 +2568,11 @@ const VIEWS = {
         ${isIOS ? `<div class="row small muted" style="gap:10px"><span class="ico-tile soft">${icon('download')}</span>${esc(t('install_ios'))}</div>` : ''}
         ${DEMO ? `<button class="btn light block" id="demo-reset">${esc(t('demo_reset'))}</button>` : ''}
         <button class="btn danger block" id="logout-btn">${icon('logout', 'width="18" height="18"')} ${esc(t('logout'))}</button>
-      </div>`)}`;
+      </div>`)}
+      ${card(`<button type="button" class="list-row" id="blocked-btn"><span class="ico-tile soft">${icon('lock')}</span><div class="meta"><div class="t">${esc(t('bl_list'))}</div><div class="d">${(state.blocked || new Set()).size}</div></div><span class="chev">${icon('chev')}</span></button>
+        <a class="list-row" href="${TERMS_URL}" target="_blank" rel="noopener"><span class="ico-tile soft">${icon('book')}</span><div class="meta"><div class="t">${esc(t('terms'))}</div></div><span class="chev">${icon('chev')}</span></a>
+        <a class="list-row" href="${PRIVACY_URL}" target="_blank" rel="noopener"><span class="ico-tile soft">${icon('shield')}</span><div class="meta"><div class="t">${esc(t('privacy'))}</div></div><span class="chev">${icon('chev')}</span></a>`)}
+      <p style="text-align:center;margin:8px 0 0"><button type="button" class="text-link del-link" id="delete-account">${esc(t('del_account'))}</button></p>`;
   },
 
   async admin() {
@@ -2774,6 +2850,8 @@ const BINDERS = {
       render();
     };
     document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); };
+    document.getElementById('blocked-btn').onclick = openBlockedSheet;
+    document.getElementById('delete-account').onclick = openDeleteSheet;
     const dr = document.getElementById('demo-reset');
     // 두 번 눌러 확인 (브라우저 confirm 창 대신 화면 안에서 확인)
     if (dr) dr.onclick = () => {
@@ -2854,6 +2932,140 @@ BINDERS.events = function (id) {
 // ② 나라방 — 나라별 채팅 (Supabase Realtime). 방 참여 ≠ 신청
 // ---------------------------------------------------------------------
 const nameCache = {};   // user_id → { name, role } (profile_names 뷰: 이메일·전화번호 없음)
+// ---------------------------------------------------------------------
+// 신고 · 차단 · 계정 삭제 (앱스토어 1.2 / 5.1.1(v), 구글플레이 UGC·계정 삭제 정책)
+// ---------------------------------------------------------------------
+async function loadBlocks() {
+  const { data } = await sb.from('user_blocks').select('blocked_id').eq('blocker_id', state.profile?.id || '');
+  state.blocked = new Set((data || []).map(r => r.blocked_id));
+}
+function isBlocked(uid) { return !!uid && !!state.blocked && state.blocked.has(uid); }
+function moreBtn(kind, id, uid, text) {
+  return `<button type="button" class="quiet-del more-btn" data-more="${kind}" data-id="${esc(id)}" data-uid="${esc(uid)}" data-text="${esc(String(text || '').slice(0, 300))}" aria-label="${esc(t('more'))}" title="${esc(t('more'))}">${icon('more')}</button>`;
+}
+// 아래에서 올라오는 시트 (같은 길로 내려가며 닫힘)
+function openSheet(html, onBind) {
+  closeSheet(true);
+  const back = document.createElement('div');
+  back.className = 'sheet-back';
+  back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true">${html}</div>`;
+  document.body.appendChild(back);
+  back.addEventListener('click', e => { if (e.target === back || e.target.closest('[data-sheet-close]')) closeSheet(); });
+  state.sheetKey = e => { if (e.key === 'Escape') closeSheet(); };
+  document.addEventListener('keydown', state.sheetKey);
+  onBind && onBind(back.querySelector('.sheet'));
+  back.querySelector('button, input, textarea')?.focus({ preventScroll: true });
+}
+function closeSheet(now) {
+  const back = document.querySelector('.sheet-back');
+  if (state.sheetKey) { document.removeEventListener('keydown', state.sheetKey); state.sheetKey = null; }
+  if (!back) return;
+  if (now || matchMedia('(prefers-reduced-motion: reduce)').matches) return back.remove();
+  back.classList.add('out'); setTimeout(() => back.remove(), 260);
+}
+function sheetHead(title, d) { return `<div class="sheet-grab" aria-hidden="true"></div><h2 class="sheet-title">${esc(title)}</h2>${d ? `<p class="small muted" style="margin:6px 0 0">${esc(d)}</p>` : ''}`; }
+async function openMore(b) {
+  const { more: kind, id, uid, text } = b.dataset;
+  await loadNames([uid]);
+  const name = shortName(nameCache[uid]?.name) || t('rp_kind_user');
+  openSheet(`${sheetHead(name)}
+    <div class="sheet-actions">
+      <button type="button" class="sheet-btn" data-act="report">${icon('shield')} ${esc(t('rp_report'))}</button>
+      <button type="button" class="sheet-btn danger" data-act="block">${icon('lock')} ${esc(t('rp_block', { x: name }))}</button>
+    </div>
+    <button type="button" class="btn light block" data-sheet-close>${esc(t('cancel'))}</button>`, sh => {
+    sh.querySelector('[data-act=report]').onclick = () => openReport(kind, id, uid, text);
+    sh.querySelector('[data-act=block]').onclick = () => openBlock(uid, name);
+  });
+}
+function openReport(kind, id, uid, text) {
+  const reasons = ['spam', 'harassment', 'inappropriate', 'safety', 'other'];
+  openSheet(`${sheetHead(t('rp_title'), t('rp_why'))}
+    <form id="report-form" novalidate style="margin-top:14px">
+      <div class="choice">${reasons.map((r, i) => `<label><input type="radio" name="reason" value="${r}" ${i === 0 ? 'checked' : ''}><span><b>${esc(t('rp_' + r))}</b></span></label>`).join('')}</div>
+      <label class="field"><span>${esc(t('rp_detail'))}</span><textarea name="detail" maxlength="1000" style="min-height:70px"></textarea></label>
+      <button class="btn block" type="submit">${esc(t('rp_send'))}</button>
+      <button type="button" class="btn light block" style="margin-top:8px" data-sheet-close>${esc(t('cancel'))}</button>
+    </form>`, sh => {
+    const f = sh.querySelector('form');
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+      const fd = new FormData(f);
+      const { error } = await sb.from('content_reports').insert({
+        reporter_id: state.profile.id, target_kind: kind, target_id: kind === 'user' ? null : Number(id), target_user_id: uid || null,
+        reason: fd.get('reason'), detail: fd.get('detail').trim() || null, excerpt: text || null,
+      });
+      if (error) { btn.disabled = false; return toast(errMsg(error), true); }
+      closeSheet(); toast(t('rp_sent'));
+    };
+  });
+}
+function openBlock(uid, name) {
+  openSheet(`${sheetHead(t('bl_title', { x: name }), t('bl_d'))}
+    <div class="stack" style="margin-top:18px"><button type="button" class="btn block danger-fill" data-act="go">${esc(t('bl_do'))}</button>
+      <button type="button" class="btn light block" data-sheet-close>${esc(t('cancel'))}</button></div>`, sh => {
+    sh.querySelector('[data-act=go]').onclick = async (e) => {
+      e.currentTarget.disabled = true;
+      const { error } = await sb.from('user_blocks').upsert({ blocker_id: state.profile.id, blocked_id: uid }, { onConflict: 'blocker_id,blocked_id', ignoreDuplicates: true });
+      if (error) { e.currentTarget.disabled = false; return toast(errMsg(error), true); }
+      state.blocked.add(uid); closeSheet(); toast(t('bl_done')); render();
+    };
+  });
+}
+async function openBlockedSheet() {
+  const ids = [...(state.blocked || [])];
+  await loadNames(ids);
+  openSheet(`${sheetHead(t('bl_list'))}
+    <div style="margin-top:10px">${ids.length ? ids.map(id => `<div class="list-row no-ico"><div class="meta"><div class="t">${esc(shortName(nameCache[id]?.name) || '—')}</div></div>
+      <button type="button" class="btn light small" data-unblock="${esc(id)}">${esc(t('bl_unblock'))}</button></div>`).join('') : `<p class="muted small">${esc(t('bl_none'))}</p>`}</div>
+    <button type="button" class="btn light block" style="margin-top:12px" data-sheet-close>${esc(t('cancel'))}</button>`, sh => {
+    sh.querySelectorAll('[data-unblock]').forEach(b => b.onclick = async () => {
+      b.disabled = true;
+      const { error } = await sb.from('user_blocks').delete().eq('blocker_id', state.profile.id).eq('blocked_id', b.dataset.unblock);
+      if (error) { b.disabled = false; return toast(errMsg(error), true); }
+      state.blocked.delete(b.dataset.unblock); b.closest('.list-row').remove(); toast(t('bl_unblocked'));
+      if (!state.blocked.size) closeSheet();
+      render();
+    });
+  });
+}
+function openDeleteSheet() {
+  const word = t('del_word');
+  openSheet(`${sheetHead(t('del_title'), t('del_d'))}
+    <form id="delete-form" novalidate style="margin-top:16px">
+      <label class="field"><span>${esc(t('del_type', { w: word }))}</span><input type="text" name="confirm" autocomplete="off" autocapitalize="characters"></label>
+      <button class="btn block danger-fill" type="submit" disabled>${esc(t('del_do'))}</button>
+      <button type="button" class="btn light block" style="margin-top:8px" data-sheet-close>${esc(t('cancel'))}</button>
+    </form>`, sh => {
+    const f = sh.querySelector('form'), btn = f.querySelector('button[type=submit]');
+    f.confirm.oninput = () => { btn.disabled = f.confirm.value.trim().toUpperCase() !== word.toUpperCase(); };
+    f.onsubmit = async e => {
+      e.preventDefault();
+      if (btn.disabled) return;
+      btn.disabled = true;
+      try {
+        // 저장소의 내 파일(간증 사진·보험 증서) 먼저 정리 — 실패해도 계정 삭제는 진행
+        if (!DEMO) for (const bucket of ['testimony-photos', INS_BUCKET]) {
+          const { data } = await sb.storage.from(bucket).list(state.profile.id, { limit: 1000 });
+          const paths = (data || []).map(o => `${state.profile.id}/${o.name}`);
+          if (paths.length) await sb.storage.from(bucket).remove(paths).catch(() => {});
+        }
+        const { error } = await sb.rpc('delete_my_account');
+        if (error) throw error;
+        closeSheet(true);
+        await sb.auth.signOut().catch(() => {});
+        toast(t('del_done'));
+      } catch (err) {
+        btn.disabled = false;
+        toast(/last_admin/.test(err.message || '') ? t('del_last_admin') : errMsg(err), true);
+      }
+    };
+  });
+}
+// 모든 화면 공통: ⋯ 버튼
+document.addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (b) { e.preventDefault(); openMore(b); } });
+
 async function loadNames(ids) {
   const need = [...new Set(ids)].filter(id => id && !(id in nameCache));
   if (!need.length) return;
@@ -2895,6 +3107,7 @@ function msgDay(iso) {
 }
 function msgHTML(m, prev) {
   const me = m.user_id === state.profile.id;
+  if (!me && isBlocked(m.user_id)) return '';
   const newDay = !prev || new Date(prev.created_at).toDateString() !== new Date(m.created_at).toDateString();
   const cont = !newDay && prev && prev.user_id === m.user_id && (new Date(m.created_at) - new Date(prev.created_at)) < 5 * 60e3;
   const who = me ? t('you') : shortName(nameCache[m.user_id]?.name);
@@ -2903,7 +3116,7 @@ function msgHTML(m, prev) {
     <div class="msg ${me ? 'me' : ''} ${cont ? 'cont' : ''} ${m.deleted ? 'gone' : ''}" data-msg="${m.id}">
       <div class="who">${esc(who)}</div>
       <div class="bubble">${m.deleted ? esc(t('room_deleted')) : esc(m.body)}</div>
-      <div class="foot"><span>${esc(msgTime(m.created_at))}</span>${canDelete ? `<button type="button" class="quiet-del" data-del-msg="${m.id}" aria-label="${esc(t('room_delete'))}" title="${esc(t('room_delete'))}">${icon('trash')}</button>` : ''}</div>
+      <div class="foot"><span>${esc(msgTime(m.created_at))}</span>${!me && !m.deleted ? moreBtn('message', m.id, m.user_id, m.body) : ''}${canDelete ? `<button type="button" class="quiet-del" data-del-msg="${m.id}" aria-label="${esc(t('room_delete'))}" title="${esc(t('room_delete'))}">${icon('trash')}</button>` : ''}</div>
     </div>`;
 }
 function chatHTML(list) {
@@ -4293,6 +4506,7 @@ async function loadTestimonies(countryId) {
 function testimonyCard(x, { full = true } = {}) {
   const c = x.country_id ? countryById(x.country_id) : null;
   const mine = x.user_id === state.profile.id;
+  if (!mine && isBlocked(x.user_id)) return '';
   const photos = Array.isArray(x.photos) ? x.photos : [];
   return card(`${photos.length ? `<div class="gallery" style="margin-top:-4px">${photos.map(u => `<figure><img src="${esc(u)}" alt="" loading="lazy"></figure>`).join('')}</div>` : ''}
     <div class="row between top" style="gap:10px">
@@ -4302,7 +4516,7 @@ function testimonyCard(x, { full = true } = {}) {
     </div>
     <p style="margin:10px 0 0;${full ? '' : 'display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden'}">${para(x.body)}</p>
     <div class="row between small muted" style="margin-top:12px"><span>${esc(mine ? t('you') : shortName(nameCache[x.user_id]?.name))} · ${esc(relTime(x.created_at))}</span>
-      ${mine ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-testi="${x.id}">${esc(t('adm_delete'))}</button>` : ''}</div>`);
+      ${mine ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-testi="${x.id}">${esc(t('adm_delete'))}</button>` : moreBtn('testimony', x.id, x.user_id, x.title + ' — ' + x.body)}</div>`);
 }
 
 VIEWS.testimonies = async function (param) {
@@ -4394,6 +4608,7 @@ VIEWS.prayers = async function (code) {
   const item = p => {
     const pc = p.country_id ? countryById(p.country_id) : null;
     const me = p.user_id === state.profile.id;
+    if (!me && isBlocked(p.user_id)) return '';
     return `<div class="prayer ${p.answered ? 'answered' : ''}">
       <div class="row between small muted"><span>${pc ? flag(pc.code) + ' ' + esc(countryName(pc)) + ' · ' : ''}${esc(me ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
         ${p.answered ? `<span class="st st-approved">${esc(t('pr_answered'))}</span>` : ''}</div>
@@ -4402,7 +4617,8 @@ VIEWS.prayers = async function (code) {
         <button type="button" class="pray-btn ${mine.has(p.id) ? 'on' : ''}" data-pray="${p.id}" aria-pressed="${mine.has(p.id)}">${icon('hands')} ${esc(t('pr_prayed'))} <b class="num">${count[p.id] || 0}</b></button>
         ${me && !p.answered ? `<button type="button" class="btn light small" data-answer="${p.id}">${esc(t('pr_mark_answered'))}</button>` : ''}
         ${me && p.answered ? `<a class="btn light small" href="#/testimonies/new" data-testi-from="${p.id}">${icon('spark')} ${esc(t('pr_write_testi'))}</a>` : ''}
-        ${me || isAdmin() ? `<button type="button" class="quiet-del" style="margin-left:auto" data-del-prayer="${p.id}" aria-label="${esc(t('adm_delete'))}" title="${esc(t('adm_delete'))}">${icon('trash')}</button>` : ''}
+        ${!me ? `<span style="margin-left:auto">${moreBtn('prayer', p.id, p.user_id, p.body)}</span>` : ''}
+        ${me || isAdmin() ? `<button type="button" class="quiet-del" style="${me ? 'margin-left:auto' : ''}" data-del-prayer="${p.id}" aria-label="${esc(t('adm_delete'))}" title="${esc(t('adm_delete'))}">${icon('trash')}</button>` : ''}
       </div></div>`;
   };
   return `${backLink(c ? '#/rooms/' + esc(c.code) : '#/community', c ? countryName(c) : t('community_title'))}${pageHead(t('com_prayer_t'), t('com_prayer_d'))}
@@ -4557,8 +4773,8 @@ VIEWS.teams = async function (id) {
     await loadNames((posts || []).map(p => p.user_id));
     body = `${myTeams.has(tm.id) ? card(`<form id="post-form"><textarea name="body" maxlength="4000" style="min-height:80px" placeholder="${esc(t('team_post_ph'))}" required></textarea>
         <button class="btn block" type="submit" style="margin-top:10px">${esc(t('team_post'))}</button></form>`) : ''}
-      ${(posts || []).length ? card((posts || []).map(p => `<div class="prayer"><div class="row between small muted"><span>${esc(p.user_id === state.profile.id ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
-          ${p.user_id === state.profile.id || isAdmin() ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-post="${p.id}">${esc(t('adm_delete'))}</button>` : ''}</div>
+      ${(posts || []).length ? card((posts || []).filter(p => p.user_id === state.profile.id || !isBlocked(p.user_id)).map(p => `<div class="prayer"><div class="row between small muted"><span>${esc(p.user_id === state.profile.id ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
+          <span class="row" style="gap:6px">${p.user_id !== state.profile.id ? moreBtn('team_post', p.id, p.user_id, p.body) : ''}${p.user_id === state.profile.id || isAdmin() ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-post="${p.id}">${esc(t('adm_delete'))}</button>` : ''}</span></div>
           <p style="margin:6px 0 0">${para(p.body)}</p></div>`).join('')) : card(emptyHTML('chat', t('team_no_posts')))}`;
   } else {
     const { data: tasks } = await sb.from('team_tasks').select('*').eq('team_id', tm.id).order('created_at');
@@ -4689,9 +4905,10 @@ function bindAdminGatherings() {
 }
 
 async function adminPostsHTML() {
-  const [{ data: ts }, { data: ss }] = await Promise.all([
+  const [{ data: ts }, { data: ss }, { data: rps }] = await Promise.all([
     sb.from('testimonies').select('*').order('created_at', { ascending: false }).limit(80),
     sb.from('support_stories').select('*').order('created_at', { ascending: false }).limit(60),
+    sb.from('content_reports').select('*').order('created_at', { ascending: false }).limit(100),
   ]);
   await loadCountries();
   const pmap = Object.fromEntries((await allProfiles()).map(p => [p.id, p]));
@@ -4717,12 +4934,44 @@ async function adminPostsHTML() {
         ${x.status !== 'rejected' ? `<button class="btn small danger" data-mod="support_stories" data-id="${x.id}" data-to="rejected">${esc(t('adm_reject'))}</button>` : ''}
         <button class="btn small light" data-mod-del="support_stories" data-id="${x.id}">${esc(t('adm_delete'))}</button></div></div></details>`;
   const order = l => [...(l || [])].sort((a, b) => (a.status === 'pending' ? 0 : 1) - (b.status === 'pending' ? 0 : 1));
-  return `<div class="section-head" style="margin-top:4px"><h2>${esc(t('com_testi_t'))}</h2><span class="small muted">${esc(t('mod_pending_n', { n: (ts || []).filter(x => x.status === 'pending').length }))}</span></div>
+  const open = (rps || []).filter(r => r.status === 'open');
+  const rRow = r => `<div class="report">
+      <div class="row between small"><b>${esc(t('rp_kind_' + r.target_kind))} · ${esc(t('rp_' + r.reason))}</b><span class="muted">${esc(relTime(r.created_at))}</span></div>
+      <div class="small muted" style="margin-top:2px">${esc(r.target_user_id ? (pmap[r.target_user_id]?.name || pmap[r.target_user_id]?.email || '—') : '—')}</div>
+      ${r.excerpt ? `<div class="quote" style="margin:8px 0 0">${esc(r.excerpt)}</div>` : ''}
+      ${r.detail ? `<p class="small" style="margin:8px 0 0">${esc(r.detail)}</p>` : ''}
+      <div class="btn-row" style="margin-top:10px">
+        ${r.target_kind !== 'user' && r.target_id ? `<button class="btn small danger" data-rp-remove="${r.id}">${esc(t('adm_rp_remove'))}</button>` : ''}
+        <button class="btn small light" data-rp-dismiss="${r.id}">${esc(t('adm_rp_dismiss'))}</button></div></div>`;
+  state.adminReports = rps || [];
+  return `<div class="section-head" style="margin-top:4px"><h2>${esc(t('adm_reports'))}</h2><span class="small muted">${esc(t('adm_rp_resolved', { n: (rps || []).length - open.length }))}</span></div>
+    ${card(open.length ? open.map(rRow).join('') : emptyHTML('shield', t('adm_reports_none')))}
+    <div class="section-head"><h2>${esc(t('com_testi_t'))}</h2><span class="small muted">${esc(t('mod_pending_n', { n: (ts || []).filter(x => x.status === 'pending').length }))}</span></div>
     ${card((ts || []).length ? order(ts).map(tRow).join('') : `<p class="muted small" style="margin:0">${esc(t('testi_none'))}</p>`)}
     <div class="section-head"><h2>${esc(t('com_support_t'))}</h2><span class="small muted">${esc(t('mod_pending_n', { n: (ss || []).filter(x => x.status === 'pending').length }))}</span></div>
     ${card((ss || []).length ? order(ss).map(sRow).join('') : `<p class="muted small" style="margin:0">${esc(t('sup_none'))}</p>`)}`;
 }
+// 신고된 내용 지우기 — 종류별 테이블과 방법 (채팅은 '삭제된 메시지'로 표시)
+const REPORT_TARGET = { message: ['messages', 'soft'], prayer: ['prayers', 'delete'], testimony: ['testimonies', 'delete'], team_post: ['team_posts', 'delete'] };
 function bindAdminPosts() {
+  app.querySelectorAll('[data-rp-remove],[data-rp-dismiss]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.rpRemove || b.dataset.rpDismiss, r = (state.adminReports || []).find(x => String(x.id) === id);
+    if (!r) return;
+    b.disabled = true;
+    if (b.dataset.rpRemove) {
+      const [tbl, how] = REPORT_TARGET[r.target_kind] || [];
+      if (tbl) {
+        const q = how === 'soft' ? sb.from(tbl).update({ deleted: true }) : sb.from(tbl).delete();
+        const { error } = await q.eq('id', r.target_id);
+        if (error) { b.disabled = false; return toast(errMsg(error), true); }
+      }
+    }
+    // 같은 글에 들어온 신고는 함께 처리
+    const same = (state.adminReports || []).filter(x => x.status === 'open' && x.target_kind === r.target_kind && String(x.target_id) === String(r.target_id) && x.target_user_id === r.target_user_id).map(x => x.id);
+    const { error } = await sb.from('content_reports').update({ status: b.dataset.rpRemove ? 'resolved' : 'dismissed', resolved_at: new Date().toISOString() }).in('id', same.length ? same : [r.id]);
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    toast(t('adm_updated')); render();
+  });
   app.querySelectorAll('[data-mod]').forEach(b => b.onclick = async () => {
     b.disabled = true;
     const { error } = await sb.from(b.dataset.mod).update({ status: b.dataset.to }).eq('id', b.dataset.id);
@@ -5130,6 +5379,7 @@ function notifText(n) {
   switch (n.kind) {
     case 'app_status': return t('nt_app', { c: c ? countryName(c) : '', s: t('st_' + p.status) });
     case 'ext_status': return t(p.status === 'approved' ? 'nt_ext_ok' : 'nt_ext_no', { d: fmtDay(p.date) });
+    case 'report_new': return t('nt_report', { k: t('rp_kind_' + (p.kind || 'user')) });
     case 'ins_status': return t(p.status === 'verified' ? 'nt_ins_ok' : 'nt_ins_fix');
     case 'grad_status': return t(p.status === 'approved' ? 'nt_grad_ok' : 'nt_grad_no');
     case 'testi_status': return t(p.status === 'approved' ? 'nt_testi_ok' : 'nt_testi_no', { x: p.title || '' });
@@ -5139,7 +5389,7 @@ function notifText(n) {
     default: return t('nt_generic');
   }
 }
-const NOTIF_ICON = { ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
+const NOTIF_ICON = { report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
 
 VIEWS.notifications = async function () {
   await loadCountries();
@@ -5164,16 +5414,17 @@ BINDERS.notifications = function () {
 // ---------------------------------------------------------------------
 async function loadAdminTodo() {
   const c = (table, col, val) => sb.from(table).select('id', { count: 'exact', head: true }).eq(col, val);
-  const [apps, ext, grad, testi, sup, ins] = await Promise.all([
+  const [apps, ext, grad, testi, sup, ins, rpt] = await Promise.all([
     c('applications', 'status', 'submitted'), c('application_extensions', 'status', 'pending'), c('graduation_requests', 'status', 'pending'),
     c('testimonies', 'status', 'pending'), c('support_stories', 'status', 'pending'), c('application_insurance', 'status', 'submitted'),
+    c('content_reports', 'status', 'open'),
   ]);
-  state.adminTodo = { apps: apps.count || 0, ext: ext.count || 0, grad: grad.count || 0, testi: testi.count || 0, sup: sup.count || 0, ins: ins.count || 0 };
+  state.adminTodo = { apps: apps.count || 0, ext: ext.count || 0, grad: grad.count || 0, testi: testi.count || 0, sup: sup.count || 0, ins: ins.count || 0, reports: rpt.count || 0 };
   return state.adminTodo;
 }
 function adminTodoHTML(td) {
   const items = [
-    ['apps', 'applications', 'submitted', 'plane', 'todo_apps'], ['ext', 'applications', 'ext', 'calendar', 'todo_ext'], ['ins', 'applications', 'ins', 'shield', 'todo_ins'],
+    ['reports', 'posts', null, 'shield', 'todo_reports'], ['apps', 'applications', 'submitted', 'plane', 'todo_apps'], ['ext', 'applications', 'ext', 'calendar', 'todo_ext'], ['ins', 'applications', 'ins', 'shield', 'todo_ins'],
     ['grad', 'training', null, 'cap', 'todo_grad'], ['testi', 'posts', null, 'spark', 'todo_testi'], ['sup', 'posts', null, 'gift', 'todo_sup'],
   ].filter(([k]) => td[k] > 0);
   if (!items.length) return `<div class="todo-none">${icon('check')} ${esc(t('todo_none'))}</div>`;
@@ -5182,7 +5433,7 @@ function adminTodoHTML(td) {
 }
 function adminTabBadge(k) {
   const td = state.adminTodo || {};
-  const n = k === 'applications' ? (td.apps || 0) + (td.ext || 0) + (td.ins || 0) : k === 'training' ? td.grad || 0 : k === 'posts' ? (td.testi || 0) + (td.sup || 0) : 0;
+  const n = k === 'applications' ? (td.apps || 0) + (td.ext || 0) + (td.ins || 0) : k === 'training' ? td.grad || 0 : k === 'posts' ? (td.testi || 0) + (td.sup || 0) + (td.reports || 0) : 0;
   return n ? `<span class="tab-n">${n}</span>` : '';
 }
 
@@ -5195,7 +5446,7 @@ async function onSession(session) {
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
     state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
-    closeRoomSub(); unsubscribeNotifications(); state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
+    closeRoomSub(); unsubscribeNotifications(); state.blocked = new Set(); state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
     if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
     delete app.dataset.tab;
     render();
@@ -5205,6 +5456,7 @@ async function onSession(session) {
   if (prevUser !== session.user.id || !state.profile) {
     render();   // 로더 표시
     await Promise.all([loadProfile(), loadSettings()]);
+    await loadBlocks();
     subscribeNotifications();
     badgeTimer = 0;
   }

@@ -7,7 +7,7 @@
     nav_conf: '11/20 컨퍼런스', nav_home: 'SVM 홈', open_app: '앱 열기',
     lg_now: '지금 파송 · 7개국', lg_future: '기도하며 준비하는 나라들',
     ft_tag: '학생자원운동 · 텍사스 브라이언–컬리지 스테이션', ft_site: '사이트', ft_more: '함께하기',
-    ft_l_home: 'SVM 홈', ft_l_conf: '미션 컨퍼런스 2026', ft_l_app: 'SVM 앱', ft_l_reg: '컨퍼런스 등록', ft_l_host: '선교지 협력', ft_l_faq: '자주 묻는 질문', ft_l_privacy: '개인정보',
+    ft_l_home: 'SVM 홈', ft_l_conf: '미션 컨퍼런스 2026', ft_l_app: 'SVM 앱', ft_l_reg: '컨퍼런스 등록', ft_l_host: '선교지 협력', ft_l_faq: '자주 묻는 질문', ft_l_privacy: '개인정보', ft_l_terms: '이용약관',
     ft_hosted: 'IM Mission Foundation Group Corp 주최',
   }, window.KO || {});
 
