@@ -15,12 +15,12 @@ for pat in [r'<!doctype html>\s*', r'<html[^>]*>\s*', r'</html>\s*', r'<head>\s*
 out = out.replace("'../conference/", f"'{SITE}conference/").replace("'../privacy/", f"'{SITE}privacy/").replace("'../terms/", f"'{SITE}terms/")
 out = out.replace('../assets/', 'assets/').replace('../icons/', 'icons/')
 out = re.sub(r'<title>.*?</title>', '<title>SVM Mission App</title>', out, count=1)
-out = out.replace("const CAN_DOWNLOAD = true;", "const CAN_DOWNLOAD = false;")
-out = out.replace("if ('serviceWorker' in navigator && location.protocol !== 'file:')", "if (false)")
+out = out.replace("const CAN_DOWNLOAD = !NATIVE;", "const CAN_DOWNLOAD = false;")
+out = out.replace("if (!NATIVE && 'serviceWorker' in navigator && location.protocol !== 'file:')", "if (false)")
 # 데모 전용: 연결 정보가 있어도 데모로
 out = out.replace("const DEMO = !configured || FORCE_DEMO;", "const DEMO = true;")
 out = out.replace("if (!configured && !DEMO)", "if (false)")
-for must in ['const DEMO = true;', 'const CAN_DOWNLOAD = false;']:
+for must in ['const DEMO = true;', 'const CAN_DOWNLOAD = false;', 'if (false)']:
     assert must in out, must
 assert '../' not in re.sub(r'https?://\S+', '', out), 'relative ../ path left'
 assert out.lstrip().startswith('<title>'), out[:80]
