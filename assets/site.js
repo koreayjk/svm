@@ -102,4 +102,15 @@
   }
 
   try { const saved = localStorage.getItem('svm_lang'); if (saved === 'ko' || (!saved && (navigator.language || '').startsWith('ko'))) setLang('ko'); } catch (e) {}
+  // 스크롤 등장: 화면에 들어올 때 천천히 떠오르기 (IntersectionObserver, 움직임 줄이기 설정이면 생략)
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const groups = ['.s-head', '.mts', '.how', '.fields', '.feat-row', '.cards4', '.aud', '.night', '.rhythm', '.host-grid', '.faq', '.wwh', '.m-list'];
+    const els = [];
+    document.querySelectorAll(groups.join(',')).forEach(g => {
+      const kids = g.matches('.s-head, .feat-row, .faq') ? [g] : [...g.children];
+      kids.forEach((el, i) => { if (el.getBoundingClientRect().top > innerHeight) { el.classList.add('rv'); el.style.setProperty('--rv-d', Math.min(i, 5) * 0.07 + 's'); els.push(el); } });
+    });
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    els.forEach(el => io.observe(el));
+  }
 })();

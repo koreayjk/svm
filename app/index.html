@@ -421,6 +421,18 @@
   .toast.no-nav { bottom: calc(var(--safe-b) + 24px); }
   body:has(.composer) .toast:not(.no-nav) { bottom: calc(var(--safe-b) + var(--island-h) + 86px); }
   @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
+  /* leaves the way it came: sinks back down and fades (spatial consistency) */
+  .toast.out { animation: toast-out .28s var(--ease) both; pointer-events: none; }
+  @keyframes toast-out { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, 10px) scale(.97); } }
+
+  /* ---------- press feedback on every small control: instant on pointer-down ---------- */
+  .chip-a, .filters button, .seg button, .lang-toggle button, .todo-item, details > summary, .choice label, .quiet-del, a.list-row, button.list-row {
+    transition: transform .3s var(--ease), opacity .2s var(--ease), background-color .2s var(--ease), color .2s var(--ease);
+  }
+  .chip-a:active, .filters button:active, .lang-toggle button:active, .todo-item:active, .quiet-del:active { transform: scale(.94); transition-duration: .08s; }
+  .seg button:active, .choice label:active { transform: scale(.97); transition-duration: .08s; }
+  details > summary:active { opacity: .6; transition-duration: .08s; }
+  a.list-row:active, button.list-row:active { opacity: .55; transition-duration: .08s; }
 
   pre.code { background: var(--navy); color: #E2E8F0; padding: 14px; border-radius: 14px; overflow-x: auto; font-size: 13px; }
 
@@ -431,7 +443,8 @@
     .btn, .chip, .country-link, .island a { transition: none; }
     .btn:active, .chip:active, .country-link:active, .island a:active { transform: none; }
     .sk { animation: none; }
-    .toast { animation: none; }
+    .toast, .toast.out { animation: none; }
+    .chip-a:active, .filters button:active, .lang-toggle button:active, .todo-item:active, .quiet-del:active, .seg button:active, .choice label:active { transform: none; }
   }
   @media (prefers-reduced-transparency: reduce) {
     .island, .apphead.scrolled { background: #fff; backdrop-filter: none; -webkit-backdrop-filter: none; }
@@ -558,7 +571,6 @@
   .date-tile .m { display: block; background: var(--orange-ink); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 3px 0 2px; }
   .date-tile .d { display: block; font-family: var(--font-num); font-weight: 600; font-size: 24px; line-height: 1; padding: 5px 0 6px; color: var(--navy); }
   a.list-row { color: inherit; }
-  a.list-row:active { opacity: .6; }
   .list-row .chev { color: #A3ABB9; display: grid; }
   .list-row .chev svg { width: 18px; height: 18px; }
   .list-row.dated + .list-row.dated::before { left: 64px; }
@@ -1371,7 +1383,11 @@ function toast(msg, isError) {
   el.textContent = msg;
   el.className = 'toast' + (isError ? ' error' : '') + (document.querySelector('.island') ? '' : ' no-nav');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.add('hidden'), 3200);
+  // 들어온 길로 내려가며 사라짐 (애니메이션이 끝나면 숨김)
+  toastTimer = setTimeout(() => {
+    el.classList.add('out');
+    toastTimer = setTimeout(() => el.classList.add('hidden'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 280);
+  }, 3200);
 }
 function errMsg(e) { return (e && (e.message || e.error_description)) || t('error_generic'); }
 
