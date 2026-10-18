@@ -574,3 +574,28 @@ create table if not exists public.application_insurance (
   reviewed_at        timestamptz
 );
 create index if not exists application_insurance_user_idx on public.application_insurance(user_id);
+
+-- 신고 · 차단 (앱스토어·구글플레이 사용자 생성 콘텐츠 정책)
+--   신고는 관리자만 보고 처리, 차단은 본인 화면에서 그 사람의 글을 숨김
+create table if not exists public.content_reports (
+  id              bigint generated always as identity primary key,
+  reporter_id     uuid references public.profiles(id) on delete set null,
+  target_kind     text not null check (target_kind in ('message','prayer','testimony','team_post','user')),
+  target_id       bigint,
+  target_user_id  uuid references public.profiles(id) on delete set null,   -- 신고된 사람이 탈퇴해도 기록은 남김
+  reason          text not null check (reason in ('spam','harassment','inappropriate','safety','other')),
+  detail          text,
+  excerpt         text,                                  -- 신고 당시 내용 일부 (지워져도 확인 가능)
+  status          text not null default 'open' check (status in ('open','resolved','dismissed')),
+  created_at      timestamptz not null default now(),
+  resolved_at     timestamptz
+);
+create index if not exists content_reports_status_idx on public.content_reports(status, created_at desc);
+
+create table if not exists public.user_blocks (
+  blocker_id  uuid not null references public.profiles(id) on delete cascade,
+  blocked_id  uuid not null references public.profiles(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (blocker_id, blocked_id),
+  check (blocker_id <> blocked_id)
+);
