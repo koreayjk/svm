@@ -14,6 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="../assets/images/hero.jpg" fetchpriority="high">
 <link rel="stylesheet" href="../assets/site.css">
 <style>
   .top { position: fixed; left: 0; right: 0; top: 0; transition: background-color .3s var(--ease); }
@@ -42,7 +43,7 @@
 
 <main id="top">
   <section class="c-hero">
-    <img src="../assets/images/hero.jpg" alt="">
+    <img src="../assets/images/hero.jpg" alt="" width="1600" height="900" fetchpriority="high" decoding="async">
     <div class="wrap">
       <div class="since" data-k="since">Student Volunteer Movement · Since 1886</div>
       <h1>Mission Conference<span>2026</span></h1>
@@ -87,11 +88,11 @@
         <h2 data-k="n_h">What the night looks like</h2>
       </div>
       <ol class="night">
-        <li><img src="../assets/images/tents-row.jpg" alt=""><div class="t"><span class="num">01</span><h3 data-k="n1_t">Tent Village</h3><p data-k="n1_d">Doors open early. Walk the nations tent by tent and meet the teams already on the field.</p></div></li>
-        <li><img src="../assets/images/tile-worship.jpg" alt=""><div class="t"><span class="num">02</span><h3 data-k="n2_t">Worship</h3><p data-k="n2_d">A room full of students lifting one voice, the heartbeat of the night.</p></div></li>
-        <li><img src="../assets/images/tile-stage.jpg" alt=""><div class="t"><span class="num">03</span><h3 data-k="n3_t">The Word</h3><p data-k="n3_d">A clear, challenging call from Scripture to carry the gospel to the nations.</p></div></li>
-        <li><img src="../assets/images/tile-live.jpg" alt=""><div class="t"><span class="num">04</span><h3 data-k="n4_t">The Vision</h3><p data-k="n4_d">Where SVM is going, how the sending pathway works, and where you fit in it.</p></div></li>
-        <li><img src="../assets/images/tile-friends.jpg" alt=""><div class="t"><span class="num">05</span><h3 data-k="n5_t">The Sending</h3><p data-k="n5_d">Respond, sign a nation and take your first real step that same night.</p></div></li>
+        <li><img src="../assets/images/tents-row.jpg" alt="" width="1100" height="800" loading="lazy" decoding="async"><div class="t"><span class="num">01</span><h3 data-k="n1_t">Tent Village</h3><p data-k="n1_d">Doors open early. Walk the nations tent by tent and meet the teams already on the field.</p></div></li>
+        <li><img src="../assets/images/tile-worship.jpg" alt="" width="900" height="680" loading="lazy" decoding="async"><div class="t"><span class="num">02</span><h3 data-k="n2_t">Worship</h3><p data-k="n2_d">A room full of students lifting one voice, the heartbeat of the night.</p></div></li>
+        <li><img src="../assets/images/tile-stage.jpg" alt="" width="900" height="680" loading="lazy" decoding="async"><div class="t"><span class="num">03</span><h3 data-k="n3_t">The Word</h3><p data-k="n3_d">A clear, challenging call from Scripture to carry the gospel to the nations.</p></div></li>
+        <li><img src="../assets/images/tile-live.jpg" alt="" width="900" height="680" loading="lazy" decoding="async"><div class="t"><span class="num">04</span><h3 data-k="n4_t">The Vision</h3><p data-k="n4_d">Where SVM is going, how the sending pathway works, and where you fit in it.</p></div></li>
+        <li><img src="../assets/images/tile-friends.jpg" alt="" width="900" height="680" loading="lazy" decoding="async"><div class="t"><span class="num">05</span><h3 data-k="n5_t">The Sending</h3><p data-k="n5_d">Respond, sign a nation and take your first real step that same night.</p></div></li>
       </ol>
     </div>
   </section>
@@ -99,7 +100,7 @@
   <section class="block" id="tents">
     <div class="wrap">
       <div class="tv">
-        <div class="tv-photo"><img src="../assets/images/tents-wide.jpg" alt=""></div>
+        <div class="tv-photo"><img src="../assets/images/tents-wide.jpg" alt="" width="1600" height="683" loading="lazy" decoding="async"></div>
         <div>
           <div class="kicker" data-k="t_kicker">Walk the world in one night</div>
           <h2 style="font-size:clamp(28px,4.4vw,44px);font-weight:900;letter-spacing:-.03em;line-height:1.15;margin-top:8px" data-k="t_h">The Tent Village</h2>
@@ -151,7 +152,7 @@
   <section class="block" id="register" style="padding-bottom:84px">
     <div class="wrap">
       <div class="reg">
-        <img src="../assets/images/register-bg.jpg" alt="">
+        <img src="../assets/images/register-bg.jpg" alt="" width="1600" height="1100" loading="lazy" decoding="async">
         <div>
           <div class="kicker" data-k="r_kicker">Register now · free</div>
           <h2 data-k="r_h">One night can change your world.</h2>
@@ -181,7 +182,7 @@
           <div class="hp" aria-hidden="true"><label>Website<input name="website" tabindex="-1" autocomplete="off"></label></div>
           <div id="reg-msg" role="status" aria-live="polite"></div>
           <button class="btn" type="submit" data-k="f_btn">Send me →</button>
-          <p class="fine" data-k="f_fine">We only use this for conference updates. We never share your info.</p>
+          <p class="fine" data-k="f_fine" data-html>We only use this for conference updates. We never share your info. <a href="../privacy/">Privacy</a></p>
         </form>
       </div>
     </div>
@@ -202,7 +203,8 @@
     <div><h4 data-k="ft_more">Get involved</h4><ul>
       <li><a href="#register" data-k="ft_l_reg">Register for Nov 20</a></li>
       <li><a href="../#host" data-k="ft_l_host">Host a team</a></li>
-      <li><a href="#faq" data-k="ft_l_faq">FAQ</a></li></ul></div>
+      <li><a href="#faq" data-k="ft_l_faq">FAQ</a></li>
+      <li><a href="../privacy/" data-k="ft_l_privacy">Privacy</a></li></ul></div>
     <div class="copy"><span data-k="ft_hosted">Hosted by IM Mission Foundation Group Corp</span><span>© 2026 IM Mission Foundation Group Corp</span></div>
   </div>
 </footer>
@@ -244,7 +246,7 @@
     r1: '예배와 생생한 선교 체험', r2: '선교 팀과의 만남', r3: '장소 안내를 이메일로 가장 먼저',
     f_h: '자리 예약하기', f_hint: '30초면 됩니다.', f_name: '이름 *', f_email: '이메일 *', f_phone: '전화번호', f_role: '저는… *',
     o0: '선택해 주세요', o1: '대학생', o2: '청년', o3: '청소년 (고등학생)', o4: '청소년·사역 리더', o5: '봉사자', o6: '기타',
-    f_btn: '등록하기 →', f_fine: '컨퍼런스 안내에만 사용하며, 정보를 절대 공유하지 않습니다.',
+    f_btn: '등록하기 →', f_fine: '컨퍼런스 안내에만 사용하며, 정보를 절대 공유하지 않습니다. <a href="../privacy/">개인정보</a>',
     msg_ok: '등록되었습니다. 장소가 정해지면 이메일로 가장 먼저 알려 드릴게요. 11월 20일에 만나요!',
     msg_dup: '이미 이 이메일로 등록되어 있습니다. 11월 20일에 만나요!',
     msg_invalid: '이름, 올바른 이메일, 그리고 “저는…” 항목을 확인해 주세요.',

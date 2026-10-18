@@ -12,7 +12,7 @@ for pat in [r'<!doctype html>\s*', r'<html[^>]*>\s*', r'</html>\s*', r'<head>\s*
             r'<link rel="apple-touch-icon"[^>]*>\s*', r'<meta name="apple-[^>]*>\s*', r'<meta property="og:[^>]*>\s*',
             r'<script src="https://cdn.jsdelivr.net/npm/@supabase[^>]*></script>\s*', r'<script src="\.\./config\.js"></script>\s*']:
     out = re.sub(pat, '', out, flags=re.I)
-out = out.replace("'../conference/", f"'{SITE}conference/")
+out = out.replace("'../conference/", f"'{SITE}conference/").replace("'../privacy/", f"'{SITE}privacy/")
 out = out.replace('../assets/', 'assets/').replace('../icons/', 'icons/')
 out = re.sub(r'<title>.*?</title>', '<title>SVM Mission App</title>', out, count=1)
 out = out.replace("const CAN_DOWNLOAD = true;", "const CAN_DOWNLOAD = false;")
