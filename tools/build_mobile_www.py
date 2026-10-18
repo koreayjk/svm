@@ -34,7 +34,7 @@ shutil.copy(SUPABASE_UMD, os.path.join(WWW, 'vendor', 'supabase.js'))
 shutil.copy(os.path.join(ROOT, 'config.js'), os.path.join(WWW, 'config.js'))
 shutil.copytree(os.path.join(ROOT, 'icons'), os.path.join(WWW, 'icons'))
 os.makedirs(os.path.join(WWW, 'assets'))
-for f in ('SVM_Logo.svg', 'SVM_Logo_white.svg', 'world-dots.svg'):
+for f in ('SVM_Logo.svg', 'SVM_Logo_white.svg', 'world-dots.svg', 'worldmap.js'):
     shutil.copy(os.path.join(ROOT, 'assets', f), os.path.join(WWW, 'assets', f))
 shutil.copytree(os.path.join(ROOT, 'assets', 'countries'), os.path.join(WWW, 'assets', 'countries'))
 print('wrote', WWW)

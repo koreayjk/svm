@@ -554,3 +554,21 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .sf-card b { color: var(--text); }
 .sf-how { margin-top: 20px; color: var(--muted); font-size: 15.5px; max-width: 46em; }
 @media (max-width: 860px) { .safety-grid { grid-template-columns: 1fr; } }
+
+/* ---------- world map: Americas in the middle, drag to turn, three sending hubs ---------- */
+.map-wrap { aspect-ratio: 1080 / 336; width: 100%; margin-inline: auto; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.worldmap.draggable { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; outline: none; }
+.worldmap.draggable.grabbing { cursor: grabbing; }
+.worldmap.draggable:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; border-radius: 12px; }
+.worldmap .arc-kr, .worldmap .arc-ph { opacity: .55; stroke-width: 1.3; }
+.worldmap .hub-flag { animation-delay: .4s; }
+.worldmap .plane-shape { fill: var(--navy); stroke: #fff; stroke-width: .8; paint-order: stroke; }
+.legend .hub { width: 10px; height: 10px; background: var(--navy); box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(13, 27, 58, .3); }
+.legend .drag-hint { width: 100%; justify-content: center; font-size: 12.5px; opacity: .75; }
+@media (max-width: 560px) {
+  .worldmap .arc { stroke-width: 2.2; }
+  .worldmap .arc-kr, .worldmap .arc-ph { stroke-width: 1.6; }
+  .worldmap .home-ring { r: 15; }
+  .worldmap .hub-flag { font-size: 22px; }
+}
