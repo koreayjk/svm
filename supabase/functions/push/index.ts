@@ -45,6 +45,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_ci_miss": "A student in {c} has not checked in for {d} days.",
     "nt_ci_help": "A student in {c} needs help.",
     "nt_returned": "Welcome home. Share your story from {c}.",
+    "nt_field_update": "News from {c}.",
+    "nt_prayer_answered": "A prayer you prayed for was answered.",
     "nt_field_msg": "New message in the {c} field conversation."
   },
   "ko": {
@@ -84,6 +86,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_ci_miss": "{c}의 학생이 {d}일째 체크인하지 않았어요.",
     "nt_ci_help": "{c}의 학생이 도움을 요청했어요.",
     "nt_returned": "잘 돌아왔어요. {c}에서의 이야기를 나눠 주세요.",
+    "nt_field_update": "{c}에서 새 소식이 왔어요.",
+    "nt_prayer_answered": "함께 기도한 제목이 응답되었어요.",
     "nt_field_msg": "{c} 선교지 대화방에 새 메시지가 있어요."
   }
 };
@@ -114,6 +118,8 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'field_msg': return t('nt_field_msg', { c: country });
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: country });
+    case 'field_update': return t('nt_field_update', { c: country });
+    case 'prayer_answered': return t('nt_prayer_answered');
     case 'dep_remind': return p.days > 0 ? t('nt_dep', { d: String(p.days), c: country }) : t('nt_dep_today', { c: country });
     case 'ins_due': return t('nt_ins_due', { d: String(Math.max(0, p.days ?? 0)) });
     case 'checkin_ask': return t('nt_ci_ask');
