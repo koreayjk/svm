@@ -663,3 +663,31 @@ create table if not exists public.field_messages (
   created_at  timestamptz not null default now()
 );
 create index if not exists field_messages_country_idx on public.field_messages(country_id, created_at);
+
+-- 출발 준비 체크 (학생이 직접 체크 — 보험 증서는 제출 여부로 자동 확인)
+create table if not exists public.application_prep (
+  application_id  bigint not null references public.applications(id) on delete cascade,
+  item            text not null check (item in ('flight','passport','leader_call','packing')),
+  done            boolean not null default true,
+  updated_at      timestamptz not null default now(),
+  primary key (application_id, item)
+);
+
+-- 선교 중 안부 체크인 ('안전해요' / '도움이 필요해요')
+create table if not exists public.field_checkins (
+  id              bigint generated always as identity primary key,
+  application_id  bigint not null references public.applications(id) on delete cascade,
+  user_id         uuid not null references public.profiles(id) on delete cascade,
+  status          text not null default 'safe' check (status in ('safe','need_help')),
+  note            text check (note is null or length(note) <= 500),
+  created_at      timestamptz not null default now()
+);
+create index if not exists field_checkins_app_idx on public.field_checkins(application_id, created_at desc);
+
+-- 자동 알림을 한 번만 보내기 위한 기록 (앱에서는 읽지 않음 — 정책 없음)
+create table if not exists public.reminder_log (
+  application_id  bigint not null references public.applications(id) on delete cascade,
+  key             text not null,
+  sent_at         timestamptz not null default now(),
+  primary key (application_id, key)
+);

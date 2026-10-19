@@ -38,6 +38,13 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_leader_msg": "Your country leader sent you a message.",
     "nt_student_msg": "A student sent you a message.",
     "nt_new_app": "New application for {c}.",
+    "nt_dep": "{d} days until departure to {c}. Check your preparation list.",
+    "nt_dep_today": "Departure day for {c}. Safe travels.",
+    "nt_ins_due": "Travel insurance certificate is due before departure ({d} days left).",
+    "nt_ci_ask": "Please check in so your leader knows you are okay.",
+    "nt_ci_miss": "A student in {c} has not checked in for {d} days.",
+    "nt_ci_help": "A student in {c} needs help.",
+    "nt_returned": "Welcome home. Share your story from {c}.",
     "nt_field_msg": "New message in the {c} field conversation."
   },
   "ko": {
@@ -70,6 +77,13 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_leader_msg": "나라 리더가 메시지를 보냈어요.",
     "nt_student_msg": "학생이 메시지를 보냈어요.",
     "nt_new_app": "{c} 새 신청서가 들어왔어요.",
+    "nt_dep": "{c} 출발까지 {d}일 남았어요. 준비 목록을 확인해 보세요.",
+    "nt_dep_today": "오늘은 {c} 출발일이에요. 안전하게 다녀오세요.",
+    "nt_ins_due": "여행자 보험 증서를 출발 전에 내야 해요 ({d}일 남음).",
+    "nt_ci_ask": "리더가 안심하도록 체크인을 눌러 주세요.",
+    "nt_ci_miss": "{c}의 학생이 {d}일째 체크인하지 않았어요.",
+    "nt_ci_help": "{c}의 학생이 도움을 요청했어요.",
+    "nt_returned": "잘 돌아왔어요. {c}에서의 이야기를 나눠 주세요.",
     "nt_field_msg": "{c} 선교지 대화방에 새 메시지가 있어요."
   }
 };
@@ -100,6 +114,12 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'field_msg': return t('nt_field_msg', { c: country });
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: country });
+    case 'dep_remind': return p.days > 0 ? t('nt_dep', { d: String(p.days), c: country }) : t('nt_dep_today', { c: country });
+    case 'ins_due': return t('nt_ins_due', { d: String(Math.max(0, p.days ?? 0)) });
+    case 'checkin_ask': return t('nt_ci_ask');
+    case 'checkin_miss': return t('nt_ci_miss', { c: country, d: String(p.days ?? '') });
+    case 'checkin_help': return t('nt_ci_help', { c: country });
+    case 'returned_testi': return t('nt_returned', { c: country });
     default: return t('nt_generic');
   }
 }
