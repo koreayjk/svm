@@ -673,9 +673,6 @@
   .composer textarea { min-height: 44px; max-height: 140px; height: 44px; padding: 10px 15px; border-radius: 20px; resize: none; font-size: 16px; background: var(--fill); }
   .composer .btn { width: 44px; min-height: 44px; height: 44px; padding: 0; border-radius: 50%; flex: 0 0 auto; }
   .chat-spacer { height: 92px; }
-  .tr-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 4px 0; border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--orange-ink); cursor: pointer; }
-  .tr-btn:disabled { opacity: .5; }
-  .tr-out { white-space: pre-wrap; margin-top: 6px; padding: 10px 12px; border-radius: 12px; background: var(--fill); font-size: 15px; line-height: 1.5; }
   .stats-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
   .stats-table th, .stats-table td { padding: 9px 3px; text-align: right; white-space: nowrap; }
   .stats-table thead th { font-size: 12.5px; font-weight: 600; color: var(--muted); }
@@ -1139,7 +1136,6 @@ const i18n = {
     fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
     vd_add: 'Add a YouTube video', vd_url: 'YouTube link', vd_title: 'Title', vd_bad: 'Please paste a YouTube link.', vd_added: 'Video added.', vd_none: 'No videos yet.', vd_section: 'Videos from the field',
     adm_partners: 'Field missionaries', adm_partners_d: 'Missionaries keep their country page up to date with photos, videos and information. They do not see student details; the country leader is their contact.', adm_partner_add: 'Add a missionary', adm_partner_none: 'No missionary yet',
-    tr_btn: 'Translate', tr_google: 'Translate (Google)', tr_hide: 'Hide translation', tr_busy: 'Translating…', tr_same: 'This is already in your language.',
     fe_title: 'News from the field', fe_sub: 'Updates, photos and videos from our missionaries, and prayers that were answered.', fe_empty: 'No news yet. Updates from the field will show up here.',
     fe_k_update: 'Update', fe_k_video: 'Video', fe_k_photos: 'Photos', fe_k_answered: 'Prayer answered', fe_mine: 'My nations', fe_all_news: 'All news',
     fe_post_t: 'Share news', fe_post_ph: 'What is happening this week? Keep it short.', fe_post_btn: 'Post', fe_post_safe: 'Do not post local believers’ real names, faces, or exact locations.', fe_posted: 'Posted. People who carry this nation were notified.', fe_recent: 'Recent news', fe_none: 'No news posted yet.',
@@ -1382,7 +1378,6 @@ const i18n = {
     fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
     vd_add: '유튜브 영상 추가', vd_url: '유튜브 링크', vd_title: '제목', vd_bad: '유튜브 링크를 붙여 넣어 주세요.', vd_added: '영상을 추가했어요.', vd_none: '아직 영상이 없습니다.', vd_section: '선교지 영상',
     adm_partners: '선교지 선교사님', adm_partners_d: '선교사님은 나라 페이지의 사진·영상·정보를 관리합니다. 학생 개인정보는 보지 않으며, 연락은 나라 리더와 합니다.', adm_partner_add: '선교사님 추가', adm_partner_none: '아직 선교사님 없음',
-    tr_btn: '번역', tr_google: '번역 (Google)', tr_hide: '번역 숨기기', tr_busy: '번역 중…', tr_same: '이미 내 언어로 쓰인 글이에요.',
     fe_title: '선교지 소식', fe_sub: '선교사님들이 전하는 근황과 사진, 영상, 그리고 응답된 기도예요.', fe_empty: '아직 소식이 없어요. 선교지 소식이 올라오면 여기에 보여요.',
     fe_k_update: '근황', fe_k_video: '영상', fe_k_photos: '사진', fe_k_answered: '기도 응답', fe_mine: '내가 품은 나라', fe_all_news: '전체 소식',
     fe_post_t: '소식 올리기', fe_post_ph: '이번 주에는 어떤 일이 있었나요? 짧게 적어 주세요.', fe_post_btn: '올리기', fe_post_safe: '현지 성도의 실명·얼굴·정확한 위치는 올리지 마세요.', fe_posted: '올렸어요. 이 나라를 품은 분들께 알림이 갔어요.', fe_recent: '최근 소식', fe_none: '아직 올린 소식이 없어요.',
@@ -3184,36 +3179,6 @@ function openDeleteSheet() {
 // 모든 화면 공통: ⋯ 버튼
 document.addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (b) { e.preventDefault(); openMore(b); } });
 
-// 번역 버튼 — 서버나 API 없이, 쓰는 사람의 기기에서:
-//   ① 브라우저에 번역 기능(Chrome 의 Translator)이 있으면 기기 안에서 바로 번역해 글 아래에 보여 줌
-//   ② 없으면 누를 때만 그 글 하나를 Google 번역 페이지로 열어 줌
-const BROWSER_TR = typeof self !== 'undefined' && 'Translator' in self;
-const hasHangul = s => (s.match(/[\u3131-\u318E\uAC00-\uD7A3]/g) || []).length > s.replace(/\s/g, '').length * 0.3;
-const trBtn = () => `<button type="button" class="tr-btn" data-tr>${icon('globe', 'width="14" height="14"')}<span>${esc(t(BROWSER_TR ? 'tr_btn' : 'tr_google'))}</span></button>`;
-document.addEventListener('click', async (e) => {
-  const b = e.target.closest('[data-tr]'); if (!b) return;
-  const wrap = b.closest('.tr-wrap'), src = wrap?.querySelector('[data-tr-src]');
-  if (!src) return;
-  let out = wrap.querySelector('.tr-out');
-  const label = b.querySelector('span');
-  if (out) { out.hidden = !out.hidden; label.textContent = t(out.hidden ? 'tr_btn' : 'tr_hide'); return; }
-  const text = src.innerText.trim(), from = hasHangul(text) ? 'ko' : 'en', to = state.lang;
-  if (from === to) return toast(t('tr_same'));
-  if (!BROWSER_TR) { window.open(`https://translate.google.com/?sl=${from}&tl=${to}&text=${encodeURIComponent(text)}&op=translate`, '_blank', 'noopener'); return; }
-  b.disabled = true; label.textContent = t('tr_busy');
-  try {
-    if ((await self.Translator.availability({ sourceLanguage: from, targetLanguage: to })) === 'unavailable') throw new Error('unavailable');
-    const tr = await self.Translator.create({ sourceLanguage: from, targetLanguage: to });
-    const result = await tr.translate(text);
-    out = document.createElement('div'); out.className = 'tr-out'; out.lang = to; out.textContent = result;
-    wrap.appendChild(out); label.textContent = t('tr_hide');
-  } catch (err) {
-    label.textContent = t('tr_btn');
-    window.open(`https://translate.google.com/?sl=${from}&tl=${to}&text=${encodeURIComponent(text)}&op=translate`, '_blank', 'noopener');
-  }
-  b.disabled = false;
-});
-
 async function loadNames(ids) {
   const need = [...new Set(ids)].filter(id => id && !(id in nameCache));
   if (!need.length) return;
@@ -3814,7 +3779,7 @@ function threadHTML(appId, list, staff) {
     ${staff ? `<div class="small muted" style="margin:16px 0 8px">${icon('chat', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('th_title'))} · ${esc(t('th_staff'))}</div>` : '<div class="sep"></div>'}
     <div class="thread-list">${list.length ? list.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
         <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
-        <div class="tr-wrap"><div class="bubble" data-tr-src>${esc(m.body)}</div>${m.user_id === me ? '' : trBtn()}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+        <div><div class="bubble">${esc(m.body)}</div></div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
     <form class="thread-form" data-thread-form="${appId}"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>
   </div>`;
@@ -3898,7 +3863,7 @@ VIEWS.field = async function (code) {
   const me = state.profile.id;
   const thread = `<div class="thread-list">${(msgs || []).length ? msgs.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
       <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
-      <div class="tr-wrap"><div class="bubble" data-tr-src>${esc(m.body)}</div>${m.user_id === me ? '' : trBtn()}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+      <div><div class="bubble">${esc(m.body)}</div></div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
     <form class="thread-form" id="field-msg-form"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
   return `${backLink('#/my', t('tab_my'))}${pageHead(t('fd_title'), can ? t('fd_sub') : '')}
@@ -4993,7 +4958,7 @@ function testimonyCard(x, { full = true } = {}) {
         <h3 style="margin-top:6px;font-size:18px">${esc(x.title)}</h3></div>
       ${x.status !== 'approved' ? `<span class="st ${x.status === 'rejected' ? 'st-rejected' : ''}">${esc(t('mod_' + x.status))}</span>` : ''}
     </div>
-    <div class="tr-wrap" style="margin-top:10px"><p style="margin:0;${full ? '' : 'display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden'}" data-tr-src>${para(x.body)}</p>${full ? trBtn() : ''}</div>
+    <div style="margin-top:10px"><p style="margin:0;${full ? '' : 'display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden'}">${para(x.body)}</p></div>
     <div class="row between small muted" style="margin-top:12px"><span>${esc(mine ? t('you') : shortName(nameCache[x.user_id]?.name))} · ${esc(relTime(x.created_at))}</span>
       ${mine ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-testi="${x.id}">${esc(t('adm_delete'))}</button>` : moreBtn('testimony', x.id, x.user_id, x.title + ' — ' + x.body)}</div>`);
 }
@@ -5025,7 +4990,7 @@ async function loadFeed({ cid = null, limit = 30 } = {}) {
 function feedItemHTML(it) {
   const c = countryById(it.country_id);
   let body = '';
-  if (it.kind === 'update' || it.kind === 'answered') body = `<div class="tr-wrap"><p style="margin:8px 0 0" data-tr-src>${para(it.body)}</p>${trBtn()}</div>${it.note ? `<div class="quote">${esc(it.note)}</div>` : ''}`;
+  if (it.kind === 'update' || it.kind === 'answered') body = `<div><p style="margin:8px 0 0">${para(it.body)}</p></div>${it.note ? `<div class="quote">${esc(it.note)}</div>` : ''}`;
   else if (it.kind === 'video') body = `<div style="margin-top:8px">${videosHTML([it.v], false)}</div>`;
   else if (it.kind === 'photos') body = `<div class="feed-photos">${it.photos.slice(0, 3).map(ph => `<img src="${esc(ph.url)}" alt="${esc(ph.caption || (c ? countryName(c) : ''))}" loading="lazy">`).join('')}</div>`;
   return `<div class="feed-item"><div class="row between small muted"><span>${c ? flag(c.code) + ' ' + esc(countryName(c)) + ' · ' : ''}${esc(relTime(it.at))}</span><span class="feed-kind">${esc(t('fe_k_' + it.kind))}</span></div>${body}</div>`;
@@ -5161,7 +5126,7 @@ VIEWS.prayers = async function (code) {
     return `<div class="prayer ${p.answered ? 'answered' : ''}">
       <div class="row between small muted"><span>${pc ? flag(pc.code) + ' ' + esc(countryName(pc)) + ' · ' : ''}${esc(me ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
         ${p.answered ? `<span class="st st-approved">${esc(t('pr_answered'))}</span>` : ''}</div>
-      <div class="tr-wrap" style="margin:8px 0 12px"><p style="margin:0" data-tr-src>${para(p.body)}</p>${trBtn()}</div>
+      <div style="margin:8px 0 12px"><p style="margin:0">${para(p.body)}</p></div>
       ${p.answered && p.answer_note ? `<div class="quote" style="margin:-2px 0 12px">${esc(p.answer_note)}</div>` : ''}
       ${p.answered && me && (count[p.id] || 0) > 0 ? `<p class="small muted" style="margin:-4px 0 12px">${esc(t('pr_ans_with', { n: count[p.id] }))}</p>` : ''}
       <div class="row" style="gap:8px;flex-wrap:wrap">

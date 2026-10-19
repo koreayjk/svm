@@ -40,7 +40,7 @@ Safe by design
 • Report and block tools, and moderation by leaders.
 • Delete your account any time from My → Delete account.
 
-English and Korean throughout, with a Translate button on shared messages.
+English and Korean throughout.
 
 **What's new (1.0)**: `First release.`
 
@@ -81,6 +81,6 @@ SVM은 텍사스 브라이언–컬리지 스테이션의 학생 자원봉사 �
 • 신고·차단 기능과 리더의 관리.
 • 언제든 마이 → 계정 삭제로 계정을 지울 수 있어요.
 
-한국어와 영어를 모두 지원하고, 공유된 글에는 번역 버튼이 있어요.
+한국어와 영어를 모두 지원해요.
 
 **업데이트 내용 (1.0)**: `첫 출시입니다.`
