@@ -673,6 +673,14 @@
   .composer textarea { min-height: 44px; max-height: 140px; height: 44px; padding: 10px 15px; border-radius: 20px; resize: none; font-size: 16px; background: var(--fill); }
   .composer .btn { width: 44px; min-height: 44px; height: 44px; padding: 0; border-radius: 50%; flex: 0 0 auto; }
   .chat-spacer { height: 92px; }
+  .feed-item { padding: 14px 0; }
+  .feed-item + .feed-item { border-top: .5px solid var(--line); }
+  .feed-kind { font-size: 12px; font-weight: 700; color: var(--orange-ink); letter-spacing: .01em; }
+  .feed-photos { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; margin-top: 8px; }
+  .feed-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 14px; background: var(--fill); }
+  .feed-item .quote { margin-top: 8px; }
+  .answer-form { display: flex; gap: 8px; margin-top: 10px; width: 100%; }
+  .answer-form input { flex: 1; min-height: 42px; }
   .unread { flex: 0 0 auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--orange-ink); color: #fff; font-size: 12.5px; font-weight: 700; display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; }
   .list-row .chev { color: #B4BBC7; display: grid; place-items: center; }
   .list-row .chev svg { width: 18px; height: 18px; }
@@ -1120,6 +1128,12 @@ const i18n = {
     fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
     vd_add: 'Add a YouTube video', vd_url: 'YouTube link', vd_title: 'Title', vd_bad: 'Please paste a YouTube link.', vd_added: 'Video added.', vd_none: 'No videos yet.', vd_section: 'Videos from the field',
     adm_partners: 'Field missionaries', adm_partners_d: 'Missionaries keep their country page up to date with photos, videos and information. They do not see student details; the country leader is their contact.', adm_partner_add: 'Add a missionary', adm_partner_none: 'No missionary yet',
+    fe_title: 'News from the field', fe_sub: 'Updates, photos and videos from our missionaries, and prayers that were answered.', fe_empty: 'No news yet. Updates from the field will show up here.',
+    fe_k_update: 'Update', fe_k_video: 'Video', fe_k_photos: 'Photos', fe_k_answered: 'Prayer answered', fe_mine: 'My nations', fe_all_news: 'All news',
+    fe_post_t: 'Share news', fe_post_ph: 'What is happening this week? Keep it short.', fe_post_btn: 'Post', fe_post_safe: 'Do not post local believers’ real names, faces, or exact locations.', fe_posted: 'Posted. People who carry this nation were notified.', fe_recent: 'Recent news', fe_none: 'No news posted yet.',
+    fl_title: 'Nations I carry', fl_sub: 'Follow what is happening and what to pray for.', fl_empty: 'You are not carrying a nation yet. Sign a nation to follow its news and prayer requests.', fl_pick: 'Choose a nation', fl_latest: 'Latest', fl_no_news: 'No news yet', fl_news: 'News', fl_prayers: 'Prayer', fl_answered_n: '{n} answered', fl_open_n: '{n} open',
+    fl_give_t: 'Give', fl_give_d: 'Help students cover their flights and mission costs.', fl_give_btn: 'Give online', fl_stories: 'Support stories', fl_see_nations: 'See nations I carry',
+    pr_ans_note: 'How was it answered? (optional)', pr_ans_save: 'Save', pr_ans_with: '{n} prayed with you', nt_field_update: 'News from {c}.', nt_prayer_answered: 'A prayer you prayed for was answered.', set_giving: 'Giving link', set_giving_d: 'A web page for donations (https). Shown on the web app only, not in the store apps.',
     pr_title: 'Get ready to go', pr_lead: 'Check these off as you finish them.', pr_today: 'Today', pr_done: '{n} of {m} done', pr_ins: 'Travel insurance certificate', pr_flight: 'Book your flight', pr_flight_d: 'You cover your own flight. Share your itinerary with your country leader.', pr_passport: 'Passport and visa', pr_passport_d: 'Passport valid 6+ months after you return. Your leader will tell you if the country needs a visa.', pr_leader_call: 'Pre-departure call with your leader', pr_leader_call_d: 'Your country leader goes over the plan and answers questions.', pr_packing: 'Pack your bag', pr_packing_d: 'Pack light. Your host does not prepare special meals or housing.', pr_open_list: 'Open packing list', pr_ins_ok: 'Certificate submitted', pr_ins_todo: 'Submit by {d}',
     ci_title: 'Check in', ci_lead: 'Let your leader know you are okay. Takes one tap.', ci_note: 'Note (optional)', ci_safe: 'I’m safe', ci_help: 'I need help', ci_help_tap: 'Tap again to alert your leader', ci_help_note: 'Pressing “I need help” alerts your country leader and HQ right away.', ci_last: 'Last check-in {t}', ci_none: 'No check-in yet', ci_thanks: 'Thank you. Your leader can see you checked in.', ci_alerted: 'Your leader and HQ were alerted.', ci_quiet: 'No check-in for {n} days', ci_status_safe: 'Safe', ci_status_help: 'Needs help',
     rt_title: 'Welcome home', rt_d: 'Share what God did on your trip. Your story encourages the next team.', rt_cta: 'Share your story',
@@ -1353,6 +1367,12 @@ const i18n = {
     fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
     vd_add: '유튜브 영상 추가', vd_url: '유튜브 링크', vd_title: '제목', vd_bad: '유튜브 링크를 붙여 넣어 주세요.', vd_added: '영상을 추가했어요.', vd_none: '아직 영상이 없습니다.', vd_section: '선교지 영상',
     adm_partners: '선교지 선교사님', adm_partners_d: '선교사님은 나라 페이지의 사진·영상·정보를 관리합니다. 학생 개인정보는 보지 않으며, 연락은 나라 리더와 합니다.', adm_partner_add: '선교사님 추가', adm_partner_none: '아직 선교사님 없음',
+    fe_title: '선교지 소식', fe_sub: '선교사님들이 전하는 근황과 사진, 영상, 그리고 응답된 기도예요.', fe_empty: '아직 소식이 없어요. 선교지 소식이 올라오면 여기에 보여요.',
+    fe_k_update: '근황', fe_k_video: '영상', fe_k_photos: '사진', fe_k_answered: '기도 응답', fe_mine: '내가 품은 나라', fe_all_news: '전체 소식',
+    fe_post_t: '소식 올리기', fe_post_ph: '이번 주에는 어떤 일이 있었나요? 짧게 적어 주세요.', fe_post_btn: '올리기', fe_post_safe: '현지 성도의 실명·얼굴·정확한 위치는 올리지 마세요.', fe_posted: '올렸어요. 이 나라를 품은 분들께 알림이 갔어요.', fe_recent: '최근 소식', fe_none: '아직 올린 소식이 없어요.',
+    fl_title: '내가 품은 나라', fl_sub: '그 나라의 소식과 기도 제목을 한곳에서 봐요.', fl_empty: '아직 품은 나라가 없어요. 나라에 이름을 쓰면 소식과 기도 제목을 받아볼 수 있어요.', fl_pick: '나라 고르기', fl_latest: '최근 소식', fl_no_news: '아직 소식이 없어요', fl_news: '소식', fl_prayers: '기도', fl_answered_n: '응답 {n}', fl_open_n: '진행 {n}',
+    fl_give_t: '후원하기', fl_give_d: '학생들의 항공권과 선교 비용을 함께 감당해 주세요.', fl_give_btn: '온라인으로 후원', fl_stories: '후원 이야기', fl_see_nations: '내가 품은 나라 보기',
+    pr_ans_note: '어떻게 응답되었나요? (선택)', pr_ans_save: '저장', pr_ans_with: '{n}명이 함께 기도했어요', nt_field_update: '{c}에서 새 소식이 왔어요.', nt_prayer_answered: '함께 기도한 제목이 응답되었어요.', set_giving: '후원 링크', set_giving_d: '후원을 받는 웹페이지 주소(https). 웹 앱에서만 보이고 스토어 앱에서는 보이지 않아요.',
     pr_title: '출발 준비', pr_lead: '끝낸 것부터 체크해 주세요.', pr_today: '오늘', pr_done: '{m}개 중 {n}개 완료', pr_ins: '여행자 보험 증서', pr_flight: '항공권 예약', pr_flight_d: '항공권은 본인이 준비해요. 일정은 나라 리더와 나눠 주세요.', pr_passport: '여권 · 비자', pr_passport_d: '귀국일 기준 6개월 이상 남은 여권이 필요해요. 비자가 필요한 나라는 리더가 알려 드려요.', pr_leader_call: '출발 전 리더와 통화', pr_leader_call_d: '나라 리더와 일정을 확인하고 궁금한 것을 물어봐요.', pr_packing: '짐 싸기', pr_packing_d: '가볍게 챙겨요. 현지에서는 특별한 음식이나 숙소를 준비하지 않아요.', pr_open_list: '준비물 목록 열기', pr_ins_ok: '증서 제출 완료', pr_ins_todo: '{d}까지 제출',
     ci_title: '안부 체크인', ci_lead: '리더에게 잘 있다고 알려 주세요. 한 번만 누르면 돼요.', ci_note: '한마디 (선택)', ci_safe: '안전해요', ci_help: '도움이 필요해요', ci_help_tap: '한 번 더 누르면 리더에게 알려요', ci_help_note: '“도움이 필요해요”를 누르면 나라 리더와 본부에 바로 알림이 가요.', ci_last: '마지막 체크인 {t}', ci_none: '아직 체크인이 없어요', ci_thanks: '고마워요. 리더가 체크인을 확인할 수 있어요.', ci_alerted: '리더와 본부에 알렸어요.', ci_quiet: '{n}일째 체크인 없음', ci_status_safe: '안전', ci_status_help: '도움 필요',
     rt_title: '잘 돌아왔어요', rt_d: '이번 여정에서 하나님이 하신 일을 나눠 주세요. 다음 팀에게 큰 힘이 돼요.', rt_cta: '후기 나누기',
@@ -1775,6 +1795,10 @@ function createDemoClient() {
       gospel_messages, gospel_sentences, courses, course_feedback, language_progress, practice_days, graduation_requests,
       gatherings, attendance, testimonies, prayers, prayer_reactions, support_stories, checklist_items, teams, team_members, team_posts, team_tasks,
       country_photos: [],
+      field_updates: [
+        { id: mid++, country_id: 1, user_id: 'seed-0', body: 'English camp registration opened this week. 42 students signed up so far. Thank you for praying.', created_at: ago(1) },
+        { id: mid++, country_id: 2, user_id: 'seed-3', body: 'The church kitchen team is ready for the summer. Simple rice and soup for everyone, nothing fancy.', created_at: ago(3) },
+      ],
       app_settings: [
         { key: 'require_graduation_to_apply', value: false },
         { key: 'sensitive_photo_block', value: true },
@@ -1881,6 +1905,14 @@ function createDemoClient() {
       const to = new Set([...ls, ...ps, ...(ls.length ? [] : db.profiles.filter(p => p.role === 'admin').map(p => p.id))]);
       to.delete(row.user_id); to.forEach(u => notify(u, 'field_msg', { country_id: row.country_id }, '#/field/' + cc));
     }
+    if (ev === 'INSERT' && table === 'field_updates') {
+      const cc = db.countries.find(x => x.id === row.country_id)?.code;
+      const to = new Set([...(db.nation_pledges || []).filter(x => x.country_id === row.country_id).map(x => x.user_id),
+        ...(db.applications || []).filter(x => x.country_id === row.country_id && ['approved', 'preparing', 'on_field'].includes(x.status)).map(x => x.user_id),
+        ...(db.country_leaders || []).filter(x => x.country_id === row.country_id).map(x => x.user_id)]);
+      to.delete(row.user_id); to.forEach(u => notify(u, 'field_update', { country_id: row.country_id }, '#/feed/' + cc));
+    }
+    if (ev === 'UPDATE' && table === 'prayers' && row.answered && !old.answered) (db.prayer_reactions || []).filter(r => r.prayer_id === row.id && r.user_id !== row.user_id).forEach(r => notify(r.user_id, 'prayer_answered', { country_id: row.country_id }, '#/feed'));
     if (ev === 'INSERT' && table === 'field_checkins' && row.status === 'need_help') {
       const a = db.applications.find(x => x.id === row.application_id);
       if (a) new Set([...(db.country_leaders || []).filter(l => l.country_id === a.country_id).map(l => l.user_id), ...db.profiles.filter(p => p.role === 'admin').map(p => p.id)]).forEach(u => { if (u !== row.user_id) notify(u, 'checkin_help', { country_id: a.country_id }, '#/lead/' + a.id); });
@@ -2236,7 +2268,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { lead: 'my', field: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { feed: 'home', following: 'home', lead: 'my', field: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2493,13 +2525,20 @@ const VIEWS = {
       </div>
       ${TORCH}`, { dark: true });
 
+    let feedHome = '';
+    try {
+      const fi = await loadFeed({ limit: 12 });
+      const mineIds = new Set([...state.myPledges, ...(apps || []).map(a => a.country_id)]);
+      const top = [...fi].sort((a, b) => (mineIds.has(b.country_id) - mineIds.has(a.country_id)) || b.at.localeCompare(a.at)).slice(0, 3);
+      if (top.length) feedHome = `<div class="section-head"><h2>${esc(t('fe_title'))}</h2><a class="text-link" href="#/feed">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(top.map(feedItemHTML).join(''))}`;
+    } catch (e) { feedHome = ''; }
     const nations = card(`
       <div class="row between top">
         <div><span class="eyebrow plain">${icon('flame', 'width="14" height="14" style="color:var(--orange)"')} ${esc(t('my_nations'))}</span>
           <h2 style="margin-top:10px">${mine.length ? esc(t(mine.length === 1 ? 'carrying_one' : 'carrying_n', { n: mine.length })) : esc(t('my_nations_empty'))}</h2></div>
       </div>
       <div style="margin-top:14px">${mine.length ? nationChips(mine) : ''}</div>
-      <div style="margin-top:${mine.length ? 14 : 4}px"><a class="text-link" href="#/countries">${esc(t('sign_a_nation'))} ${icon('arrow')}</a></div>`);
+      <div style="margin-top:${mine.length ? 14 : 4}px" class="row" ><a class="text-link" href="#/countries">${esc(t('sign_a_nation'))} ${icon('arrow')}</a>${mine.length ? `<a class="text-link" style="margin-left:auto" href="#/following">${esc(t('fl_see_nations'))} ${icon('arrow')}</a>` : ''}</div>`);
 
     const concepts = [1, 2, 3, 4, 5].map(n => card(`
       <div class="concept"><div class="concept-n">0${n}</div>
@@ -2534,6 +2573,7 @@ const VIEWS = {
       ${others.length ? `<div class="section-head"><h2>${esc(t('ev_upcoming'))}</h2><a class="text-link" href="#/events">${esc(t('see_all'))} ${icon('chev')}</a></div>${card(others.map(eventRow).join(''))}` : ''}
       <div class="section-head"><h2>${esc(t('countries_title'))}</h2><a class="text-link" href="#/countries">${esc(t('see_all'))} ${icon('chev')}</a></div>
       <div class="rail dest-rail">${active.map(destCard).join('')}</div>
+      ${feedHome}
       ${nations}
       ${featT ? `<div class="section-head"><h2>${esc(t('featured_testimony'))}</h2><a class="text-link" href="#/testimonies">${esc(t('see_all'))} ${icon('chev')}</a></div>${testimonyCard(featT, { full: false })}` : ''}
       <div class="section-head"><h2>${esc(t('concepts_title'))}</h2><span class="small muted">${esc(t('swipe'))}</span></div>
@@ -2650,7 +2690,10 @@ const VIEWS = {
       </div>`;
       body = card(`
         ${sw('require_graduation_to_apply', t('set_require_grad'), t('set_require_grad_d'))}
-        ${sw('sensitive_photo_block', t('set_photo_block'), t('set_photo_block_d'))}`) + await adminChecklistHTML();
+        ${sw('sensitive_photo_block', t('set_photo_block'), t('set_photo_block_d'))}
+        <div class="sep"></div>
+        <label class="field" style="margin:0"><span>${esc(t('set_giving'))}</span><input type="url" inputmode="url" data-setting-text="giving_url" placeholder="https://" value="${esc(typeof s.giving_url === 'string' ? s.giving_url : '')}"></label>
+        <p class="small muted" style="margin:6px 0 0">${esc(t('set_giving_d'))}</p>`) + await adminChecklistHTML();
     } else {
       const list = await loadCountries(true);
       body = card(`
@@ -2942,6 +2985,14 @@ const BINDERS = {
       };
       bindMemberList();
     }
+    app.querySelectorAll('[data-setting-text]').forEach(inp => inp.onchange = async () => {
+      const v = inp.value.trim();
+      if (v && !/^https:\/\//.test(v)) return toast('https://', true);
+      const { error } = await sb.from('app_settings').upsert({ key: inp.dataset.settingText, value: v });
+      if (error) return toast(errMsg(error), true);
+      state.settings[inp.dataset.settingText] = v;
+      toast(t('saved'));
+    });
     app.querySelectorAll('[data-setting]').forEach(cb => cb.onchange = async () => {
       const { error } = await sb.from('app_settings').upsert({ key: cb.dataset.setting, value: cb.checked });
       if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
@@ -3790,8 +3841,9 @@ VIEWS.field = async function (code) {
   const c = (code && mine.find(x => x.code === code.toUpperCase())) || mine[0];
   if (!c) return backLink('#/my', t('tab_my')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   const can = canEditCountry(c);
-  const [photos, videos, { data: msgs }] = await Promise.all([loadCountryGallery(c.id), loadCountryVideos(c.id),
-    sb.from('field_messages').select('*').eq('country_id', c.id).order('created_at').limit(300)]);
+  const [photos, videos, { data: msgs }, { data: ups }] = await Promise.all([loadCountryGallery(c.id), loadCountryVideos(c.id),
+    sb.from('field_messages').select('*').eq('country_id', c.id).order('created_at').limit(300),
+    sb.from('field_updates').select('*').eq('country_id', c.id).order('created_at', { ascending: false }).limit(5)]);
   await loadNames((msgs || []).map(m => m.user_id));
   state.gallery = { cid: c.id, photos };
   state.fieldCountry = c;
@@ -3804,7 +3856,12 @@ VIEWS.field = async function (code) {
   return `${backLink('#/my', t('tab_my'))}${pageHead(t('fd_title'), can ? t('fd_sub') : '')}
     ${mine.length > 1 ? `<div class="lang-pick" style="margin:-6px -20px 14px">${mine.map(x => `<a class="chip-a ${x.id === c.id ? 'active' : ''}" href="#/field/${esc(x.code)}"><span aria-hidden="true">${flag(x.code)}</span>${esc(countryName(x))}</a>`).join('')}</div>` : ''}
     ${state.partnerOf.has(c.id) ? card(`<span class="eyebrow plain">${icon('hands', 'width="14" height="14"')} ${esc(t('fd_guide_t'))}</span><p style="margin:10px 0 0">${esc(t('fd_guide'))}</p>`) : ''}
-    ${can ? `<div class="section-head"><h2>${esc(t('fd_photos'))}</h2><a class="text-link" href="#/countries/${esc(c.code)}">${esc(t('ce_preview'))} ${icon('chev')}</a></div>
+    ${can ? `<div class="section-head"><h2>${esc(t('fe_post_t'))}</h2></div>
+      ${card(`<form id="update-form"><label class="field"><textarea name="body" aria-label="${esc(t('fe_post_t'))}" maxlength="1000" style="min-height:90px" placeholder="${esc(t('fe_post_ph'))}" required></textarea></label>
+        <p class="small muted" style="margin:0 0 12px">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('fe_post_safe'))}</p>
+        <button class="btn block" type="submit">${esc(t('fe_post_btn'))}</button></form>
+        ${(ups || []).length ? `<div class="sep"></div><div class="small muted" style="margin-bottom:4px">${esc(t('fe_recent'))}</div>${ups.map(u => `<div class="feed-item"><div class="row between small muted"><span>${esc(relTime(u.created_at))}</span><button type="button" class="quiet-del" data-update-del="${u.id}" aria-label="${esc(t('adm_delete'))}">${icon('trash')}</button></div><p style="margin:6px 0 0">${para(u.body)}</p></div>`).join('')}` : ''}`)}
+      <div class="section-head"><h2>${esc(t('fd_photos'))}</h2><a class="text-link" href="#/countries/${esc(c.code)}">${esc(t('ce_preview'))} ${icon('chev')}</a></div>
       ${galleryHTML(c, photos)}
       <div class="section-head"><h2>${esc(t('fd_videos'))}</h2></div>
       ${videosHTML(videos, true)}
@@ -3820,6 +3877,22 @@ VIEWS.field = async function (code) {
 BINDERS.field = function () {
   const c = state.fieldCountry; if (!c) return;
   bindGallery(c);
+  const uf = document.getElementById('update-form');
+  if (uf) uf.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = uf.body.value.trim();
+    if (!body) return;
+    const btn = uf.querySelector('button'); btn.disabled = true;
+    const { error } = await sb.from('field_updates').insert({ country_id: c.id, user_id: state.profile.id, body });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    toast(t('fe_posted')); render();
+  };
+  app.querySelectorAll('[data-update-del]').forEach(b => b.onclick = armTwice(b, async () => {
+    const { error } = await sb.from('field_updates').delete().eq('id', b.dataset.updateDel);
+    if (error) return toast(errMsg(error), true);
+    render();
+  }));
   const vf = document.getElementById('video-form');
   if (vf) vf.onsubmit = async (e) => {
     e.preventDefault();
@@ -4877,6 +4950,76 @@ function testimonyCard(x, { full = true } = {}) {
       ${mine ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-testi="${x.id}">${esc(t('adm_delete'))}</button>` : moreBtn('testimony', x.id, x.user_id, x.title + ' — ' + x.body)}</div>`);
 }
 
+// ---------------------------------------------------------------------
+// 선교지 소식 피드 · 내가 품은 나라
+// ---------------------------------------------------------------------
+async function loadFeed({ cid = null, limit = 30 } = {}) {
+  const get = (table, order, extra) => {
+    let q = sb.from(table).select('*');
+    if (cid) q = q.eq('country_id', cid);
+    if (extra) q = extra(q);
+    return q.order(order, { ascending: false }).limit(limit);
+  };
+  const [u, v, ph, pr] = await Promise.all([
+    get('field_updates', 'created_at'), get('country_videos', 'created_at'), get('country_photos', 'created_at'),
+    get('prayers', 'created_at', q => q.eq('answered', true)),
+  ]);
+  await loadNames([...(u.data || []).map(x => x.user_id)]);
+  const items = [];
+  (u.data || []).forEach(x => items.push({ kind: 'update', country_id: x.country_id, at: x.created_at, body: x.body, key: 'u' + x.id }));
+  (v.data || []).forEach(x => items.push({ kind: 'video', country_id: x.country_id, at: x.created_at, v: x, key: 'v' + x.id }));
+  const groups = {};   // 같은 나라·같은 날 올린 사진은 한 묶음
+  (ph.data || []).filter(x => x.created_at).forEach(x => { const k = x.country_id + '|' + x.created_at.slice(0, 10); (groups[k] = groups[k] || { kind: 'photos', country_id: x.country_id, at: x.created_at, photos: [], key: 'p' + k }).photos.push(x); });
+  Object.values(groups).forEach(g => items.push(g));
+  (pr.data || []).filter(x => x.country_id && !isBlocked(x.user_id)).forEach(x => items.push({ kind: 'answered', country_id: x.country_id, at: x.answered_at || x.created_at, body: x.body, note: x.answer_note, key: 'a' + x.id }));
+  return items.sort((a, b) => b.at.localeCompare(a.at));
+}
+function feedItemHTML(it) {
+  const c = countryById(it.country_id);
+  let body = '';
+  if (it.kind === 'update' || it.kind === 'answered') body = `<p style="margin:8px 0 0">${para(it.body)}</p>${it.note ? `<div class="quote">${esc(it.note)}</div>` : ''}`;
+  else if (it.kind === 'video') body = `<div style="margin-top:8px">${videosHTML([it.v], false)}</div>`;
+  else if (it.kind === 'photos') body = `<div class="feed-photos">${it.photos.slice(0, 3).map(ph => `<img src="${esc(ph.url)}" alt="${esc(ph.caption || (c ? countryName(c) : ''))}" loading="lazy">`).join('')}</div>`;
+  return `<div class="feed-item"><div class="row between small muted"><span>${c ? flag(c.code) + ' ' + esc(countryName(c)) + ' · ' : ''}${esc(relTime(it.at))}</span><span class="feed-kind">${esc(t('fe_k_' + it.kind))}</span></div>${body}</div>`;
+}
+VIEWS.feed = async function (code) {
+  await Promise.all([loadCountries(), loadPledges()]);
+  const c = code ? (state.countries || []).find(x => x.code === code.toUpperCase()) : null;
+  const items = await loadFeed({ cid: c?.id || null, limit: 30 });
+  const chips = `<div class="lang-pick" style="margin:0 -20px 12px"><a class="chip-a ${!c ? 'active' : ''}" href="#/feed">${esc(t('fe_all_news'))}</a>${(state.countries || []).filter(x => x.is_active).map(x => `<a class="chip-a ${c?.id === x.id ? 'active' : ''}" href="#/feed/${esc(x.code)}"><span aria-hidden="true">${flag(x.code)}</span>${esc(countryName(x))}</a>`).join('')}</div>`;
+  return `${backLink('#/home', t('tab_home'))}${pageHead(t('fe_title'), t('fe_sub'))}
+    ${state.myPledges.size ? `<a class="text-link" href="#/following" style="display:inline-flex;margin-bottom:10px">${esc(t('fl_see_nations'))} ${icon('arrow')}</a>` : ''}
+    ${chips}
+    ${items.length ? card(items.map(feedItemHTML).join('')) : card(emptyHTML('globe', t('fe_empty')))}`;
+};
+BINDERS.feed = function () { bindVideoFacades(); };
+
+VIEWS.following = async function () {
+  await Promise.all([loadCountries(), loadPledges(), loadSettings()]);
+  const mine = [...state.myPledges].map(countryById).filter(Boolean);
+  const ids = mine.map(x => x.id);
+  const [ups, prs] = ids.length ? await Promise.all([
+    sb.from('field_updates').select('country_id,body,created_at').in('country_id', ids).order('created_at', { ascending: false }).limit(200),
+    sb.from('prayers').select('country_id,answered').in('country_id', ids).limit(1000)]) : [{ data: [] }, { data: [] }];
+  const latest = {}, open = {}, done = {}, news = {};
+  (ups.data || []).forEach(u => { if (!latest[u.country_id]) latest[u.country_id] = u; news[u.country_id] = (news[u.country_id] || 0) + 1; });
+  (prs.data || []).forEach(x => { (x.answered ? done : open)[x.country_id] = ((x.answered ? done : open)[x.country_id] || 0) + 1; });
+  const giveUrl = setting('giving_url');
+  const give = !NATIVE && typeof giveUrl === 'string' && /^https:\/\//.test(giveUrl)
+    ? card(`<span class="eyebrow plain">${icon('gift', 'width="14" height="14"')} ${esc(t('fl_give_t'))}</span><p style="margin:10px 0 14px">${esc(t('fl_give_d'))}</p>
+        <a class="btn block" href="${esc(giveUrl)}" target="_blank" rel="noopener">${esc(t('fl_give_btn'))}</a>`) : '';
+  return `${backLink('#/home', t('tab_home'))}${pageHead(t('fl_title'), t('fl_sub'))}
+    ${mine.length ? mine.map(c => card(`<a class="list-row" href="#/countries/${esc(c.code)}"><span class="flag-tile" style="font-size:30px" aria-hidden="true">${flag(c.code)}</span>
+        <div class="meta"><div class="t">${esc(countryName(c))}</div>
+          <div class="d">${latest[c.id] ? esc(t('fl_latest')) + ' · ' + esc(relTime(latest[c.id].created_at)) : esc(t('fl_no_news'))}</div></div><span class="chev">${icon('chev')}</span></a>
+      ${latest[c.id] ? `<p class="small" style="margin:6px 0 0">${esc(latest[c.id].body.length > 140 ? latest[c.id].body.slice(0, 140) + '…' : latest[c.id].body)}</p>` : ''}
+      <div class="chips" style="margin-top:12px"><a class="chip" href="#/feed/${esc(c.code)}">${esc(t('fl_news'))}${news[c.id] ? ' · ' + news[c.id] : ''}</a>
+        <a class="chip" href="#/prayers/${esc(c.code)}">${icon('hands', 'width="14" height="14"')} ${esc(t('fl_prayers'))} · ${esc(t('fl_open_n', { n: open[c.id] || 0 }))}${done[c.id] ? ' · ' + esc(t('fl_answered_n', { n: done[c.id] })) : ''}</a></div>`)).join('')
+      : card(emptyHTML('flame', t('fl_empty')) + `<a class="btn block navy" href="#/countries" style="margin-top:14px">${esc(t('fl_pick'))}</a>`)}
+    ${give}
+    ${card(`<a class="list-row" href="#/support"><span class="ico-tile">${icon('gift')}</span><div class="meta"><div class="t">${esc(t('fl_stories'))}</div></div><span class="chev">${icon('chev')}</span></a>`)}`;
+};
+
 VIEWS.testimonies = async function (param) {
   await Promise.all([loadCountries(), loadSettings()]);
   if (param === 'new') {
@@ -4971,6 +5114,8 @@ VIEWS.prayers = async function (code) {
       <div class="row between small muted"><span>${pc ? flag(pc.code) + ' ' + esc(countryName(pc)) + ' · ' : ''}${esc(me ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
         ${p.answered ? `<span class="st st-approved">${esc(t('pr_answered'))}</span>` : ''}</div>
       <p style="margin:8px 0 12px">${para(p.body)}</p>
+      ${p.answered && p.answer_note ? `<div class="quote" style="margin:-2px 0 12px">${esc(p.answer_note)}</div>` : ''}
+      ${p.answered && me && (count[p.id] || 0) > 0 ? `<p class="small muted" style="margin:-4px 0 12px">${esc(t('pr_ans_with', { n: count[p.id] }))}</p>` : ''}
       <div class="row" style="gap:8px;flex-wrap:wrap">
         <button type="button" class="pray-btn ${mine.has(p.id) ? 'on' : ''}" data-pray="${p.id}" aria-pressed="${mine.has(p.id)}">${icon('hands')} ${esc(t('pr_prayed'))} <b class="num">${count[p.id] || 0}</b></button>
         ${me && !p.answered ? `<button type="button" class="btn light small" data-answer="${p.id}">${esc(t('pr_mark_answered'))}</button>` : ''}
@@ -5013,10 +5158,21 @@ BINDERS.prayers = function () {
     const n = b.querySelector('b'); n.textContent = Math.max(0, Number(n.textContent) + (on ? -1 : 1));
     b.classList.toggle('on', !on); b.setAttribute('aria-pressed', String(!on));
   });
-  app.querySelectorAll('[data-answer]').forEach(b => b.onclick = async () => {
-    const { error } = await sb.from('prayers').update({ answered: true }).eq('id', b.dataset.answer);
-    if (error) return toast(errMsg(error), true);
-    toast(t('pr_answered_toast')); render();
+  app.querySelectorAll('[data-answer]').forEach(b => b.onclick = () => {
+    const box = b.closest('.prayer');
+    if (box.querySelector('.answer-form')) return box.querySelector('.answer-form input').focus();
+    const f = document.createElement('form');
+    f.className = 'answer-form';
+    f.innerHTML = `<input type="text" name="note" maxlength="500" autocomplete="off" placeholder="${esc(t('pr_ans_note'))}" aria-label="${esc(t('pr_ans_note'))}"><button class="btn small" type="submit">${esc(t('pr_ans_save'))}</button>`;
+    box.appendChild(f);
+    f.note.focus();
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      const note = f.note.value.trim() || null;
+      const { error } = await sb.from('prayers').update({ answered: true, answered_at: new Date().toISOString(), answer_note: note }).eq('id', b.dataset.answer);
+      if (error) return toast(errMsg(error), true);
+      toast(t('pr_answered_toast')); render();
+    };
   });
   app.querySelectorAll('[data-testi-from]').forEach(a => a.addEventListener('click', () => { state.newTestimonyPrayer = state.prayers.find(p => String(p.id) === a.dataset.testiFrom) || null; }));
   app.querySelectorAll('[data-del-prayer]').forEach(b => b.onclick = armTwice(b, async () => {
@@ -5756,11 +5912,13 @@ function notifText(n) {
     case 'checkin_ask': return t('nt_ci_ask');
     case 'checkin_miss': return t('nt_ci_miss', { c: c ? countryName(c) : '', d: p.days ?? '' });
     case 'checkin_help': return t('nt_ci_help', { c: c ? countryName(c) : '' });
+    case 'field_update': return t('nt_field_update', { c: c ? countryName(c) : '' });
+    case 'prayer_answered': return t('nt_prayer_answered');
     case 'returned_testi': return t('nt_returned', { c: c ? countryName(c) : '' });
     default: return t('nt_generic');
   }
 }
-const NOTIF_ICON = { dep_remind: 'plane', ins_due: 'shield', checkin_ask: 'check', checkin_miss: 'shield', checkin_help: 'shield', returned_testi: 'spark', field_msg: 'globe', leader_msg: 'chat', student_msg: 'chat', new_app: 'plane', report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
+const NOTIF_ICON = { field_update: 'globe', prayer_answered: 'hands', dep_remind: 'plane', ins_due: 'shield', checkin_ask: 'check', checkin_miss: 'shield', checkin_help: 'shield', returned_testi: 'spark', field_msg: 'globe', leader_msg: 'chat', student_msg: 'chat', new_app: 'plane', report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
 
 VIEWS.notifications = async function () {
   await loadCountries();

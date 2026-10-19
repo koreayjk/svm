@@ -684,6 +684,28 @@ create table if not exists public.field_checkins (
 );
 create index if not exists field_checkins_app_idx on public.field_checkins(application_id, created_at desc);
 
+-- 선교지 소식: 선교사님이 나라마다 올리는 짧은 근황 (홈 · 소식 피드에 표시)
+create table if not exists public.field_updates (
+  id          bigint generated always as identity primary key,
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  user_id     uuid references public.profiles(id) on delete set null,
+  body        text not null check (length(body) between 1 and 1000),
+  created_at  timestamptz not null default now()
+);
+create index if not exists field_updates_country_idx on public.field_updates(country_id, created_at desc);
+
+-- 사진은 올린 때를 알아야 소식 피드에 최신순으로 보여 줄 수 있음
+alter table public.country_photos add column if not exists created_at timestamptz not null default now();
+
+-- 기도 응답: 언제, 어떻게 응답받았는지 한마디
+alter table public.prayers add column if not exists answered_at timestamptz;
+alter table public.prayers add column if not exists answer_note text;
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'prayers_answer_note_len') then
+    alter table public.prayers add constraint prayers_answer_note_len check (answer_note is null or length(answer_note) <= 500);
+  end if;
+end $$;
+
 -- 자동 알림을 한 번만 보내기 위한 기록 (앱에서는 읽지 않음 — 정책 없음)
 create table if not exists public.reminder_log (
   application_id  bigint not null references public.applications(id) on delete cascade,

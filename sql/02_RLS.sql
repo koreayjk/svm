@@ -348,6 +348,7 @@ alter table public.field_messages             enable row level security;
 alter table public.application_prep          enable row level security;
 alter table public.field_checkins            enable row level security;
 alter table public.reminder_log              enable row level security;
+alter table public.field_updates            enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -363,7 +364,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -413,6 +414,10 @@ create policy "checkins: self or manager read" on public.field_checkins for sele
 create policy "checkins: self send" on public.field_checkins for insert with check (
   user_id = auth.uid()
   and exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid() and a.status = 'on_field'));
+-- 선교지 소식: 회원은 읽기, 그 나라 선교사님·리더·관리자만 쓰기
+create policy "field_updates: read"   on public.field_updates for select to authenticated using (true);
+create policy "field_updates: write"  on public.field_updates for insert with check (user_id = auth.uid() and public.can_edit_country(country_id));
+create policy "field_updates: delete" on public.field_updates for delete using (user_id = auth.uid() or public.can_edit_country(country_id));
 -- reminder_log: 정책 없음 = 앱에서는 접근 불가 (아래 send_reminders 함수만 씁니다)
 
 -- 관리자가 아닌 사람이 나라 정보를 고칠 때 바꿀 수 없는 칸은 원래대로
@@ -829,6 +834,42 @@ begin
 end;
 $$;
 
+-- 새 선교지 소식 → 그 나라를 품은 사람, 파송 준비·선교 중인 학생, 나라 리더에게 알림 (쓴 사람 제외)
+create or replace function public.notify_field_update()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  insert into public.notifications (user_id, kind, payload, link)
+  select u, 'field_update', jsonb_build_object('country_id', new.country_id), '#/feed/' || c.code
+    from (select user_id as u from public.nation_pledges where country_id = new.country_id
+          union select user_id from public.applications where country_id = new.country_id and status in ('approved','preparing','on_field')
+          union select user_id from public.country_leaders where country_id = new.country_id) x
+    join public.countries c on c.id = new.country_id
+   where u is distinct from new.user_id;
+  return new;
+end;
+$$;
+
+-- 기도가 응답되면 함께 기도한 사람들에게 알림
+create or replace function public.notify_prayer_answered()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.answered and not coalesce(old.answered, false) then
+    insert into public.notifications (user_id, kind, payload, link)
+    select r.user_id, 'prayer_answered', jsonb_build_object('country_id', new.country_id), '#/feed'
+      from public.prayer_reactions r where r.prayer_id = new.id and r.user_id <> new.user_id;
+  end if;
+  return new;
+end;
+$$;
+
 -- 안부 체크인에서 '도움이 필요해요'를 누르면 맡은 리더와 관리자 모두에게 바로 알림
 create or replace function public.notify_checkin()
 returns trigger
@@ -950,6 +991,12 @@ create trigger notify_app_message after insert on public.application_messages
 drop trigger if exists notify_field_message on public.field_messages;
 create trigger notify_field_message after insert on public.field_messages
   for each row execute function public.notify_field_message();
+drop trigger if exists notify_field_update on public.field_updates;
+create trigger notify_field_update after insert on public.field_updates
+  for each row execute function public.notify_field_update();
+drop trigger if exists notify_prayer_answered on public.prayers;
+create trigger notify_prayer_answered after update on public.prayers
+  for each row execute function public.notify_prayer_answered();
 drop trigger if exists notify_checkin on public.field_checkins;
 create trigger notify_checkin after insert on public.field_checkins
   for each row execute function public.notify_checkin();
