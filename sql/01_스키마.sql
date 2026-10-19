@@ -628,3 +628,38 @@ create table if not exists public.application_messages (
   created_at      timestamptz not null default now()
 );
 create index if not exists application_messages_app_idx on public.application_messages(application_id, created_at);
+
+-- 선교지 파트너(현지 선교사님) — 자기 나라 페이지의 정보·사진·영상을 관리
+--   학생 개인정보는 보지 않고, 연락은 그 나라의 SVM 나라 리더와 합니다.
+create table if not exists public.field_partners (
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  user_id     uuid not null references public.profiles(id) on delete cascade,
+  created_at  timestamptz not null default now(),
+  primary key (country_id, user_id)
+);
+
+-- 나라 페이지 영상 (유튜브 링크)
+create table if not exists public.country_videos (
+  id          bigint generated always as identity primary key,
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  youtube_id  text not null check (youtube_id ~ '^[A-Za-z0-9_-]{11}$'),
+  title       text,
+  title_ko    text,
+  sort_order  int not null default 0,
+  created_by  uuid references public.profiles(id) on delete set null,
+  created_at  timestamptz not null default now()
+);
+create index if not exists country_videos_country_idx on public.country_videos(country_id, sort_order);
+
+-- 사진을 올린 사람 (선교사님이 올린 사진도 구분)
+alter table public.country_photos add column if not exists uploaded_by uuid references public.profiles(id) on delete set null;
+
+-- 선교지 대화방: 나라마다 선교사님 ↔ 나라 리더(와 관리자)
+create table if not exists public.field_messages (
+  id          bigint generated always as identity primary key,
+  country_id  bigint not null references public.countries(id) on delete cascade,
+  user_id     uuid references public.profiles(id) on delete set null,
+  body        text not null check (length(body) between 1 and 2000),
+  created_at  timestamptz not null default now()
+);
+create index if not exists field_messages_country_idx on public.field_messages(country_id, created_at);
