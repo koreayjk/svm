@@ -697,6 +697,21 @@ create index if not exists field_updates_country_idx on public.field_updates(cou
 -- 사진은 올린 때를 알아야 소식 피드에 최신순으로 보여 줄 수 있음
 alter table public.country_photos add column if not exists created_at timestamptz not null default now();
 
+-- 번역: 같은 글은 한 번만 번역해서 저장 (앱에서는 읽지 않음 — 번역 함수만 씁니다) · 회원당 하루 사용량
+create table if not exists public.translations (
+  hash        text not null,
+  lang        text not null check (lang in ('en','ko')),
+  out         text not null,
+  created_at  timestamptz not null default now(),
+  primary key (hash, lang)
+);
+create table if not exists public.translation_usage (
+  user_id  uuid not null references public.profiles(id) on delete cascade,
+  day      date not null,
+  n        int not null default 0,
+  primary key (user_id, day)
+);
+
 -- 기도 응답: 언제, 어떻게 응답받았는지 한마디
 alter table public.prayers add column if not exists answered_at timestamptz;
 alter table public.prayers add column if not exists answer_note text;

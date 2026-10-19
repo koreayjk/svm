@@ -673,6 +673,14 @@
   .composer textarea { min-height: 44px; max-height: 140px; height: 44px; padding: 10px 15px; border-radius: 20px; resize: none; font-size: 16px; background: var(--fill); }
   .composer .btn { width: 44px; min-height: 44px; height: 44px; padding: 0; border-radius: 50%; flex: 0 0 auto; }
   .chat-spacer { height: 92px; }
+  .tr-btn { display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; padding: 4px 0; border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--orange-ink); cursor: pointer; }
+  .tr-btn:disabled { opacity: .5; }
+  .tr-out { white-space: pre-wrap; margin-top: 6px; padding: 10px 12px; border-radius: 12px; background: var(--fill); font-size: 15px; line-height: 1.5; }
+  .stats-table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+  .stats-table th, .stats-table td { padding: 9px 3px; text-align: right; white-space: nowrap; }
+  .stats-table thead th { font-size: 12.5px; font-weight: 600; color: var(--muted); }
+  .stats-table th[scope=row] { text-align: left; font-weight: 600; max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
+  .stats-table tbody tr + tr > * { border-top: .5px solid var(--line); }
   .feed-item { padding: 14px 0; }
   .feed-item + .feed-item { border-top: .5px solid var(--line); }
   .feed-kind { font-size: 12px; font-weight: 700; color: var(--orange-ink); letter-spacing: .01em; }
@@ -1075,6 +1083,9 @@ const i18n = {
     install_app: 'Install app', install_ios: 'On iPhone: tap the Share button, then “Add to Home Screen”.',
     graduate_badge: 'Graduate badge',
     // admin
+    admin_stats: 'Overview', sx_members: 'Members', sx_new_month: '{n} new this month', sx_apps: 'Applications', sx_field: 'On the field now', sx_returned: 'Returned', sx_funnel: 'From apply to return', sx_funnel_d: 'How many applications reached each step.', sx_by_country: 'By country', sx_col_apps: 'Applied', sx_col_field: 'On field', sx_col_back: 'Returned', sx_col_pledge: 'Carry', sx_col_pray: 'Prayers',
+    sx_care: 'Needs attention', sx_quiet: 'On the field, no check-in for 3+ days', sx_help: 'Latest check-in asks for help', sx_ins: 'Leaving within 14 days, no insurance certificate', sx_pending_apps: 'Applications waiting for a decision', sx_all_good: 'Nothing needs attention right now.',
+    sx_community: 'Community', sx_testi: 'Testimonies published', sx_prayers: 'Prayers answered / total', sx_pledges: 'Names written for nations', sx_news30: 'Field updates, last 30 days', sx_growth: 'New members, last 6 months',
     admin_title: 'Admin', admin_members: 'Members', admin_settings: 'Settings', admin_countries: 'Countries',
     set_require_grad: 'Only graduates can apply', set_require_grad_d: 'Off: anyone can apply. On: only graduate members can submit applications.',
     set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
@@ -1128,6 +1139,7 @@ const i18n = {
     fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
     vd_add: 'Add a YouTube video', vd_url: 'YouTube link', vd_title: 'Title', vd_bad: 'Please paste a YouTube link.', vd_added: 'Video added.', vd_none: 'No videos yet.', vd_section: 'Videos from the field',
     adm_partners: 'Field missionaries', adm_partners_d: 'Missionaries keep their country page up to date with photos, videos and information. They do not see student details; the country leader is their contact.', adm_partner_add: 'Add a missionary', adm_partner_none: 'No missionary yet',
+    tr_btn: 'Translate', tr_hide: 'Hide translation', tr_busy: 'Translating…', tr_fail: 'Could not translate. Please try again.', tr_limit: 'You reached today’s translation limit.', tr_demo: 'Translation works in the live app, not in the demo.',
     fe_title: 'News from the field', fe_sub: 'Updates, photos and videos from our missionaries, and prayers that were answered.', fe_empty: 'No news yet. Updates from the field will show up here.',
     fe_k_update: 'Update', fe_k_video: 'Video', fe_k_photos: 'Photos', fe_k_answered: 'Prayer answered', fe_mine: 'My nations', fe_all_news: 'All news',
     fe_post_t: 'Share news', fe_post_ph: 'What is happening this week? Keep it short.', fe_post_btn: 'Post', fe_post_safe: 'Do not post local believers’ real names, faces, or exact locations.', fe_posted: 'Posted. People who carry this nation were notified.', fe_recent: 'Recent news', fe_none: 'No news posted yet.',
@@ -1317,6 +1329,9 @@ const i18n = {
     my_att_t: '출석 기록', my_att_d: '주일 미션 게더링 출석 기록.',
     install_app: '앱 설치', install_ios: '아이폰: 공유 버튼을 누른 뒤 “홈 화면에 추가”를 선택하세요.',
     graduate_badge: '수료 배지',
+    admin_stats: '현황', sx_members: '회원', sx_new_month: '이번 달 {n}명 가입', sx_apps: '신청', sx_field: '지금 선교 중', sx_returned: '귀국', sx_funnel: '신청부터 귀국까지', sx_funnel_d: '각 단계에 도달한 신청 수예요.', sx_by_country: '나라별', sx_col_apps: '신청', sx_col_field: '선교 중', sx_col_back: '귀국', sx_col_pledge: '품은 수', sx_col_pray: '기도',
+    sx_care: '살펴볼 일', sx_quiet: '선교 중인데 3일 넘게 체크인이 없음', sx_help: '마지막 체크인이 도움 요청', sx_ins: '2주 안에 출발하는데 보험 증서가 없음', sx_pending_apps: '결정을 기다리는 신청', sx_all_good: '지금 살펴볼 일이 없어요.',
+    sx_community: '커뮤니티', sx_testi: '공개된 후기', sx_prayers: '응답된 기도 / 전체', sx_pledges: '나라에 쓴 이름', sx_news30: '최근 30일 선교지 소식', sx_growth: '최근 6개월 새 회원',
     admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
     set_require_grad: '수료 회원만 신청 가능', set_require_grad_d: '끄면 누구나 신청 가능, 켜면 수료 회원만 신청서를 제출할 수 있습니다.',
     set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
@@ -1367,6 +1382,7 @@ const i18n = {
     fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
     vd_add: '유튜브 영상 추가', vd_url: '유튜브 링크', vd_title: '제목', vd_bad: '유튜브 링크를 붙여 넣어 주세요.', vd_added: '영상을 추가했어요.', vd_none: '아직 영상이 없습니다.', vd_section: '선교지 영상',
     adm_partners: '선교지 선교사님', adm_partners_d: '선교사님은 나라 페이지의 사진·영상·정보를 관리합니다. 학생 개인정보는 보지 않으며, 연락은 나라 리더와 합니다.', adm_partner_add: '선교사님 추가', adm_partner_none: '아직 선교사님 없음',
+    tr_btn: '번역', tr_hide: '번역 숨기기', tr_busy: '번역 중…', tr_fail: '번역하지 못했어요. 잠시 뒤 다시 시도해 주세요.', tr_limit: '오늘 번역 횟수를 모두 썼어요.', tr_demo: '번역은 데모가 아니라 실제 앱에서 동작해요.',
     fe_title: '선교지 소식', fe_sub: '선교사님들이 전하는 근황과 사진, 영상, 그리고 응답된 기도예요.', fe_empty: '아직 소식이 없어요. 선교지 소식이 올라오면 여기에 보여요.',
     fe_k_update: '근황', fe_k_video: '영상', fe_k_photos: '사진', fe_k_answered: '기도 응답', fe_mine: '내가 품은 나라', fe_all_news: '전체 소식',
     fe_post_t: '소식 올리기', fe_post_ph: '이번 주에는 어떤 일이 있었나요? 짧게 적어 주세요.', fe_post_btn: '올리기', fe_post_safe: '현지 성도의 실명·얼굴·정확한 위치는 올리지 마세요.', fe_posted: '올렸어요. 이 나라를 품은 분들께 알림이 갔어요.', fe_recent: '최근 소식', fe_none: '아직 올린 소식이 없어요.',
@@ -2658,10 +2674,12 @@ const VIEWS = {
     const tab = state.adminTab;
     const todo = adminTodoHTML(await loadAdminTodo());
     const seg = `<div class="filters admin-tabs" role="tablist">
-      ${['applications', 'training', 'gatherings', 'events', 'posts', 'teams', 'members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}${adminTabBadge(k)}</button>`).join('')}
+      ${['stats', 'applications', 'training', 'gatherings', 'events', 'posts', 'teams', 'members', 'settings', 'countries'].map(k => `<button type="button" role="tab" data-admin-tab="${k}" aria-selected="${tab === k}" class="${tab === k ? 'active' : ''}">${esc(t('admin_' + k))}${adminTabBadge(k)}</button>`).join('')}
     </div>`;
     let body = '';
-    if (tab === 'applications') {
+    if (tab === 'stats') {
+      body = await adminStatsHTML();
+    } else if (tab === 'applications') {
       body = await adminApplicationsHTML();
     } else if (tab === 'training') {
       body = await adminTrainingHTML();
@@ -3165,6 +3183,27 @@ function openDeleteSheet() {
 }
 // 모든 화면 공통: ⋯ 버튼
 document.addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (b) { e.preventDefault(); openMore(b); } });
+
+// 번역 버튼 — 글(data-tr-src) 바로 아래에 번역을 보여 줌 (Supabase 'translate' 함수, 같은 글은 저장해서 다시 씀)
+const trBtn = () => `<button type="button" class="tr-btn" data-tr>${icon('globe', 'width="14" height="14"')}<span>${esc(t('tr_btn'))}</span></button>`;
+document.addEventListener('click', async (e) => {
+  const b = e.target.closest('[data-tr]'); if (!b) return;
+  const wrap = b.closest('.tr-wrap'), src = wrap?.querySelector('[data-tr-src]');
+  if (!src) return;
+  let out = wrap.querySelector('.tr-out');
+  const label = b.querySelector('span');
+  if (out) { out.hidden = !out.hidden; label.textContent = t(out.hidden ? 'tr_btn' : 'tr_hide'); return; }
+  if (DEMO) return toast(t('tr_demo'));
+  b.disabled = true; label.textContent = t('tr_busy');
+  const { data, error } = await sb.functions.invoke('translate', { body: { text: src.innerText.trim(), to: state.lang } });
+  b.disabled = false;
+  if (error || !data?.text) {
+    label.textContent = t('tr_btn');
+    return toast(t(error?.context?.status === 429 ? 'tr_limit' : 'tr_fail'), true);
+  }
+  out = document.createElement('div'); out.className = 'tr-out'; out.lang = state.lang; out.textContent = data.text;
+  wrap.appendChild(out); label.textContent = t('tr_hide');
+});
 
 async function loadNames(ids) {
   const need = [...new Set(ids)].filter(id => id && !(id in nameCache));
@@ -3766,7 +3805,7 @@ function threadHTML(appId, list, staff) {
     ${staff ? `<div class="small muted" style="margin:16px 0 8px">${icon('chat', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('th_title'))} · ${esc(t('th_staff'))}</div>` : '<div class="sep"></div>'}
     <div class="thread-list">${list.length ? list.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
         <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
-        <div class="bubble">${esc(m.body)}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+        <div class="tr-wrap"><div class="bubble" data-tr-src>${esc(m.body)}</div>${m.user_id === me ? '' : trBtn()}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
     <form class="thread-form" data-thread-form="${appId}"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>
   </div>`;
@@ -3850,7 +3889,7 @@ VIEWS.field = async function (code) {
   const me = state.profile.id;
   const thread = `<div class="thread-list">${(msgs || []).length ? msgs.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
       <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
-      <div class="bubble">${esc(m.body)}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+      <div class="tr-wrap"><div class="bubble" data-tr-src>${esc(m.body)}</div>${m.user_id === me ? '' : trBtn()}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
     <form class="thread-form" id="field-msg-form"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
   return `${backLink('#/my', t('tab_my'))}${pageHead(t('fd_title'), can ? t('fd_sub') : '')}
@@ -4945,7 +4984,7 @@ function testimonyCard(x, { full = true } = {}) {
         <h3 style="margin-top:6px;font-size:18px">${esc(x.title)}</h3></div>
       ${x.status !== 'approved' ? `<span class="st ${x.status === 'rejected' ? 'st-rejected' : ''}">${esc(t('mod_' + x.status))}</span>` : ''}
     </div>
-    <p style="margin:10px 0 0;${full ? '' : 'display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden'}">${para(x.body)}</p>
+    <div class="tr-wrap" style="margin-top:10px"><p style="margin:0;${full ? '' : 'display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden'}" data-tr-src>${para(x.body)}</p>${full ? trBtn() : ''}</div>
     <div class="row between small muted" style="margin-top:12px"><span>${esc(mine ? t('you') : shortName(nameCache[x.user_id]?.name))} · ${esc(relTime(x.created_at))}</span>
       ${mine ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-del-testi="${x.id}">${esc(t('adm_delete'))}</button>` : moreBtn('testimony', x.id, x.user_id, x.title + ' — ' + x.body)}</div>`);
 }
@@ -4977,7 +5016,7 @@ async function loadFeed({ cid = null, limit = 30 } = {}) {
 function feedItemHTML(it) {
   const c = countryById(it.country_id);
   let body = '';
-  if (it.kind === 'update' || it.kind === 'answered') body = `<p style="margin:8px 0 0">${para(it.body)}</p>${it.note ? `<div class="quote">${esc(it.note)}</div>` : ''}`;
+  if (it.kind === 'update' || it.kind === 'answered') body = `<div class="tr-wrap"><p style="margin:8px 0 0" data-tr-src>${para(it.body)}</p>${trBtn()}</div>${it.note ? `<div class="quote">${esc(it.note)}</div>` : ''}`;
   else if (it.kind === 'video') body = `<div style="margin-top:8px">${videosHTML([it.v], false)}</div>`;
   else if (it.kind === 'photos') body = `<div class="feed-photos">${it.photos.slice(0, 3).map(ph => `<img src="${esc(ph.url)}" alt="${esc(ph.caption || (c ? countryName(c) : ''))}" loading="lazy">`).join('')}</div>`;
   return `<div class="feed-item"><div class="row between small muted"><span>${c ? flag(c.code) + ' ' + esc(countryName(c)) + ' · ' : ''}${esc(relTime(it.at))}</span><span class="feed-kind">${esc(t('fe_k_' + it.kind))}</span></div>${body}</div>`;
@@ -5113,7 +5152,7 @@ VIEWS.prayers = async function (code) {
     return `<div class="prayer ${p.answered ? 'answered' : ''}">
       <div class="row between small muted"><span>${pc ? flag(pc.code) + ' ' + esc(countryName(pc)) + ' · ' : ''}${esc(me ? t('you') : shortName(nameCache[p.user_id]?.name))} · ${esc(relTime(p.created_at))}</span>
         ${p.answered ? `<span class="st st-approved">${esc(t('pr_answered'))}</span>` : ''}</div>
-      <p style="margin:8px 0 12px">${para(p.body)}</p>
+      <div class="tr-wrap" style="margin:8px 0 12px"><p style="margin:0" data-tr-src>${para(p.body)}</p>${trBtn()}</div>
       ${p.answered && p.answer_note ? `<div class="quote" style="margin:-2px 0 12px">${esc(p.answer_note)}</div>` : ''}
       ${p.answered && me && (count[p.id] || 0) > 0 ? `<p class="small muted" style="margin:-4px 0 12px">${esc(t('pr_ans_with', { n: count[p.id] }))}</p>` : ''}
       <div class="row" style="gap:8px;flex-wrap:wrap">
@@ -5502,6 +5541,59 @@ function bindAdminPosts() {
     if (error) return toast(errMsg(error), true);
     toast(t('adm_deleted')); render();
   }));
+}
+
+async function adminStatsHTML() {
+  await loadCountries();
+  const q = (table, cols = '*') => sb.from(table).select(cols).limit(5000);
+  const [pr, ap, ci, ins, te, pw, pl, up, hist] = await Promise.all([
+    q('profiles', 'id,created_at'), q('applications', 'id,user_id,country_id,status,start_date'), q('field_checkins', 'application_id,status,created_at'),
+    q('application_insurance', 'application_id,status'), q('testimonies', 'status'), q('prayers', 'country_id,answered'), q('nation_pledges', 'country_id'),
+    q('field_updates', 'created_at'), q('application_status_history', 'application_id,status,changed_at')]);
+  const profiles = pr.data || [], apps = ap.data || [], checks = ci.data || [], prayers = pw.data || [], pledges = pl.data || [];
+  const today = nowInTZ().date, month = today.slice(0, 7);
+  const lastCi = {}, lastHelp = {};
+  checks.forEach(c => { if (!lastCi[c.application_id] || c.created_at > lastCi[c.application_id]) { lastCi[c.application_id] = c.created_at; lastHelp[c.application_id] = c.status === 'need_help'; } });
+  const sinceField = {};
+  (hist.data || []).filter(h => h.status === 'on_field').forEach(h => { if (!sinceField[h.application_id] || h.changed_at > sinceField[h.application_id]) sinceField[h.application_id] = h.changed_at; });
+  const onField = apps.filter(a => a.status === 'on_field');
+  const quiet = onField.filter(a => { const base = lastCi[a.id] || sinceField[a.id]; return base && daysBetween(base.slice(0, 10), today) >= 3; });
+  const help = onField.filter(a => lastHelp[a.id]);
+  const hasIns = new Set((ins.data || []).filter(x => ['submitted', 'verified'].includes(x.status)).map(x => x.application_id));
+  const noIns = apps.filter(a => ['approved', 'preparing'].includes(a.status) && a.start_date && daysBetween(today, a.start_date) >= 0 && daysBetween(today, a.start_date) <= 14 && !hasIns.has(a.id));
+  const waiting = apps.filter(a => a.status === 'submitted');
+  const stage = APP_FLOW.map((k, i) => ({ k, n: apps.filter(a => a.status !== 'rejected' && APP_FLOW.indexOf(a.status) >= i).length }));
+  const top = Math.max(1, stage[0].n);
+  const bar = (n, max) => `<div class="bar" style="margin-top:6px"><i style="width:${Math.round(n / Math.max(1, max) * 100)}%"></i></div>`;
+  const months = [...Array(6)].map((_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - (5 - i)); const k = d.toISOString().slice(0, 7); return { k, n: profiles.filter(p => (p.created_at || '').slice(0, 7) === k).length }; });
+  const mmax = Math.max(1, ...months.map(m => m.n));
+  const rowsC = (state.countries || []).filter(c => c.is_active).map(c => {
+    const a = apps.filter(x => x.country_id === c.id);
+    return `<tr><th scope="row">${flag(c.code)} ${esc(countryName(c))}</th><td>${a.length}</td><td>${a.filter(x => x.status === 'on_field').length}</td><td>${a.filter(x => x.status === 'returned').length}</td>
+      <td>${pledges.filter(x => x.country_id === c.id).length}</td></tr>`;
+  }).join('');
+  const attn = [[quiet.length, 'sx_quiet'], [help.length, 'sx_help'], [noIns.length, 'sx_ins'], [waiting.length, 'sx_pending_apps']].filter(x => x[0] > 0);
+  const news30 = (up.data || []).filter(u => daysBetween(u.created_at.slice(0, 10), today) <= 30).length;
+  const tile = (cls, n, lbl, sub) => `<div class="stat ${cls}" style="min-height:120px"><div><div class="big">${n.toLocaleString()}</div><div class="lbl">${esc(lbl)}</div>${sub ? `<div class="small muted" style="margin-top:4px">${esc(sub)}</div>` : ''}</div></div>`;
+  return `<div class="bento" style="margin-bottom:12px">
+      ${tile('peach', profiles.length, t('sx_members'), t('sx_new_month', { n: profiles.filter(p => (p.created_at || '').slice(0, 7) === month).length }))}
+      ${tile('lav', apps.length, t('sx_apps'))}
+      ${tile('lav', onField.length, t('sx_field'))}
+      ${tile('peach', apps.filter(a => a.status === 'returned').length, t('sx_returned'))}</div>
+    <div class="section-head"><h2>${esc(t('sx_care'))}</h2></div>
+    ${card(attn.length ? attn.map(([n, k]) => `<div class="list-row no-ico"><div class="meta"><div class="t">${esc(t(k))}</div></div><span class="st st-on_field">${n}</span></div>`).join('') : `<p class="muted" style="margin:0">${esc(t('sx_all_good'))}</p>`)}
+    <div class="section-head"><h2>${esc(t('sx_funnel'))}</h2></div>
+    ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t('sx_funnel_d'))}</p>${stage.map(s => `<div style="margin-top:12px"><div class="row between"><span>${esc(t('st_' + s.k))}</span><b class="num">${s.n}</b></div>${bar(s.n, top)}</div>`).join('')}`)}
+    <div class="section-head"><h2>${esc(t('sx_by_country'))}</h2></div>
+    ${card(`<div style="overflow-x:auto"><table class="stats-table"><thead><tr><th></th><th>${esc(t('sx_col_apps'))}</th><th>${esc(t('sx_col_field'))}</th><th>${esc(t('sx_col_back'))}</th><th>${esc(t('sx_col_pledge'))}</th></tr></thead><tbody>${rowsC}</tbody></table></div>`)}
+    <div class="section-head"><h2>${esc(t('sx_community'))}</h2></div>
+    ${card(`<dl class="kv">
+      <dt>${esc(t('sx_testi'))}</dt><dd>${(te.data || []).filter(x => x.status === 'approved').length}</dd>
+      <dt>${esc(t('sx_prayers'))}</dt><dd>${prayers.filter(x => x.answered).length} / ${prayers.length}</dd>
+      <dt>${esc(t('sx_pledges'))}</dt><dd>${pledges.length}</dd>
+      <dt>${esc(t('sx_news30'))}</dt><dd>${news30}</dd></dl>
+      <div class="sep"></div><div class="small muted">${esc(t('sx_growth'))}</div>
+      ${months.map(m => `<div style="margin-top:10px"><div class="row between small"><span>${esc(m.k)}</span><b class="num">${m.n}</b></div>${bar(m.n, mmax)}</div>`).join('')}`)}`;
 }
 
 async function adminTeamsHTML() {
