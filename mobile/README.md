@@ -60,14 +60,6 @@
 
 이제 앱 안 알림이 생길 때마다 그 회원의 폰으로 푸시가 갑니다. 함수 로그(Edge Functions → push → Logs)에서 `["sent"]` 를 확인할 수 있습니다.
 
-### 번역 함수 (선택)
-
-공유된 글의 '번역' 버튼을 쓰려면 같은 방식으로 함수를 하나 더 올립니다.
-
-1. **Edge Functions** → *Deploy a new function* → *Via Editor* → 이름 `translate` → `supabase/functions/translate/index.ts` 내용 붙여 넣고 Deploy (**Verify JWT 켜 둠** — 로그인한 회원만 부를 수 있어요)
-2. **Secrets** 에 `ANTHROPIC_API_KEY` 추가 ([console.anthropic.com](https://console.anthropic.com) 에서 만든 키, 저장소에는 절대 넣지 않기)
-3. 요금은 번역한 글자 수만큼만 나오고, 같은 글은 저장해서 다시 번역하지 않으며 회원당 하루 60번으로 막아 둡니다.
-
 ## 3. 아이폰 앱 (Xcode)
 
 ```bash

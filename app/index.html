@@ -1139,7 +1139,7 @@ const i18n = {
     fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
     vd_add: 'Add a YouTube video', vd_url: 'YouTube link', vd_title: 'Title', vd_bad: 'Please paste a YouTube link.', vd_added: 'Video added.', vd_none: 'No videos yet.', vd_section: 'Videos from the field',
     adm_partners: 'Field missionaries', adm_partners_d: 'Missionaries keep their country page up to date with photos, videos and information. They do not see student details; the country leader is their contact.', adm_partner_add: 'Add a missionary', adm_partner_none: 'No missionary yet',
-    tr_btn: 'Translate', tr_hide: 'Hide translation', tr_busy: 'Translating…', tr_fail: 'Could not translate. Please try again.', tr_limit: 'You reached today’s translation limit.', tr_demo: 'Translation works in the live app, not in the demo.',
+    tr_btn: 'Translate', tr_google: 'Translate (Google)', tr_hide: 'Hide translation', tr_busy: 'Translating…', tr_same: 'This is already in your language.',
     fe_title: 'News from the field', fe_sub: 'Updates, photos and videos from our missionaries, and prayers that were answered.', fe_empty: 'No news yet. Updates from the field will show up here.',
     fe_k_update: 'Update', fe_k_video: 'Video', fe_k_photos: 'Photos', fe_k_answered: 'Prayer answered', fe_mine: 'My nations', fe_all_news: 'All news',
     fe_post_t: 'Share news', fe_post_ph: 'What is happening this week? Keep it short.', fe_post_btn: 'Post', fe_post_safe: 'Do not post local believers’ real names, faces, or exact locations.', fe_posted: 'Posted. People who carry this nation were notified.', fe_recent: 'Recent news', fe_none: 'No news posted yet.',
@@ -1382,7 +1382,7 @@ const i18n = {
     fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
     vd_add: '유튜브 영상 추가', vd_url: '유튜브 링크', vd_title: '제목', vd_bad: '유튜브 링크를 붙여 넣어 주세요.', vd_added: '영상을 추가했어요.', vd_none: '아직 영상이 없습니다.', vd_section: '선교지 영상',
     adm_partners: '선교지 선교사님', adm_partners_d: '선교사님은 나라 페이지의 사진·영상·정보를 관리합니다. 학생 개인정보는 보지 않으며, 연락은 나라 리더와 합니다.', adm_partner_add: '선교사님 추가', adm_partner_none: '아직 선교사님 없음',
-    tr_btn: '번역', tr_hide: '번역 숨기기', tr_busy: '번역 중…', tr_fail: '번역하지 못했어요. 잠시 뒤 다시 시도해 주세요.', tr_limit: '오늘 번역 횟수를 모두 썼어요.', tr_demo: '번역은 데모가 아니라 실제 앱에서 동작해요.',
+    tr_btn: '번역', tr_google: '번역 (Google)', tr_hide: '번역 숨기기', tr_busy: '번역 중…', tr_same: '이미 내 언어로 쓰인 글이에요.',
     fe_title: '선교지 소식', fe_sub: '선교사님들이 전하는 근황과 사진, 영상, 그리고 응답된 기도예요.', fe_empty: '아직 소식이 없어요. 선교지 소식이 올라오면 여기에 보여요.',
     fe_k_update: '근황', fe_k_video: '영상', fe_k_photos: '사진', fe_k_answered: '기도 응답', fe_mine: '내가 품은 나라', fe_all_news: '전체 소식',
     fe_post_t: '소식 올리기', fe_post_ph: '이번 주에는 어떤 일이 있었나요? 짧게 적어 주세요.', fe_post_btn: '올리기', fe_post_safe: '현지 성도의 실명·얼굴·정확한 위치는 올리지 마세요.', fe_posted: '올렸어요. 이 나라를 품은 분들께 알림이 갔어요.', fe_recent: '최근 소식', fe_none: '아직 올린 소식이 없어요.',
@@ -3184,8 +3184,12 @@ function openDeleteSheet() {
 // 모든 화면 공통: ⋯ 버튼
 document.addEventListener('click', e => { const b = e.target.closest('[data-more]'); if (b) { e.preventDefault(); openMore(b); } });
 
-// 번역 버튼 — 글(data-tr-src) 바로 아래에 번역을 보여 줌 (Supabase 'translate' 함수, 같은 글은 저장해서 다시 씀)
-const trBtn = () => `<button type="button" class="tr-btn" data-tr>${icon('globe', 'width="14" height="14"')}<span>${esc(t('tr_btn'))}</span></button>`;
+// 번역 버튼 — 서버나 API 없이, 쓰는 사람의 기기에서:
+//   ① 브라우저에 번역 기능(Chrome 의 Translator)이 있으면 기기 안에서 바로 번역해 글 아래에 보여 줌
+//   ② 없으면 누를 때만 그 글 하나를 Google 번역 페이지로 열어 줌
+const BROWSER_TR = typeof self !== 'undefined' && 'Translator' in self;
+const hasHangul = s => (s.match(/[\u3131-\u318E\uAC00-\uD7A3]/g) || []).length > s.replace(/\s/g, '').length * 0.3;
+const trBtn = () => `<button type="button" class="tr-btn" data-tr>${icon('globe', 'width="14" height="14"')}<span>${esc(t(BROWSER_TR ? 'tr_btn' : 'tr_google'))}</span></button>`;
 document.addEventListener('click', async (e) => {
   const b = e.target.closest('[data-tr]'); if (!b) return;
   const wrap = b.closest('.tr-wrap'), src = wrap?.querySelector('[data-tr-src]');
@@ -3193,16 +3197,21 @@ document.addEventListener('click', async (e) => {
   let out = wrap.querySelector('.tr-out');
   const label = b.querySelector('span');
   if (out) { out.hidden = !out.hidden; label.textContent = t(out.hidden ? 'tr_btn' : 'tr_hide'); return; }
-  if (DEMO) return toast(t('tr_demo'));
+  const text = src.innerText.trim(), from = hasHangul(text) ? 'ko' : 'en', to = state.lang;
+  if (from === to) return toast(t('tr_same'));
+  if (!BROWSER_TR) { window.open(`https://translate.google.com/?sl=${from}&tl=${to}&text=${encodeURIComponent(text)}&op=translate`, '_blank', 'noopener'); return; }
   b.disabled = true; label.textContent = t('tr_busy');
-  const { data, error } = await sb.functions.invoke('translate', { body: { text: src.innerText.trim(), to: state.lang } });
-  b.disabled = false;
-  if (error || !data?.text) {
+  try {
+    if ((await self.Translator.availability({ sourceLanguage: from, targetLanguage: to })) === 'unavailable') throw new Error('unavailable');
+    const tr = await self.Translator.create({ sourceLanguage: from, targetLanguage: to });
+    const result = await tr.translate(text);
+    out = document.createElement('div'); out.className = 'tr-out'; out.lang = to; out.textContent = result;
+    wrap.appendChild(out); label.textContent = t('tr_hide');
+  } catch (err) {
     label.textContent = t('tr_btn');
-    return toast(t(error?.context?.status === 429 ? 'tr_limit' : 'tr_fail'), true);
+    window.open(`https://translate.google.com/?sl=${from}&tl=${to}&text=${encodeURIComponent(text)}&op=translate`, '_blank', 'noopener');
   }
-  out = document.createElement('div'); out.className = 'tr-out'; out.lang = state.lang; out.textContent = data.text;
-  wrap.appendChild(out); label.textContent = t('tr_hide');
+  b.disabled = false;
 });
 
 async function loadNames(ids) {
