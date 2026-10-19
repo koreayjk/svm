@@ -32,7 +32,6 @@ User-generated content: members can post messages, prayer requests and testimoni
 No in-app purchases. No ads. No third-party tracking. There is no donation or payment flow inside the iOS/Android apps.
 Login is email + password only (no third-party sign-in).
 Notifications are optional and only used for the member's own updates (application status, replies, safety check-ins).
-Translation: the "Translate" button uses on-device browser translation when available; otherwise it opens that one message in Google Translate when the member taps it. Nothing is sent from our servers.
 Travel insurance upload is a document upload for the member's own trip; it is private to the member, their country leader and admins.
 ```
 
