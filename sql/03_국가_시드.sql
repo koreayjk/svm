@@ -23,7 +23,7 @@ values
    'Korean (greetings and the gospel message). English for classes.',
    '한국어 (인사와 복음 메시지). 수업은 영어로 진행합니다.',
    'Simple host-church housing; meals shared with the church.',
-   '현지 교회 숙소, 현지 교회와 소박하게 함께 식사.'),
+   '현지 교회 숙소, 교회 식구들과 소박하게 함께 식사.'),
 
   ('PH', 'Philippines', '필리핀', false, 2,
    'A warm, open culture with many churches eager for young workers.',
@@ -35,7 +35,7 @@ values
    'Tagalog/Filipino; English is widely spoken.',
    '타갈로그어(필리핀어). 영어가 널리 통용됩니다.',
    'Mission house or host family; simple shared meals.',
-   '선교관 또는 홈스테이, 현지 교회와 소박하게 함께 식사.'),
+   '선교관 또는 홈스테이, 교회 식구들과 소박하게 함께 식사.'),
 
   ('MY', 'Malaysia', '말레이시아', false, 3,
    'A multi-ethnic nation where Malay, Chinese and Indian cultures meet.',
@@ -47,7 +47,7 @@ values
    'Malay; English and Chinese are commonly used.',
    '말레이어. 영어와 중국어도 많이 사용됩니다.',
    'Church guest room or mission house; simple shared meals.',
-   '교회 게스트룸 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
+   '교회 게스트룸 또는 선교관, 교회 식구들과 소박하게 함께 식사.'),
 
   ('TH', 'Thailand', '태국', false, 4,
    'The "Land of Smiles" — a Buddhist-majority country with a growing church.',
@@ -59,7 +59,7 @@ values
    'Thai.',
    '태국어.',
    'Mission center or host church; simple shared meals.',
-   '선교센터 또는 현지 교회, 현지 교회와 소박하게 함께 식사.'),
+   '선교센터 또는 현지 교회, 교회 식구들과 소박하게 함께 식사.'),
 
   ('MX', 'Mexico', '멕시코', false, 5,
    'A close neighbor with vibrant churches and great openness to the gospel.',
@@ -71,7 +71,7 @@ values
    'Spanish.',
    '스페인어.',
    'Host families or church rooms; simple shared meals.',
-   '홈스테이 또는 교회 시설, 현지 교회와 소박하게 함께 식사.'),
+   '홈스테이 또는 교회 시설, 교회 식구들과 소박하게 함께 식사.'),
 
   ('JP', 'Japan', '일본', false, 6,
    'Less than 1% of Japan is Christian — one of the largest unreached peoples.',
@@ -83,7 +83,7 @@ values
    'Japanese.',
    '일본어.',
    'Church housing or mission house; simple shared meals.',
-   '교회 숙소 또는 선교관, 현지 교회와 소박하게 함께 식사.'),
+   '교회 숙소 또는 선교관, 교회 식구들과 소박하게 함께 식사.'),
 
   ('EG', 'Egypt', '이집트', true, 7,
    'One of the oldest Christian communities in the world lives here.',
