@@ -345,6 +345,9 @@ alter table public.application_messages       enable row level security;
 alter table public.field_partners             enable row level security;
 alter table public.country_videos             enable row level security;
 alter table public.field_messages             enable row level security;
+alter table public.application_prep          enable row level security;
+alter table public.field_checkins            enable row level security;
+alter table public.reminder_log              enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -360,7 +363,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -393,6 +396,24 @@ create policy "field_partners: admin write"  on public.field_partners for all us
 create policy "field_messages: read" on public.field_messages for select using (public.in_field_room(country_id));
 create policy "field_messages: send" on public.field_messages for insert with check (user_id = auth.uid() and public.in_field_room(country_id));
 create policy "field_messages: own delete" on public.field_messages for delete using (user_id = auth.uid() or public.is_admin());
+
+-- 출발 준비: 본인 신청서만 체크, 리더·관리자는 보기만
+create policy "prep: self or manager read" on public.application_prep for select using (
+  exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()) or public.can_manage_application(application_id));
+create policy "prep: self write" on public.application_prep for insert with check (
+  exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()));
+create policy "prep: self update" on public.application_prep for update
+  using (exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()))
+  with check (exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()));
+create policy "prep: self delete" on public.application_prep for delete using (
+  exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid()));
+
+-- 안부 체크인: 선교 중인 본인 신청서에만 남기고, 본인과 맡은 리더·관리자가 봄
+create policy "checkins: self or manager read" on public.field_checkins for select using (user_id = auth.uid() or public.can_manage_application(application_id));
+create policy "checkins: self send" on public.field_checkins for insert with check (
+  user_id = auth.uid()
+  and exists (select 1 from public.applications a where a.id = application_id and a.user_id = auth.uid() and a.status = 'on_field'));
+-- reminder_log: 정책 없음 = 앱에서는 접근 불가 (아래 send_reminders 함수만 씁니다)
 
 -- 관리자가 아닌 사람이 나라 정보를 고칠 때 바꿀 수 없는 칸은 원래대로
 create or replace function public.guard_country_update()
@@ -675,6 +696,10 @@ begin
     if new.status is distinct from old.status then
       insert into public.notifications (user_id, kind, payload, link)
       values (new.user_id, 'app_status', jsonb_build_object('status', new.status, 'country_id', new.country_id), '#/apps/' || new.id);
+      if new.status = 'returned' then   -- 돌아오면 후기를 나눠 달라고 초대
+        insert into public.notifications (user_id, kind, payload, link)
+        values (new.user_id, 'returned_testi', jsonb_build_object('country_id', new.country_id), '#/apps/' || new.id);
+      end if;
     end if;
   elsif tg_table_name = 'application_extensions' then
     if new.status is distinct from old.status and new.status <> 'pending' then
@@ -804,6 +829,110 @@ begin
 end;
 $$;
 
+-- 안부 체크인에서 '도움이 필요해요'를 누르면 맡은 리더와 관리자 모두에게 바로 알림
+create or replace function public.notify_checkin()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare a record;
+begin
+  if new.status <> 'need_help' then return new; end if;
+  select id, country_id into a from public.applications where id = new.application_id;
+  insert into public.notifications (user_id, kind, payload, link)
+  select u, 'checkin_help', jsonb_build_object('country_id', a.country_id), '#/lead/' || a.id
+    from (select user_id as u from public.country_leaders where country_id = a.country_id
+          union select id from public.profiles where role = 'admin') x
+   where u is distinct from new.user_id;
+  return new;
+end;
+$$;
+
+-- 매일 한 번 (pg_cron — sql/06_알림_예약.sql): 출발 준비 · 보험 · 안부 · 후기 알림을 만들어 둡니다.
+-- 같은 알림은 reminder_log 로 한 번만 보냅니다. 앱·익명 사용자는 부를 수 없습니다.
+create or replace function public.send_reminders()
+returns integer
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  a record; d int; k int; b int; rk text; quiet int; base timestamptz; sent int := 0;
+  leaders uuid[];
+begin
+  -- 1) 출발 전: 30 · 14 · 3 · 1일 전 (지금 구간 하나만, 한 번)
+  for a in select id, user_id, country_id, start_date from public.applications
+            where status in ('approved','preparing') and start_date is not null and start_date >= current_date loop
+    d := a.start_date - current_date;
+    b := null;
+    foreach k in array array[1,3,14,30] loop
+      if d <= k then b := k; exit; end if;
+    end loop;
+    if b is not null then
+      rk := 'dep_' || b;
+      if not exists (select 1 from public.reminder_log where application_id = a.id and reminder_log.key = rk) then
+        insert into public.reminder_log (application_id, key) values (a.id, rk);
+        insert into public.notifications (user_id, kind, payload, link)
+        values (a.user_id, 'dep_remind', jsonb_build_object('days', d, 'country_id', a.country_id), '#/apps/' || a.id);
+        sent := sent + 1;
+      end if;
+    end if;
+    -- 보험 증서: 출발 10일 전·7일 전까지 안 냈거나 고쳐야 하면
+    if d <= 10 and not exists (select 1 from public.application_insurance i where i.application_id = a.id and i.status in ('submitted','verified')) then
+      rk := case when d <= 7 then 'ins_7' else 'ins_10' end;
+      if not exists (select 1 from public.reminder_log where application_id = a.id and reminder_log.key = rk) then
+        insert into public.reminder_log (application_id, key) values (a.id, rk);
+        insert into public.notifications (user_id, kind, payload, link)
+        values (a.user_id, 'ins_due', jsonb_build_object('days', d, 'country_id', a.country_id), '#/apps/' || a.id);
+        sent := sent + 1;
+      end if;
+    end if;
+  end loop;
+
+  -- 2) 선교 중: 체크인이 3일 넘게 없으면 본인에게, 5일 넘게 없으면 리더(없으면 관리자)에게
+  for a in select id, user_id, country_id, updated_at from public.applications where status = 'on_field' loop
+    select max(created_at) into base from public.field_checkins where application_id = a.id;
+    base := coalesce(base, (select max(changed_at) from public.application_status_history h where h.application_id = a.id and h.status = 'on_field'), a.updated_at);
+    quiet := current_date - base::date;
+    rk := 'ci_ask_' || current_date;
+    if quiet >= 3 and quiet % 3 = 0 and not exists (select 1 from public.reminder_log where application_id = a.id and reminder_log.key = rk) then
+      insert into public.reminder_log (application_id, key) values (a.id, rk);
+      insert into public.notifications (user_id, kind, payload, link)
+      values (a.user_id, 'checkin_ask', jsonb_build_object('country_id', a.country_id), '#/apps/' || a.id);
+      sent := sent + 1;
+    end if;
+    rk := 'ci_miss_' || current_date;
+    if quiet >= 5 and (quiet = 5 or quiet % 7 = 0) and not exists (select 1 from public.reminder_log where application_id = a.id and reminder_log.key = rk) then
+      insert into public.reminder_log (application_id, key) values (a.id, rk);
+      select coalesce(array_agg(user_id), '{}') into leaders from public.country_leaders where country_id = a.country_id;
+      insert into public.notifications (user_id, kind, payload, link)
+      select u, 'checkin_miss', jsonb_build_object('country_id', a.country_id, 'days', quiet), '#/lead/' || a.id
+        from unnest(case when array_length(leaders, 1) > 0 then leaders
+                         else (select coalesce(array_agg(id), '{}') from public.profiles where role = 'admin') end) u;
+      sent := sent + 1;
+    end if;
+  end loop;
+
+  -- 3) 돌아온 지 7일째 후기를 아직 안 나눴으면 한 번 더 초대
+  for a in select ap.id, ap.user_id, ap.country_id from public.applications ap
+            where ap.status = 'returned'
+              and exists (select 1 from public.application_status_history h where h.application_id = ap.id and h.status = 'returned'
+                           and h.changed_at <= now() - interval '7 days' and h.changed_at > now() - interval '30 days')
+              and not exists (select 1 from public.testimonies t where t.user_id = ap.user_id
+                               and t.created_at >= (select max(changed_at) from public.application_status_history h where h.application_id = ap.id and h.status = 'returned')) loop
+    if not exists (select 1 from public.reminder_log where application_id = a.id and reminder_log.key = 'testi_7') then
+      insert into public.reminder_log (application_id, key) values (a.id, 'testi_7');
+      insert into public.notifications (user_id, kind, payload, link)
+      values (a.user_id, 'returned_testi', jsonb_build_object('country_id', a.country_id), '#/apps/' || a.id);
+      sent := sent + 1;
+    end if;
+  end loop;
+  return sent;
+end;
+$$;
+revoke all on function public.send_reminders() from public, anon, authenticated;
+
 do $$
 declare tb text;
 begin
@@ -821,6 +950,9 @@ create trigger notify_app_message after insert on public.application_messages
 drop trigger if exists notify_field_message on public.field_messages;
 create trigger notify_field_message after insert on public.field_messages
   for each row execute function public.notify_field_message();
+drop trigger if exists notify_checkin on public.field_checkins;
+create trigger notify_checkin after insert on public.field_checkins
+  for each row execute function public.notify_checkin();
 drop trigger if exists notify_new_application on public.applications;
 create trigger notify_new_application after insert on public.applications
   for each row execute function public.notify_new_application();
