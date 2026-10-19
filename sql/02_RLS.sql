@@ -349,8 +349,6 @@ alter table public.application_prep          enable row level security;
 alter table public.field_checkins            enable row level security;
 alter table public.reminder_log              enable row level security;
 alter table public.field_updates            enable row level security;
-alter table public.translations              enable row level security;
-alter table public.translation_usage         enable row level security;   -- 정책 없음: 번역 함수(service role)만 씁니다
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -366,7 +364,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates','translations','translation_usage'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
