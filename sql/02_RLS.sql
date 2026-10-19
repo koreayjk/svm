@@ -44,6 +44,32 @@ as $$
     where a.id = aid and l.user_id = auth.uid());
 $$;
 
+-- 이 나라의 선교지 파트너(선교사님)인가? / 이 나라 페이지를 고칠 수 있는가?
+create or replace function public.is_field_partner(cid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.field_partners where country_id = cid and user_id = auth.uid());
+$$;
+create or replace function public.can_edit_country(cid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$ select public.is_admin() or public.is_field_partner(cid); $$;
+-- 선교지 대화방에 들어갈 수 있는가? (관리자 · 그 나라 리더 · 선교사님)
+create or replace function public.in_field_room(cid bigint)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$ select public.is_admin() or public.is_country_leader(cid) or public.is_field_partner(cid); $$;
+
 create or replace function public.my_role()
 returns text
 language sql
@@ -316,6 +342,9 @@ alter table public.user_blocks                enable row level security;
 alter table public.device_tokens              enable row level security;
 alter table public.country_leaders            enable row level security;
 alter table public.application_messages       enable row level security;
+alter table public.field_partners             enable row level security;
+alter table public.country_videos             enable row level security;
+alter table public.field_messages             enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -331,7 +360,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -351,8 +380,38 @@ create policy "profiles: admin delete"        on public.profiles for delete usin
 -- 공개 콘텐츠: 누구나 읽기, 관리자만 쓰기
 create policy "countries: read"        on public.countries      for select using (is_active or public.is_admin());
 create policy "countries: admin write" on public.countries      for all using (public.is_admin()) with check (public.is_admin());
+-- 선교사님: 자기 나라 소개·사역·생활 정보만 고침 (공개 여부·민감 국가·코드·이름은 아래 트리거가 지킴)
+create policy "countries: partner edit" on public.countries for update using (public.is_field_partner(id)) with check (public.is_field_partner(id));
 create policy "photos: read"           on public.country_photos for select using (true);
 create policy "photos: admin write"    on public.country_photos for all using (public.is_admin()) with check (public.is_admin());
+create policy "photos: partner add"    on public.country_photos for insert with check (public.is_field_partner(country_id) and uploaded_by = auth.uid());
+create policy "photos: partner remove" on public.country_photos for delete using (public.is_field_partner(country_id));
+create policy "videos: read"           on public.country_videos for select using (true);
+create policy "videos: edit"           on public.country_videos for all using (public.can_edit_country(country_id)) with check (public.can_edit_country(country_id));
+create policy "field_partners: members read" on public.field_partners for select to authenticated using (true);
+create policy "field_partners: admin write"  on public.field_partners for all using (public.is_admin()) with check (public.is_admin());
+create policy "field_messages: read" on public.field_messages for select using (public.in_field_room(country_id));
+create policy "field_messages: send" on public.field_messages for insert with check (user_id = auth.uid() and public.in_field_room(country_id));
+create policy "field_messages: own delete" on public.field_messages for delete using (user_id = auth.uid() or public.is_admin());
+
+-- 관리자가 아닌 사람이 나라 정보를 고칠 때 바꿀 수 없는 칸은 원래대로
+create or replace function public.guard_country_update()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if not public.is_admin() then
+    new.code := old.code; new.name_en := old.name_en; new.name_ko := old.name_ko;
+    new.is_active := old.is_active; new.is_sensitive := old.is_sensitive; new.sort_order := old.sort_order;
+  end if;
+  return new;
+end;
+$$;
+drop trigger if exists guard_country_update on public.countries;
+create trigger guard_country_update before update on public.countries
+  for each row execute function public.guard_country_update();
 create policy "settings: read"         on public.app_settings   for select using (true);
 create policy "settings: admin write"  on public.app_settings   for all using (public.is_admin()) with check (public.is_admin());
 create policy "events: read"           on public.events         for select using (is_published or public.is_admin());
@@ -695,6 +754,27 @@ begin
   return new;
 end;
 $$;
+-- 선교지 대화방 알림: 같은 방의 다른 사람(나라 리더 · 선교사님, 리더가 없으면 관리자)에게
+create or replace function public.notify_field_message()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare cc text;
+begin
+  select code into cc from public.countries where id = new.country_id;
+  insert into public.notifications (user_id, kind, payload, link)
+  select distinct u, 'field_msg', jsonb_build_object('country_id', new.country_id), '#/field/' || cc
+    from (select user_id as u from public.country_leaders where country_id = new.country_id
+          union select user_id from public.field_partners where country_id = new.country_id
+          union select id from public.profiles where role = 'admin'
+                and not exists (select 1 from public.country_leaders where country_id = new.country_id)) x
+   where u is distinct from new.user_id;
+  return new;
+end;
+$$;
+
 -- 새 신청서가 들어오면 그 나라 리더에게
 create or replace function public.notify_new_application()
 returns trigger
@@ -738,6 +818,9 @@ create trigger notify_report after insert on public.content_reports
 drop trigger if exists notify_app_message on public.application_messages;
 create trigger notify_app_message after insert on public.application_messages
   for each row execute function public.notify_app_message();
+drop trigger if exists notify_field_message on public.field_messages;
+create trigger notify_field_message after insert on public.field_messages
+  for each row execute function public.notify_field_message();
 drop trigger if exists notify_new_application on public.applications;
 create trigger notify_new_application after insert on public.applications
   for each row execute function public.notify_new_application();
@@ -768,6 +851,8 @@ do $$ begin
     drop policy if exists "svm: admin remove"         on storage.objects;
     drop policy if exists "svm: member testimony upload" on storage.objects;
     drop policy if exists "svm: member testimony remove" on storage.objects;
+    drop policy if exists "svm: partner photo upload" on storage.objects;
+    drop policy if exists "svm: partner photo remove" on storage.objects;
     drop policy if exists "svm: insurance own upload" on storage.objects;
     drop policy if exists "svm: insurance own or admin read" on storage.objects;
     drop policy if exists "svm: insurance own remove" on storage.objects;
@@ -784,6 +869,12 @@ do $$ begin
       with check (bucket_id = 'testimony-photos' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: member testimony remove" on storage.objects for delete to authenticated
       using (bucket_id = 'testimony-photos' and (storage.foldername(name))[1] = auth.uid()::text);
+    create policy "svm: partner photo upload" on storage.objects for insert to authenticated
+      with check (bucket_id = 'country-photos' and exists (select 1 from public.countries c
+        where lower(c.code) = (storage.foldername(name))[1] and public.is_field_partner(c.id)));
+    create policy "svm: partner photo remove" on storage.objects for delete to authenticated
+      using (bucket_id = 'country-photos' and exists (select 1 from public.countries c
+        where lower(c.code) = (storage.foldername(name))[1] and public.is_field_partner(c.id)));
     create policy "svm: insurance own upload" on storage.objects for insert to authenticated
       with check (bucket_id = 'insurance-docs' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: insurance own or admin read" on storage.objects for select to authenticated

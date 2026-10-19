@@ -37,7 +37,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "rp_kind_user": "Member",
     "nt_leader_msg": "Your country leader sent you a message.",
     "nt_student_msg": "A student sent you a message.",
-    "nt_new_app": "New application for {c}."
+    "nt_new_app": "New application for {c}.",
+    "nt_field_msg": "New message in the {c} field conversation."
   },
   "ko": {
     "nt_app": "{c} 신청: {s}",
@@ -68,7 +69,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "rp_kind_user": "회원",
     "nt_leader_msg": "나라 리더가 메시지를 보냈어요.",
     "nt_student_msg": "학생이 메시지를 보냈어요.",
-    "nt_new_app": "{c} 새 신청서가 들어왔어요."
+    "nt_new_app": "{c} 새 신청서가 들어왔어요.",
+    "nt_field_msg": "{c} 선교지 대화방에 새 메시지가 있어요."
   }
 };
 
@@ -95,6 +97,7 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'team_added': return t('nt_team', { x: p.team || '' });
     case 'report_new': return t('nt_report', { k: t('rp_kind_' + (p.kind || 'user')) });
     case 'leader_msg': return t('nt_leader_msg');
+    case 'field_msg': return t('nt_field_msg', { c: country });
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: country });
     default: return t('nt_generic');

@@ -726,6 +726,9 @@
   .thread-form textarea { min-height: 46px; padding: 11px 14px; font-size: 15px; }
   .thread-form .btn { flex: 0 0 auto; min-height: 46px; }
   .leader-row { align-items: flex-start; flex-wrap: wrap; }
+  .videos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .vcard .video { border-radius: 16px; overflow: hidden; }
+  .agree.need span { color: var(--danger); }
   .chip-x { border: 0; background: none; padding: 0 0 0 6px; font-size: 16px; line-height: 1; color: var(--muted-2); cursor: pointer; }
   .chip-x:hover { color: var(--danger); }
 
@@ -1111,6 +1114,13 @@ const i18n = {
     st_submitted: 'Submitted', st_approved: 'Approved', st_rejected: 'Not approved', st_preparing: 'Preparing to go', st_on_field: 'On the field', st_returned: 'Returned',
     apps_title: 'My applications', apps_empty: 'No applications yet. Explore a field and apply when you are ready.', apps_new: 'New application',
     app_timeline: 'Status', app_details: 'Details', app_expected_return: 'Expected return', app_applied: 'Applied', app_hq_note: 'Note from HQ',
+    fd_title: 'My field', fd_sub: 'Share what students need to know about your field: photos, videos and how life and ministry work there.',
+    fd_guide_t: 'Thank you for hosting', fd_guide: 'Students pay their own flights, so please do not prepare anything special. They live as you live and serve alongside you. Students will not contact you directly; your SVM country leader is your contact and joins any meeting.',
+    fd_info: 'Country page', fd_photos: 'Photos', fd_videos: 'Videos', fd_room: 'Field conversation', fd_room_d: 'Missionaries, the SVM country leader and HQ for {c}. Students do not see this.',
+    fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
+    vd_add: 'Add a YouTube video', vd_url: 'YouTube link', vd_title: 'Title', vd_bad: 'Please paste a YouTube link.', vd_added: 'Video added.', vd_none: 'No videos yet.', vd_section: 'Videos from the field',
+    adm_partners: 'Field missionaries', adm_partners_d: 'Missionaries keep their country page up to date with photos, videos and information. They do not see student details; the country leader is their contact.', adm_partner_add: 'Add a missionary', adm_partner_none: 'No missionary yet',
+    fd_link_d: 'Missionary for {c}', fd_room_link_d: 'Talk with the missionaries for {c}', nt_field_msg: 'New message in the {c} field conversation.',
     ld_title: 'My students', ld_sub: 'Applications for the countries you lead. You are the contact between your students and the field.', ld_link_d: 'Leader for {c}',
     ld_yours: 'Your SVM country leader', ld_none_yet: 'HQ will assign your country leader soon. Until then, write here and HQ will answer.',
     ld_note: 'Talk with your country leader here. You do not need to contact the field yourself; when a meeting is helpful, your leader sets it up and joins you.',
@@ -1333,6 +1343,13 @@ const i18n = {
     st_submitted: '접수', st_approved: '승인', st_rejected: '반려', st_preparing: '출국 준비', st_on_field: '사역 중', st_returned: '귀국',
     apps_title: '내 신청', apps_empty: '아직 신청 내역이 없어요. 선교지를 둘러보고 준비되면 신청하세요.', apps_new: '새로 신청하기',
     app_timeline: '진행 상황', app_details: '신청 내용', app_expected_return: '귀국 예정일', app_applied: '신청일', app_hq_note: '본부 메모',
+    fd_title: '내 선교지', fd_sub: '학생들이 알아야 할 선교지 정보를 나눠 주세요. 사진, 영상, 현지 생활과 사역 안내.',
+    fd_guide_t: '맞이해 주셔서 감사합니다', fd_guide: '학생들은 항공권을 스스로 부담하니 따로 준비하지 않으셔도 됩니다. 사시는 그대로 함께 지내며 섬깁니다. 학생들이 직접 연락드리지 않고, SVM 나라 리더가 연락 창구가 되어 필요한 미팅에 함께합니다.',
+    fd_info: '나라 페이지', fd_photos: '사진', fd_videos: '영상', fd_room: '선교지 대화방', fd_room_d: '{c} 선교사님, SVM 나라 리더, 본부가 함께 봅니다. 학생에게는 보이지 않습니다.',
+    fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
+    vd_add: '유튜브 영상 추가', vd_url: '유튜브 링크', vd_title: '제목', vd_bad: '유튜브 링크를 붙여 넣어 주세요.', vd_added: '영상을 추가했어요.', vd_none: '아직 영상이 없습니다.', vd_section: '선교지 영상',
+    adm_partners: '선교지 선교사님', adm_partners_d: '선교사님은 나라 페이지의 사진·영상·정보를 관리합니다. 학생 개인정보는 보지 않으며, 연락은 나라 리더와 합니다.', adm_partner_add: '선교사님 추가', adm_partner_none: '아직 선교사님 없음',
+    fd_link_d: '{c} 선교사님', fd_room_link_d: '{c} 선교사님과 대화', nt_field_msg: '{c} 선교지 대화방에 새 메시지가 있어요.',
     ld_title: '내 학생', ld_sub: '내가 맡은 나라의 신청서입니다. 학생과 선교지 사이의 연락은 리더가 맡습니다.', ld_link_d: '{c} 리더',
     ld_yours: '내 SVM 나라 리더', ld_none_yet: '곧 본부에서 나라 리더를 정해 드립니다. 그때까지는 여기에 쓰시면 본부가 답합니다.',
     ld_note: '나라 리더와 여기서 이야기하세요. 선교지에는 직접 연락하지 않아도 됩니다. 함께 이야기할 일이 있으면 리더가 미팅을 잡고 같이 참여합니다.',
@@ -1502,6 +1519,8 @@ function flag(code) {
 function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === 'graduate' ? '🎓 ' : ''}${esc(t('role_' + role))}</span>`; }
 function isAdmin() { return state.profile?.role === 'admin'; }
 function isLeader() { return !!(state.leaderOf && state.leaderOf.size); }
+function isPartner() { return !!(state.partnerOf && state.partnerOf.size); }
+function canEditCountry(c) { return !!c && (isAdmin() || !!state.partnerOf?.has(c.id)); }
 function logo(white) { return `<img class="logo" src="../assets/${white ? 'SVM_Logo_white' : 'SVM_Logo'}.svg" alt="SVM">`; }
 
 let toastTimer;
@@ -1846,6 +1865,13 @@ function createDemoClient() {
         (ls.length ? ls : db.profiles.filter(p => p.role === 'admin').map(p => p.id)).forEach(u => notify(u, 'student_msg', { country_id: a.country_id }, '#/lead/' + a.id));
       }
     }
+    if (ev === 'INSERT' && table === 'field_messages') {
+      const cc = db.countries.find(x => x.id === row.country_id)?.code;
+      const ls = (db.country_leaders || []).filter(l => l.country_id === row.country_id).map(l => l.user_id);
+      const ps = (db.field_partners || []).filter(l => l.country_id === row.country_id).map(l => l.user_id);
+      const to = new Set([...ls, ...ps, ...(ls.length ? [] : db.profiles.filter(p => p.role === 'admin').map(p => p.id))]);
+      to.delete(row.user_id); to.forEach(u => notify(u, 'field_msg', { country_id: row.country_id }, '#/field/' + cc));
+    }
     if (ev === 'INSERT' && table === 'applications') (db.country_leaders || []).filter(l => l.country_id === row.country_id && l.user_id !== row.user_id).forEach(l => notify(l.user_id, 'new_app', { country_id: row.country_id }, '#/lead/' + row.id));
     if (ev === 'INSERT' && table === 'team_members') notify(row.user_id, 'team_added', { team: db.teams.find(x => x.id === row.team_id)?.name }, '#/teams/' + row.team_id);
     channels.forEach(ch => ch.subs.forEach(sub => {
@@ -1889,7 +1915,7 @@ function createDemoClient() {
       } else if (this.op === 'insert') {
         const list = Array.isArray(this.v) ? this.v : [this.v];
         const COMPOSITE = { nation_pledges: ['user_id', 'country_id'], room_members: ['user_id', 'country_id'], language_progress: ['user_id', 'sentence_id'], practice_days: ['user_id', 'day'],
-          attendance: ['gathering_id', 'user_id'], country_leaders: ['country_id', 'user_id'], user_blocks: ['blocker_id', 'blocked_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
+          attendance: ['gathering_id', 'user_id'], country_leaders: ['country_id', 'user_id'], field_partners: ['country_id', 'user_id'], user_blocks: ['blocker_id', 'blocked_id'], prayer_reactions: ['prayer_id', 'user_id'], team_members: ['team_id', 'user_id'], checklist_progress: ['user_id', 'item_id'] };
         const UNIQUE = { application_insurance: ['application_id'], gatherings: ['date', 'type'], course_feedback: ['user_id', 'course_id'], countries: ['code'] };
         for (const r of list) {
           const pk = COMPOSITE[this.t], uq = pk || UNIQUE[this.t];
@@ -2147,7 +2173,7 @@ async function render() {
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
   let { tab, param } = parseRoute();
-  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin()) || (tab === 'lead' && !isAdmin() && !isLeader())) tab = 'home';
+  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin()) || (tab === 'lead' && !isAdmin() && !isLeader()) || (tab === 'field' && !isAdmin() && !isLeader() && !isPartner())) tab = 'home';
   if (state.roomSub && !(tab === 'rooms' && param && param.toUpperCase() === state.roomSub.code)) { closeRoomSub(); badgeTimer = 0; }
   if (tab !== 'learn' && player.playing) stopAudio();
   if (progressQueue.size) flushProgress();
@@ -2196,7 +2222,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { lead: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { lead: 'my', field: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2534,7 +2560,10 @@ const VIEWS = {
     const mine = [...state.myPledges].map(countryById).filter(Boolean);
     const isIOS = !NATIVE && /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.navigator.standalone;
     const leadOf = [...(state.leaderOf || [])].map(countryById).filter(Boolean);
+    const partnerOf = [...(state.partnerOf || [])].map(countryById).filter(Boolean);
     return `${pageHead(t('my_title'))}
+      ${partnerOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile orange">${icon('globe')}</span><div class="meta"><div class="t">${esc(t('fd_title'))}</div><div class="d">${esc(t('fd_link_d', { c: partnerOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
+      ${leadOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile">${icon('chat')}</span><div class="meta"><div class="t">${esc(t('fd_room'))}</div><div class="d">${esc(t('fd_room_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${leadOf.length ? card(`<a class="list-row" href="#/lead"><span class="ico-tile orange">${icon('people')}</span><div class="meta"><div class="t">${esc(t('ld_title'))}</div><div class="d">${esc(t('ld_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${card(`
         <div class="row" style="gap:14px;margin-bottom:20px">
@@ -2735,7 +2764,7 @@ async function viewCountryDetail(c) {
     names = (data || []).map(r => r.display_name).filter(Boolean);
   }
   const pledged = state.myPledges.has(c.id);
-  const [photos, rooms, apps, testis] = await Promise.all([loadCountryGallery(c.id), loadRooms(), loadMyApps(), loadTestimonies(c.id)]);
+  const [photos, rooms, apps, testis, videos] = await Promise.all([loadCountryGallery(c.id), loadRooms(), loadMyApps(), loadTestimonies(c.id), loadCountryVideos(c.id)]);
   const pubTestis = testis.filter(x => x.status === 'approved').slice(0, 2);
   state.gallery = { cid: c.id, photos };
   const myApp = apps.find(a => a.country_id === c.id && ACTIVE_STATUSES.includes(a.status));
@@ -2748,6 +2777,7 @@ async function viewCountryDetail(c) {
       ${destInner(c, { hero: true })}
     </div>
     ${galleryHTML(c, photos)}
+    ${videos.length ? `<div class="section-head"><h2>${esc(t('vd_section'))}</h2></div>${videosHTML(videos, false)}` : ''}
     ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
 
     ${card(sections.map(([k, f]) => `<div class="info-sec"><span class="eyebrow plain">${esc(t(k))}</span><p>${para(loc(c, f))}</p></div>`).join('')
@@ -2807,24 +2837,32 @@ function bindMemberList() {
   });
 }
 
+// 나라 사진 올리기·지우기 (나라 페이지와 '내 선교지' 화면이 같이 씀)
+function bindGallery(c0) {
+  const input = document.getElementById('photo-input');
+  if (input && c0) input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    const safe = document.getElementById('photo-safe');
+    if (safe && !safe.checked) { input.value = ''; safe.closest('label')?.classList.add('need'); return toast(t('fd_photo_need'), true); }
+    toast(t('gal_uploading'));
+    try { await addCountryPhoto(c0, file, (state.gallery?.photos.length || 0) + 1); toast(t('gal_added')); render(); }
+    catch (e) { toast(errMsg(e), true); }
+  };
+  app.querySelectorAll('[data-photo-del]').forEach(b => b.onclick = async () => {
+    // 두 번 눌러 확인
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.style.background = 'var(--danger)'; setTimeout(() => { delete b.dataset.armed; b.style.background = ''; }, 3000); return; }
+    const p = state.gallery?.photos.find(x => String(x.id) === b.dataset.photoDel);
+    if (!p) return;
+    try { await removeCountryPhoto(p); toast(t('gal_removed')); render(); } catch (e) { toast(errMsg(e), true); }
+  });
+  bindVideoFacades();
+}
+
 const BINDERS = {
   countries(code) {
-    const input = document.getElementById('photo-input');
     const c0 = code && state.countries?.find(x => x.code === code.toUpperCase());
-    if (input && c0) input.onchange = async () => {
-      const file = input.files[0];
-      if (!file) return;
-      toast(t('gal_uploading'));
-      try { await addCountryPhoto(c0, file, (state.gallery?.photos.length || 0) + 1); toast(t('gal_added')); render(); }
-      catch (e) { toast(errMsg(e), true); }
-    };
-    app.querySelectorAll('[data-photo-del]').forEach(b => b.onclick = async () => {
-      // 두 번 눌러 확인
-      if (!b.dataset.armed) { b.dataset.armed = '1'; b.style.background = 'var(--danger)'; setTimeout(() => { delete b.dataset.armed; b.style.background = ''; }, 3000); return; }
-      const p = state.gallery?.photos.find(x => String(x.id) === b.dataset.photoDel);
-      if (!p) return;
-      try { await removeCountryPhoto(p); toast(t('gal_removed')); render(); } catch (e) { toast(errMsg(e), true); }
-    });
+    bindGallery(c0);
     const btn = document.getElementById('pledge-btn');
     if (btn) btn.onclick = async () => {
       btn.disabled = true;
@@ -2896,7 +2934,7 @@ const BINDERS = {
       state.settings[cb.dataset.setting] = cb.checked;
       toast(t('saved'));
     });
-    app.querySelectorAll('[data-country]').forEach(cb => cb.onchange = async () => {
+    app.querySelectorAll('input[data-country]').forEach(cb => cb.onchange = async () => {
       const { error } = await sb.from('countries').update({ [cb.dataset.field]: cb.checked }).eq('id', cb.dataset.country);
       if (error) { cb.checked = !cb.checked; return toast(errMsg(error), true); }
       state.countries = null;   // 다음에 다시 불러오기
@@ -3572,10 +3610,12 @@ BINDERS.apps = function (id) {
 // ---------------------------------------------------------------------
 async function loadLeaders(force) {
   if (state.leaders && !force) return state.leaders;
-  const { data } = await sb.from('country_leaders').select('country_id,user_id');
+  const [{ data }, { data: fp }] = await Promise.all([sb.from('country_leaders').select('country_id,user_id'), sb.from('field_partners').select('country_id,user_id')]);
   state.leaders = data || [];
+  state.partners = fp || [];
   state.leaderOf = new Set(state.leaders.filter(l => l.user_id === state.profile?.id).map(l => l.country_id));
-  await loadNames(state.leaders.map(l => l.user_id));
+  state.partnerOf = new Set(state.partners.filter(l => l.user_id === state.profile?.id).map(l => l.country_id));
+  await loadNames([...state.leaders, ...state.partners].map(l => l.user_id));
   return state.leaders;
 }
 const leadersOf = cid => (state.leaders || []).filter(l => l.country_id === cid).map(l => l.user_id);
@@ -3624,29 +3664,154 @@ VIEWS.lead = async function (id) {
 };
 BINDERS.lead = function () { bindAdminApplications(); };
 
+// ---------------------------------------------------------------------
+// 선교지 파트너(선교사님) — 자기 나라 페이지의 정보·사진·영상 관리, 나라 리더와 대화
+//   학생 개인정보는 보지 않습니다. 학생과의 연락은 나라 리더가 맡습니다.
+// ---------------------------------------------------------------------
+async function loadCountryVideos(cid) {
+  const { data } = await sb.from('country_videos').select('*').eq('country_id', cid).order('sort_order').order('id');
+  return data || [];
+}
+function videosHTML(list, editable) {
+  if (!list.length) return editable ? `<p class="small muted" style="margin:0 0 12px">${esc(t('vd_none'))}</p>` : '';
+  return `<div class="videos-grid">${list.map(v => `<div class="vcard">
+      <div class="video" data-yt="${esc(v.youtube_id)}"><button type="button" aria-label="${esc(locPair(v, 'title') || 'Video')}" style="background-image:url(https://i.ytimg.com/vi/${esc(v.youtube_id)}/hqdefault.jpg)"><i>${icon('play')}</i></button></div>
+      <div class="row between" style="margin-top:8px;gap:8px"><span class="small" style="font-weight:500">${esc(locPair(v, 'title') || '')}</span>
+        ${editable ? `<button type="button" class="quiet-del" data-video-del="${v.id}" aria-label="${esc(t('adm_delete'))}">${icon('trash')}</button>` : ''}</div></div>`).join('')}</div>`;
+}
+// 유튜브: 누르기 전에는 썸네일만 (가볍고, 외부 쿠키 없음)
+function bindVideoFacades() {
+  app.querySelectorAll('.video[data-yt] button').forEach(b => b.onclick = () => {
+    const box = b.parentElement, id = box.dataset.yt;
+    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0" title="YouTube" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  });
+}
+function fieldEditorHTML(c) {
+  const extras = (Array.isArray(c.extra_sections) ? c.extra_sections : []).filter(Boolean);
+  const pair = (f, label) => `<div class="field-pair wide">
+      <label class="field"><span>${esc(t(label))} · EN</span><textarea name="${f}" style="min-height:90px">${esc(c[f] || '')}</textarea></label>
+      <label class="field"><span>${esc(t(label))} · 한국어</span><textarea name="${f}_ko" style="min-height:90px">${esc(c[f + '_ko'] || '')}</textarea></label></div>`;
+  const extraRow = (x, i) => `<div class="extra-row" data-extra="${i}">
+      <div class="field-pair"><input type="text" name="ex_title_en_${i}" value="${esc(x.title_en || '')}" placeholder="${esc(t('ce_ex_title'))} · EN">
+        <input type="text" name="ex_title_ko_${i}" value="${esc(x.title_ko || '')}" placeholder="${esc(t('ce_ex_title'))} · 한국어"></div>
+      <div class="field-pair wide" style="margin-top:8px"><textarea name="ex_body_en_${i}" style="min-height:70px" placeholder="${esc(t('ce_ex_body'))} · EN">${esc(x.body_en || '')}</textarea>
+        <textarea name="ex_body_ko_${i}" style="min-height:70px" placeholder="${esc(t('ce_ex_body'))} · 한국어">${esc(x.body_ko || '')}</textarea></div></div>`;
+  return `<form id="field-form" data-id="${c.id}">
+      ${COUNTRY_FIELDS.map(([f, l]) => pair(f, l)).join('')}
+      <div class="small muted" style="margin:4px 0 8px 4px">${esc(t('ce_extras'))}</div>
+      <div class="stack">${[...extras, {}].map(extraRow).join('')}</div>
+      <p class="small muted" style="margin:8px 4px 14px">${esc(t('ce_extras_note'))}</p>
+      <div class="btn-row"><button class="btn navy" type="submit">${esc(t('save'))}</button><a class="btn light" href="#/countries/${esc(c.code)}">${esc(t('ce_preview'))}</a></div>
+    </form>`;
+}
+VIEWS.field = async function (code) {
+  await Promise.all([loadCountries(true), loadLeaders(true)]);
+  const mine = isAdmin() ? (state.countries || []).filter(x => x.is_active)
+    : (state.countries || []).filter(x => state.partnerOf.has(x.id) || state.leaderOf.has(x.id));
+  const c = (code && mine.find(x => x.code === code.toUpperCase())) || mine[0];
+  if (!c) return backLink('#/my', t('tab_my')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const can = canEditCountry(c);
+  const [photos, videos, { data: msgs }] = await Promise.all([loadCountryGallery(c.id), loadCountryVideos(c.id),
+    sb.from('field_messages').select('*').eq('country_id', c.id).order('created_at').limit(300)]);
+  await loadNames((msgs || []).map(m => m.user_id));
+  state.gallery = { cid: c.id, photos };
+  state.fieldCountry = c;
+  const me = state.profile.id;
+  const thread = `<div class="thread-list">${(msgs || []).length ? msgs.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
+      <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
+      <div class="bubble">${esc(m.body)}</div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('th_none'))}</p>`}</div>
+    <form class="thread-form" id="field-msg-form"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
+      <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
+  return `${backLink('#/my', t('tab_my'))}${pageHead(t('fd_title'), can ? t('fd_sub') : '')}
+    ${mine.length > 1 ? `<div class="lang-pick" style="margin:-6px -20px 14px">${mine.map(x => `<a class="chip-a ${x.id === c.id ? 'active' : ''}" href="#/field/${esc(x.code)}"><span aria-hidden="true">${flag(x.code)}</span>${esc(countryName(x))}</a>`).join('')}</div>` : ''}
+    ${state.partnerOf.has(c.id) ? card(`<span class="eyebrow plain">${icon('hands', 'width="14" height="14"')} ${esc(t('fd_guide_t'))}</span><p style="margin:10px 0 0">${esc(t('fd_guide'))}</p>`) : ''}
+    ${can ? `<div class="section-head"><h2>${esc(t('fd_photos'))}</h2><a class="text-link" href="#/countries/${esc(c.code)}">${esc(t('ce_preview'))} ${icon('chev')}</a></div>
+      ${galleryHTML(c, photos)}
+      <div class="section-head"><h2>${esc(t('fd_videos'))}</h2></div>
+      ${videosHTML(videos, true)}
+      ${card(`<form id="video-form" class="field-pair" style="align-items:end">
+        <label class="field" style="margin:0"><span>${esc(t('vd_url'))}</span><input type="text" name="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=…" required></label>
+        <label class="field" style="margin:0"><span>${esc(t('vd_title'))}</span><input type="text" name="title" maxlength="120"></label>
+        <button class="btn small" type="submit" style="grid-column:1/-1">${icon('plus')} ${esc(t('vd_add'))}</button></form>`)}
+      <div class="section-head"><h2>${esc(t('fd_info'))}</h2></div>
+      ${card(fieldEditorHTML(c))}` : ''}
+    <div class="section-head"><h2>${esc(t('fd_room'))}</h2></div>
+    ${card(`<p class="small muted" style="margin:0 0 10px">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('fd_room_d', { c: countryName(c) }))}</p>${thread}`)}`;
+};
+BINDERS.field = function () {
+  const c = state.fieldCountry; if (!c) return;
+  bindGallery(c);
+  const vf = document.getElementById('video-form');
+  if (vf) vf.onsubmit = async (e) => {
+    e.preventDefault();
+    const id = ytId(vf.url.value.trim());
+    if (!id) return toast(t('vd_bad'), true);
+    const title = vf.title.value.trim() || null;
+    const { error } = await sb.from('country_videos').insert({ country_id: c.id, youtube_id: id, title, title_ko: title, created_by: state.profile.id });
+    if (error) return toast(errMsg(error), true);
+    toast(t('vd_added')); render();
+  };
+  app.querySelectorAll('[data-video-del]').forEach(b => b.onclick = armTwice(b, async () => {
+    const { error } = await sb.from('country_videos').delete().eq('id', b.dataset.videoDel);
+    if (error) return toast(errMsg(error), true);
+    render();
+  }));
+  const ff = document.getElementById('field-form');
+  if (ff) ff.onsubmit = async (e) => {
+    e.preventDefault();
+    const v = Object.fromEntries(new FormData(ff));
+    const row = {};
+    COUNTRY_FIELDS.forEach(([k]) => { row[k] = v[k].trim() || null; row[k + '_ko'] = v[k + '_ko'].trim() || null; });
+    row.extra_sections = [...ff.querySelectorAll('[data-extra]')].map(el => {
+      const i = el.dataset.extra, g = k => (v[`ex_${k}_${i}`] || '').trim();
+      return { title_en: g('title_en'), title_ko: g('title_ko'), body_en: g('body_en'), body_ko: g('body_ko') };
+    }).filter(x => x.title_en || x.title_ko || x.body_en || x.body_ko);
+    const btn = ff.querySelector('button[type=submit]'); btn.disabled = true;
+    const { error } = await sb.from('countries').update(row).eq('id', c.id);
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    state.countries = null; toast(t('saved')); render();
+  };
+  const mf = document.getElementById('field-msg-form');
+  if (mf) mf.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = mf.body.value.trim(); if (!body) return;
+    const btn = mf.querySelector('button'); btn.disabled = true;
+    const { error } = await sb.from('field_messages').insert({ country_id: c.id, user_id: state.profile.id, body });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    render();
+  };
+};
+
+// 관리자: 나라마다 리더·선교사님 지정 (같은 모양의 카드 두 개)
+const ROLE_TABLES = {
+  leaders: { table: 'country_leaders', title: 'adm_leaders', desc: 'adm_leaders_d', add: 'adm_leader_add', none: 'adm_leader_none', list: () => state.leaders },
+  partners: { table: 'field_partners', title: 'adm_partners', desc: 'adm_partners_d', add: 'adm_partner_add', none: 'adm_partner_none', list: () => state.partners },
+};
 async function adminLeadersHTML(list) {
   await loadLeaders(true);
   const people = await allProfiles();
   const pmap = Object.fromEntries(people.map(p => [p.id, p]));
-  return `<div class="section-head"><h2>${esc(t('adm_leaders'))}</h2></div>
-    ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t('adm_leaders_d'))}</p>
-      ${list.filter(c => c.is_active).map(c => { const ls = leadersOf(c.id); return `<div class="list-row no-ico leader-row">
+  return Object.entries(ROLE_TABLES).map(([kind, R]) => `<div class="section-head"><h2>${esc(t(R.title))}</h2></div>
+    ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t(R.desc))}</p>
+      ${list.filter(c => c.is_active).map(c => { const ls = (R.list() || []).filter(l => l.country_id === c.id).map(l => l.user_id); return `<div class="list-row no-ico leader-row">
         <span class="flag-tile" style="font-size:24px" aria-hidden="true">${flag(c.code)}</span>
         <div class="meta"><div class="t">${esc(countryName(c))}</div>
-          <div class="chips" style="margin-top:6px">${ls.length ? ls.map(u => `<span class="chip">${esc(pmap[u]?.name || pmap[u]?.email || '—')}<button type="button" class="chip-x" data-leader-del="${c.id}" data-user="${esc(u)}" aria-label="${esc(t('adm_delete'))}">×</button></span>`).join('') : `<span class="small muted">${esc(t('adm_leader_none'))}</span>`}</div></div>
-        <select data-leader-add="${c.id}" aria-label="${esc(t('adm_leader_add'))} · ${esc(countryName(c))}" style="max-width:170px;min-height:40px;padding:8px 12px;font-size:14px">
-          <option value="">+ ${esc(t('adm_leader_add'))}</option>${people.filter(p => !ls.includes(p.id)).map(p => `<option value="${esc(p.id)}">${esc(p.name || p.email)}</option>`).join('')}</select>
-      </div>`; }).join('')}`)}`;
+          <div class="chips" style="margin-top:6px">${ls.length ? ls.map(u => `<span class="chip">${esc(pmap[u]?.name || pmap[u]?.email || '—')}<button type="button" class="chip-x" data-role-del="${kind}" data-role-country="${c.id}" data-user="${esc(u)}" aria-label="${esc(t('adm_delete'))}">×</button></span>`).join('') : `<span class="small muted">${esc(t(R.none))}</span>`}</div></div>
+        <select data-role-add="${kind}" data-role-country="${c.id}" aria-label="${esc(t(R.add))} · ${esc(countryName(c))}" style="max-width:170px;min-height:40px;padding:8px 12px;font-size:14px">
+          <option value="">+ ${esc(t(R.add))}</option>${people.filter(p => !ls.includes(p.id)).map(p => `<option value="${esc(p.id)}">${esc(p.name || p.email)}</option>`).join('')}</select>
+      </div>`; }).join('')}`)}`).join('');
 }
 function bindAdminLeaders() {
-  app.querySelectorAll('[data-leader-add]').forEach(sel => sel.onchange = async () => {
+  app.querySelectorAll('[data-role-add]').forEach(sel => sel.onchange = async () => {
     if (!sel.value) return;
-    const { error } = await sb.from('country_leaders').insert({ country_id: Number(sel.dataset.leaderAdd), user_id: sel.value });
+    const { error } = await sb.from(ROLE_TABLES[sel.dataset.roleAdd].table).insert({ country_id: Number(sel.dataset.roleCountry), user_id: sel.value });
     if (error) return toast(errMsg(error), true);
     toast(t('adm_updated')); render();
   });
-  app.querySelectorAll('[data-leader-del]').forEach(b => b.onclick = async () => {
-    const { error } = await sb.from('country_leaders').delete().eq('country_id', Number(b.dataset.leaderDel)).eq('user_id', b.dataset.user);
+  app.querySelectorAll('[data-role-del]').forEach(b => b.onclick = async () => {
+    const { error } = await sb.from(ROLE_TABLES[b.dataset.roleDel].table).delete().eq('country_id', Number(b.dataset.roleCountry)).eq('user_id', b.dataset.user);
     if (error) return toast(errMsg(error), true);
     toast(t('adm_updated')); render();
   });
@@ -3850,7 +4015,7 @@ async function addCountryPhoto(c, file, sortOrder) {
     if (error) throw error;
     url = sb.storage.from('country-photos').getPublicUrl(path).data.publicUrl;
   }
-  const { error } = await sb.from('country_photos').insert({ country_id: c.id, url, sort_order: sortOrder });
+  const { error } = await sb.from('country_photos').insert({ country_id: c.id, url, sort_order: sortOrder, uploaded_by: state.profile.id });
   if (error) throw error;
   state.photos = null;
 }
@@ -3862,13 +4027,15 @@ async function removeCountryPhoto(p) {
   state.photos = null;
 }
 function galleryHTML(c, photos) {
-  if (!photos.length && !isAdmin()) return '';
+  const can = canEditCountry(c);
+  if (!photos.length && !can) return '';
   return `<div class="gallery" aria-label="${esc(countryName(c))}">
       ${photos.map(p => `<figure><img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy">
-        ${isAdmin() ? `<button type="button" data-photo-del="${p.id}" aria-label="${esc(t('gal_remove'))}">${icon('trash')}</button>` : ''}</figure>`).join('')}
-      ${isAdmin() ? `<label class="gallery-add">${icon('plus')}<span>${esc(t('gal_add'))}</span><input type="file" accept="image/*" id="photo-input"></label>` : ''}
+        ${can ? `<button type="button" data-photo-del="${p.id}" aria-label="${esc(t('gal_remove'))}">${icon('trash')}</button>` : ''}</figure>`).join('')}
+      ${can ? `<label class="gallery-add">${icon('plus')}<span>${esc(t('gal_add'))}</span><input type="file" accept="image/*" id="photo-input"></label>` : ''}
     </div>
-    ${isAdmin() ? `<div class="form-note" style="margin-top:-2px">${icon('lock')}<span>${esc(t('gal_note'))}</span></div>` : ''}`;
+    ${can ? `<div class="form-note" style="margin-top:-2px">${icon('lock')}<span>${esc(t('gal_note'))}</span></div>
+      <label class="agree" style="margin:0 4px 16px"><input type="checkbox" id="photo-safe"><span>${esc(t('fd_photo_ok'))}</span></label>` : ''}`;
 }
 
 // ---------------------------------------------------------------------
@@ -5489,12 +5656,13 @@ function notifText(n) {
     case 'feedback_reply': return t('nt_reply');
     case 'team_added': return t('nt_team', { x: p.team || '' });
     case 'leader_msg': return t('nt_leader_msg');
+    case 'field_msg': return t('nt_field_msg', { c: c ? countryName(c) : '' });
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: c ? countryName(c) : '' });
     default: return t('nt_generic');
   }
 }
-const NOTIF_ICON = { leader_msg: 'chat', student_msg: 'chat', new_app: 'plane', report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
+const NOTIF_ICON = { field_msg: 'globe', leader_msg: 'chat', student_msg: 'chat', new_app: 'plane', report_new: 'shield', ins_status: 'shield', app_status: 'plane', ext_status: 'calendar', grad_status: 'cap', testi_status: 'spark', support_status: 'gift', feedback_reply: 'chat', team_added: 'people' };
 
 VIEWS.notifications = async function () {
   await loadCountries();
@@ -5551,7 +5719,7 @@ async function onSession(session) {
   if (!session) {
     state.profile = null; state.adminMembers = null; state.countries = null;
     state.myPledges = new Set(); state.pledgeCounts = {}; state.photos = null; state.events = null;
-    closeRoomSub(); unsubscribeNotifications(); state.blocked = new Set(); state.leaderOf = new Set(); state.leaders = null; state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
+    closeRoomSub(); unsubscribeNotifications(); state.blocked = new Set(); state.leaderOf = new Set(); state.leaders = null; state.partnerOf = new Set(); state.partners = null; state.rooms = null; state.room = null; state.myApps = null; state.app = null; state.adminApps = null;
     if (prevUser && state.authMode !== 'recovery') state.authMode = 'login';   // 로그아웃 후에는 로그인 화면 (첫 방문은 회원가입 그대로)
     delete app.dataset.tab;
     render();
