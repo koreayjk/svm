@@ -30,12 +30,6 @@
   .hh .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
   .hh .btn.ghost { background: rgba(255, 255, 255, .12); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
   .hh .btn.ghost:hover { box-shadow: inset 0 0 0 1px #fff; }
-  .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .why > div { background: var(--surface); border-radius: var(--r-card); padding: 24px; }
-  .why .n { font-family: var(--font-num); font-weight: 600; font-size: 40px; line-height: 1; color: var(--orange-ink); }
-  .why h3 { font-size: 19px; font-weight: 700; letter-spacing: -.02em; margin: 12px 0 6px; }
-  .why p { margin: 0; color: var(--muted); font-size: 15.5px; }
-  .pull { margin: 22px 0 0; padding: 22px 26px; border-radius: var(--r-card); background: var(--orange-soft); font-size: clamp(19px, 2.6vw, 24px); font-weight: 700; letter-spacing: -.02em; line-height: 1.4; color: var(--navy); text-wrap: balance; }
   .promise { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .promise > div { display: flex; gap: 14px; background: var(--surface); border-radius: var(--r-card); padding: 22px; }
   .promise svg { flex: 0 0 auto; width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: var(--orange-ink); color: #fff; margin-top: 2px; }
@@ -65,7 +59,7 @@
   .plan p { margin: 0; font-size: 16px; opacity: .92; }
   .steps.six { grid-template-columns: repeat(6, 1fr); }
   @media (max-width: 1000px) { .steps.six { grid-template-columns: 1fr; gap: 14px; } .steps.six li { padding: 4px 0 0 46px; } .steps.six li::after { display: none; } }
-  @media (max-width: 800px) { .why, .promise, .roles, .opts, .talk { grid-template-columns: 1fr; } .hh { padding: 52px 0 48px; } }
+  @media (max-width: 800px) { .promise, .roles, .opts, .talk { grid-template-columns: 1fr; } .hh { padding: 52px 0 48px; } }
   .soft { max-width: 52em; margin-top: 14px; padding: 20px 22px; border-radius: 20px; background: var(--surface); color: var(--muted); font-size: 16px; }
   .soft b { color: var(--text); }
   .cta { background: var(--navy); color: #fff; border-radius: 32px; padding: clamp(26px, 5vw, 52px); }
@@ -255,8 +249,9 @@
       <li><a href="../conference/#register" data-k="ft_l_reg">Register for Nov 20</a></li>
       <li><a href="./" data-k="ft_l_host">Host a team</a></li>
       <li><a href="../privacy/" data-k="ft_l_privacy">Privacy</a></li>
-      <li><a href="../terms/" data-k="ft_l_terms">Terms of Use</a></li></ul></div>
-    <div class="copy"><span data-k="ft_hosted">Hosted by IM Mission Foundation Group Corp</span><span>© 2026 IM Mission Foundation Group Corp</span></div>
+      <li><a href="../terms/" data-k="ft_l_terms">Terms of Use</a></li>
+      <li><a href="mailto:imamerica2414@gmail.com" data-k="ft_l_contact">Contact</a></li></ul></div>
+    <div class="copy"><span data-k="ft_legal">IM Mission Foundation Group Corp (EIN 99-2847865) is a 501(c)(3) nonprofit organization.</span><span data-k="ft_hosted">Hosted by IM Mission Foundation Group Corp</span><span>© 2026 IM Mission Foundation Group Corp</span></div>
   </div>
 </footer>
 

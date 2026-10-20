@@ -383,6 +383,17 @@ create table if not exists public.conference_registrations (
 create unique index if not exists conference_registrations_email_uq
   on public.conference_registrations (event_key, lower(email));
 
+-- 홈페이지 '소식 받기' (이메일만 남기는 가벼운 참여). 누구나 넣기만 가능, 조회는 관리자
+create table if not exists public.newsletter_signups (
+  id          bigint generated always as identity primary key,
+  email       text not null check (char_length(email) between 3 and 200 and email like '%_@_%'),
+  name        text check (name is null or char_length(name) <= 120),
+  interest    text not null default 'general' check (interest in ('general','go','support','host')),
+  lang        text not null default 'en' check (lang in ('en','ko')),
+  created_at  timestamptz not null default now()
+);
+create unique index if not exists newsletter_signups_email_uq on public.newsletter_signups (lower(email));
+
 -- =====================================================================
 -- v1 → v2 업그레이드 (v1 SQL 을 이미 실행한 DB 용 — 새 DB 에서는 아무 일도 하지 않음)
 -- =====================================================================
