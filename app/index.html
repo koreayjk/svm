@@ -1131,6 +1131,7 @@ const i18n = {
     apps_title: 'My applications', apps_empty: 'No applications yet. Explore a field and apply when you are ready.', apps_new: 'New application',
     app_timeline: 'Status', app_details: 'Details', app_expected_return: 'Expected return', app_applied: 'Applied', app_hq_note: 'Note from HQ',
     fd_title: 'My field', fd_sub: 'Share what students need to know about your field: photos, videos and how life and ministry work there.',
+    fd_guide_link: 'Read the full guide for host fields',
     fd_guide_t: 'Thank you for hosting', fd_guide: 'Students pay their own flights, so please do not prepare anything special. They live as you live and serve alongside you. Students will not contact you directly; your SVM country leader is your contact and joins any meeting.',
     fd_info: 'Country page', fd_photos: 'Photos', fd_videos: 'Videos', fd_room: 'Field conversation', fd_room_d: 'Missionaries, the SVM country leader and HQ for {c}. Students do not see this.',
     fd_photo_ok: 'No faces, real names or exact locations of local believers are shown', fd_photo_need: 'Please confirm the photo is safe to share.',
@@ -1373,6 +1374,7 @@ const i18n = {
     apps_title: '내 신청', apps_empty: '아직 신청 내역이 없어요. 선교지를 둘러보고 준비되면 신청하세요.', apps_new: '새로 신청하기',
     app_timeline: '진행 상황', app_details: '신청 내용', app_expected_return: '귀국 예정일', app_applied: '신청일', app_hq_note: '본부 메모',
     fd_title: '내 선교지', fd_sub: '학생들이 알아야 할 선교지 정보를 나눠 주세요. 사진, 영상, 현지 생활과 사역 안내.',
+    fd_guide_link: '선교지를 위한 전체 안내 읽기',
     fd_guide_t: '맞이해 주셔서 감사합니다', fd_guide: '학생들은 항공권을 스스로 부담하니 따로 준비하지 않으셔도 됩니다. 사시는 그대로 함께 지내며 섬깁니다. 학생들이 직접 연락드리지 않고, SVM 나라 리더가 연락 창구가 되어 필요한 미팅에 함께합니다.',
     fd_info: '나라 페이지', fd_photos: '사진', fd_videos: '영상', fd_room: '선교지 대화방', fd_room_d: '{c} 선교사님, SVM 나라 리더, 본부가 함께 봅니다. 학생에게는 보이지 않습니다.',
     fd_photo_ok: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않습니다', fd_photo_need: '사진이 안전한지 확인해 주세요.',
@@ -2318,6 +2320,7 @@ function viewSetup() {
 // ---------- Auth ----------
 const PRIVACY_URL = '../privacy/';
 const TERMS_URL = '../terms/';
+const HOST_URL = '../host/';
 function viewAuth() {
   const m = state.authMode;
   let form;
@@ -3868,7 +3871,7 @@ VIEWS.field = async function (code) {
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
   return `${backLink('#/my', t('tab_my'))}${pageHead(t('fd_title'), can ? t('fd_sub') : '')}
     ${mine.length > 1 ? `<div class="lang-pick" style="margin:-6px -20px 14px">${mine.map(x => `<a class="chip-a ${x.id === c.id ? 'active' : ''}" href="#/field/${esc(x.code)}"><span aria-hidden="true">${flag(x.code)}</span>${esc(countryName(x))}</a>`).join('')}</div>` : ''}
-    ${state.partnerOf.has(c.id) ? card(`<span class="eyebrow plain">${icon('hands', 'width="14" height="14"')} ${esc(t('fd_guide_t'))}</span><p style="margin:10px 0 0">${esc(t('fd_guide'))}</p>`) : ''}
+    ${state.partnerOf.has(c.id) ? card(`<span class="eyebrow plain">${icon('hands', 'width="14" height="14"')} ${esc(t('fd_guide_t'))}</span><p style="margin:10px 0 0">${esc(t('fd_guide'))}</p><p style="margin:10px 0 0"><a class="text-link" href="${HOST_URL}" target="_blank" rel="noopener">${esc(t('fd_guide_link'))} ${icon('arrow')}</a></p>`) : ''}
     ${can ? `<div class="section-head"><h2>${esc(t('fe_post_t'))}</h2></div>
       ${card(`<form id="update-form"><label class="field"><textarea name="body" aria-label="${esc(t('fe_post_t'))}" maxlength="1000" style="min-height:90px" placeholder="${esc(t('fe_post_ph'))}" required></textarea></label>
         <p class="small muted" style="margin:0 0 12px">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('fe_post_safe'))}</p>

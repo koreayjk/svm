@@ -18,7 +18,7 @@ html = open(os.path.join(ROOT, 'app', 'index.html'), encoding='utf-8').read()
 html = re.sub(r'<script src="https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@[^"]+"></script>', '<script src="vendor/supabase.js"></script>', html)
 html = re.sub(r'<link rel="manifest"[^>]*>\s*', '', html)
 html = html.replace('"../config.js"', '"config.js"')
-for page in ('privacy', 'terms', 'conference'):
+for page in ('privacy', 'terms', 'conference', 'host'):
     html = html.replace(f"'../{page}/", f"'{SITE}{page}/")
 html = html.replace('../assets/', 'assets/').replace('../icons/', 'icons/')
 assert '../' not in re.sub(r'https?://\S+', '', html), 'relative ../ path left'
