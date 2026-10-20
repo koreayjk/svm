@@ -349,6 +349,7 @@ alter table public.application_prep          enable row level security;
 alter table public.field_checkins            enable row level security;
 alter table public.reminder_log              enable row level security;
 alter table public.field_updates            enable row level security;
+alter table public.field_plans              enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -364,7 +365,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates','field_plans'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -418,6 +419,16 @@ create policy "checkins: self send" on public.field_checkins for insert with che
 create policy "field_updates: read"   on public.field_updates for select to authenticated using (true);
 create policy "field_updates: write"  on public.field_updates for insert with check (user_id = auth.uid() and public.can_edit_country(country_id));
 create policy "field_updates: delete" on public.field_updates for delete using (user_id = auth.uid() or public.can_edit_country(country_id));
+-- 합의 계획서: 리더·관리자가 쓰고, 선교지는 '보낸' 계획만 보고 동의·수정 요청, 학생은 자기 신청서에 연결된 계획만 봄
+create policy "plans: read" on public.field_plans for select using (
+  public.is_admin() or public.is_country_leader(country_id)
+  or (public.is_field_partner(country_id) and sent_at is not null)
+  or exists (select 1 from public.applications a where a.plan_id = field_plans.id and a.user_id = auth.uid()));
+create policy "plans: lead add" on public.field_plans for insert with check ((public.is_admin() or public.is_country_leader(country_id)) and created_by = auth.uid());
+create policy "plans: update" on public.field_plans for update
+  using (public.is_admin() or public.is_country_leader(country_id) or (public.is_field_partner(country_id) and sent_at is not null))
+  with check (public.is_admin() or public.is_country_leader(country_id) or (public.is_field_partner(country_id) and sent_at is not null));
+create policy "plans: lead delete" on public.field_plans for delete using (public.is_admin() or public.is_country_leader(country_id));
 -- reminder_log: 정책 없음 = 앱에서는 접근 불가 (아래 send_reminders 함수만 씁니다)
 
 -- 관리자가 아닌 사람이 나라 정보를 고칠 때 바꿀 수 없는 칸은 원래대로
@@ -834,6 +845,98 @@ begin
 end;
 $$;
 
+-- 합의 계획서 규칙: 선교지는 동의·수정 요청만 할 수 있고, 리더가 내용을 고치면 동의가 처음부터 다시 필요함
+create or replace function public.guard_field_plan()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  lead boolean := public.is_admin() or public.is_country_leader(old.country_id);
+  skip  text[] := array['sent_at','field_agreed_at','field_agreed_by','field_agreed_via','field_agreed_note','field_comment','svm_agreed_at','svm_agreed_by','closed','updated_at'];
+  fskip text[] := array['field_agreed_at','field_agreed_by','field_agreed_via','field_agreed_note','field_comment','updated_at'];
+begin
+  if new.country_id is distinct from old.country_id then raise exception 'country cannot change'; end if;
+  new.updated_at := now();
+  if not lead then
+    if not public.is_field_partner(old.country_id) or old.sent_at is null then raise exception 'not allowed'; end if;
+    if (to_jsonb(new) - fskip) is distinct from (to_jsonb(old) - fskip) then raise exception 'field partners can only agree or comment'; end if;
+    if new.field_agreed_at is not null and (new.field_agreed_via is distinct from 'self' or new.field_agreed_by is distinct from auth.uid()) then
+      raise exception 'bad agreement';
+    end if;
+    return new;
+  end if;
+  if (to_jsonb(new) - skip) is distinct from (to_jsonb(old) - skip) then   -- 내용이 바뀜 → 처음부터 다시
+    new.sent_at := null; new.field_agreed_at := null; new.field_agreed_by := null; new.field_agreed_via := null; new.field_agreed_note := null;
+    new.svm_agreed_at := null; new.svm_agreed_by := null; new.field_comment := null;
+  end if;
+  if new.field_agreed_via = 'leader' and new.field_agreed_at is not null and old.field_agreed_at is null then
+    if coalesce(trim(new.field_agreed_note), '') = '' then raise exception 'PLAN_NOTE_REQUIRED'; end if;
+    new.field_agreed_by := auth.uid();
+    new.sent_at := coalesce(new.sent_at, now());
+  end if;
+  if new.svm_agreed_at is not null and old.svm_agreed_at is null then
+    if new.field_agreed_at is null then raise exception 'PLAN_FIELD_FIRST'; end if;
+    new.svm_agreed_by := auth.uid();
+  end if;
+  return new;
+end;
+$$;
+
+-- 합의 계획서 알림: 보냄 → 선교사님 · 선교지 동의/수정 요청 → 리더와 관리자 · 확정 → 선교사님
+create or replace function public.notify_plan()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare pay jsonb := jsonb_build_object('country_id', new.country_id, 'title', new.title); lnk text := '#/plans/' || new.id;
+begin
+  if new.sent_at is not null and old.sent_at is null then
+    insert into public.notifications (user_id, kind, payload, link)
+    select user_id, 'plan_review', pay, lnk from public.field_partners where country_id = new.country_id and user_id is distinct from auth.uid();
+  end if;
+  if new.field_agreed_at is not null and old.field_agreed_at is null and new.field_agreed_via = 'self' then
+    insert into public.notifications (user_id, kind, payload, link)
+    select u, 'plan_field_agreed', pay, lnk from (select user_id as u from public.country_leaders where country_id = new.country_id
+      union select id from public.profiles where role = 'admin') x where u is distinct from auth.uid();
+  end if;
+  if new.field_comment is not null and new.field_comment is distinct from old.field_comment then
+    insert into public.notifications (user_id, kind, payload, link)
+    select u, 'plan_changes', pay, lnk from (select user_id as u from public.country_leaders where country_id = new.country_id
+      union select id from public.profiles where role = 'admin') x where u is distinct from auth.uid();
+  end if;
+  if new.svm_agreed_at is not null and old.svm_agreed_at is null then
+    insert into public.notifications (user_id, kind, payload, link)
+    select user_id, 'plan_agreed', pay, lnk from public.field_partners where country_id = new.country_id and user_id is distinct from auth.uid();
+  end if;
+  return new;
+end;
+$$;
+
+-- 신청 승인 전에 합의된 계획서가 있어야 하는 설정(require_plan_to_approve)이 켜져 있으면 확인
+create or replace function public.guard_application_plan()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if new.plan_id is not null and not exists (select 1 from public.field_plans p where p.id = new.plan_id and p.country_id = new.country_id) then
+    raise exception 'PLAN_COUNTRY';
+  end if;
+  if public.setting_bool('require_plan_to_approve')
+     and old.status in ('submitted','rejected') and new.status not in ('submitted','rejected') then
+    if new.plan_id is null or not exists (select 1 from public.field_plans p where p.id = new.plan_id and p.country_id = new.country_id
+         and p.field_agreed_at is not null and p.svm_agreed_at is not null and not p.closed) then
+      raise exception 'PLAN_REQUIRED';
+    end if;
+  end if;
+  return new;
+end;
+$$;
+
 -- 새 선교지 소식 → 그 나라를 품은 사람, 파송 준비·선교 중인 학생, 나라 리더에게 알림 (쓴 사람 제외)
 create or replace function public.notify_field_update()
 returns trigger
@@ -991,6 +1094,12 @@ create trigger notify_app_message after insert on public.application_messages
 drop trigger if exists notify_field_message on public.field_messages;
 create trigger notify_field_message after insert on public.field_messages
   for each row execute function public.notify_field_message();
+drop trigger if exists guard_field_plan on public.field_plans;
+create trigger guard_field_plan before update on public.field_plans for each row execute function public.guard_field_plan();
+drop trigger if exists notify_plan on public.field_plans;
+create trigger notify_plan after update on public.field_plans for each row execute function public.notify_plan();
+drop trigger if exists guard_application_plan on public.applications;
+create trigger guard_application_plan before update on public.applications for each row execute function public.guard_application_plan();
 drop trigger if exists notify_field_update on public.field_updates;
 create trigger notify_field_update after insert on public.field_updates
   for each row execute function public.notify_field_update();
