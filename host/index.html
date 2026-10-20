@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>For Host Fields · SVM Student Volunteer Movement</title>
+<meta name="description" content="Why SVM sends college students on mission trips, why it costs your field nothing, and how every detail is agreed before a team leaves. A guide for missionaries and local churches.">
+<meta property="og:title" content="For Host Fields · SVM Student Volunteer Movement">
+<meta property="og:description" content="Students pay their own flights. Your field carries no cost. Every detail is agreed before anyone leaves.">
+<meta property="og:image" content="https://koreayjk.github.io/svm/assets/images/hero.jpg">
+<link rel="canonical" href="https://koreayjk.github.io/svm/host/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://koreayjk.github.io/svm/host/">
+<meta property="og:site_name" content="SVM · Student Volunteer Movement">
+<meta property="og:image:width" content="1600">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2F3F8">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+<style>
+  .hh { background: var(--navy); color: #fff; padding: 72px 0 64px; }
+  .hh .kicker { color: #FF9A62; }
+  .hh h1 { font-size: clamp(34px, 6vw, 60px); font-weight: 900; letter-spacing: -.035em; line-height: 1.08; margin: 10px 0 18px; max-width: 16em; text-wrap: balance; }
+  .hh .lead { color: var(--on-dark-muted); font-size: clamp(17px, 2.2vw, 20px); max-width: 36em; margin: 0 0 26px; text-wrap: pretty; }
+  .hh .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .hh .btn.ghost { background: rgba(255, 255, 255, .12); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
+  .hh .btn.ghost:hover { box-shadow: inset 0 0 0 1px #fff; }
+  .why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .why > div { background: var(--surface); border-radius: var(--r-card); padding: 24px; }
+  .why .n { font-family: var(--font-num); font-weight: 600; font-size: 40px; line-height: 1; color: var(--orange-ink); }
+  .why h3 { font-size: 19px; font-weight: 700; letter-spacing: -.02em; margin: 12px 0 6px; }
+  .why p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .pull { margin: 22px 0 0; padding: 22px 26px; border-radius: var(--r-card); background: var(--orange-soft); font-size: clamp(19px, 2.6vw, 24px); font-weight: 700; letter-spacing: -.02em; line-height: 1.4; color: var(--navy); text-wrap: balance; }
+  .promise { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .promise > div { display: flex; gap: 14px; background: var(--surface); border-radius: var(--r-card); padding: 22px; }
+  .promise svg { flex: 0 0 auto; width: 26px; height: 26px; padding: 5px; border-radius: 50%; background: var(--orange-ink); color: #fff; margin-top: 2px; }
+  .promise h3 { font-size: 17px; font-weight: 700; margin: 0 0 4px; }
+  .promise p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .roles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .role { background: var(--surface); border-radius: var(--r-card); padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+  .role h3 { font-size: 20px; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+  .role p { margin: 0; color: var(--muted); font-size: 15.5px; }
+  .role .when { margin-top: auto; padding-top: 12px; font-size: 14.5px; color: var(--muted-2); border-top: 1px solid var(--line); }
+  .role .when b { color: var(--orange-dark); }
+  .role.open { background: var(--navy); }
+  .role.open h3, .role.open p { color: #fff; }
+  .role.open p { opacity: .82; }
+  .role.open .when { border-color: rgba(255, 255, 255, .2); color: rgba(255, 255, 255, .7); }
+  .opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 4px; }
+  .opts > div { background: var(--bg); border-radius: 20px; padding: 18px 20px; }
+  .opts b { display: block; font-size: 16px; margin-bottom: 3px; }
+  .opts span { color: var(--muted); font-size: 15px; }
+  .note { margin-top: 18px; padding: 16px 18px; border-radius: 18px; background: var(--orange-soft); color: #5C2A0B; font-size: 15.5px; }
+  .talk { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px 12px; margin: 22px 0 0; padding: 0; list-style: none; }
+  .talk li { display: flex; gap: 12px; align-items: flex-start; background: var(--bg); border-radius: 18px; padding: 14px 16px; color: var(--muted); font-size: 15px; }
+  .talk li b { display: block; color: var(--text); font-size: 15.5px; margin-bottom: 1px; }
+  .talk svg { flex: 0 0 auto; width: 20px; height: 20px; color: var(--orange-ink); margin-top: 2px; }
+  .plan { margin-top: 22px; padding: 20px 22px; border-radius: 20px; background: var(--navy); color: #fff; }
+  .plan b { color: #FF9A62; }
+  .plan p { margin: 0; font-size: 16px; opacity: .92; }
+  .steps.six { grid-template-columns: repeat(6, 1fr); }
+  @media (max-width: 1000px) { .steps.six { grid-template-columns: 1fr; gap: 14px; } .steps.six li { padding: 4px 0 0 46px; } .steps.six li::after { display: none; } }
+  @media (max-width: 800px) { .why, .promise, .roles, .opts, .talk { grid-template-columns: 1fr; } .hh { padding: 52px 0 48px; } }
+  .soft { max-width: 52em; margin-top: 14px; padding: 20px 22px; border-radius: 20px; background: var(--surface); color: var(--muted); font-size: 16px; }
+  .soft b { color: var(--text); }
+  .cta { background: var(--navy); color: #fff; border-radius: 32px; padding: clamp(26px, 5vw, 52px); }
+  .cta .kicker { color: #FF9A62; }
+  .cta h2 { font-size: clamp(26px, 4vw, 40px); font-weight: 900; letter-spacing: -.03em; line-height: 1.15; margin: 8px 0 12px; }
+  .cta p { color: var(--on-dark-muted); font-size: 17px; max-width: 38em; margin: 0 0 20px; }
+  .cta .ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cta .btn.ghost { background: rgba(255, 255, 255, .12); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a href="../" aria-label="SVM home"><img class="logo" src="../assets/SVM_Logo.svg" alt="SVM" width="90" height="28"></a>
+    <div class="right">
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button type="button" data-lang="ko" aria-pressed="false">한국어</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hh">
+    <div class="wrap">
+      <div class="kicker" data-k="h_kicker">For host fields · missionaries and local churches</div>
+      <h1 data-k="h_h1">Come as you are. Everything is settled before anyone leaves.</h1>
+      <p class="lead" data-k="h_lead">SVM sends college students to the mission field every school break. We do it without asking your field for money, special food or a special place to stay. This page explains why we do it this way, and how we plan each team with you.</p>
+      <div class="ctas">
+        <a class="btn" href="#how" data-k="h_cta1">How it works</a>
+        <a class="btn ghost" href="#talk" data-k="h_cta2">Talk with us</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="why">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="w_kicker">Why we do this</div>
+        <h2 data-k="w_h">Sending teams is expensive. Students have no money. We still want to send them every break.</h2>
+      </div>
+      <div class="why">
+        <div><div class="n">01</div><h3 data-k="w1_t">The usual way costs too much</h3><p data-k="w1_p">Flights, rooms, meals and program fees add up fast. Often the sending side raises a large sum, or the field ends up carrying part of the cost.</p></div>
+        <div><div class="n">02</div><h3 data-k="w2_t">Students have time, not money</h3><p data-k="w2_p">American college students have long breaks and a real desire to serve. What they do not have is a budget. If a trip is expensive, most of them can never go.</p></div>
+        <div><div class="n">03</div><h3 data-k="w3_t">We want to send every break</h3><p data-k="w3_p">Summer, winter and spring, again and again, not one trip a year. That only works if no one is burdened: not the students beyond their flight, and not you.</p></div>
+      </div>
+      <p class="pull" data-k="w_pull">A mission trip should open doors, not drain the people who open them.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="p_kicker">Our promise to your field</div>
+        <h2 data-k="p_h">You carry no cost, and no surprises.</h2>
+      </div>
+      <div class="promise">
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><h3 data-k="p1_t">You pay nothing</h3><p data-k="p1_p">Students pay for their own round-trip flight and travel insurance. There are no fees to SVM and nothing for you to cover.</p></div></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><h3 data-k="p2_t">Nothing special to prepare</h3><p data-k="p2_p">No special meals, no nicer room. Students live the way you live, serve alongside you, and share the gospel. You decide how food and housing work (see below).</p></div></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><h3 data-k="p3_t">One person to talk to</h3><p data-k="p3_p">Each country has an SVM leader who cares for the students and speaks with you. Students do not contact you on their own. If a meeting helps, the leader joins it.</p></div></div>
+        <div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><h3 data-k="p4_t">Everything agreed first</h3><p data-k="p4_p">We talk through every detail with you before a team is approved to go: the role, dates, food, housing, safety and contacts. Our goal is that nothing is left to figure out on arrival.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="roles">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="r_kicker">What students can do</div>
+        <h2 data-k="r_h">There is no fixed program. We decide the role together.</h2>
+        <p data-k="r_p">We build each team around what you need and what you can carry. These are the most common starting points. You can pick one, combine them, or tell us something else.</p>
+      </div>
+      <div class="roles">
+        <div class="role"><h3 data-k="r1_t">Teach English</h3><p data-k="r1_p">Native English speakers can run classes for children, youth and adults, English camps, and conversation practice. It is a natural way to meet people and build trust.</p><div class="when" data-k="r1_w" data-html><b>A good fit when</b> you have an English class, a school connection, or want to start one.</div></div>
+        <div class="role"><h3 data-k="r2_t">Build and repair</h3><p data-k="r2_p">Extra hands for a building project: a church or classroom, painting, roofing, repairs, a clean-up. Students' experience varies, and we ask about it first.</p><div class="when" data-k="r2_w" data-html><b>A good fit when</b> you have a project and not enough people to do the work.</div></div>
+        <div class="role"><h3 data-k="r3_t">Share the gospel and disciple</h3><p data-k="r3_p">Evangelism, prayer, visiting homes, friendship and discipleship, side by side with your people. Students train weekly and learn the core gospel message in your language.</p><div class="when" data-k="r3_w" data-html><b>A good fit when</b> you want more voices and more feet for outreach.</div></div>
+        <div class="role"><h3 data-k="r4_t">Join what you already do</h3><p data-k="r4_p">Kids' programs and VBS, music, sports, media, office help, community work. Students simply serve inside your existing ministry.</p><div class="when" data-k="r4_w" data-html><b>A good fit when</b> your ministry is running and you want help, not a new program.</div></div>
+        <div class="role open" style="grid-column:1/-1"><h3 data-k="r5_t">Something we have not listed</h3><p data-k="r5_p">Tell us your real need. We would rather ask a question than guess. Maximum possibility is the point: whatever fits your field and the students' gifts, we will talk it through.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="host-band">
+        <div class="s-head" style="margin-bottom:0">
+          <div class="kicker" data-k="f_kicker">Food and housing</div>
+          <h2 data-k="f_h">You choose. Simple is always fine.</h2>
+          <p data-k="f_p">We never expect more than you already live with. Any of these works, and you can mix them:</p>
+        </div>
+        <div class="opts" style="margin-top:22px">
+          <div><b data-k="f1_t">Live as you live</b><span data-k="f1_p">They eat what you eat and stay where you can host: a church floor, a shared room, a homestay.</span></div>
+          <div><b data-k="f2_t">Students handle their own meals</b><span data-k="f2_p">They buy and cook their own food. You only point them to a market.</span></div>
+          <div><b data-k="f3_t">Students find their own place</b><span data-k="f3_p">They arrange a simple room nearby. You only advise on a safe area.</span></div>
+          <div><b data-k="f4_t">A mix</b><span data-k="f4_p">For example, they sleep at the church and make their own meals.</span></div>
+        </div>
+        <p class="note" data-k="f_note">Saying “please have them take care of their own food” is a normal, welcome answer. It is exactly what lets many fields say yes to more students.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="talk">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="t_kicker">Before anyone leaves</div>
+        <h2 data-k="t_h">We talk through all of this with you first.</h2>
+        <p data-k="t_p">Our goal is simple: every question is answered before departure. Your SVM country leader goes through these with you.</p>
+      </div>
+      <ul class="talk">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t1_t">The role</b><span data-k="t1_p">What the students will do each day and week.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t2_t">Dates and team size</b><span data-k="t2_p">Which seasons suit you, how long, and how many students your field can welcome.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t3_t">Food and housing</b><span data-k="t3_p">Which option above you prefer, and anything students should know.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t4_t">Getting around</b><span data-k="t4_p">Airport pickup, local transport, and how far the work is from where they stay.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t5_t">Culture and safety</b><span data-k="t5_p">Dress, manners, places to avoid, and rules for a sensitive country.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t6_t">Who to call</b><span data-k="t6_p">One SVM leader for you, and what to do if something goes wrong.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t7_t">What students cover</b><span data-k="t7_p">Their flight, insurance and personal spending. Written down so there is no doubt.</span></div></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.2 4.2L19 7"/></svg><div><b data-k="t8_t">What you do not have to provide</b><span data-k="t8_p">Everything you tell us you cannot or would rather not carry.</span></div></li>
+      </ul>
+      <div class="plan"><p data-k="plan" data-html><b>A one-page plan, agreed by both sides.</b> We write the answers into a short plan: the role, dates, team size, food, housing, transport, safety, contacts, and what the field does not have to provide. We do not approve a team to go until you and SVM agree on it.</p></div>
+    </div>
+  </section>
+
+  <section class="block" id="how">
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker" data-k="s_kicker">How it works</div>
+        <h2 data-k="s_h">From first hello to a team on your field</h2>
+      </div>
+      <ol class="steps six">
+        <li data-k="s1" data-html><b>Say hello</b>Tell your SVM country leader about your ministry.</li>
+        <li data-k="s2" data-html><b>Talk it through</b>Needs, what you can and cannot carry, seasons, ideas. No pressure.</li>
+        <li data-k="s3" data-html><b>Write the plan</b>One page. You and SVM agree on it.</li>
+        <li data-k="s4" data-html><b>Students prepare</b>They train, learn your language, buy travel insurance and apply for your plan.</li>
+        <li data-k="s5" data-html><b>Pre-departure call</b>The leader goes over the plan with you once more. Students join if it helps.</li>
+        <li data-k="s6" data-html><b>Go and report back</b>The leader stays in touch while they are with you. Students share what happened.</li>
+      </ol>
+      <p class="soft" data-k="s_app" data-html><b>You get a place in the SVM app.</b> Post news, photos and videos from your country, update what visitors should expect, and talk with your SVM country leader. Students see your news and pray for you.</p>
+      <p class="soft" data-k="s_no" data-html><b>Saying “not yet” is okay.</b> If your season is wrong or the timing is hard, tell us. We would rather wait than send a team that adds weight to your field.</p>
+      <div class="protect" style="max-width:52em"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>
+        <span data-k="protect">We protect your field. Students are told never to post local believers' faces, real names or exact church locations. Testimonies and photos are reviewed before they appear, and sensitive countries hide names and limit photos.</span></div>
+    </div>
+  </section>
+
+  <section class="block" id="faq">
+    <div class="wrap">
+      <div class="s-head"><div class="kicker" data-k="q_kicker">Questions hosts ask</div><h2 data-k="q_h">Straight answers</h2></div>
+      <div class="faq">
+        <details><summary data-k="q1">Do we have to pay anything?</summary><p data-k="a1">No. Students pay their own flights and travel insurance. There are no fees to SVM and no program costs for your field.</p></details>
+        <details><summary data-k="q2">We have very little space. Can we still host?</summary><p data-k="a2">Yes. Ask for a small team, a shorter stay, or have students find their own simple room. Tell your country leader what you can do, and we plan around it.</p></details>
+        <details><summary data-k="q3">How many students, and for how long?</summary><p data-k="a3">You decide with your country leader. Stays are usually a month or longer, in the seasons that suit you. We start small if you prefer.</p></details>
+        <details><summary data-k="q4">Who is responsible for the students?</summary><p data-k="a4">SVM trains and screens them, requires travel insurance, and an SVM country leader looks after them. Students check in with the leader during the trip. You are never asked to supervise them alone.</p></details>
+        <details><summary data-k="q5">Can we choose who comes?</summary><p data-k="a5">Your leader talks with you about the skills and character that fit your plan. Students then apply for that specific plan, and the leader approves the team.</p></details>
+        <details><summary data-k="q6">What if something is not working?</summary><p data-k="a6">Tell your country leader right away. You never have to handle it alone, and we adjust the plan together.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cta">
+        <div class="kicker" data-k="c_kicker">Talk with us</div>
+        <h2 data-k="c_h">Tell us about your field.</h2>
+        <p data-k="c_p">Meet the SVM team at the Mission Conference on Nov 20, or ask any SVM leader at the Sunday Mission Gathering to connect you with headquarters and your country leader.</p>
+        <div class="ctas">
+          <a class="btn" href="../conference/" data-k="c_b1">Mission Conference · Nov 20</a>
+          <a class="btn ghost app-link" href="../app/" data-k="c_b2">Open the SVM app</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot-big">
+  <div class="wrap">
+    <div>
+      <img src="../assets/SVM_Logo.svg" alt="SVM" width="84" height="26">
+      <p data-k="ft_tag">Student Volunteer Movement · Bryan–College Station, TX</p>
+      <p class="tagline" style="margin-top:8px;font-size:13px">Mobilizing · Training · Sending</p>
+    </div>
+    <div><h4 data-k="ft_site">Site</h4><ul>
+      <li><a href="../" data-k="ft_l_home">SVM home</a></li>
+      <li><a href="../conference/" data-k="ft_l_conf">Mission Conference 2026</a></li>
+      <li><a class="app-link" href="../app/" data-k="ft_l_app">SVM app</a></li></ul></div>
+    <div><h4 data-k="ft_more">Get involved</h4><ul>
+      <li><a href="../conference/#register" data-k="ft_l_reg">Register for Nov 20</a></li>
+      <li><a href="./" data-k="ft_l_host">Host a team</a></li>
+      <li><a href="../privacy/" data-k="ft_l_privacy">Privacy</a></li>
+      <li><a href="../terms/" data-k="ft_l_terms">Terms of Use</a></li></ul></div>
+    <div class="copy"><span data-k="ft_hosted">Hosted by IM Mission Foundation Group Corp</span><span>© 2026 IM Mission Foundation Group Corp</span></div>
+  </div>
+</footer>
+
+<script>
+  window.SVM_BASE = '../';
+  window.KO = {
+    h_kicker: '선교지 · 현지 교회를 위한 안내', h_h1: '있는 그대로 함께 지냅니다. 떠나기 전에 모든 이야기를 마칩니다.',
+    h_lead: 'SVM은 방학마다 대학생들을 선교지로 보냅니다. 선교지에 돈이나 특별한 음식, 특별한 숙소를 부탁하지 않습니다. 왜 이런 방식으로 하는지, 그리고 팀마다 어떻게 함께 계획하는지 이 페이지에서 설명드립니다.',
+    h_cta1: '진행 방법 보기', h_cta2: '이야기 나누기',
+    w_kicker: '우리가 이 일을 하는 이유', w_h: '선교를 보내는 데는 큰 돈이 듭니다. 학생들에게는 돈이 없습니다. 그래도 우리는 방학마다 보내고 싶습니다.',
+    w1_t: '기존 방식은 비용이 너무 큽니다', w1_p: '항공권, 숙소, 식사, 프로그램 비용이 금방 쌓입니다. 보내는 쪽이 큰 돈을 모으거나, 선교지가 그 일부를 떠안게 되는 일이 많습니다.',
+    w2_t: '학생에게는 시간은 있어도 돈이 없습니다', w2_p: '미국 대학생들은 방학이 길고 섬기고 싶은 마음도 큽니다. 하지만 예산이 없습니다. 비용이 크면 대부분은 갈 수 없습니다.',
+    w3_t: '방학마다 계속 보내고 싶습니다', w3_p: '여름, 겨울, 봄마다 끊이지 않고 보내는 것이 목표입니다. 그러려면 누구도 짐을 지지 않아야 합니다. 학생은 항공권 이상을, 선교지는 아무것도 부담하지 않아야 합니다.',
+    w_pull: '선교는 문을 여는 일이어야지, 문을 열어 준 사람을 지치게 하는 일이어서는 안 됩니다.',
+    p_kicker: '선교지에 드리는 약속', p_h: '비용 부담도, 예상 밖의 일도 없습니다.',
+    p1_t: '선교지는 한 푼도 내지 않습니다', p1_p: '학생들이 왕복 항공권과 여행자 보험을 직접 냅니다. SVM에 내는 비용도 없고, 선교지가 감당할 것도 없습니다.',
+    p2_t: '특별히 준비할 것이 없습니다', p2_p: '특별한 식사도, 더 좋은 방도 필요 없습니다. 학생들은 여러분이 사는 그대로 지내며 함께 섬기고 복음을 전합니다. 식사와 숙소는 여러분이 정하세요(아래 참고).',
+    p3_t: '연락은 한 사람과만', p3_p: '나라마다 학생을 돌보고 선교지와 이야기하는 SVM 나라 리더가 있습니다. 학생이 직접 연락하지 않습니다. 필요하면 리더가 미팅에 함께합니다.',
+    p4_t: '모든 것을 먼저 합의합니다', p4_p: '팀이 가기로 승인되기 전에 역할, 날짜, 식사, 숙소, 안전, 연락처까지 하나하나 이야기합니다. 도착해서 알아서 해결해야 할 일이 남지 않는 것이 우리의 목표입니다.',
+    r_kicker: '학생들이 할 수 있는 일', r_h: '정해진 프로그램은 없습니다. 역할은 함께 정합니다.',
+    r_p: '선교지가 필요한 것과 감당할 수 있는 것에 맞춰 팀을 만듭니다. 아래는 가장 흔한 시작점입니다. 하나를 고르거나 함께 묶어도 되고, 다른 것을 말씀해 주셔도 됩니다.',
+    r1_t: '영어 가르치기', r1_p: '영어가 모국어인 학생들이 어린이, 청소년, 어른을 위한 수업과 영어 캠프, 회화 모임을 열 수 있습니다. 사람들을 만나고 신뢰를 쌓는 자연스러운 길입니다.', r1_w: '<b>이럴 때 잘 맞아요</b> 영어 수업이나 학교와의 연결이 있거나, 새로 시작하고 싶을 때.',
+    r2_t: '건축과 수리', r2_p: '교회나 교실 건축, 페인트, 지붕, 수리, 정리 작업에 일손을 보탭니다. 학생마다 경험이 다르며, 먼저 물어봅니다.', r2_w: '<b>이럴 때 잘 맞아요</b> 진행 중인 공사가 있는데 일할 사람이 부족할 때.',
+    r3_t: '복음 전하기와 제자훈련', r3_p: '전도, 기도, 가정 방문, 우정, 제자훈련을 현지 분들과 나란히 합니다. 학생들은 매주 훈련하며 여러분의 언어로 핵심 복음 메시지를 배웁니다.', r3_w: '<b>이럴 때 잘 맞아요</b> 전도에 더 많은 목소리와 발걸음이 필요할 때.',
+    r4_t: '지금 하는 사역에 함께하기', r4_p: '어린이 프로그램과 VBS, 음악, 스포츠, 미디어, 사무 지원, 지역 봉사까지. 학생들은 이미 있는 사역 안에서 섬깁니다.', r4_w: '<b>이럴 때 잘 맞아요</b> 사역이 돌아가고 있고, 새 프로그램이 아니라 도움이 필요할 때.',
+    r5_t: '여기에 없는 일', r5_p: '필요한 것을 솔직히 말씀해 주세요. 짐작하기보다 먼저 묻겠습니다. 가능성을 최대한 열어 두는 것이 목적입니다. 선교지에 맞고 학생들의 은사에 맞는 일이라면 무엇이든 함께 이야기합니다.',
+    f_kicker: '식사와 숙소', f_h: '선택은 여러분이 합니다. 소박해도 언제나 괜찮습니다.', f_p: '이미 지내는 것 이상을 기대하지 않습니다. 아래 중 어느 것이든 좋고, 섞어도 됩니다.',
+    f1_t: '사는 그대로 함께', f1_p: '여러분이 먹는 것을 같이 먹고, 지낼 수 있는 곳에서 지냅니다. 교회 바닥, 함께 쓰는 방, 홈스테이 등.',
+    f2_t: '식사는 학생들이 스스로', f2_p: '학생들이 직접 장을 보고 해 먹습니다. 시장 위치만 알려 주세요.',
+    f3_t: '숙소도 학생들이 스스로', f3_p: '가까운 곳에 소박한 방을 직접 구합니다. 안전한 지역만 조언해 주세요.',
+    f4_t: '섞어서', f4_p: '예를 들면 교회에서 자고 식사는 스스로 해결합니다.',
+    f_note: '“식사는 학생들이 알아서 하게 해 주세요”라는 말씀도 평범하고 환영하는 답입니다. 그 덕분에 더 많은 선교지가 학생들을 받겠다고 말할 수 있습니다.',
+    t_kicker: '떠나기 전에', t_h: '이 모든 것을 먼저 함께 이야기합니다.', t_p: '목표는 간단합니다. 출발하기 전에 모든 질문에 답이 나와 있는 것입니다. SVM 나라 리더가 아래 항목을 하나씩 함께 살펴봅니다.',
+    t1_t: '역할', t1_p: '학생들이 매일, 매주 무엇을 할지.',
+    t2_t: '날짜와 팀 규모', t2_p: '어느 시기가 맞는지, 얼마나 머물지, 몇 명까지 받을 수 있는지.',
+    t3_t: '식사와 숙소', t3_p: '위 방식 중 어느 것이 좋은지, 학생들이 알아야 할 점.',
+    t4_t: '이동', t4_p: '공항 픽업, 현지 교통, 숙소에서 사역지까지의 거리.',
+    t5_t: '문화와 안전', t5_p: '옷차림, 예절, 피해야 할 곳, 민감 국가의 규칙.',
+    t6_t: '연락할 사람', t6_p: '선교지를 위한 SVM 담당 리더 한 사람, 문제가 생기면 할 일.',
+    t7_t: '학생이 부담하는 것', t7_p: '항공권, 보험, 개인 용돈. 오해가 없도록 글로 적어 둡니다.',
+    t8_t: '선교지가 준비하지 않아도 되는 것', t8_p: '감당하기 어렵거나 하지 않았으면 하는 모든 것.',
+    plan: '<b>양쪽이 합의한 한 장짜리 계획서.</b> 나눈 이야기를 짧은 계획서에 적습니다. 역할, 날짜, 팀 규모, 식사, 숙소, 이동, 안전, 연락처, 그리고 선교지가 준비하지 않아도 되는 것까지. 여러분과 SVM이 이 계획서에 합의하기 전에는 팀이 가는 것을 승인하지 않습니다.',
+    s_kicker: '진행 방법', s_h: '첫 인사부터 선교지에 팀이 도착하기까지',
+    s1: '<b>인사 나누기</b>SVM 나라 리더에게 사역을 소개해 주세요.', s2: '<b>함께 이야기하기</b>필요한 것, 감당할 수 있는 것과 없는 것, 시기, 아이디어. 부담은 없습니다.',
+    s3: '<b>계획서 쓰기</b>한 장으로, 여러분과 SVM이 합의합니다.', s4: '<b>학생들 준비</b>훈련하고, 여러분의 언어를 배우고, 여행자 보험에 가입하고 이 계획에 지원합니다.',
+    s5: '<b>출발 전 통화</b>리더가 계획을 한 번 더 함께 살펴봅니다. 필요하면 학생들도 함께합니다.', s6: '<b>가서, 나누기</b>학생들이 머무는 동안 리더가 계속 연락하고, 학생들은 있었던 일을 나눕니다.',
+    s_app: '<b>SVM 앱에 선교지 공간이 생깁니다.</b> 나라의 소식·사진·영상을 올리고, 방문하는 사람들이 알아야 할 내용을 고치고, SVM 나라 리더와 이야기할 수 있습니다. 학생들은 그 소식을 보며 선교지를 위해 기도합니다.',
+    s_no: '<b>“아직은 어렵습니다”라고 하셔도 됩니다.</b> 시기가 맞지 않거나 사정이 어려우시면 말씀해 주세요. 선교지에 짐이 되는 팀을 보내느니 기다리겠습니다.',
+    protect: '선교지를 지킵니다. 학생들은 현지 성도의 얼굴, 실명, 정확한 교회 위치를 절대 올리지 않도록 안내받습니다. 간증과 사진은 검토한 뒤에 공개되며, 민감한 나라는 이름을 숨기고 사진을 제한합니다.',
+    q_kicker: '선교지에서 자주 묻는 질문', q_h: '솔직하게 답합니다',
+    q1: '선교지가 내야 하는 비용이 있나요?', a1: '없습니다. 학생들이 항공권과 여행자 보험을 직접 냅니다. SVM에 내는 비용도, 선교지가 부담하는 프로그램 비용도 없습니다.',
+    q2: '공간이 아주 작은데 받을 수 있을까요?', a2: '네. 작은 팀이나 짧은 기간을 요청하시거나, 학생들이 소박한 방을 직접 구하게 하셔도 됩니다. 나라 리더에게 할 수 있는 것을 말씀해 주시면 그에 맞춰 계획합니다.',
+    q3: '몇 명이, 얼마나 오나요?', a3: '나라 리더와 함께 정합니다. 보통 한 달 이상이고, 여러분께 맞는 시기에 옵니다. 원하시면 작게 시작합니다.',
+    q4: '학생들은 누가 책임지나요?', a4: 'SVM이 훈련하고 선발하며, 여행자 보험을 필수로 하고, SVM 나라 리더가 학생들을 돌봅니다. 학생들은 선교 중에 리더에게 체크인합니다. 선교지가 혼자 학생들을 지도하도록 맡기지 않습니다.',
+    q5: '어떤 학생이 올지 정할 수 있나요?', a5: '리더가 여러분의 계획에 맞는 기술과 성품을 함께 이야기합니다. 학생들은 그 구체적인 계획에 지원하고, 리더가 팀을 승인합니다.',
+    q6: '잘 안 맞으면 어떻게 하나요?', a6: '바로 나라 리더에게 말씀해 주세요. 혼자 해결하지 않으셔도 되고, 계획을 함께 조정합니다.',
+    c_kicker: '이야기 나누기', c_h: '선교지 이야기를 들려주세요.', c_p: '11월 20일 미션 컨퍼런스에서 SVM 팀을 만나시거나, 주일 미션 게더링에서 SVM 리더에게 말씀하시면 본부와 나라 리더를 연결해 드립니다.',
+    c_b1: '미션 컨퍼런스 · 11월 20일', c_b2: 'SVM 앱 열기'
+  };
+</script>
+<script src="../assets/site.js"></script>
+</body>
+</html>
