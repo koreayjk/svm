@@ -572,3 +572,5 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .worldmap .field.hit .home { animation: wm-hit .9s ease-out; transform-box: fill-box; transform-origin: center; }
 @keyframes wm-hit { 0% { transform: scale(1); } 35% { transform: scale(1.7); } 100% { transform: scale(1); } }
 @media (max-width: 560px) { .worldmap .trail { stroke-width: 3; } }
+[hidden] { display: none !important; }
+.give-legal { margin: 12px 0 0; font-size: 13.5px; color: var(--muted-2); }

@@ -5268,7 +5268,7 @@ VIEWS.following = async function () {
   const latest = {}, open = {}, done = {}, news = {};
   (ups.data || []).forEach(u => { if (!latest[u.country_id]) latest[u.country_id] = u; news[u.country_id] = (news[u.country_id] || 0) + 1; });
   (prs.data || []).forEach(x => { (x.answered ? done : open)[x.country_id] = ((x.answered ? done : open)[x.country_id] || 0) + 1; });
-  const giveUrl = setting('giving_url');
+  const giveUrl = setting('giving_url') || CONFIG.GIVING_URL;
   const give = !NATIVE && typeof giveUrl === 'string' && /^https:\/\//.test(giveUrl)
     ? card(`<span class="eyebrow plain">${icon('gift', 'width="14" height="14"')} ${esc(t('fl_give_t'))}</span><p style="margin:10px 0 14px">${esc(t('fl_give_d'))}</p>
         <a class="btn block" href="${esc(giveUrl)}" target="_blank" rel="noopener">${esc(t('fl_give_btn'))}</a>`) : '';

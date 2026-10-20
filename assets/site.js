@@ -74,6 +74,13 @@
     document.addEventListener('svm:lang', e => wm && wm.setLang(e.detail));
   }
 
+  // 후원 버튼 — config.js 의 GIVING_URL 이 https 주소일 때만 보임 (그 전에는 기존 안내 문구가 보임)
+  const giveUrl = (window.SVM_CONFIG || {}).GIVING_URL || '';
+  if (/^https:\/\//.test(giveUrl)) {
+    document.querySelectorAll('[data-give]').forEach(el => { el.hidden = false; if (el.tagName === 'A') { el.href = giveUrl; el.target = '_blank'; el.rel = 'noopener'; } });
+    document.querySelectorAll('[data-give-off]').forEach(el => { el.hidden = true; });
+  }
+
   try { const saved = localStorage.getItem('svm_lang'); if (saved === 'ko' || (!saved && (navigator.language || '').startsWith('ko'))) setLang('ko'); } catch (e) {}
   // 스크롤 등장: 화면에 들어올 때 천천히 떠오르기 (IntersectionObserver, 움직임 줄이기 설정이면 생략)
   if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
