@@ -1086,7 +1086,7 @@ const i18n = {
     // admin
     admin_stats: 'Overview', sx_members: 'Members', sx_new_month: '{n} new this month', sx_apps: 'Applications', sx_field: 'On the field now', sx_returned: 'Returned', sx_funnel: 'From apply to return', sx_funnel_d: 'How many applications reached each step.', sx_by_country: 'By country', sx_col_apps: 'Applied', sx_col_field: 'On field', sx_col_back: 'Returned', sx_col_pledge: 'Carry', sx_col_pray: 'Prayers',
     sx_care: 'Needs attention', sx_quiet: 'On the field, no check-in for 3+ days', sx_help: 'Latest check-in asks for help', sx_ins: 'Leaving within 14 days, no insurance certificate', sx_pending_apps: 'Applications waiting for a decision', sx_all_good: 'Nothing needs attention right now.',
-    sx_community: 'Community', sx_testi: 'Testimonies published', sx_prayers: 'Prayers answered / total', sx_pledges: 'Names written for nations', sx_news30: 'Field updates, last 30 days', sx_growth: 'New members, last 6 months',
+    sx_community: 'Community', sx_testi: 'Testimonies published', sx_prayers: 'Prayers answered / total', sx_pledges: 'Names written for nations', sx_news30: 'Field updates, last 30 days', sx_subs: 'Email subscribers (website)', sx_growth: 'New members, last 6 months',
     admin_title: 'Admin', admin_members: 'Members', admin_settings: 'Settings', admin_countries: 'Countries',
     set_require_grad: 'Only graduates can apply', set_require_grad_d: 'Off: anyone can apply. On: only graduate members can submit applications.',
     set_photo_block: 'Block photos for sensitive countries', set_photo_block_d: 'Prevent photo uploads on testimonies for sensitive countries.',
@@ -1349,7 +1349,7 @@ const i18n = {
     graduate_badge: '수료 배지',
     admin_stats: '현황', sx_members: '회원', sx_new_month: '이번 달 {n}명 가입', sx_apps: '신청', sx_field: '지금 선교 중', sx_returned: '귀국', sx_funnel: '신청부터 귀국까지', sx_funnel_d: '각 단계에 도달한 신청 수예요.', sx_by_country: '나라별', sx_col_apps: '신청', sx_col_field: '선교 중', sx_col_back: '귀국', sx_col_pledge: '품은 수', sx_col_pray: '기도',
     sx_care: '살펴볼 일', sx_quiet: '선교 중인데 3일 넘게 체크인이 없음', sx_help: '마지막 체크인이 도움 요청', sx_ins: '2주 안에 출발하는데 보험 증서가 없음', sx_pending_apps: '결정을 기다리는 신청', sx_all_good: '지금 살펴볼 일이 없어요.',
-    sx_community: '커뮤니티', sx_testi: '공개된 후기', sx_prayers: '응답된 기도 / 전체', sx_pledges: '나라에 쓴 이름', sx_news30: '최근 30일 선교지 소식', sx_growth: '최근 6개월 새 회원',
+    sx_community: '커뮤니티', sx_testi: '공개된 후기', sx_prayers: '응답된 기도 / 전체', sx_pledges: '나라에 쓴 이름', sx_news30: '최근 30일 선교지 소식', sx_subs: '이메일 소식 신청 (홈페이지)', sx_growth: '최근 6개월 새 회원',
     admin_title: '관리', admin_members: '회원', admin_settings: '설정', admin_countries: '국가',
     set_require_grad: '수료 회원만 신청 가능', set_require_grad_d: '끄면 누구나 신청 가능, 켜면 수료 회원만 신청서를 제출할 수 있습니다.',
     set_photo_block: '민감 국가 사진 업로드 차단', set_photo_block_d: '민감 국가 후기에 사진을 올리지 못하게 합니다.',
@@ -5771,10 +5771,10 @@ function bindAdminPosts() {
 async function adminStatsHTML() {
   await loadCountries();
   const q = (table, cols = '*') => sb.from(table).select(cols).limit(5000);
-  const [pr, ap, ci, ins, te, pw, pl, up, hist] = await Promise.all([
+  const [pr, ap, ci, ins, te, pw, pl, up, hist, nl] = await Promise.all([
     q('profiles', 'id,created_at'), q('applications', 'id,user_id,country_id,status,start_date'), q('field_checkins', 'application_id,status,created_at'),
     q('application_insurance', 'application_id,status'), q('testimonies', 'status'), q('prayers', 'country_id,answered'), q('nation_pledges', 'country_id'),
-    q('field_updates', 'created_at'), q('application_status_history', 'application_id,status,changed_at')]);
+    q('field_updates', 'created_at'), q('application_status_history', 'application_id,status,changed_at'), q('newsletter_signups', 'id')]);
   const profiles = pr.data || [], apps = ap.data || [], checks = ci.data || [], prayers = pw.data || [], pledges = pl.data || [];
   const today = nowInTZ().date, month = today.slice(0, 7);
   const lastCi = {}, lastHelp = {};
@@ -5816,7 +5816,8 @@ async function adminStatsHTML() {
       <dt>${esc(t('sx_testi'))}</dt><dd>${(te.data || []).filter(x => x.status === 'approved').length}</dd>
       <dt>${esc(t('sx_prayers'))}</dt><dd>${prayers.filter(x => x.answered).length} / ${prayers.length}</dd>
       <dt>${esc(t('sx_pledges'))}</dt><dd>${pledges.length}</dd>
-      <dt>${esc(t('sx_news30'))}</dt><dd>${news30}</dd></dl>
+      <dt>${esc(t('sx_news30'))}</dt><dd>${news30}</dd>
+      <dt>${esc(t('sx_subs'))}</dt><dd>${(nl.data || []).length}</dd></dl>
       <div class="sep"></div><div class="small muted">${esc(t('sx_growth'))}</div>
       ${months.map(m => `<div style="margin-top:10px"><div class="row between small"><span>${esc(m.k)}</span><b class="num">${m.n}</b></div>${bar(m.n, mmax)}</div>`).join('')}`)}`;
 }

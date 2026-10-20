@@ -350,6 +350,7 @@ alter table public.field_checkins            enable row level security;
 alter table public.reminder_log              enable row level security;
 alter table public.field_updates            enable row level security;
 alter table public.field_plans              enable row level security;
+alter table public.newsletter_signups        enable row level security;
 
 -- ---------------------------------------------------------------------
 -- 정책 일괄 삭제 후 재생성
@@ -365,7 +366,7 @@ begin
              'language_progress','practice_days','courses','course_feedback','graduation_requests','teams',
              'team_members','team_tasks','team_posts','gatherings','attendance','testimonies','prayers',
              'prayer_reactions','checklist_items','checklist_progress','support_stories','app_settings','events','conference_registrations',
-             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates','field_plans'])
+             'notifications','application_notes','application_insurance','content_reports','user_blocks','device_tokens','country_leaders','application_messages','field_partners','country_videos','field_messages','application_prep','field_checkins','reminder_log','field_updates','field_plans','newsletter_signups'])
   loop
     execute format('drop policy if exists %I on public.%I', r.policyname, r.tablename);
   end loop;
@@ -457,6 +458,9 @@ create policy "events: admin write"    on public.events         for all using (p
 -- 컨퍼런스 등록: 누구나 제출(insert)만, 조회·수정·삭제는 관리자
 create policy "registrations: public insert" on public.conference_registrations for insert to anon, authenticated
   with check (event_key = 'mc2026');
+-- 소식 받기: 누구나 제출(insert)만, 조회·수정·삭제는 관리자
+create policy "newsletter: public insert" on public.newsletter_signups for insert to anon, authenticated with check (true);
+create policy "newsletter: admin manage"  on public.newsletter_signups for all using (public.is_admin()) with check (public.is_admin());
 -- 알림: 본인 것만 읽고 '읽음' 표시. 만들기는 트리거(security definer)만
 create policy "notifications: own read"   on public.notifications for select using (user_id = auth.uid());
 create policy "notifications: own update" on public.notifications for update using (user_id = auth.uid()) with check (user_id = auth.uid());
