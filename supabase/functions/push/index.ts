@@ -45,6 +45,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_ci_miss": "A student in {c} has not checked in for {d} days.",
     "nt_ci_help": "A student in {c} needs help.",
     "nt_returned": "Welcome home. Share your story from {c}.",
+    "nt_plan_review": "A plan for {c} is waiting for your review.",
+    "nt_plan_field_agreed": "The {c} field agreed to the plan.",
+    "nt_plan_changes": "The {c} field asked for changes to the plan.",
+    "nt_plan_agreed": "The {c} plan is agreed. Thank you.",
     "nt_field_update": "News from {c}.",
     "nt_prayer_answered": "A prayer you prayed for was answered.",
     "nt_field_msg": "New message in the {c} field conversation."
@@ -86,6 +90,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_ci_miss": "{c}의 학생이 {d}일째 체크인하지 않았어요.",
     "nt_ci_help": "{c}의 학생이 도움을 요청했어요.",
     "nt_returned": "잘 돌아왔어요. {c}에서의 이야기를 나눠 주세요.",
+    "nt_plan_review": "{c} 합의 계획서를 확인해 주세요.",
+    "nt_plan_field_agreed": "{c} 선교지가 계획서에 동의했어요.",
+    "nt_plan_changes": "{c} 선교지가 계획서 수정을 요청했어요.",
+    "nt_plan_agreed": "{c} 계획서가 확정되었어요. 감사합니다.",
     "nt_field_update": "{c}에서 새 소식이 왔어요.",
     "nt_prayer_answered": "함께 기도한 제목이 응답되었어요.",
     "nt_field_msg": "{c} 선교지 대화방에 새 메시지가 있어요."
@@ -118,6 +126,10 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'field_msg': return t('nt_field_msg', { c: country });
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: country });
+    case 'plan_review': return t('nt_plan_review', { c: country });
+    case 'plan_field_agreed': return t('nt_plan_field_agreed', { c: country });
+    case 'plan_changes': return t('nt_plan_changes', { c: country });
+    case 'plan_agreed': return t('nt_plan_agreed', { c: country });
     case 'field_update': return t('nt_field_update', { c: country });
     case 'prayer_answered': return t('nt_prayer_answered');
     case 'dep_remind': return p.days > 0 ? t('nt_dep', { d: String(p.days), c: country }) : t('nt_dep_today', { c: country });

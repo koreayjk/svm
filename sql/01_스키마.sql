@@ -697,6 +697,42 @@ create index if not exists field_updates_country_idx on public.field_updates(cou
 -- 사진은 올린 때를 알아야 소식 피드에 최신순으로 보여 줄 수 있음
 alter table public.country_photos add column if not exists created_at timestamptz not null default now();
 
+-- 합의 계획서: 선교지에서 학생을 받기 전에 역할 · 날짜 · 식사 · 숙소 · 안전을 미리 정해 두는 한 장짜리 계획
+--   나라 리더가 쓰고 → 선교지(선교사님)에게 보내 → 선교지가 동의(또는 수정 요청) → 리더가 확정
+create table if not exists public.field_plans (
+  id                 bigint generated always as identity primary key,
+  country_id         bigint not null references public.countries(id) on delete cascade,
+  title              text not null check (length(title) between 1 and 120),
+  start_date         date,
+  end_date           date,
+  max_students       int check (max_students is null or max_students between 1 and 200),
+  roles              text[] not null default '{}',                    -- english · build · evangelism · existing · other
+  role_note          text check (role_note is null or length(role_note) <= 2000),
+  housing            text not null default 'host' check (housing in ('host','students','mix')),
+  housing_note       text check (housing_note is null or length(housing_note) <= 2000),
+  meals              text not null default 'host' check (meals in ('host','students','mix')),
+  meals_note         text check (meals_note is null or length(meals_note) <= 2000),
+  transport_note     text check (transport_note is null or length(transport_note) <= 2000),
+  safety_note        text check (safety_note is null or length(safety_note) <= 2000),
+  contact_note       text check (contact_note is null or length(contact_note) <= 2000),
+  students_cover     text check (students_cover is null or length(students_cover) <= 2000),
+  field_not_provide  text check (field_not_provide is null or length(field_not_provide) <= 2000),
+  sent_at            timestamptz,                                     -- 선교지에 보낸 때
+  field_agreed_at    timestamptz,
+  field_agreed_by    uuid references public.profiles(id) on delete set null,
+  field_agreed_via   text check (field_agreed_via in ('self','leader')),   -- self: 선교사님이 직접 · leader: 리더가 통화·미팅 내용을 기록
+  field_agreed_note  text check (field_agreed_note is null or length(field_agreed_note) <= 1000),
+  field_comment      text check (field_comment is null or length(field_comment) <= 2000),   -- 선교지의 수정 요청
+  svm_agreed_at      timestamptz,
+  svm_agreed_by      uuid references public.profiles(id) on delete set null,
+  closed             boolean not null default false,
+  created_by         uuid default auth.uid() references public.profiles(id) on delete set null,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+create index if not exists field_plans_country_idx on public.field_plans(country_id, created_at desc);
+alter table public.applications add column if not exists plan_id bigint references public.field_plans(id) on delete set null;
+
 -- 기도 응답: 언제, 어떻게 응답받았는지 한마디
 alter table public.prayers add column if not exists answered_at timestamptz;
 alter table public.prayers add column if not exists answer_note text;
