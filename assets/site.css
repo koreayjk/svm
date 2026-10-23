@@ -600,3 +600,4 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .stay-box p { color: var(--on-dark-muted); font-size: 17px; }
 .details-head { padding-bottom: 0; }
 @media (max-width: 860px) { .why, .trust { grid-template-columns: 1fr; } .stay-box { grid-template-columns: 1fr; } }
+.why.skills .n { font-size: 34px; }
