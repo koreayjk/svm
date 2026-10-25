@@ -248,12 +248,12 @@ select
   E'The launch of SVM in Bryan/College Station.\nTent Village — walk the nation booths and sign your nation.\nSign up on site with the QR code, explore the fields, and apply.\nFirst look at the SVM metaverse mission space (teaser).',
   E'브라이언/컬리지 스테이션 SVM 발족식.\n텐트 빌리지 — 나라별 부스를 돌며 내 나라에 이름 쓰기.\n현장 QR로 가입하고, 선교지를 둘러보고, 신청까지.\nSVM 메타버스 선교 공간 예고편 첫 공개.',
   '2026-11-20 18:00:00 America/Chicago', false,
-  'Bryan–College Station, TX · venue announced soon', '../conference/#register', true
+  'Country Fellowship Church · 408 E 24th St, Bryan, TX 77803', '../conference/#register', true
 where not exists (select 1 from public.events where title_en = 'SVM Mission Conference 2026');
 
 -- 예전 시드(하루 종일 일정)로 이미 들어간 경우 오후 6시 입장으로 맞춤
 update public.events
    set starts_at = '2026-11-20 18:00:00 America/Chicago',
        all_day = false, link_url = coalesce(link_url, '../conference/#register'),
-       location = case when location = 'Bryan/College Station, TX' then 'Bryan–College Station, TX · venue announced soon' else location end
+       location = case when location = 'Bryan/College Station, TX' then 'Country Fellowship Church · 408 E 24th St, Bryan, TX 77803' else location end
  where title_en = 'SVM Mission Conference 2026' and all_day;
