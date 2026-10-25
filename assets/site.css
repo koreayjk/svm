@@ -447,6 +447,9 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .form .btn { width: 100%; }
 .form .btn[disabled] { opacity: .6; cursor: default; }
 .form .fine { font-size: 13px; color: var(--muted-2); text-align: center; }
+.form label.check { display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+.form label.check input { width: 20px; height: 20px; accent-color: var(--orange); flex: none; }
+#reg-group-fields { display: grid; gap: 14px; }
 .form .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .form-msg { border-radius: 14px; padding: 14px 16px; font-size: 15px; }
 .form-msg.ok { background: #EAF6EE; color: #11522A; }
