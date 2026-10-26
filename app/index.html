@@ -739,6 +739,15 @@
   .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
   .tmsg.me { text-align: right; }
   .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .cd-list { margin: 12px 0 0; padding-left: 18px; font-size: 14.5px; opacity: .88; display: grid; gap: 4px; }
+  .cd-btn { background: rgba(255, 255, 255, .14); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
+  .cd-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .cd-done { margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, .14); font-weight: 700; display: flex; gap: 8px; align-items: center; }
+  .cf-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 4px 0 14px; }
+  .cf-stats div { background: var(--surface); border-radius: 16px; padding: 12px 8px; text-align: center; }
+  .cf-stats b { display: block; font-size: 24px; letter-spacing: -.02em; color: var(--navy); }
+  .cf-stats span { font-size: 12px; color: var(--muted-2); }
+  .cf-row .meta { min-width: 0; } .cf-row.in .t { color: var(--muted-2); }
   .mr-wrap + .mr-wrap { border-top: 1px solid var(--line); }
   .mr-sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 0 0 12px 52px; }
   .mr-sub select { width: auto; max-width: 190px; min-height: 36px; padding: 6px 10px; font-size: 13.5px; }
@@ -1268,6 +1277,8 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
+    cd_tonight: 'Tonight', cd_doors: 'Doors {t}', cd_here: "I'm here", cd_here_done: 'You are checked in. Welcome!', cd_here_ok: 'Welcome. You are checked in.', cd_sign: 'Sign your nation', cd_tent: 'Tent Village', cd_tent_d: 'Walk the nation booths', cd_map: 'Open map', cd_door: 'Door check-in', cd_prog: 'Tonight', cd_demo_note: 'Preview of the conference-day screen.',
+    cf_title: 'Conference check-in', cf_sub: 'Check people in at the door. Search by name, email or group.', cf_registered: 'Registered', cf_in: 'Checked in', cf_walk: 'Walk-ins', cf_app: 'App check-ins', cf_people: '{n} people', cf_search: 'Search name, email or group', cf_checkin: 'Check in', cf_undo: 'Undo', cf_in_at: 'In {t}', cf_group: 'Group', cf_walk_t: 'Add a walk-in', cf_walk_name: 'Name', cf_walk_email: 'Email (optional)', cf_walk_group: 'Group name (optional)', cf_walk_size: 'People', cf_walk_add: 'Add and check in', cf_none: 'No one found.', cf_added: 'Added and checked in.', cf_need_name: 'Please enter a name.', cf_link_d: 'Door check-in, walk-ins and counts for the conference',
     net_title: 'Leaders room', net_link_d: 'All leaders together, plus a room for each nation', net_d: 'Missionaries, country leaders and SVM leaders from every nation. Students do not see this.', net_safe: 'Please do not post names, faces or exact locations of local believers, especially for sensitive countries.', net_all: 'All leaders', net_d_country: 'Missionaries, the SVM country leader and HQ for {c}. Students do not see this.', net_role_partner: 'Missionary', net_role_leader: 'Country leader', net_role_admin: 'SVM HQ', net_none: 'No messages yet. Say hello to the other leaders.', nt_net_msg: 'New message in the leaders room.',
     fd_more_t: 'Post news or a video', fd_more_d: 'Updates, YouTube videos and prayer news for this nation.', fd_more_btn: 'Post',
     ce_extras_note: 'Leave a section empty to remove it. A new empty section appears after you save.', ce_preview: 'View page',
@@ -1526,6 +1537,8 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
+    cd_tonight: '오늘 밤', cd_doors: '{t} 입장', cd_here: '도착했어요', cd_here_done: '체크인되었어요. 환영합니다!', cd_here_ok: '환영합니다. 체크인되었어요.', cd_sign: '내 나라에 이름 쓰기', cd_tent: '텐트 빌리지', cd_tent_d: '나라별 부스 둘러보기', cd_map: '지도 열기', cd_door: '현장 접수', cd_prog: '오늘 순서', cd_demo_note: '행사 당일 화면 미리보기입니다.',
+    cf_title: '컨퍼런스 접수', cf_sub: '입구에서 도착한 분을 체크인합니다. 이름, 이메일, 단체 이름으로 찾을 수 있어요.', cf_registered: '등록', cf_in: '체크인', cf_walk: '현장 등록', cf_app: '앱 체크인', cf_people: '{n}명', cf_search: '이름, 이메일, 단체 검색', cf_checkin: '체크인', cf_undo: '취소', cf_in_at: '{t} 입장', cf_group: '단체', cf_walk_t: '현장 등록 추가', cf_walk_name: '이름', cf_walk_email: '이메일 (선택)', cf_walk_group: '단체 이름 (선택)', cf_walk_size: '인원', cf_walk_add: '추가하고 체크인', cf_none: '찾는 분이 없어요.', cf_added: '추가하고 체크인했어요.', cf_need_name: '이름을 입력해 주세요.', cf_link_d: '현장 접수, 현장 등록, 인원 현황',
     net_title: '리더 대화방', net_link_d: '전체 리더 방과 나라별 리더 방', net_d: '모든 나라의 선교사님, 나라 리더, SVM 리더가 함께 보는 방이에요. 학생에게는 보이지 않습니다.', net_safe: '현지 성도의 이름·얼굴·정확한 위치는 올리지 마세요. 특히 민감 국가는 더 조심해 주세요.', net_all: '전체 리더', net_d_country: '{c} 선교사님, SVM 나라 리더, 본부가 함께 봅니다. 학생에게는 보이지 않습니다.', net_role_partner: '선교사님', net_role_leader: '나라 리더', net_role_admin: 'SVM 본부', net_none: '아직 메시지가 없어요. 다른 리더들에게 인사해 보세요.', nt_net_msg: '리더 대화방에 새 메시지가 있어요.',
     fd_more_t: '소식·영상 올리기', fd_more_d: '이 나라의 근황, 유튜브 영상, 기도 소식을 올릴 수 있어요.', fd_more_btn: '올리기',
     ce_extras_note: '항목을 비우면 삭제됩니다. 저장하면 빈 항목 칸이 하나 더 생깁니다.', ce_preview: '페이지 보기',
@@ -1851,6 +1864,14 @@ function createDemoClient() {
       { id: mid++, team_id: 800, title: 'Day 1–2 lesson plans', assignee: 'seed-4', status: 'doing', due_date: null, created_at: ago(6) },
       { id: mid++, team_id: 800, title: 'Collect camp supplies list from host church', assignee: null, status: 'todo', due_date: null, created_at: ago(2) },
     ];
+    const conference_registrations = [
+      { id: 1, event_key: 'mc2026', full_name: 'Grace Kim', email: 'grace.kim@example.org', phone: null, role: 'student', lang: 'en', group_name: null, group_size: null, walk_in: false, checked_in_at: null, checked_in_by: null, created_at: ago(6) },
+      { id: 2, event_key: 'mc2026', full_name: 'Daniel Park', email: 'daniel.park@example.org', phone: null, role: 'leader', lang: 'ko', group_name: 'Grace Church Youth', group_size: 14, walk_in: false, checked_in_at: null, checked_in_by: null, created_at: ago(5) },
+      { id: 3, event_key: 'mc2026', full_name: 'Maria Lopez', email: 'maria.lopez@example.org', phone: null, role: 'young_adult', lang: 'en', group_name: null, group_size: null, walk_in: false, checked_in_at: ago(0), checked_in_by: 'seed-1', created_at: ago(4) },
+      { id: 4, event_key: 'mc2026', full_name: 'Joshua Lee', email: 'joshua.lee@example.org', phone: null, role: 'student', lang: 'en', group_name: null, group_size: null, walk_in: false, checked_in_at: null, checked_in_by: null, created_at: ago(3) },
+      { id: 5, event_key: 'mc2026', full_name: 'Hannah Cho', email: 'hannah.cho@example.org', phone: null, role: 'youth', lang: 'ko', group_name: null, group_size: null, walk_in: false, checked_in_at: null, checked_in_by: null, created_at: ago(2) },
+    ];
+    const conference_checkins = [];
     const application_extensions = [
       { id: mid++, application_id: 3, new_return_date: ahead(400), reason: 'The church asked me to stay through the Christmas outreach and spring camp.', status: 'pending', created_at: ago(1), reviewed_at: null },
     ];
@@ -1858,6 +1879,7 @@ function createDemoClient() {
     return {
       users: [], session: null, next: 1000,
       profiles, countries, nation_pledges, room_members, messages, applications, application_status_history, application_extensions,
+      conference_registrations, conference_checkins,
       gospel_messages, gospel_sentences, courses, course_feedback, language_progress, practice_days, graduation_requests,
       gatherings, attendance, testimonies, prayers, prayer_reactions, support_stories, checklist_items, teams, team_members, team_posts, team_tasks,
       country_photos: [],
@@ -2299,7 +2321,7 @@ async function render() {
   if (!state.profile) { app.innerHTML = `<main>${loaderHTML()}</main>`; return; }
 
   let { tab, param } = parseRoute();
-  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin()) || (tab === 'lead' && !isAdmin() && !isLeader()) || (tab === 'field' && !isAdmin() && !isLeader() && !isPartner()) || (tab === 'network' && !isAdmin() && !isLeader() && !isPartner()) || (tab === 'plans' && !isAdmin() && !isLeader() && !isPartner())) tab = 'home';
+  if ((!TABS.some(x => x.id === tab) && !(tab in SUB_TAB)) || (tab === 'admin' && !isAdmin()) || (tab === 'lead' && !isAdmin() && !isLeader()) || (tab === 'field' && !isAdmin() && !isLeader() && !isPartner()) || (tab === 'network' && !isAdmin() && !isLeader() && !isPartner()) || (tab === 'conference' && !isAdmin()) || (tab === 'plans' && !isAdmin() && !isLeader() && !isPartner())) tab = 'home';
   if (state.roomSub && !(tab === 'rooms' && param && param.toUpperCase() === state.roomSub.code)) { closeRoomSub(); badgeTimer = 0; }
   if (tab !== 'learn' && player.playing) stopAudio();
   if (progressQueue.size) flushProgress();
@@ -2348,7 +2370,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2571,6 +2593,7 @@ const VIEWS = {
     const p = state.profile;
     const [{ list, today }, events, , , , apps, streak, attended, featuredT] = await Promise.all([upcomingMeetings(), loadEvents(true), loadCountries(), loadPledges(), loadPhotos(), loadMyApps(), loadStreak(), myAttendance(),
       sb.from('testimonies').select('*').eq('status', 'approved').eq('featured', true).order('created_at', { ascending: false }).limit(1)]);
+    if (confDayOn(events.find(e => e.is_featured))) { const { data: ch } = await sb.from('conference_checkins').select('user_id').eq('user_id', p.id).maybeSingle(); state.confHere = !!ch; }
     const featT = featuredT.data?.[0] || null;
     if (featT) await loadNames([featT.user_id]);
     const trainCode = trainCountryCode();
@@ -2636,6 +2659,7 @@ const VIEWS = {
           <div style="padding-top:8px">${roleTag(p.role)}</div>
         </div>
       </div>
+      ${confDayCard(featured, state.confHere)}
       ${featured ? eventHero(featured) : ''}
       <div class="bento" style="margin-bottom:12px">
         <a class="stat peach" href="#/countries"><span class="s-ico">${icon('flame')}</span>
@@ -2699,6 +2723,7 @@ const VIEWS = {
     return `${pageHead(t('my_title'))}
       ${partnerOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile orange">${icon('globe')}</span><div class="meta"><div class="t">${esc(t('fd_title'))}</div><div class="d">${esc(t('fd_link_d', { c: partnerOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${leadOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile">${icon('chat')}</span><div class="meta"><div class="t">${esc(t('fd_room'))}</div><div class="d">${esc(t('fd_room_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
+      ${isAdmin() ? card(`<a class="list-row" href="#/conference"><span class="ico-tile orange">${icon('check')}</span><div class="meta"><div class="t">${esc(t('cf_title'))}</div><div class="d">${esc(t('cf_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${(isAdmin() || leadOf.length || partnerOf.length) ? card(`<a class="list-row" href="#/network"><span class="ico-tile">${icon('people')}</span><div class="meta"><div class="t">${esc(t('net_title'))}</div><div class="d">${esc(t('net_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${(isAdmin() || leadOf.length || partnerOf.length) ? card(`<a class="list-row" href="#/plans"><span class="ico-tile orange">${icon('check')}</span><div class="meta"><div class="t">${esc(t('pl_title'))}</div><div class="d">${esc(t('pl_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${leadOf.length ? card(`<a class="list-row" href="#/lead"><span class="ico-tile orange">${icon('people')}</span><div class="meta"><div class="t">${esc(t('ld_title'))}</div><div class="d">${esc(t('ld_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
@@ -3123,6 +3148,13 @@ const BINDERS = {
 };
 
 BINDERS.home = function () {
+  const hb = document.getElementById('conf-here');
+  if (hb) hb.onclick = async () => {
+    hb.disabled = true;
+    const { error } = await sb.from('conference_checkins').insert({ user_id: state.profile.id });
+    if (error && error.code !== '23505') { hb.disabled = false; return toast(errMsg(error), true); }
+    state.confHere = true; toast(t('cd_here_ok')); render();
+  };
   const b = document.getElementById('checkin-btn');
   if (b) b.onclick = async () => { b.disabled = true; await checkIn(); b.disabled = false; };
 };
@@ -4220,6 +4252,93 @@ BINDERS.field = function () {
     btn.disabled = false;
     if (error) return toast(errMsg(error), true);
     render();
+  };
+};
+
+// ---------------------------------------------------------------------
+// 컨퍼런스 현장 모드 — 행사 당일 홈 카드(도착 체크인·부스 안내) + 관리자 접수 화면
+// ---------------------------------------------------------------------
+const CONF_DEMO_DAY = DEMO && /[?&]confday\b/.test(location.search);   // app/?demo&confday — 미리보기
+function confDayOn(e) {
+  if (!e) return false;
+  if (CONF_DEMO_DAY) return true;
+  return evDay(e.starts_at) === evDay(new Date().toISOString());
+}
+function confDayCard(e, here) {
+  if (!confDayOn(e)) return '';
+  const where = e.location || '';
+  const lines = String(locPair(e, 'description') || '').split('\n').map(x => x.trim()).filter(Boolean);
+  return card(`<div class="row between top"><span class="eyebrow">${icon('spark', 'width="13" height="13"')} ${esc(t('cd_tonight'))}</span><span class="tag today">${esc(t('cd_doors', { t: evTime(e) }))}</span></div>
+    <div class="meet-title" style="margin-top:10px">${esc(locPair(e, 'title'))}</div>
+    ${where ? `<a class="row small" style="margin-top:8px;gap:6px;color:inherit;text-decoration:none;opacity:.85" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(where)}" target="_blank" rel="noopener">${icon('pin', 'width="15" height="15"')} <span>${esc(where)}</span> · <u>${esc(t('cd_map'))}</u></a>` : ''}
+    ${lines.length ? `<ul class="cd-list">${lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>` : ''}
+    ${here ? `<div class="cd-done">${icon('check')} ${esc(t('cd_here_done'))}</div>` : `<button class="btn block" id="conf-here" style="margin-top:16px">${icon('check')} ${esc(t('cd_here'))}</button>`}
+    <div class="cd-actions"><a class="btn cd-btn" href="#/countries">${icon('flame', 'width="17" height="17"')} ${esc(t('cd_sign'))}</a>
+      <a class="btn cd-btn" href="#/countries">${icon('globe', 'width="17" height="17"')} ${esc(t('cd_tent'))}</a></div>
+    ${isAdmin() ? `<a class="text-link" href="#/conference" style="display:inline-flex;margin-top:12px">${esc(t('cd_door'))} ${icon('chev')}</a>` : ''}
+    ${TORCH}`, { dark: true });
+}
+const CF_SEARCH = { q: '' };
+VIEWS.conference = async function () {
+  if (!isAdmin()) return backLink('#/my', t('tab_my')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const [{ data: regs, error }, { data: apps }] = await Promise.all([
+    sb.from('conference_registrations').select('*').order('created_at', { ascending: false }).limit(2000),
+    sb.from('conference_checkins').select('user_id')]);
+  if (error) throw error;
+  state.confRegs = regs || [];
+  const n = r => r.group_size || 1;
+  const sum = rows => rows.reduce((a, r) => a + n(r), 0);
+  const inRows = state.confRegs.filter(r => r.checked_in_at);
+  const stats = `<div class="cf-stats">
+    <div><b>${sum(state.confRegs.filter(r => !r.walk_in))}</b><span>${esc(t('cf_registered'))}</span></div>
+    <div><b>${sum(inRows.filter(r => !r.walk_in))}</b><span>${esc(t('cf_in'))}</span></div>
+    <div><b>${sum(state.confRegs.filter(r => r.walk_in))}</b><span>${esc(t('cf_walk'))}</span></div>
+    <div><b>${(apps || []).length}</b><span>${esc(t('cf_app'))}</span></div></div>`;
+  return `${backLink('#/my', t('tab_my'))}${pageHead(t('cf_title'), t('cf_sub'))}
+    ${stats}
+    <input type="text" id="cf-search" placeholder="${esc(t('cf_search'))}" value="${esc(CF_SEARCH.q)}" aria-label="${esc(t('cf_search'))}" style="margin-bottom:10px">
+    ${card(`<div id="cf-list">${confListHTML()}</div>`)}
+    <div class="section-head"><h2>${esc(t('cf_walk_t'))}</h2></div>
+    ${card(`<form id="cf-walk" class="field-pair" style="align-items:end">
+      <label class="field" style="margin:0"><span>${esc(t('cf_walk_name'))} *</span><input type="text" name="name" maxlength="120" required></label>
+      <label class="field" style="margin:0"><span>${esc(t('cf_walk_email'))}</span><input name="email" type="email" maxlength="200"></label>
+      <label class="field" style="margin:0"><span>${esc(t('cf_walk_group'))}</span><input type="text" name="group" maxlength="120"></label>
+      <label class="field" style="margin:0"><span>${esc(t('cf_walk_size'))}</span><input type="text" inputmode="numeric" name="size" maxlength="3" value="1"></label>
+      <button class="btn small" type="submit" style="grid-column:1/-1">${icon('plus')} ${esc(t('cf_walk_add'))}</button></form>`)}`;
+};
+function confListHTML() {
+  const q = CF_SEARCH.q.trim().toLowerCase();
+  const rows = (state.confRegs || []).filter(r => !q || [r.full_name, r.email, r.group_name].some(v => (v || '').toLowerCase().includes(q)))
+    .sort((a, b) => (!!a.checked_in_at - !!b.checked_in_at) || a.full_name.localeCompare(b.full_name)).slice(0, 80);
+  if (!rows.length) return `<p class="small muted" style="margin:0">${esc(t('cf_none'))}</p>`;
+  return rows.map(r => `<div class="list-row cf-row ${r.checked_in_at ? 'in' : ''}">
+    <div class="meta"><div class="t ellip">${esc(r.full_name)}${r.walk_in ? ' <span class="tag">walk-in</span>' : ''}</div>
+      <div class="d ellip">${r.group_name ? esc(t('cf_group')) + ': ' + esc(r.group_name) + ' · ' + esc(t('cf_people', { n: r.group_size || 1 })) + ' · ' : ''}${esc(/@walkin\./.test(r.email) ? '' : r.email)}${r.checked_in_at ? ' · ' + esc(t('cf_in_at', { t: new Date(r.checked_in_at).toLocaleTimeString(dateLocale(), { timeZone: CONFIG.TIMEZONE, hour: 'numeric', minute: '2-digit' }) })) : ''}</div></div>
+    <button type="button" class="btn small ${r.checked_in_at ? 'light' : ''}" data-cf="${r.id}">${esc(t(r.checked_in_at ? 'cf_undo' : 'cf_checkin'))}</button></div>`).join('');
+}
+BINDERS.conference = function () {
+  const bindRows = () => app.querySelectorAll('[data-cf]').forEach(b => b.onclick = async () => {
+    const r = state.confRegs.find(x => String(x.id) === b.dataset.cf); if (!r) return;
+    const patch = r.checked_in_at ? { checked_in_at: null, checked_in_by: null } : { checked_in_at: new Date().toISOString(), checked_in_by: state.profile.id };
+    b.disabled = true;
+    const { error } = await sb.from('conference_registrations').update(patch).eq('id', r.id);
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    Object.assign(r, patch); render();
+  });
+  bindRows();
+  const si = document.getElementById('cf-search');
+  if (si) si.oninput = () => { CF_SEARCH.q = si.value; document.getElementById('cf-list').innerHTML = confListHTML(); bindRows(); };
+  const wf = document.getElementById('cf-walk');
+  if (wf) wf.onsubmit = async (e) => {
+    e.preventDefault();
+    const name = wf.name.value.trim(); if (!name) return toast(t('cf_need_name'), true);
+    const email = wf.email.value.trim().toLowerCase() || `walkin-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@walkin.svm.invalid`;
+    const group = wf.group.value.trim(), size = Math.max(1, Math.min(500, parseInt(wf.size.value, 10) || 1));
+    const row = { full_name: name, email, role: 'other', lang: state.lang === 'ko' ? 'ko' : 'en', walk_in: true, checked_in_at: new Date().toISOString(), checked_in_by: state.profile.id };
+    if (group || size > 1) { row.group_name = group || name; row.group_size = Math.max(2, size); }
+    const { error } = await sb.from('conference_registrations').insert(row);
+    if (error) return toast(errMsg(error), true);
+    toast(t('cf_added')); CF_SEARCH.q = ''; render();
   };
 };
 
