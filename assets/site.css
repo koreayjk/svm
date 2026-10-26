@@ -627,8 +627,8 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 /* full-bleed hero photo */
 .hero { padding-block: 0 8px; }
 .hero-top { position: relative; isolation: isolate; overflow: hidden; padding-block: clamp(48px, 8vw, 96px) clamp(48px, 7vw, 80px); color: var(--on-dark); }
-.hero-top .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%; z-index: -2; }
-.hero-top::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13, 27, 58, .55), rgba(13, 27, 58, .5) 50%, rgba(13, 27, 58, .82)); }
+.hero-top .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 85%; z-index: -2; }
+.hero-top::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(13, 27, 58, .62), rgba(13, 27, 58, .5) 40%, rgba(13, 27, 58, .86) 78%); }
 .hero-top .tagline { color: #FF9A62; }
 .hero-top h1 { color: #fff; }
 .hero-top h1 em { color: #FF9A62; }
