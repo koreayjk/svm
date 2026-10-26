@@ -38,7 +38,7 @@ SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`asse
 
 | 파일 | 용도 | 원본 |
 |---|---|---|
-| `hero-sunset.jpg` | 히어로 배경 (노을 앞에서 두 팔을 든 실루엣) | https://www.pexels.com/photo/people-silhouette-during-sunset-853168/ |
+| `hero-airport.jpg` | 히어로 배경 (노을 지는 공항 창가 실루엣) | https://www.pexels.com/photo/silhouette-of-person-in-airport-227690/ |
 | `card-flight.jpg` | 가는 사람 카드 | https://www.pexels.com/photo/view-of-airliner-wing-above-the-clouds-2147486/ |
 | `card-prayer.jpg`, `band-group.jpg` | 후원 카드, "왜" 섹션 | https://www.pexels.com/photo/group-of-people-praying-in-the-living-room-6860385/ · https://www.pexels.com/photo/group-of-people-praying-together-6860380/ |
 | `card-children.jpg` | 현지 교회 카드 | https://www.pexels.com/photo/people-sitting-on-the-floor-9090747/ |
