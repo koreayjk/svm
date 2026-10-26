@@ -95,3 +95,14 @@
     els.forEach(el => io.observe(el));
   }
 })();
+
+// 앱 소개: 폰 화면은 고정, 스크롤하면 단계에 맞춰 화면과 설명이 바뀜 (데스크톱)
+(function () {
+  const stage = document.querySelector('.feat-stage'); if (!stage) return;
+  const rows = [...document.querySelectorAll('.feat-row')], imgs = [...stage.querySelectorAll('.phone img')], dots = [...stage.querySelectorAll('.dots i')];
+  const show = k => { rows.forEach((r, i) => r.classList.toggle('on', i === k)); imgs.forEach((m, i) => m.classList.toggle('on', i === k)); dots.forEach((d, i) => d.classList.toggle('on', i === k)); };
+  show(0);
+  if (!('IntersectionObserver' in window)) { rows.forEach(r => r.classList.add('on')); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) show(rows.indexOf(e.target)); }), { rootMargin: '-45% 0px -45% 0px' });
+  rows.forEach(r => io.observe(r));
+})();
