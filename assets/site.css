@@ -124,9 +124,9 @@ p { margin: 0; text-wrap: pretty; }
 
 /* ---------- sections ---------- */
 section.block { padding-block: 84px 0; }
-.s-head { max-width: 46em; margin-bottom: 30px; }
+.s-head { max-width: 60em; margin-bottom: 30px; }
 .s-head h2 { font-size: clamp(28px, 4.4vw, 44px); font-weight: 900; letter-spacing: -.03em; line-height: 1.15; margin-top: 8px; }
-.s-head p { margin-top: 12px; color: var(--muted); font-size: 18px; }
+.s-head p { max-width: 40em; margin-top: 12px; color: var(--muted); font-size: 18px; }
 
 /* launch band */
 .launch {
