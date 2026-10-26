@@ -739,6 +739,11 @@
   .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
   .tmsg.me { text-align: right; }
   .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .sos-home { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 14px 16px; border-radius: 20px; border: 1.5px solid rgba(197, 48, 48, .35); background: #FFF1F0; color: #8A1C1C; text-decoration: none; }
+  .sos-home b { font-size: 16px; } .sos-home .small { opacity: .8; } .sos-home > svg:last-child { margin-left: auto; flex: none; }
+  .sos-ico { width: 40px; height: 40px; border-radius: 12px; background: #C53030; color: #fff; display: grid; place-items: center; flex: none; }
+  .sos-num { font-family: var(--font-num); font-size: 34px; font-weight: 600; margin-top: 6px; letter-spacing: .02em; }
+  .sos-ack { margin-top: 10px; padding: 12px 14px; border-radius: 14px; background: #E8F6EE; color: #165a35; display: flex; gap: 8px; align-items: flex-start; font-weight: 600; }
   .trip-home { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 18px 20px; border-radius: 24px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; text-decoration: none; box-shadow: 0 14px 30px -18px rgba(242, 103, 34, .8); }
   .trip-dd { font-family: var(--font-num); font-weight: 600; font-size: 44px; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; }
   .trip-go { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; flex: none; }
@@ -1284,6 +1289,7 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
+    sos_home: 'Need help?', sos_home_d: 'Alert your leader and HQ right away', sos_title: 'Emergency help', sos_lead: 'If your life is in danger, call the local emergency number first. Then tell us here so your leader and HQ can help.', sos_note: 'What is happening? (optional)', sos_loc: 'Include my location (only your leader and HQ see it)', sos_send: 'Send alert', sos_tap: 'Tap again to send', sos_sent: 'Alert sent', sos_sent_d: 'Your country leader and HQ were notified {t}.', sos_wait: 'Waiting for your leader to confirm. Keep your phone with you.', sos_acked: 'Your leader saw this {t}.', sos_acked_by: 'Confirmed by {n}', sos_safe: "I'm safe now", sos_safe_ok: 'Glad you are safe. We let your leader know.', sos_num: 'Local emergency number', sos_num_note: 'Numbers can change. Ask your leader to confirm.', sos_contact: 'Your local contact', sos_msg: 'Message my leader', sos_refresh: 'Check status', sos_sent_ok: 'Alert sent. Help is on the way.', sos_locating: 'Getting your location…', nt_ci_ack: 'Your leader saw your help request.', ci_ack_btn: 'I saw it', ci_ack_note: 'Note to the student (optional)', ci_acked: 'Seen {t}{n}', ci_unacked: 'Not yet seen by a leader',
     tr_title: 'Trip itinerary', tr_to: 'Departure to {c}', tr_dd: 'D-{n}', tr_today: 'Departure day', tr_out: 'Outbound flight', tr_out_ph: 'Airline and flight number', tr_out_when: 'Departure (date, time, airport)', tr_arrive: 'Arrival (date, time, airport)', tr_back: 'Return flight', tr_back_when: 'Return (date, time, airport)', tr_meet: 'Who meets you', tr_meet_ph: 'Name or church that will pick you up', tr_contact: 'Local contact', tr_contact_ph: 'Phone or chat for your first days', tr_save: 'Save itinerary', tr_saved: 'Itinerary saved.', tr_share: 'Share with family', tr_copied: 'Summary copied. Paste it into a message.', tr_empty: 'Add your flight details so your family and your team leader can follow your trip.', tr_edit: 'Edit', tr_summary_head: 'My SVM trip', tr_sens: 'Local contact is left out of the shared summary for safety.', tr_home_cta: 'Open itinerary',
     cd_tonight: 'Tonight', cd_doors: 'Doors {t}', cd_here: "I'm here", cd_here_done: 'You are checked in. Welcome!', cd_here_ok: 'Welcome. You are checked in.', cd_sign: 'Sign your nation', cd_tent: 'Tent Village', cd_tent_d: 'Walk the nation booths', cd_map: 'Open map', cd_door: 'Door check-in', cd_prog: 'Tonight', cd_demo_note: 'Preview of the conference-day screen.',
     cf_title: 'Conference check-in', cf_sub: 'Check people in at the door. Search by name, email or group.', cf_registered: 'Registered', cf_in: 'Checked in', cf_walk: 'Walk-ins', cf_app: 'App check-ins', cf_people: '{n} people', cf_search: 'Search name, email or group', cf_checkin: 'Check in', cf_undo: 'Undo', cf_in_at: 'In {t}', cf_group: 'Group', cf_walk_t: 'Add a walk-in', cf_walk_name: 'Name', cf_walk_email: 'Email (optional)', cf_walk_group: 'Group name (optional)', cf_walk_size: 'People', cf_walk_add: 'Add and check in', cf_none: 'No one found.', cf_added: 'Added and checked in.', cf_need_name: 'Please enter a name.', cf_link_d: 'Door check-in, walk-ins and counts for the conference',
@@ -1545,6 +1551,7 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
+    sos_home: '도움이 필요하세요?', sos_home_d: '리더와 본부에 바로 알립니다', sos_title: '긴급 도움 요청', sos_lead: '생명이 위험하면 먼저 현지 응급 번호로 전화하세요. 그다음 여기에 알려 주시면 리더와 본부가 도울 수 있어요.', sos_note: '어떤 상황인가요? (선택)', sos_loc: '내 위치 포함 (리더와 본부에게만 보여요)', sos_send: '도움 요청 보내기', sos_tap: '한 번 더 눌러야 보내져요', sos_sent: '요청을 보냈어요', sos_sent_d: '{t} 나라 리더와 본부에 알렸어요.', sos_wait: '리더의 확인을 기다리는 중이에요. 휴대폰을 가까이 두세요.', sos_acked: '리더가 {t} 확인했어요.', sos_acked_by: '{n} 님이 확인', sos_safe: '이제 안전해요', sos_safe_ok: '안전하다니 다행이에요. 리더에게 알렸어요.', sos_num: '현지 응급 번호', sos_num_note: '번호는 바뀔 수 있어요. 리더에게 확인해 두세요.', sos_contact: '내 현지 연락처', sos_msg: '리더에게 메시지', sos_refresh: '상태 확인', sos_sent_ok: '요청을 보냈어요. 곧 도움이 가요.', sos_locating: '위치를 가져오는 중…', nt_ci_ack: '리더가 도움 요청을 확인했어요.', ci_ack_btn: '확인했어요', ci_ack_note: '학생에게 남길 말 (선택)', ci_acked: '{t} 확인{n}', ci_unacked: '아직 확인한 리더가 없어요',
     tr_title: '여정 일정표', tr_to: '{c} 출발', tr_dd: 'D-{n}', tr_today: '출발하는 날', tr_out: '가는 항공편', tr_out_ph: '항공사와 편명', tr_out_when: '출발 (날짜, 시간, 공항)', tr_arrive: '도착 (날짜, 시간, 공항)', tr_back: '오는 항공편', tr_back_when: '귀국 (날짜, 시간, 공항)', tr_meet: '마중 나오는 분', tr_meet_ph: '마중 나오는 분이나 교회 이름', tr_contact: '현지 연락처', tr_contact_ph: '처음 며칠 연락할 전화번호나 메신저', tr_save: '일정 저장', tr_saved: '일정을 저장했어요.', tr_share: '가족과 공유', tr_copied: '요약을 복사했어요. 메시지에 붙여 넣으세요.', tr_empty: '항공편을 적어 두면 가족과 리더가 여정을 함께 볼 수 있어요.', tr_edit: '수정', tr_summary_head: '나의 SVM 선교 여정', tr_sens: '안전을 위해 현지 연락처는 공유 요약에서 뺐어요.', tr_home_cta: '일정 열기',
     cd_tonight: '오늘 밤', cd_doors: '{t} 입장', cd_here: '도착했어요', cd_here_done: '체크인되었어요. 환영합니다!', cd_here_ok: '환영합니다. 체크인되었어요.', cd_sign: '내 나라에 이름 쓰기', cd_tent: '텐트 빌리지', cd_tent_d: '나라별 부스 둘러보기', cd_map: '지도 열기', cd_door: '현장 접수', cd_prog: '오늘 순서', cd_demo_note: '행사 당일 화면 미리보기입니다.',
     cf_title: '컨퍼런스 접수', cf_sub: '입구에서 도착한 분을 체크인합니다. 이름, 이메일, 단체 이름으로 찾을 수 있어요.', cf_registered: '등록', cf_in: '체크인', cf_walk: '현장 등록', cf_app: '앱 체크인', cf_people: '{n}명', cf_search: '이름, 이메일, 단체 검색', cf_checkin: '체크인', cf_undo: '취소', cf_in_at: '{t} 입장', cf_group: '단체', cf_walk_t: '현장 등록 추가', cf_walk_name: '이름', cf_walk_email: '이메일 (선택)', cf_walk_group: '단체 이름 (선택)', cf_walk_size: '인원', cf_walk_add: '추가하고 체크인', cf_none: '찾는 분이 없어요.', cf_added: '추가하고 체크인했어요.', cf_need_name: '이름을 입력해 주세요.', cf_link_d: '현장 접수, 현장 등록, 인원 현황',
@@ -2028,6 +2035,7 @@ function createDemoClient() {
       const a = db.applications.find(x => x.id === row.application_id);
       if (a) new Set([...(db.country_leaders || []).filter(l => l.country_id === a.country_id).map(l => l.user_id), ...db.profiles.filter(p => p.role === 'admin').map(p => p.id)]).forEach(u => { if (u !== row.user_id) notify(u, 'checkin_help', { country_id: a.country_id }, '#/lead/' + a.id); });
     }
+    if (ev === 'UPDATE' && table === 'field_checkins' && row.acked_at && !old.acked_at) notify(row.user_id, 'checkin_ack', { application_id: row.application_id }, '#/sos/' + row.application_id);
     if (ev === 'UPDATE' && table === 'applications' && row.status === 'returned' && old.status !== 'returned') notify(row.user_id, 'returned_testi', { country_id: row.country_id }, '#/apps/' + row.id);
     if (ev === 'INSERT' && table === 'applications') (db.country_leaders || []).filter(l => l.country_id === row.country_id && l.user_id !== row.user_id).forEach(l => notify(l.user_id, 'new_app', { country_id: row.country_id }, '#/lead/' + row.id));
     if (ev === 'INSERT' && table === 'team_members') notify(row.user_id, 'team_added', { team: db.teams.find(x => x.id === row.team_id)?.name }, '#/teams/' + row.team_id);
@@ -2379,7 +2387,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', sos: 'home', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2669,6 +2677,7 @@ const VIEWS = {
         </div>
       </div>
       ${tripHomeCard(myApp)}
+      ${sosHomeCard(apps)}
       ${confDayCard(featured, state.confHere)}
       ${featured ? eventHero(featured) : ''}
       <div class="bento" style="margin-bottom:12px">
@@ -3724,6 +3733,70 @@ VIEWS.apps = async function (id) {
 // 출발 준비 · 안부 체크인 · 귀국 후기
 // ---------------------------------------------------------------------
 const PREP_ITEMS = ['flight', 'passport', 'leader_call', 'packing'];
+const EMERGENCY = { KR: '119 · 112', PH: '911', MY: '999', TH: '1669 · 191', MX: '911', JP: '119 · 110', EG: '123 · 122' };
+function sosEligible(a) {
+  if (!a) return false;
+  if (a.status === 'on_field') return true;
+  if (['approved', 'preparing'].includes(a.status) && a.start_date) { const d = daysBetween(nowInTZ().date, a.start_date); return d <= 3 && d >= -1; }
+  return false;
+}
+function sosHomeCard(apps) {
+  const a = (apps || []).find(sosEligible); if (!a) return '';
+  return `<a class="sos-home" href="#/sos/${a.id}"><span class="sos-ico">${icon('shield', 'width="22" height="22"')}</span><div><b>${esc(t('sos_home'))}</b><div class="small">${esc(t('sos_home_d'))}</div></div>${icon('chev')}</a>`;
+}
+VIEWS.sos = async function (id) {
+  const [, apps] = await Promise.all([loadCountries(), loadMyApps()]);
+  const a = apps.find(x => String(x.id) === String(id)) || apps.find(sosEligible);
+  const back = backLink('#/home', t('tab_home'));
+  if (!a) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  const c = countryById(a.country_id);
+  const [{ data: cis }, { data: tr }] = await Promise.all([
+    sb.from('field_checkins').select('*').eq('application_id', a.id).order('created_at', { ascending: false }).limit(5),
+    sb.from('application_trips').select('local_contact').eq('application_id', a.id).maybeSingle()]);
+  state.sosApp = a;
+  const last = (cis || [])[0];
+  const active = last && last.status === 'need_help' && (Date.now() - new Date(last.created_at).getTime()) < 24 * 3600 * 1000;
+  const num = c && EMERGENCY[c.code];
+  const numCard = num ? card(`<span class="eyebrow plain">${icon('shield', 'width="14" height="14"')} ${esc(t('sos_num'))}${c ? ' · ' + esc(countryName(c)) : ''}</span><div class="sos-num">${esc(num)}</div><p class="small muted" style="margin:6px 0 0">${esc(t('sos_num_note'))}</p>`) : '';
+  const contactCard = tr?.local_contact ? card(`<span class="eyebrow plain">${esc(t('sos_contact'))}</span><p style="margin:8px 0 0;font-weight:700">${esc(tr.local_contact)}</p>`) : '';
+  if (active) {
+    let ack = `<p class="small" style="margin:10px 0 0">${esc(t('sos_wait'))}</p>`;
+    if (last.acked_at) { await loadNames([last.acked_by]); ack = `<div class="sos-ack">${icon('check')} <span>${esc(t('sos_acked', { t: relTime(last.acked_at) }))}${last.acked_by && nameCache[last.acked_by]?.name ? ' · ' + esc(t('sos_acked_by', { n: shortName(nameCache[last.acked_by].name) })) : ''}${last.ack_note ? `<br><em>${esc(last.ack_note)}</em>` : ''}</span></div>`; }
+    return `${back}${pageHead(t('sos_title'))}
+      ${card(`<span class="eyebrow plain" style="color:var(--danger)">${icon('shield', 'width="14" height="14"')} ${esc(t('sos_sent'))}</span>
+        <p style="margin:10px 0 0">${esc(t('sos_sent_d', { t: relTime(last.created_at) }))}</p>${ack}
+        <div class="btn-row" style="margin-top:14px"><a class="btn small navy" href="#/apps/${a.id}">${icon('chat', 'width="15" height="15"')} ${esc(t('sos_msg'))}</a>
+          <button class="btn small light" type="button" id="sos-refresh">${esc(t('sos_refresh'))}</button></div>`)}
+      ${numCard}${contactCard}
+      <button class="btn block" type="button" id="sos-safe" style="margin-top:4px">${icon('check')} ${esc(t('sos_safe'))}</button>`;
+  }
+  return `${back}${pageHead(t('sos_title'), t('sos_lead'))}
+    ${numCard}${contactCard}
+    ${card(`<form id="sos-form" novalidate><label class="field"><span>${esc(t('sos_note'))}</span><textarea name="note" rows="3" maxlength="400" style="min-height:80px"></textarea></label>
+      <label class="agree" style="margin:0 0 14px"><input type="checkbox" name="loc"><span>${esc(t('sos_loc'))}</span></label>
+      <button class="btn block danger-fill" type="button" id="sos-send">${icon('shield')} ${esc(t('sos_send'))}</button></form>`)}`;
+};
+BINDERS.sos = function () {
+  const a = state.sosApp; if (!a) return;
+  const send = async (status, note) => {
+    const { error } = await sb.from('field_checkins').insert({ application_id: a.id, user_id: state.profile.id, status, note: note || null });
+    if (error) return toast(errMsg(error), true);
+    toast(t(status === 'safe' ? 'sos_safe_ok' : 'sos_sent_ok')); render();
+  };
+  const sb1 = document.getElementById('sos-send');
+  if (sb1) sb1.onclick = armTwice(sb1, async () => {
+    const f = document.getElementById('sos-form');
+    let note = f.note.value.trim();
+    if (f.loc.checked && navigator.geolocation) {
+      toast(t('sos_locating'));
+      const pos = await new Promise(res => navigator.geolocation.getCurrentPosition(p => res(p), () => res(null), { timeout: 6000, maximumAge: 60000 }));
+      if (pos) note = (note ? note + ' ' : '') + `📍 https://maps.google.com/?q=${pos.coords.latitude.toFixed(5)},${pos.coords.longitude.toFixed(5)}`;
+    }
+    await send('need_help', note.slice(0, 500));
+  });
+  const sf = document.getElementById('sos-safe'); if (sf) sf.onclick = () => send('safe', null);
+  const rf = document.getElementById('sos-refresh'); if (rf) rf.onclick = () => render();
+};
 function tripSummary(a, c, tr) {
   const lines = [`${t('tr_summary_head')} · ${countryName(c)}`];
   if (a.start_date) lines.push(`${t('ap_start')}: ${fmtDay(a.start_date)}`);
@@ -4545,6 +4618,10 @@ function adminCheckinHTML(a) {
   return `<div class="ext-box ins-box"><div class="row between"><b>${icon('shield', 'width="15" height="15" style="vertical-align:-2px"')} ${esc(t('ci_title'))}</b>
       ${last ? `<span class="st ${help ? 'st-rejected' : 'st-returned'}">${esc(t(help ? 'ci_status_help' : 'ci_status_safe'))}</span>` : `<span class="small muted">${esc(t('ci_none'))}</span>`}</div>
     ${last ? `<p class="small" style="margin:6px 0 0">${esc(t('ci_last', { t: relTime(last.created_at) }))}${last.note ? ` · ${esc(last.note)}` : ''}</p>` : ''}
+    ${help ? (last.acked_at ? `<p class="small" style="margin:6px 0 0;color:var(--success, #1d7a46)">${icon('check', 'width="14" height="14" style="vertical-align:-2px"')} ${esc(t('ci_acked', { t: relTime(last.acked_at), n: last.ack_note ? ' · ' + last.ack_note : '' }))}</p>`
+      : `<div class="form-note warn" style="margin-top:8px">${icon('spark')}<span>${esc(t('ci_unacked'))}</span></div>
+        <label class="field" style="margin:10px 0 8px"><span>${esc(t('ci_ack_note'))}</span><input type="text" maxlength="500" data-ci-ack-note="${last.id}"></label>
+        <button type="button" class="btn small" data-ci-ack="${last.id}">${icon('check')} ${esc(t('ci_ack_btn'))}</button>`) : ''}
     ${quiet >= 3 ? `<div class="form-note warn">${icon('spark')}<span>${esc(t('ci_quiet', { n: quiet }))}</span></div>` : ''}</div>`;
 }
 function adminInsHTML(a) {
@@ -4665,6 +4742,13 @@ function bindAdminApplications() {
   });
   bindThreads();
   app.querySelectorAll('[data-ins-file]').forEach(b => b.onclick = () => openInsuranceFile((state.adminApps || []).find(x => String(x.id) === b.dataset.insFile)?.ins?.file_path));
+  app.querySelectorAll('[data-ci-ack]').forEach(b => b.onclick = async () => {
+    const note = app.querySelector(`[data-ci-ack-note="${b.dataset.ciAck}"]`)?.value.trim() || null;
+    b.disabled = true;
+    const { error } = await sb.from('field_checkins').update({ acked_at: new Date().toISOString(), acked_by: state.profile.id, ack_note: note }).eq('id', Number(b.dataset.ciAck));
+    if (error) { b.disabled = false; return toast(errMsg(error), true); }
+    toast(t('adm_updated')); render();
+  });
   app.querySelectorAll('[data-ins]').forEach(b => b.onclick = async () => {
     const note = app.querySelector(`[data-ins-note="${b.dataset.ins}"]`)?.value.trim() || null;
     if (b.dataset.insTo === 'needs_fix' && !note) { app.querySelector(`[data-ins-note="${b.dataset.ins}"]`)?.focus(); return toast(t('ins_fix_note'), true); }
@@ -6501,6 +6585,7 @@ function notifText(n) {
     case 'leader_msg': return t('nt_leader_msg');
     case 'field_msg': return t('nt_field_msg', { c: c ? countryName(c) : '' });
     case 'net_msg': return t('nt_net_msg');
+    case 'checkin_ack': return t('nt_ci_ack');
     case 'student_msg': return t('nt_student_msg');
     case 'new_app': return t('nt_new_app', { c: c ? countryName(c) : '' });
     case 'dep_remind': return p.days > 0 ? t('nt_dep', { d: p.days, c: c ? countryName(c) : '' }) : t('nt_dep_today', { c: c ? countryName(c) : '' });
