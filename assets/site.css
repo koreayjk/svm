@@ -642,3 +642,21 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .aud-card .aud-img { width: calc(100% + 2 * var(--pad)); max-width: none; margin: calc(-1 * var(--pad)) calc(-1 * var(--pad)) 6px; height: 150px; object-fit: cover; }
 .m-photo { width: 100%; height: clamp(160px, 22vw, 240px); object-fit: cover; border-radius: 24px; margin-top: 26px; }
 .band + .band { margin-top: 20px; }
+
+/* app walkthrough: pinned phone, steps scroll on the right (desktop) */
+.feat-stage { display: none; }
+@media (min-width: 861px) {
+  .feat { grid-template-columns: minmax(0, 290px) minmax(0, 1fr); column-gap: clamp(40px, 8vw, 110px); gap: 0 clamp(40px, 8vw, 110px); align-items: start; }
+  .feat-stage { display: block; grid-column: 1; grid-row: 1 / span 7; position: sticky; top: max(84px, calc(50vh - 340px)); align-self: start; }
+  .feat-stage .phone { max-width: 290px; margin: 0 auto; }
+  .feat-stage .phone img { position: absolute; inset: 9px; width: calc(100% - 18px); height: calc(100% - 18px); opacity: 0; transition: opacity .45s var(--ease); }
+  .feat-stage .phone img.on { opacity: 1; }
+  .feat-stage .dots { display: flex; justify-content: center; gap: 7px; margin-top: 18px; }
+  .feat-stage .dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); transition: background .3s, width .3s var(--ease); }
+  .feat-stage .dots i.on { width: 22px; border-radius: 4px; background: var(--orange); }
+  .feat-row, .feat-row:nth-child(even) { grid-column: 2; display: flex; align-items: center; min-height: min(78vh, 640px); }
+  .feat-row .phone { display: none; }
+  .feat-row .copy { opacity: .35; transform: translateY(8px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+  .feat-row.on .copy { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .feat-stage .phone img, .feat-row .copy, .feat-stage .dots i { transition: none; } }
