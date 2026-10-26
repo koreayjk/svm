@@ -32,3 +32,14 @@ SVM 자체 사진을 올리기 전까지 쓰는 기본 이미지입니다 (`asse
 [world-atlas](https://github.com/topojson/world-atlas)(ISC) 형식으로 받아 점 지도로 변환했습니다.
 
 - `assets/images/` (컨퍼런스 사진: hero, register-bg, tents-*, tile-*, band-pano) — 이전 mc2026 컨퍼런스 사이트에서 쓰던 이미지를 그대로 옮겼습니다. 실제 행사 사진이 생기면 교체하세요.
+
+## 홈페이지 사진 (assets/images/)
+모두 Pexels 라이선스. 스톡 사진이며 실제 SVM 활동이 아닙니다 (사진 설명은 비워 두고 실제 사역이라고 주장하지 않습니다).
+
+| 파일 | 용도 | 원본 |
+|---|---|---|
+| `hero-flight.jpg` | 히어로 배경 (비행기 날개, 노을) | https://www.pexels.com/photo/a-close-up-shot-of-a-wing-of-an-airplane-13239848/ |
+| `card-flight.jpg` | 가는 사람 카드 | https://www.pexels.com/photo/view-of-airliner-wing-above-the-clouds-2147486/ |
+| `card-prayer.jpg`, `band-group.jpg` | 후원 카드, "왜" 섹션 | https://www.pexels.com/photo/group-of-people-praying-in-the-living-room-6860385/ · https://www.pexels.com/photo/group-of-people-praying-together-6860380/ |
+| `card-children.jpg` | 현지 교회 카드 | https://www.pexels.com/photo/people-sitting-on-the-floor-9090747/ |
+| `ministry-study.jpg` | Into the World | https://www.pexels.com/photo/a-people-doing-bible-study-6860826/ |
