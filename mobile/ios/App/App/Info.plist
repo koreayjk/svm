@@ -8,6 +8,8 @@
 	<string>SVM lets you choose photos for testimonies and your travel insurance certificate.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Leaders use the microphone to record gospel message sentences for language training.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Only if you choose "Include my location" when asking for emergency help, SVM sends your location to your country leader and HQ.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -45,4 +45,7 @@
     <!-- 리더가 언어 훈련 문장을 녹음할 때 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- 비상 도움 요청에서 학생이 '내 위치 포함'을 선택했을 때만 -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>
