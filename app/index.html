@@ -739,6 +739,9 @@
   .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
   .tmsg.me { text-align: right; }
   .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .mr-wrap + .mr-wrap { border-top: 1px solid var(--line); }
+  .mr-sub { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 0 0 12px 52px; }
+  .mr-sub select { width: auto; max-width: 190px; min-height: 36px; padding: 6px 10px; font-size: 13.5px; }
   .net-tag { display: inline-block; margin-left: 4px; padding: 1px 8px; border-radius: 999px; background: var(--fill); color: var(--navy); font-size: 11.5px; font-weight: 700; vertical-align: 1px; }
   .net-tag.partner { background: var(--orange-soft); color: var(--orange-dark); }
   .thread-form { display: flex; gap: 8px; align-items: flex-end; }
@@ -1038,7 +1041,7 @@ const i18n = {
     // tabs
     tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
     // roles
-    role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin',
+    role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin', role_admin_all: 'Admin (all nations)', mr_add: 'Assign to a nation', mr_leader: 'Country leader', mr_partner: 'Missionary', mr_admin_note: 'Full admin: manages every nation.',
     // home
     hello: 'Hi, {name}', hello_anon: 'Welcome',
     next_meeting: 'Next meeting', then: 'Then',
@@ -1309,7 +1312,7 @@ const i18n = {
     todo_reports: '확인할 신고', nt_report: '확인할 새 신고: {k}',
     signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
     tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
-    role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자',
+    role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자', role_admin_all: '전체 관리자', mr_add: '나라 담당 지정', mr_leader: '나라 리더', mr_partner: '선교사님', mr_admin_note: '전체 관리자: 모든 나라를 관리합니다.',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
     next_meeting: '다음 모임', then: '이어서',
     g_sunday: '주일 미션 게더링',
@@ -2756,6 +2759,7 @@ const VIEWS = {
     } else if (tab === 'teams') {
       body = await adminTeamsHTML();
     } else if (tab === 'members') {
+      await Promise.all([loadCountries(), loadLeaders(true)]);
       if (!state.adminMembers) {
         const { data, error } = await sb.from('profiles').select('id,name,email,school,role,created_at').order('created_at', { ascending: false });
         if (error) throw error;
@@ -2956,16 +2960,42 @@ function memberListHTML() {
   const q = state.adminSearch.trim().toLowerCase();
   const list = (state.adminMembers || []).filter(m => !q || [m.name, m.email, m.school].some(v => (v || '').toLowerCase().includes(q)));
   return `<div class="small muted" style="padding-bottom:6px"><span class="num" style="font-size:15px;color:var(--navy)">${list.length}</span> ${esc(t('members_unit'))}</div>` +
-    list.map(m => `<div class="list-row">
+    list.map(m => `<div class="mr-wrap"><div class="list-row">
       <span class="avatar sm" aria-hidden="true">${esc(initials(m.name || m.email))}</span>
       <div class="meta"><div class="t ellip">${esc(m.name || '—')}</div>
         <div class="d ellip">${esc(m.email)}${m.school ? ' · ' + esc(m.school) : ''}</div></div>
       <select data-role-for="${esc(m.id)}" style="width:auto;min-width:118px;min-height:42px;padding:8px 12px" ${m.id === state.profile.id ? 'disabled' : ''} aria-label="Role">
-        ${['member', 'graduate', 'admin'].map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${esc(t('role_' + r))}</option>`).join('')}
+        ${['member', 'graduate', 'admin'].map(r => `<option value="${r}" ${m.role === r ? 'selected' : ''}>${esc(r === 'admin' ? t('role_admin_all') : t('role_' + r))}</option>`).join('')}
       </select>
-    </div>`).join('');
+    </div>${memberAssignHTML(m)}</div>`).join('');
+}
+// 나라 담당: 한 사람을 여러 나라의 '나라 리더' 또는 '선교사님'으로 지정 (전체 관리자와는 별개)
+function memberAssignHTML(m) {
+  if (m.role === 'admin') return `<div class="mr-sub"><span class="small muted">${esc(t('mr_admin_note'))}</span></div>`;
+  const cs = (state.countries || []).filter(x => x.is_active);
+  const has = [
+    ...(state.leaders || []).filter(l => l.user_id === m.id).map(l => ['leaders', l.country_id]),
+    ...(state.partners || []).filter(l => l.user_id === m.id).map(l => ['partners', l.country_id]),
+  ];
+  const chips = has.map(([k, cid]) => { const c = countryById(cid); return c ? `<span class="chip"><span aria-hidden="true">${flag(c.code)}</span> ${esc(countryName(c))} · ${esc(t(k === 'leaders' ? 'mr_leader' : 'mr_partner'))}<button type="button" class="chip-x" data-assign-del="${k}" data-country="${cid}" data-user="${esc(m.id)}" aria-label="${esc(t('adm_delete'))}">×</button></span>` : ''; }).join('');
+  const opts = (k) => cs.filter(c => !has.some(([kk, cid]) => kk === k && cid === c.id)).map(c => `<option value="${k}:${c.id}">${esc(flag(c.code))} ${esc(countryName(c))}</option>`).join('');
+  return `<div class="mr-sub">${chips}<select data-assign-for="${esc(m.id)}" aria-label="${esc(t('mr_add'))}"><option value="">+ ${esc(t('mr_add'))}</option>
+    <optgroup label="${esc(t('mr_leader'))}">${opts('leaders')}</optgroup><optgroup label="${esc(t('mr_partner'))}">${opts('partners')}</optgroup></select></div>`;
 }
 function bindMemberList() {
+  const refresh = async () => { await loadLeaders(true); document.getElementById('member-list').innerHTML = memberListHTML(); bindMemberList(); };
+  app.querySelectorAll('[data-assign-for]').forEach(sel => sel.onchange = async () => {
+    if (!sel.value) return;
+    const [k, cid] = sel.value.split(':');
+    const { error } = await sb.from(ROLE_TABLES[k].table).insert({ country_id: Number(cid), user_id: sel.dataset.assignFor });
+    if (error) { toast(errMsg(error), true); return; }
+    toast(t('adm_updated')); refresh();
+  });
+  app.querySelectorAll('[data-assign-del]').forEach(b => b.onclick = async () => {
+    const { error } = await sb.from(ROLE_TABLES[b.dataset.assignDel].table).delete().eq('country_id', Number(b.dataset.country)).eq('user_id', b.dataset.user);
+    if (error) { toast(errMsg(error), true); return; }
+    toast(t('adm_updated')); refresh();
+  });
   app.querySelectorAll('[data-role-for]').forEach(sel => sel.onchange = async () => {
     const id = sel.dataset.roleFor, role = sel.value;
     const prev = state.adminMembers.find(m => m.id === id);
