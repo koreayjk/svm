@@ -6828,28 +6828,28 @@ window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); stat
 window.addEventListener('offline', () => toast(t('offline'), true));
 
 // ---------------------------------------------------------------------
-// 스토어 앱 연동 — 푸시 알림(Firebase Cloud Messaging), 아이콘 숫자, 안드로이드 뒤로 가기
+// 스토어 앱 연동 — 푸시 알림(아이폰 APNs 직접 · 안드로이드 FCM), 아이콘 숫자, 안드로이드 뒤로 가기
 // ---------------------------------------------------------------------
 async function nativeRegister() {
-  if (!NATIVE || DEMO || !Native.FirebaseMessaging || !state.profile) return;
-  const FM = Native.FirebaseMessaging;
+  if (!NATIVE || DEMO || !Native.PushNotifications || !state.profile) return;
+  const PN = Native.PushNotifications;
   try {
-    let perm = await FM.checkPermissions();
-    if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await FM.requestPermissions();
+    let perm = await PN.checkPermissions();
+    if (perm.receive === 'prompt' || perm.receive === 'prompt-with-rationale') perm = await PN.requestPermissions();
     if (perm.receive !== 'granted') return;
-    const { token } = await FM.getToken();
-    if (token) await saveDeviceToken(token);
-    if (!state.fmListening) {
-      state.fmListening = true;
-      FM.addListener('tokenReceived', e => { if (e.token) saveDeviceToken(e.token); });
+    if (!state.pnListening) {
+      state.pnListening = true;
+      // iOS: APNs 기기 토큰 · 안드로이드: FCM 토큰
+      PN.addListener('registration', e => { if (e?.value) saveDeviceToken(e.value); });
       // 알림을 눌러 앱을 열면 해당 화면으로
-      FM.addListener('notificationActionPerformed', e => {
+      PN.addListener('pushNotificationActionPerformed', e => {
         const link = e?.notification?.data?.link;
         if (link && /^#\/[\w\/-]*$/.test(link)) location.hash = link;
       });
       // 앱이 열려 있을 때 온 알림은 화면 안 알림(실시간)으로 이미 보이므로 숫자만 새로
-      FM.addListener('notificationReceived', () => { badgeTimer = 0; refreshBadgesSoon(); });
+      PN.addListener('pushNotificationReceived', () => { badgeTimer = 0; refreshBadgesSoon(); });
     }
+    await PN.register();
   } catch (e) { /* 알림을 못 켜도 앱은 그대로 사용 */ }
 }
 async function saveDeviceToken(token) {

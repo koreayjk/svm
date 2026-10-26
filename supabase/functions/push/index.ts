@@ -1,9 +1,16 @@
 // SVM 푸시 알림 — notifications 테이블에 새 행이 생기면(데이터베이스 웹훅) 그 회원의 폰으로 보냅니다.
-// Firebase Cloud Messaging(HTTP v1) 하나로 안드로이드와 아이폰(APNs 키를 Firebase에 등록) 모두 보냅니다.
+//   · 아이폰: Apple APNs 로 직접 보냅니다 (APNs 인증 키 .p8 — Firebase 필요 없음)
+//   · 안드로이드: Firebase Cloud Messaging(HTTP v1) — 서비스 계정 키만 있으면 됩니다
 //
 // 필요한 비밀값 (Supabase 대시보드 → Edge Functions → Secrets, 저장소에 절대 넣지 않음)
-//   FCM_SERVICE_ACCOUNT  : Firebase 서비스 계정 JSON 전체
 //   PUSH_WEBHOOK_SECRET  : 웹훅 요청 헤더 x-webhook-secret 과 같은 임의의 긴 문자열
+//   아이폰(APNs)
+//     APNS_KEY           : 애플에서 받은 AuthKey_XXXX.p8 파일 내용 전체 (-----BEGIN PRIVATE KEY----- 포함)
+//     APNS_KEY_ID        : 그 키의 Key ID (10자)
+//     APNS_TEAM_ID       : Apple 개발자 Team ID (10자)
+//     APNS_TOPIC         : 번들 ID (기본 com.imamerica.svm)
+//   안드로이드(FCM)
+//     FCM_SERVICE_ACCOUNT: 서비스 계정 JSON 전체
 // SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 는 Supabase 가 자동으로 넣어 줍니다.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
@@ -180,6 +187,40 @@ async function accessToken(sa: { client_email: string; private_key: string }) {
   return cached.token;
 }
 
+// ---- Apple APNs (토큰 방식, ES256 JWT, 50분 캐시) ----
+let apnsCached: { jwt: string; exp: number } | null = null;
+async function apnsJwt() {
+  if (apnsCached && apnsCached.exp > Date.now() + 60_000) return apnsCached.jwt;
+  const keyId = Deno.env.get('APNS_KEY_ID')!, teamId = Deno.env.get('APNS_TEAM_ID')!, p8 = Deno.env.get('APNS_KEY')!;
+  const now = Math.floor(Date.now() / 1000);
+  const head = b64url(JSON.stringify({ alg: 'ES256', kid: keyId }));
+  const claim = b64url(JSON.stringify({ iss: teamId, iat: now }));
+  const der = Uint8Array.from(atob(p8.replace(/-----[^-]+-----/g, '').replace(/\s+/g, '')), c => c.charCodeAt(0));
+  const key = await crypto.subtle.importKey('pkcs8', der, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(`${head}.${claim}`));
+  const jwt = `${head}.${claim}.${b64url(sig)}`;
+  apnsCached = { jwt, exp: Date.now() + 50 * 60_000 };
+  return jwt;
+}
+// 정식(TestFlight·App Store) 기기 토큰은 api.push.apple.com, Xcode 로 직접 설치한 개발 빌드는 sandbox — 안 맞으면 다른 쪽으로 한 번 더
+async function sendApns(token: string, body: unknown) {
+  const jwt = await apnsJwt();
+  const topic = Deno.env.get('APNS_TOPIC') || 'com.imamerica.svm';
+  let last = { status: 0, reason: '' };
+  for (const host of ['api.push.apple.com', 'api.sandbox.push.apple.com']) {
+    const r = await fetch(`https://${host}/3/device/${token}`, {
+      method: 'POST',
+      headers: { authorization: `bearer ${jwt}`, 'apns-topic': topic, 'apns-push-type': 'alert', 'apns-priority': '10' },
+      body: JSON.stringify(body),
+    });
+    if (r.ok) return { ok: true, status: r.status, reason: '' };
+    const j = await r.json().catch(() => ({} as any));
+    last = { status: r.status, reason: j.reason || '' };
+    if (!(r.status === 400 && last.reason === 'BadDeviceToken')) break;   // 다른 서버에서도 시도할 가치가 있는 경우만
+  }
+  return { ok: false, ...last };
+}
+
 Deno.serve(async (req) => {
   const secret = Deno.env.get('PUSH_WEBHOOK_SECRET');
   if (!secret || req.headers.get('x-webhook-secret') !== secret) return new Response('forbidden', { status: 403 });
@@ -189,7 +230,7 @@ Deno.serve(async (req) => {
 
   const db = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, { auth: { persistSession: false } });
   const [{ data: tokens }, { data: prof }, { count: unread }] = await Promise.all([
-    db.from('device_tokens').select('token,lang').eq('user_id', n.user_id),
+    db.from('device_tokens').select('token,lang,platform').eq('user_id', n.user_id),
     db.from('profiles').select('lang').eq('id', n.user_id).maybeSingle(),
     db.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', n.user_id).is('read_at', null),
   ]);
@@ -199,17 +240,29 @@ Deno.serve(async (req) => {
     const { data: c } = await db.from('countries').select('name_en,name_ko').eq('id', n.payload.country_id).maybeSingle();
     if (c) country = { en: c.name_en, ko: c.name_ko };
   }
-  const sa = JSON.parse(Deno.env.get('FCM_SERVICE_ACCOUNT')!);
-  const auth = await accessToken(sa);
+  const saRaw = Deno.env.get('FCM_SERVICE_ACCOUNT');
+  const sa = saRaw ? JSON.parse(saRaw) : null;
+  const apnsReady = !!(Deno.env.get('APNS_KEY') && Deno.env.get('APNS_KEY_ID') && Deno.env.get('APNS_TEAM_ID'));
   const badge = unread || 1;
-  const results = await Promise.all(tokens.map(async ({ token, lang }) => {
+  const results = await Promise.all(tokens.map(async ({ token, lang, platform }) => {
     const L = (prof?.lang || lang) === 'ko' ? 'ko' : 'en';
+    const text = bodyFor(n, L, L === 'ko' ? country.ko : country.en);
+    const link = n.link || '#/notifications';
+    if (platform === 'ios') {
+      if (!apnsReady) return 'ios: APNS secrets missing';
+      const r = await sendApns(token, { aps: { alert: { title: 'SVM', body: text }, badge, sound: 'default' }, link, kind: n.kind });
+      if (r.ok) return 'sent';
+      if (r.status === 410 || r.reason === 'Unregistered' || r.reason === 'BadDeviceToken' || r.reason === 'DeviceTokenNotForTopic') await db.from('device_tokens').delete().eq('token', token);
+      return `failed: ios ${r.status} ${r.reason}`;
+    }
+    if (platform === 'web') return 'skipped: web';
+    if (!sa) return 'android: FCM_SERVICE_ACCOUNT missing';
+    const auth = await accessToken(sa);
     const message = {
       token,
-      notification: { title: 'SVM', body: bodyFor(n, L, L === 'ko' ? country.ko : country.en) },
-      data: { link: n.link || '#/notifications', kind: n.kind },
+      notification: { title: 'SVM', body: text },
+      data: { link, kind: n.kind },
       android: { priority: 'high', notification: { notification_count: badge, icon: 'ic_stat_svm', color: '#F26722' } },
-      apns: { payload: { aps: { badge, sound: 'default' } } },
     };
     const r = await fetch(`https://fcm.googleapis.com/v1/projects/${sa.project_id}/messages:send`, {
       method: 'POST', headers: { Authorization: `Bearer ${auth}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message }),
@@ -218,7 +271,7 @@ Deno.serve(async (req) => {
     const err = await r.text();
     // 앱을 지웠거나 만료된 기기 토큰은 정리
     if (r.status === 404 || /UNREGISTERED|INVALID_ARGUMENT/.test(err)) await db.from('device_tokens').delete().eq('token', token);
-    return 'failed: ' + r.status;
+    return 'failed: android ' + r.status;
   }));
   return new Response(JSON.stringify(results), { headers: { 'Content-Type': 'application/json' } });
 });
