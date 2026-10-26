@@ -739,6 +739,8 @@
   .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
   .tmsg.me { text-align: right; }
   .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .net-tag { display: inline-block; margin-left: 4px; padding: 1px 8px; border-radius: 999px; background: var(--fill); color: var(--navy); font-size: 11.5px; font-weight: 700; vertical-align: 1px; }
+  .net-tag.partner { background: var(--orange-soft); color: var(--orange-dark); }
   .thread-form { display: flex; gap: 8px; align-items: flex-end; }
   .thread-form textarea { min-height: 46px; padding: 11px 14px; font-size: 15px; }
   .thread-form .btn { flex: 0 0 auto; min-height: 46px; }
@@ -1263,7 +1265,7 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
-    net_title: 'Leaders room', net_link_d: 'One room for field missionaries, country leaders and SVM leaders across all nations', net_d: 'Missionaries, country leaders and SVM leaders from every nation. Students do not see this.', net_safe: 'Please do not post names, faces or exact locations of local believers, especially for sensitive countries.', net_none: 'No messages yet. Say hello to the other leaders.', nt_net_msg: 'New message in the leaders room.',
+    net_title: 'Leaders room', net_link_d: 'All leaders together, plus a room for each nation', net_d: 'Missionaries, country leaders and SVM leaders from every nation. Students do not see this.', net_safe: 'Please do not post names, faces or exact locations of local believers, especially for sensitive countries.', net_all: 'All leaders', net_d_country: 'Missionaries, the SVM country leader and HQ for {c}. Students do not see this.', net_role_partner: 'Missionary', net_role_leader: 'Country leader', net_role_admin: 'SVM HQ', net_none: 'No messages yet. Say hello to the other leaders.', nt_net_msg: 'New message in the leaders room.',
     fd_more_t: 'Post news or a video', fd_more_d: 'Updates, YouTube videos and prayer news for this nation.', fd_more_btn: 'Post',
     ce_extras_note: 'Leave a section empty to remove it. A new empty section appears after you save.', ce_preview: 'View page',
     ce_add: 'Add a country', ce_code: 'Country code (2 letters)', ce_add_note: 'New countries start hidden. Fill in the page, then turn on “Active” above.',
@@ -1521,7 +1523,7 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
-    net_title: '리더 대화방', net_link_d: '모든 나라의 선교지 리더 · 나라 리더 · SVM 리더가 함께 쓰는 방', net_d: '모든 나라의 선교사님, 나라 리더, SVM 리더가 함께 보는 방이에요. 학생에게는 보이지 않습니다.', net_safe: '현지 성도의 이름·얼굴·정확한 위치는 올리지 마세요. 특히 민감 국가는 더 조심해 주세요.', net_none: '아직 메시지가 없어요. 다른 리더들에게 인사해 보세요.', nt_net_msg: '리더 대화방에 새 메시지가 있어요.',
+    net_title: '리더 대화방', net_link_d: '전체 리더 방과 나라별 리더 방', net_d: '모든 나라의 선교사님, 나라 리더, SVM 리더가 함께 보는 방이에요. 학생에게는 보이지 않습니다.', net_safe: '현지 성도의 이름·얼굴·정확한 위치는 올리지 마세요. 특히 민감 국가는 더 조심해 주세요.', net_all: '전체 리더', net_d_country: '{c} 선교사님, SVM 나라 리더, 본부가 함께 봅니다. 학생에게는 보이지 않습니다.', net_role_partner: '선교사님', net_role_leader: '나라 리더', net_role_admin: 'SVM 본부', net_none: '아직 메시지가 없어요. 다른 리더들에게 인사해 보세요.', nt_net_msg: '리더 대화방에 새 메시지가 있어요.',
     fd_more_t: '소식·영상 올리기', fd_more_d: '이 나라의 근황, 유튜브 영상, 기도 소식을 올릴 수 있어요.', fd_more_btn: '올리기',
     ce_extras_note: '항목을 비우면 삭제됩니다. 저장하면 빈 항목 칸이 하나 더 생깁니다.', ce_preview: '페이지 보기',
     ce_add: '나라 추가', ce_code: '나라 코드 (영문 2자리)', ce_add_note: '새 나라는 숨김 상태로 추가됩니다. 내용을 채운 뒤 위에서 "노출"을 켜세요.',
@@ -4196,27 +4198,43 @@ function inNetworkRoom() { return isAdmin() || (state.leaderOf && state.leaderOf
 VIEWS.network = async function () {
   await Promise.all([loadCountries(true), loadLeaders(true)]);
   if (!inNetworkRoom()) return backLink('#/my', t('tab_my')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
-  const { data: msgs } = await sb.from('network_messages').select('*').order('created_at', { ascending: false }).limit(300);
+  // 방 목록: 전체 리더 + (내가 속한 나라마다 그 나라 리더 방. 관리자는 모든 나라)
+  const mine = isAdmin() ? (state.countries || []).filter(x => x.is_active)
+    : (state.countries || []).filter(x => state.partnerOf.has(x.id) || state.leaderOf.has(x.id));
+  const cur = mine.find(x => x.id === state.netRoom) || null;   // null = 전체 리더 대화방
+  const q = cur ? sb.from('field_messages').select('*').eq('country_id', cur.id) : sb.from('network_messages').select('*');
+  const { data: msgs } = await q.order('created_at', { ascending: false }).limit(300);
   const list = (msgs || []).slice().reverse();
   await loadNames(list.map(m => m.user_id));
   const me = state.profile.id;
+  // 전체 방에서는 보낸 사람이 어느 나라 사람인지 표시 (선교사님 > 나라 리더 > SVM 본부)
+  const tagOf = uid => {
+    const ps = (state.partners || []).filter(x => x.user_id === uid).map(x => x.country_id);
+    const ls = (state.leaders || []).filter(x => x.user_id === uid).map(x => x.country_id);
+    const role = ps.length ? 'partner' : ls.length ? 'leader' : 'admin';
+    const cn = [...new Set([...ps, ...ls])].map(countryById).filter(Boolean);
+    return `<span class="net-tag ${role}">${cn.map(c => `<span aria-hidden="true">${flag(c.code)}</span>`).join('')}${cn.length ? ' ' : ''}${esc(t('net_role_' + role))}</span>`;
+  };
   const thread = `<div class="thread-list" id="net-thread">${list.length ? list.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
-      <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} · ${esc(relTime(m.created_at))}</div>
+      <div class="who">${esc(m.user_id === me ? t('you') : shortName(nameCache[m.user_id]?.name) || '—')} ${cur ? '' : tagOf(m.user_id)} · ${esc(relTime(m.created_at))}</div>
       <div><div class="bubble">${esc(m.body)}</div></div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('net_none'))}</p>`}</div>
     <form class="thread-form" id="net-form"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
-  return `${backLink('#/my', t('tab_my'))}${pageHead(t('net_title'), t('net_d'))}
+  return `${backLink('#/my', t('tab_my'))}${pageHead(t('net_title'), cur ? t('net_d_country', { c: countryName(cur) }) : t('net_d'))}
+    <div class="lang-pick" style="margin:-6px -20px 14px"><a class="chip-a ${!cur ? 'active' : ''}" href="#/network" data-net-room="0">${icon('people', 'width="15" height="15"')} ${esc(t('net_all'))}</a>${mine.map(c => `<a class="chip-a ${cur && c.id === cur.id ? 'active' : ''}" href="#/network" data-net-room="${c.id}"><span aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>
     <div class="banner" role="note">${icon('lock')}<span>${esc(t('net_safe'))}</span></div>
     ${card(thread)}`;
 };
 BINDERS.network = function () {
   const th = document.getElementById('net-thread'); if (th) th.scrollTop = th.scrollHeight;
+  app.querySelectorAll('[data-net-room]').forEach(a => a.onclick = (e) => { e.preventDefault(); state.netRoom = Number(a.dataset.netRoom) || 0; render(); });
   const f = document.getElementById('net-form');
   if (f) f.onsubmit = async (e) => {
     e.preventDefault();
     const body = f.body.value.trim(); if (!body) return;
     const btn = f.querySelector('button'); btn.disabled = true;
-    const { error } = await sb.from('network_messages').insert({ user_id: state.profile.id, body });
+    const row = state.netRoom ? ['field_messages', { country_id: state.netRoom, user_id: state.profile.id, body }] : ['network_messages', { user_id: state.profile.id, body }];
+    const { error } = await sb.from(row[0]).insert(row[1]);
     btn.disabled = false;
     if (error) return toast(errMsg(error), true);
     render();
