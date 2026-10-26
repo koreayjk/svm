@@ -21,8 +21,9 @@ For students who want to go
 • Sign your name on a nation and follow its news and prayer needs.
 • Train: listen to the gospel message in the language of your field and practice it sentence by sentence.
 • Apply for a short-term trip and see every step, from approval to return.
-• Get ready: a countdown, a checklist, and your travel insurance certificate (required, due 7 days before departure).
-• On the field, check in with one tap. “I need help” alerts your country leader and the team right away.
+• Get ready: a countdown, a checklist, your trip itinerary (flights, who meets you, a summary to share with family) and your travel insurance certificate (required, due 7 days before departure).
+• On the field, check in with one tap. The emergency button alerts your country leader and the team right away, shows the local emergency number, and tells you when your leader has seen it.
+• Find a prayer partner for a nation you carry and share prayer requests with each other.
 • When you are home, share your testimony so the next team is encouraged.
 
 For supporters
@@ -33,11 +34,13 @@ For hosts and missionaries
 • Post news, photos and videos from your country, and update what visitors should expect.
 • Students pay only for their own flight, so you do not prepare special meals or housing. Everyone lives and serves together as things are.
 • Talk with your SVM country leader, who manages the students and joins meetings when needed. Students do not contact the field directly.
+• Leaders have a room for all leaders and a room for each nation, and a panel that shows who needs attention.
 
 Safe by design
 • Every country has an SVM leader who looks after the students.
 • Sensitive countries show only counts, with limited photos. Please never post the names, faces or exact locations of local believers.
 • Report and block tools, and moderation by leaders.
+• Your location is shared only if you choose “Include my location” when you ask for emergency help.
 • Delete your account any time from My → Delete account.
 
 English and Korean throughout.
@@ -62,8 +65,9 @@ SVM은 텍사스 브라이언–컬리지 스테이션의 학생 자원봉사 �
 • 나라에 이름을 쓰고 그 나라의 소식과 기도 제목을 받아봐요.
 • 훈련: 선교지 언어로 복음 메시지를 듣고 한 문장씩 따라 연습해요.
 • 단기선교를 신청하고 승인부터 귀국까지 모든 단계를 확인해요.
-• 출발 준비: D-day, 준비 목록, 여행자 보험 증서(필수, 출발 7일 전까지)를 한곳에서.
-• 선교지에서는 한 번 눌러 안부를 전해요. “도움이 필요해요”를 누르면 나라 리더와 본부에 바로 알려요.
+• 출발 준비: D-day, 준비 목록, 여정 일정표(항공편, 마중 나오는 분, 가족과 공유할 요약), 여행자 보험 증서(필수, 출발 7일 전까지)를 한곳에서.
+• 선교지에서는 한 번 눌러 안부를 전해요. 비상 버튼은 나라 리더와 본부에 바로 알리고, 현지 응급 번호를 보여 주고, 리더가 확인하면 알려 줘요.
+• 내가 품은 나라의 기도 짝을 찾아 서로 기도 제목을 나눠요.
 • 돌아오면 후기를 나눠 다음 팀에게 힘을 주세요.
 
 후원하는 분
@@ -74,11 +78,13 @@ SVM은 텍사스 브라이언–컬리지 스테이션의 학생 자원봉사 �
 • 그 나라의 소식·사진·영상을 올리고, 방문하는 사람들이 알아야 할 내용을 고쳐 둘 수 있어요.
 • 학생들은 자기 항공권만 부담해요. 특별한 식사나 숙소를 준비하지 않아도 되고, 있는 그대로 함께 지내며 섬겨요.
 • 학생을 돌보고 필요하면 미팅에 함께하는 SVM 나라 리더와 이야기해요. 학생이 선교지에 직접 연락하지 않아요.
+• 리더는 전체 리더 방과 나라별 방을 쓰고, 누구를 챙겨야 하는지 한눈에 봐요.
 
 안전하게
 • 나라마다 학생을 돌보는 SVM 리더가 있어요.
 • 민감한 나라는 인원 수만 보여 주고 사진을 제한해요. 현지 성도의 이름·얼굴·정확한 위치는 절대 올리지 마세요.
 • 신고·차단 기능과 리더의 관리.
+• 비상 도움 요청에서 “내 위치 포함”을 선택한 경우에만 위치를 보내요.
 • 언제든 마이 → 계정 삭제로 계정을 지울 수 있어요.
 
 한국어와 영어를 모두 지원해요.

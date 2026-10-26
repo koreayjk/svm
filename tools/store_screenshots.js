@@ -54,6 +54,7 @@ async function run(name, dev) {
   for (const lang of ['en', 'ko']) {
     await go('#/home'); await p.click(`.lang-toggle [data-lang=${lang}]`); await settle(500);
     await snap(lang, 7, 'checkin', '#' + appHash, '#checkin-form');
+    await snap(lang, 8, 'emergency', '#/sos/' + appHash.split('/').pop());
   }
   await b.close();
 }
