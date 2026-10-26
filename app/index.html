@@ -1263,6 +1263,7 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
+    fd_more_t: 'Post news or a video', fd_more_d: 'Updates, YouTube videos and prayer news for this nation.', fd_more_btn: 'Post',
     ce_extras_note: 'Leave a section empty to remove it. A new empty section appears after you save.', ce_preview: 'View page',
     ce_add: 'Add a country', ce_code: 'Country code (2 letters)', ce_add_note: 'New countries start hidden. Fill in the page, then turn on “Active” above.',
     ce_code_bad: 'Use the 2-letter country code (e.g. VN).', ce_code_dup: 'That country already exists.', ce_added: 'Country added (hidden for now).',
@@ -1519,6 +1520,7 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
+    fd_more_t: '소식·영상 올리기', fd_more_d: '이 나라의 근황, 유튜브 영상, 기도 소식을 올릴 수 있어요.', fd_more_btn: '올리기',
     ce_extras_note: '항목을 비우면 삭제됩니다. 저장하면 빈 항목 칸이 하나 더 생깁니다.', ce_preview: '페이지 보기',
     ce_add: '나라 추가', ce_code: '나라 코드 (영문 2자리)', ce_add_note: '새 나라는 숨김 상태로 추가됩니다. 내용을 채운 뒤 위에서 "노출"을 켜세요.',
     ce_code_bad: '영문 2자리 나라 코드를 넣어 주세요 (예: VN).', ce_code_dup: '이미 있는 나라입니다.', ce_added: '나라를 추가했어요 (아직 숨김).',
@@ -2906,6 +2908,7 @@ async function viewCountryDetail(c) {
       ${destInner(c, { hero: true })}
     </div>
     ${galleryHTML(c, photos)}
+    ${canEditCountry(c) ? card(`<div class="row between" style="gap:12px;align-items:center"><div><b>${esc(t('fd_more_t'))}</b><p class="small muted" style="margin:4px 0 0">${esc(t('fd_more_d'))}</p></div><a class="btn small" href="#/field/${esc(c.code)}" style="flex:none">${icon('plus')} ${esc(t('fd_more_btn'))}</a></div>`) : ''}
     ${videos.length ? `<div class="section-head"><h2>${esc(t('vd_section'))}</h2></div>${videosHTML(videos, false)}` : ''}
     ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
 
