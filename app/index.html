@@ -739,6 +739,13 @@
   .tmsg .bubble { display: inline-block; max-width: 92%; background: var(--fill); padding: 9px 13px; border-radius: 16px 16px 16px 6px; font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
   .tmsg.me { text-align: right; }
   .tmsg.me .bubble { background: var(--navy); color: #fff; border-radius: 16px 16px 6px 16px; text-align: left; }
+  .trip-home { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; padding: 18px 20px; border-radius: 24px; background: linear-gradient(135deg, var(--orange), var(--orange-dark)); color: #fff; text-decoration: none; box-shadow: 0 14px 30px -18px rgba(242, 103, 34, .8); }
+  .trip-dd { font-family: var(--font-num); font-weight: 600; font-size: 44px; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .trip-go { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; flex: none; }
+  .trip-sum { margin-top: 12px; display: grid; gap: 8px; }
+  .trip-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; font-size: 14.5px; align-items: baseline; }
+  .trip-row span { color: var(--muted-2); font-size: 13px; }
+  .trip-edit { margin-top: 14px; } .trip-edit summary { cursor: pointer; font-weight: 700; color: var(--orange-dark); }
   .cd-list { margin: 12px 0 0; padding-left: 18px; font-size: 14.5px; opacity: .88; display: grid; gap: 4px; }
   .cd-btn { background: rgba(255, 255, 255, .14); color: #fff; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
   .cd-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
@@ -1277,6 +1284,7 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
+    tr_title: 'Trip itinerary', tr_to: 'Departure to {c}', tr_dd: 'D-{n}', tr_today: 'Departure day', tr_out: 'Outbound flight', tr_out_ph: 'Airline and flight number', tr_out_when: 'Departure (date, time, airport)', tr_arrive: 'Arrival (date, time, airport)', tr_back: 'Return flight', tr_back_when: 'Return (date, time, airport)', tr_meet: 'Who meets you', tr_meet_ph: 'Name or church that will pick you up', tr_contact: 'Local contact', tr_contact_ph: 'Phone or chat for your first days', tr_save: 'Save itinerary', tr_saved: 'Itinerary saved.', tr_share: 'Share with family', tr_copied: 'Summary copied. Paste it into a message.', tr_empty: 'Add your flight details so your family and your team leader can follow your trip.', tr_edit: 'Edit', tr_summary_head: 'My SVM trip', tr_sens: 'Local contact is left out of the shared summary for safety.', tr_home_cta: 'Open itinerary',
     cd_tonight: 'Tonight', cd_doors: 'Doors {t}', cd_here: "I'm here", cd_here_done: 'You are checked in. Welcome!', cd_here_ok: 'Welcome. You are checked in.', cd_sign: 'Sign your nation', cd_tent: 'Tent Village', cd_tent_d: 'Walk the nation booths', cd_map: 'Open map', cd_door: 'Door check-in', cd_prog: 'Tonight', cd_demo_note: 'Preview of the conference-day screen.',
     cf_title: 'Conference check-in', cf_sub: 'Check people in at the door. Search by name, email or group.', cf_registered: 'Registered', cf_in: 'Checked in', cf_walk: 'Walk-ins', cf_app: 'App check-ins', cf_people: '{n} people', cf_search: 'Search name, email or group', cf_checkin: 'Check in', cf_undo: 'Undo', cf_in_at: 'In {t}', cf_group: 'Group', cf_walk_t: 'Add a walk-in', cf_walk_name: 'Name', cf_walk_email: 'Email (optional)', cf_walk_group: 'Group name (optional)', cf_walk_size: 'People', cf_walk_add: 'Add and check in', cf_none: 'No one found.', cf_added: 'Added and checked in.', cf_need_name: 'Please enter a name.', cf_link_d: 'Door check-in, walk-ins and counts for the conference',
     net_title: 'Leaders room', net_link_d: 'All leaders together, plus a room for each nation', net_d: 'Missionaries, country leaders and SVM leaders from every nation. Students do not see this.', net_safe: 'Please do not post names, faces or exact locations of local believers, especially for sensitive countries.', net_all: 'All leaders', net_d_country: 'Missionaries, the SVM country leader and HQ for {c}. Students do not see this.', net_role_partner: 'Missionary', net_role_leader: 'Country leader', net_role_admin: 'SVM HQ', net_none: 'No messages yet. Say hello to the other leaders.', nt_net_msg: 'New message in the leaders room.',
@@ -1537,6 +1545,7 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
+    tr_title: '여정 일정표', tr_to: '{c} 출발', tr_dd: 'D-{n}', tr_today: '출발하는 날', tr_out: '가는 항공편', tr_out_ph: '항공사와 편명', tr_out_when: '출발 (날짜, 시간, 공항)', tr_arrive: '도착 (날짜, 시간, 공항)', tr_back: '오는 항공편', tr_back_when: '귀국 (날짜, 시간, 공항)', tr_meet: '마중 나오는 분', tr_meet_ph: '마중 나오는 분이나 교회 이름', tr_contact: '현지 연락처', tr_contact_ph: '처음 며칠 연락할 전화번호나 메신저', tr_save: '일정 저장', tr_saved: '일정을 저장했어요.', tr_share: '가족과 공유', tr_copied: '요약을 복사했어요. 메시지에 붙여 넣으세요.', tr_empty: '항공편을 적어 두면 가족과 리더가 여정을 함께 볼 수 있어요.', tr_edit: '수정', tr_summary_head: '나의 SVM 선교 여정', tr_sens: '안전을 위해 현지 연락처는 공유 요약에서 뺐어요.', tr_home_cta: '일정 열기',
     cd_tonight: '오늘 밤', cd_doors: '{t} 입장', cd_here: '도착했어요', cd_here_done: '체크인되었어요. 환영합니다!', cd_here_ok: '환영합니다. 체크인되었어요.', cd_sign: '내 나라에 이름 쓰기', cd_tent: '텐트 빌리지', cd_tent_d: '나라별 부스 둘러보기', cd_map: '지도 열기', cd_door: '현장 접수', cd_prog: '오늘 순서', cd_demo_note: '행사 당일 화면 미리보기입니다.',
     cf_title: '컨퍼런스 접수', cf_sub: '입구에서 도착한 분을 체크인합니다. 이름, 이메일, 단체 이름으로 찾을 수 있어요.', cf_registered: '등록', cf_in: '체크인', cf_walk: '현장 등록', cf_app: '앱 체크인', cf_people: '{n}명', cf_search: '이름, 이메일, 단체 검색', cf_checkin: '체크인', cf_undo: '취소', cf_in_at: '{t} 입장', cf_group: '단체', cf_walk_t: '현장 등록 추가', cf_walk_name: '이름', cf_walk_email: '이메일 (선택)', cf_walk_group: '단체 이름 (선택)', cf_walk_size: '인원', cf_walk_add: '추가하고 체크인', cf_none: '찾는 분이 없어요.', cf_added: '추가하고 체크인했어요.', cf_need_name: '이름을 입력해 주세요.', cf_link_d: '현장 접수, 현장 등록, 인원 현황',
     net_title: '리더 대화방', net_link_d: '전체 리더 방과 나라별 리더 방', net_d: '모든 나라의 선교사님, 나라 리더, SVM 리더가 함께 보는 방이에요. 학생에게는 보이지 않습니다.', net_safe: '현지 성도의 이름·얼굴·정확한 위치는 올리지 마세요. 특히 민감 국가는 더 조심해 주세요.', net_all: '전체 리더', net_d_country: '{c} 선교사님, SVM 나라 리더, 본부가 함께 봅니다. 학생에게는 보이지 않습니다.', net_role_partner: '선교사님', net_role_leader: '나라 리더', net_role_admin: 'SVM 본부', net_none: '아직 메시지가 없어요. 다른 리더들에게 인사해 보세요.', nt_net_msg: '리더 대화방에 새 메시지가 있어요.',
@@ -2659,6 +2668,7 @@ const VIEWS = {
           <div style="padding-top:8px">${roleTag(p.role)}</div>
         </div>
       </div>
+      ${tripHomeCard(myApp)}
       ${confDayCard(featured, state.confHere)}
       ${featured ? eventHero(featured) : ''}
       <div class="bento" style="margin-bottom:12px">
@@ -3642,14 +3652,16 @@ VIEWS.apps = async function (id) {
   const a = apps.find(x => String(x.id) === String(id));
   if (!a) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   const c = countryById(a.country_id);
-  const [hist, exts, insq, prepq, ciq, planq] = await Promise.all([
+  const [hist, exts, insq, prepq, ciq, planq, tripq] = await Promise.all([
     sb.from('application_status_history').select('status,changed_at').eq('application_id', a.id).order('changed_at'),
     sb.from('application_extensions').select('*').eq('application_id', a.id).order('created_at', { ascending: false }),
     sb.from('application_insurance').select('*').eq('application_id', a.id).maybeSingle(),
     sb.from('application_prep').select('*').eq('application_id', a.id),
     sb.from('field_checkins').select('*').eq('application_id', a.id).order('created_at', { ascending: false }).limit(5),
     a.plan_id ? sb.from('field_plans').select('*').eq('id', a.plan_id).maybeSingle() : Promise.resolve({ data: null }),
+    sb.from('application_trips').select('*').eq('application_id', a.id).maybeSingle(),
   ]);
+  state.appTrip = tripq.data || null;
   const plan = planq.data && planIsAgreed(planq.data) ? planq.data : null;
   state.appIns = insq.data || null;
   state.appPrep = prepq.data || [];
@@ -3701,6 +3713,7 @@ VIEWS.apps = async function (id) {
       ${a.admin_note ? `<div class="sep"></div><span class="eyebrow plain">${esc(t('app_hq_note'))}</span><p style="margin:8px 0 0">${para(a.admin_note)}</p>` : ''}`)}
     ${plan ? card(`<span class="eyebrow plain">${icon('check', 'width="14" height="14"')} ${esc(t('pl_for_app'))} · ${esc(plan.title)}</span><p class="small muted" style="margin:8px 0 14px">${esc(t('pl_for_app_d'))}</p>${planSummaryHTML(plan)}`) : ''}
     ${a.status !== 'rejected' ? await leaderCardHTML(a) : ''}
+    ${['approved', 'preparing', 'on_field'].includes(a.status) ? tripCardHTML(a, c, state.appTrip) : ''}
     ${['approved', 'preparing'].includes(a.status) ? prepCardHTML(a, state.appIns, state.appPrep) : ''}
     ${a.status === 'on_field' ? checkinCardHTML(a, state.appCheckins) : ''}
     ${a.status === 'returned' ? returnedCardHTML(a) : ''}
@@ -3711,6 +3724,43 @@ VIEWS.apps = async function (id) {
 // 출발 준비 · 안부 체크인 · 귀국 후기
 // ---------------------------------------------------------------------
 const PREP_ITEMS = ['flight', 'passport', 'leader_call', 'packing'];
+function tripSummary(a, c, tr) {
+  const lines = [`${t('tr_summary_head')} · ${countryName(c)}`];
+  if (a.start_date) lines.push(`${t('ap_start')}: ${fmtDay(a.start_date)}`);
+  if (tr?.out_flight) lines.push(`${t('tr_out')}: ${tr.out_flight}`);
+  if (tr?.out_when) lines.push(`${t('tr_out_when').replace(/ \(.*/, '')}: ${tr.out_when}`);
+  if (tr?.arrive_when) lines.push(`${t('tr_arrive').replace(/ \(.*/, '')}: ${tr.arrive_when}`);
+  if (tr?.meet_note) lines.push(`${t('tr_meet')}: ${tr.meet_note}`);
+  if (tr?.back_flight) lines.push(`${t('tr_back')}: ${tr.back_flight}`);
+  if (tr?.back_when) lines.push(`${t('tr_back_when').replace(/ \(.*/, '')}: ${tr.back_when}`);
+  else if (a.expected_return) lines.push(`${t('tr_back_when').replace(/ \(.*/, '')}: ${fmtDay(a.expected_return)}`);
+  if (tr?.local_contact && !c.is_sensitive) lines.push(`${t('tr_contact')}: ${tr.local_contact}`);
+  return lines.join('\n');
+}
+function tripCardHTML(a, c, tr) {
+  const days = a.start_date ? daysBetween(nowInTZ().date, a.start_date) : null;
+  const row = (k, v) => v ? `<div class="trip-row"><span>${esc(t(k))}</span><b>${esc(v)}</b></div>` : '';
+  const has = tr && (tr.out_flight || tr.out_when || tr.arrive_when || tr.back_flight || tr.back_when || tr.meet_note || tr.local_contact);
+  const f = (name, k, ph) => `<label class="field" style="margin:0"><span>${esc(t(k))}</span><input type="text" name="${name}" maxlength="${name === 'meet_note' ? 500 : name === 'local_contact' ? 300 : 160}" value="${esc(tr?.[name] || '')}" ${ph ? `placeholder="${esc(t(ph))}"` : ''}></label>`;
+  return card(`<div class="row between top"><span class="eyebrow plain">${icon('plane', 'width="14" height="14"')} ${esc(t('tr_title'))}</span>
+      ${days != null && days >= 0 ? `<span class="st st-on_field">${days ? 'D-' + days : esc(t('tr_today'))}</span>` : ''}</div>
+    ${has ? `<div class="trip-sum">${row('tr_out', tr.out_flight)}${row('tr_out_when', tr.out_when)}${row('tr_arrive', tr.arrive_when)}${row('tr_meet', tr.meet_note)}${row('tr_back', tr.back_flight)}${row('tr_back_when', tr.back_when)}${row('tr_contact', tr.local_contact)}</div>
+      <div class="row" style="gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn small navy" type="button" id="trip-share">${icon('send', 'width="15" height="15"')} ${esc(t('tr_share'))}</button></div>
+      ${c.is_sensitive ? `<p class="small muted" style="margin:8px 0 0">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('tr_sens'))}</p>` : ''}`
+      : `<p class="small muted" style="margin:10px 0 0">${esc(t('tr_empty'))}</p>`}
+    <details class="trip-edit" ${has ? '' : 'open'}><summary>${esc(t('tr_edit'))}</summary>
+      <form id="trip-form" style="display:grid;gap:10px;margin-top:12px">${f('out_flight', 'tr_out', 'tr_out_ph')}${f('out_when', 'tr_out_when')}${f('arrive_when', 'tr_arrive')}${f('meet_note', 'tr_meet', 'tr_meet_ph')}${f('back_flight', 'tr_back', 'tr_out_ph')}${f('back_when', 'tr_back_when')}${f('local_contact', 'tr_contact', 'tr_contact_ph')}
+        <button class="btn" type="submit">${esc(t('tr_save'))}</button></form></details>`);
+}
+function tripHomeCard(a) {
+  if (!a || !['approved', 'preparing'].includes(a.status) || !a.start_date) return '';
+  const days = daysBetween(nowInTZ().date, a.start_date);
+  if (days < 0) return '';
+  const c = countryById(a.country_id); if (!c) return '';
+  return `<a class="trip-home" href="#/apps/${a.id}"><div><div class="small" style="opacity:.8">${esc(t('tr_to', { c: countryName(c) }))} · ${esc(fmtDay(a.start_date))}</div>
+    <div class="trip-dd">${days ? esc(t('tr_dd', { n: days })) : esc(t('tr_today'))}</div></div>
+    <span class="trip-go" aria-label="${esc(t('tr_home_cta'))}"><span aria-hidden="true" style="font-size:30px">${flag(c.code)}</span> ${icon('chev')}</span></a>`;
+}
 function prepCardHTML(a, ins, prep) {
   const today = nowInTZ().date;
   const days = a.start_date ? daysBetween(today, a.start_date) : null;
@@ -4015,6 +4065,24 @@ function bindInsurance() {
 }
 
 BINDERS.apps = function (id) {
+  const tf = document.getElementById('trip-form');
+  if (tf) tf.onsubmit = async (e) => {
+    e.preventDefault();
+    const row = { application_id: Number(id), updated_at: new Date().toISOString() };
+    ['out_flight', 'out_when', 'arrive_when', 'meet_note', 'back_flight', 'back_when', 'local_contact'].forEach(k => { row[k] = tf[k].value.trim() || null; });
+    const btn = tf.querySelector('button[type=submit]'); btn.disabled = true;
+    const { error } = await sb.from('application_trips').upsert(row, { onConflict: 'application_id' });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    toast(t('tr_saved')); render();
+  };
+  const sh = document.getElementById('trip-share');
+  if (sh) sh.onclick = async () => {
+    const a = (state.myApps || []).find(x => String(x.id) === String(id)); const c = a && countryById(a.country_id); if (!a || !c) return;
+    const text = tripSummary(a, c, state.appTrip);
+    try { if (navigator.share) { await navigator.share({ text }); return; } } catch (e) { if (e && e.name === 'AbortError') return; }
+    try { await navigator.clipboard.writeText(text); toast(t('tr_copied')); } catch (e) { prompt('', text); }
+  };
   bindInsurance();
   bindThreads();
   app.querySelectorAll('[data-prep]').forEach(cb => cb.onchange = async () => {
