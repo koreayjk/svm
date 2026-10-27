@@ -1653,7 +1653,7 @@ function roleBadge(role) { return `<span class="badge ${esc(role)}">${role === '
 function isAdmin() { return state.profile?.role === 'admin'; }
 function isLeader() { return !!(state.leaderOf && state.leaderOf.size); }
 function isPartner() { return !!(state.partnerOf && state.partnerOf.size); }
-function canEditCountry(c) { return !!c && (isAdmin() || !!state.partnerOf?.has(c.id)); }
+function canEditCountry(c) { return !!c && (isAdmin() || !!state.partnerOf?.has(c.id) || !!state.leaderOf?.has(c.id)); }
 function logo(white) { return `<img class="logo" src="../assets/${white ? 'SVM_Logo_white' : 'SVM_Logo'}.svg" alt="SVM">`; }
 
 let toastTimer;
