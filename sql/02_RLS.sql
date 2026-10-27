@@ -60,7 +60,7 @@ language sql
 stable
 security definer
 set search_path = public
-as $$ select public.is_admin() or public.is_field_partner(cid); $$;
+as $$ select public.is_admin() or public.is_field_partner(cid) or public.is_country_leader(cid); $$;
 -- 선교지 대화방에 들어갈 수 있는가? (관리자 · 그 나라 리더 · 선교사님)
 create or replace function public.in_field_room(cid bigint)
 returns boolean
@@ -387,11 +387,11 @@ create policy "profiles: admin delete"        on public.profiles for delete usin
 create policy "countries: read"        on public.countries      for select using (is_active or public.is_admin());
 create policy "countries: admin write" on public.countries      for all using (public.is_admin()) with check (public.is_admin());
 -- 선교사님: 자기 나라 소개·사역·생활 정보만 고침 (공개 여부·민감 국가·코드·이름은 아래 트리거가 지킴)
-create policy "countries: partner edit" on public.countries for update using (public.is_field_partner(id)) with check (public.is_field_partner(id));
+create policy "countries: partner edit" on public.countries for update using (public.can_edit_country(id)) with check (public.can_edit_country(id));
 create policy "photos: read"           on public.country_photos for select using (true);
 create policy "photos: admin write"    on public.country_photos for all using (public.is_admin()) with check (public.is_admin());
-create policy "photos: partner add"    on public.country_photos for insert with check (public.is_field_partner(country_id) and uploaded_by = auth.uid());
-create policy "photos: partner remove" on public.country_photos for delete using (public.is_field_partner(country_id));
+create policy "photos: partner add"    on public.country_photos for insert with check (public.can_edit_country(country_id) and uploaded_by = auth.uid());
+create policy "photos: partner remove" on public.country_photos for delete using (public.can_edit_country(country_id));
 create policy "videos: read"           on public.country_videos for select using (true);
 create policy "videos: edit"           on public.country_videos for all using (public.can_edit_country(country_id)) with check (public.can_edit_country(country_id));
 create policy "field_partners: members read" on public.field_partners for select to authenticated using (true);
@@ -1163,10 +1163,10 @@ do $$ begin
       using (bucket_id = 'testimony-photos' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: partner photo upload" on storage.objects for insert to authenticated
       with check (bucket_id = 'country-photos' and exists (select 1 from public.countries c
-        where lower(c.code) = (storage.foldername(name))[1] and public.is_field_partner(c.id)));
+        where lower(c.code) = (storage.foldername(name))[1] and public.can_edit_country(c.id)));
     create policy "svm: partner photo remove" on storage.objects for delete to authenticated
       using (bucket_id = 'country-photos' and exists (select 1 from public.countries c
-        where lower(c.code) = (storage.foldername(name))[1] and public.is_field_partner(c.id)));
+        where lower(c.code) = (storage.foldername(name))[1] and public.can_edit_country(c.id)));
     create policy "svm: insurance own upload" on storage.objects for insert to authenticated
       with check (bucket_id = 'insurance-docs' and (storage.foldername(name))[1] = auth.uid()::text);
     create policy "svm: insurance own or admin read" on storage.objects for select to authenticated
