@@ -743,6 +743,13 @@
   .next-list { display: grid; gap: 8px; }
   .next-opt { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; border-radius: 16px; padding: 12px 14px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer; }
   .next-opt > svg:last-child { margin-left: auto; flex: none; }
+  .gallery.fb-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 8px; overflow: visible; margin: 10px 0 0; padding: 0; }
+  .gallery.fb-photos figure { flex: none; width: auto; aspect-ratio: 4 / 3; } .fb-photos figure a { display: block; width: 100%; height: 100%; } .fb-photos figure img { width: 100%; height: 100%; object-fit: cover; }
+  .fb-thumbs { display: flex; gap: 8px; flex-wrap: wrap; } .fb-thumbs figure { position: relative; width: 72px; height: 72px; border-radius: 12px; overflow: hidden; margin: 0; }
+  .fb-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+  .fb-thumbs button { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; border: 0; background: rgba(13, 27, 58, .75); color: #fff; font-size: 14px; line-height: 1; cursor: pointer; }
+  .tag.fb-problem { background: #FFF1F0; color: #8A1C1C; }
+  .fb-comment { padding: 10px 0; } .fb-comment + .fb-comment { border-top: 1px solid var(--line); }
   .attn-list { display: grid; gap: 8px; margin-top: 12px; }
   .attn { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; border-radius: 16px; padding: 12px 14px; background: var(--surface); color: inherit; font: inherit; text-align: left; cursor: pointer; }
   .attn-n { min-width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; background: var(--navy); color: #fff; flex: none; }
@@ -1367,6 +1374,7 @@ const i18n = {
     ev_f_tz: 'Times are Bryan/College Station time.', ev_f_desc: 'Description', ev_f_link: 'Register link (optional)', ev_f_image: 'Image link (optional)',
     ev_f_allday: 'Time to be announced', ev_f_published: 'Show in the app', ev_f_need: 'Please add a title and a start time.', ev_hidden: 'Hidden', ev_past: 'Past',
     ce_title: 'Edit country page', ce_name: 'Name', ce_extras: 'Extra sections (shown under the main sections)', ce_ex_title: 'Section title', ce_ex_body: 'Text',
+    fb_title: 'Ideas & feedback', fb_d: 'Found something hard to use, or have an idea? Tell us. Everyone can comment.', fb_t: 'Ideas & feedback', fb_idea: 'Idea', fb_problem: 'Problem', fb_ph: 'What was hard to use, or what would make SVM better?', fb_photo: 'Add photos', fb_photo_n: 'Up to 3 photos', fb_post: 'Post', fb_posted: 'Thank you. Your note was posted.', fb_empty: 'No notes yet. Be the first to share an idea.', fb_comments: '{n} comments', fb_comment_ph: 'Write a comment…', fb_comment_send: 'Comment', fb_no_comments: 'No comments yet.', fb_status_open: 'New', fb_status_planned: 'Planned', fb_status_done: 'Done', fb_set_status: 'Status', fb_del: 'Delete', fb_back: 'Ideas & feedback', fb_photo_safe: 'No faces, real names or exact locations of local believers.', fb_uploading: 'Uploading photos…', fb_filter_all: 'All', nt_fb_new: 'A new idea or problem was posted.', nt_fb_comment: 'New comment on an idea thread.', nt_fb_status: 'Your idea was marked {s}.', rp_kind_feedback: 'Idea post', rp_kind_feedback_comment: 'Idea comment',
     sos_home: 'Need help?', sos_home_d: 'Alert your leader and HQ right away', sos_title: 'Emergency help', sos_lead: 'If your life is in danger, call the local emergency number first. Then tell us here so your leader and HQ can help.', sos_note: 'What is happening? (optional)', sos_loc: 'Include my location (only your leader and HQ see it)', sos_send: 'Send alert', sos_tap: 'Tap again to send', sos_sent: 'Alert sent', sos_sent_d: 'Your country leader and HQ were notified {t}.', sos_wait: 'Waiting for your leader to confirm. Keep your phone with you.', sos_acked: 'Your leader saw this {t}.', sos_acked_by: 'Confirmed by {n}', sos_safe: "I'm safe now", sos_safe_ok: 'Glad you are safe. We let your leader know.', sos_num: 'Local emergency number', sos_num_note: 'Numbers can change. Ask your leader to confirm.', sos_contact: 'Your local contact', sos_msg: 'Message my leader', sos_refresh: 'Check status', sos_sent_ok: 'Alert sent. Help is on the way.', sos_locating: 'Getting your location…', nt_ci_ack: 'Your leader saw your help request.', ci_ack_btn: 'I saw it', ci_ack_note: 'Note to the student (optional)', ci_acked: 'Seen {t}{n}', ci_unacked: 'Not yet seen by a leader',
     pp_title: 'Prayer partner', pp_d: 'Pair up with someone who carries {c} too. Share prayer requests with each other.', pp_find: 'Find a prayer partner', pp_none: 'No one is free to pair with yet. Check back soon.', pp_yours: 'Your partner', pp_open: 'Open', pp_found: 'You have a prayer partner.', pp_title2: 'Prayer partner · {c}', pp_lead: 'Share what to pray for. Pray for each other this week.', pp_ph: 'Write a prayer request or an update…', pp_empty: 'Say hello and share your first request.', pp_end: 'End pairing', pp_ended: 'This pairing has ended.', pp_end_tap: 'Tap again to end', nt_pair_new: 'You have a new prayer partner for {c}.', nt_pair_msg: 'Your prayer partner wrote to you.',
     nx_title: 'What is next?', nx_d: 'You have been on the field. Pick a next step and your leader will follow up.', nx_again: 'Go again', nx_again_d: 'Another break, same or a new nation', nx_longer: 'Go longer', nx_longer_d: 'A 1–2 year path', nx_mentor: 'Help the next team', nx_mentor_d: 'Share what you learned with new students', nx_pray: 'Keep carrying this nation', nx_pray_d: 'Pray and stay connected', nx_sent: 'Your leader was told. They will reach out.', nx_msg_again: 'I would like to go again. Can we talk about the next trip?', nx_msg_longer: 'I am interested in a longer path (1–2 years). Can we talk about it?', nx_msg_mentor: 'I would like to help the next team of students. How can I?',
@@ -1632,6 +1640,7 @@ const i18n = {
     ev_f_tz: '시간은 브라이언/컬리지 스테이션 기준입니다.', ev_f_desc: '소개', ev_f_link: '등록 링크 (선택)', ev_f_image: '이미지 링크 (선택)',
     ev_f_allday: '시간 추후 안내', ev_f_published: '앱에 표시', ev_f_need: '제목과 시작 시간을 넣어 주세요.', ev_hidden: '숨김', ev_past: '지난 이벤트',
     ce_title: '나라 페이지 편집', ce_name: '이름', ce_extras: '추가 항목 (기본 항목 아래에 표시)', ce_ex_title: '항목 제목', ce_ex_body: '내용',
+    fb_title: '개선 제안', fb_d: '써 보다가 불편했던 점이나 아이디어를 남겨 주세요. 누구나 댓글을 달 수 있어요.', fb_t: '개선 제안', fb_idea: '아이디어', fb_problem: '불편해요', fb_ph: '어디가 불편했는지, 어떻게 바뀌면 좋을지 적어 주세요.', fb_photo: '사진 추가', fb_photo_n: '사진은 3장까지', fb_post: '올리기', fb_posted: '고맙습니다. 의견이 올라갔어요.', fb_empty: '아직 글이 없어요. 첫 아이디어를 남겨 보세요.', fb_comments: '댓글 {n}개', fb_comment_ph: '댓글을 남겨 주세요…', fb_comment_send: '댓글 달기', fb_no_comments: '아직 댓글이 없어요.', fb_status_open: '접수', fb_status_planned: '반영 예정', fb_status_done: '반영 완료', fb_set_status: '상태', fb_del: '삭제', fb_back: '개선 제안', fb_photo_safe: '현지 성도의 얼굴·실명·정확한 위치가 나오지 않게 해 주세요.', fb_uploading: '사진을 올리는 중…', fb_filter_all: '전체', nt_fb_new: '새 개선 제안이 올라왔어요.', nt_fb_comment: '개선 제안 글에 새 댓글이 달렸어요.', nt_fb_status: '내 제안이 "{s}" 상태가 되었어요.', rp_kind_feedback: '개선 제안 글', rp_kind_feedback_comment: '개선 제안 댓글',
     sos_home: '도움이 필요하세요?', sos_home_d: '리더와 본부에 바로 알립니다', sos_title: '긴급 도움 요청', sos_lead: '생명이 위험하면 먼저 현지 응급 번호로 전화하세요. 그다음 여기에 알려 주시면 리더와 본부가 도울 수 있어요.', sos_note: '어떤 상황인가요? (선택)', sos_loc: '내 위치 포함 (리더와 본부에게만 보여요)', sos_send: '도움 요청 보내기', sos_tap: '한 번 더 눌러야 보내져요', sos_sent: '요청을 보냈어요', sos_sent_d: '{t} 나라 리더와 본부에 알렸어요.', sos_wait: '리더의 확인을 기다리는 중이에요. 휴대폰을 가까이 두세요.', sos_acked: '리더가 {t} 확인했어요.', sos_acked_by: '{n} 님이 확인', sos_safe: '이제 안전해요', sos_safe_ok: '안전하다니 다행이에요. 리더에게 알렸어요.', sos_num: '현지 응급 번호', sos_num_note: '번호는 바뀔 수 있어요. 리더에게 확인해 두세요.', sos_contact: '내 현지 연락처', sos_msg: '리더에게 메시지', sos_refresh: '상태 확인', sos_sent_ok: '요청을 보냈어요. 곧 도움이 가요.', sos_locating: '위치를 가져오는 중…', nt_ci_ack: '리더가 도움 요청을 확인했어요.', ci_ack_btn: '확인했어요', ci_ack_note: '학생에게 남길 말 (선택)', ci_acked: '{t} 확인{n}', ci_unacked: '아직 확인한 리더가 없어요',
     pp_title: '기도 짝', pp_d: '{c}를 함께 품은 사람과 짝이 되어 서로 기도 제목을 나눠요.', pp_find: '기도 짝 찾기', pp_none: '아직 짝지을 수 있는 분이 없어요. 곧 다시 확인해 주세요.', pp_yours: '내 기도 짝', pp_open: '열기', pp_found: '기도 짝이 생겼어요.', pp_title2: '기도 짝 · {c}', pp_lead: '기도 제목을 나누고 이번 주에 서로를 위해 기도해요.', pp_ph: '기도 제목이나 근황을 적어 주세요…', pp_empty: '인사하고 첫 기도 제목을 나눠 보세요.', pp_end: '짝 끝내기', pp_ended: '이 짝은 끝났어요.', pp_end_tap: '한 번 더 눌러 끝내기', nt_pair_new: '{c} 기도 짝이 생겼어요.', nt_pair_msg: '기도 짝이 글을 남겼어요.',
     nx_title: '다음 걸음은?', nx_d: '선교지를 다녀오셨어요. 다음 걸음을 고르면 리더가 이어서 연락해요.', nx_again: '다시 가기', nx_again_d: '이번 방학에 같은 나라나 새로운 나라로', nx_longer: '더 길게 가기', nx_longer_d: '1~2년 길', nx_mentor: '다음 팀 돕기', nx_mentor_d: '새 학생들에게 배운 것을 나누기', nx_pray: '이 나라 계속 품기', nx_pray_d: '기도하며 이어가기', nx_sent: '리더에게 알렸어요. 곧 연락할 거예요.', nx_msg_again: '다시 가고 싶어요. 다음 여정을 의논할 수 있을까요?', nx_msg_longer: '더 긴 길(1~2년)에 관심이 있어요. 이야기 나눌 수 있을까요?', nx_msg_mentor: '다음 학생 팀을 돕고 싶어요. 어떻게 하면 될까요?',
@@ -1972,6 +1981,13 @@ function createDemoClient() {
       { id: 5, event_key: 'mc2026', full_name: 'Hannah Cho', email: 'hannah.cho@example.org', phone: null, role: 'youth', lang: 'ko', group_name: null, group_size: null, walk_in: false, checked_in_at: null, checked_in_by: null, created_at: ago(2) },
     ];
     const conference_checkins = [];
+    const feedback_posts = [
+      { id: 1, user_id: 'seed-2', kind: 'idea', body: 'It would help to see the Sunday schedule for the whole month on one page, so I can plan rides.', photos: [], status: 'planned', created_at: ago(3) },
+      { id: 2, user_id: 'seed-5', kind: 'problem', body: 'On my phone the prayer request box is hidden behind the keyboard while I type.', photos: [], status: 'open', created_at: ago(1) },
+    ];
+    const feedback_comments = [
+      { id: 1, post_id: 1, user_id: 'seed-4', body: 'Yes please. A calendar view would be great.', created_at: ago(2) },
+    ];
     const application_extensions = [
       { id: mid++, application_id: 3, new_return_date: ahead(400), reason: 'The church asked me to stay through the Christmas outreach and spring camp.', status: 'pending', created_at: ago(1), reviewed_at: null },
     ];
@@ -1979,7 +1995,7 @@ function createDemoClient() {
     return {
       users: [], session: null, next: 1000,
       profiles, countries, nation_pledges, room_members, messages, applications, application_status_history, application_extensions,
-      conference_registrations, conference_checkins,
+      conference_registrations, conference_checkins, feedback_posts, feedback_comments,
       gospel_messages, gospel_sentences, courses, course_feedback, language_progress, practice_days, graduation_requests,
       gatherings, attendance, testimonies, prayers, prayer_reactions, support_stories, checklist_items, teams, team_members, team_posts, team_tasks,
       country_photos: [],
@@ -2043,6 +2059,7 @@ function createDemoClient() {
     team_tasks: () => ({ status: 'todo' }),
     team_members: () => ({ role: 'member' }),
     gatherings: () => ({ type: 'sunday', start_time: '14:00', end_time: '16:00' }),
+    feedback_posts: () => ({ kind: 'idea', status: 'open', photos: [] }),
     countries: () => ({ is_active: true, is_sensitive: false, extra_sections: [], booth_meta: {}, sort_order: 0 }),
     events: () => ({ all_day: false, is_featured: false, is_published: true }),
     attendance: () => ({ checked_at: nowIso() }),
@@ -2485,7 +2502,7 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', sos: 'home', pair: 'countries', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', sos: 'home', pair: 'countries', ideas: 'community', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
@@ -2825,7 +2842,7 @@ const VIEWS = {
     return `${pageHead(t('community_title'), t('community_sub'))}
       ${await viewCommunityRooms()}
       <div class="section-head"><h2>${esc(t('community_more'))}</h2></div>
-      ${card([['hands', 'prayers', 'com_prayer'], ['spark', 'testimonies', 'com_testi'], ['people', 'teams', 'com_teams'], ['gift', 'support', 'com_support']]
+      ${card([['hands', 'prayers', 'com_prayer'], ['spark', 'testimonies', 'com_testi'], ['people', 'teams', 'com_teams'], ['gift', 'support', 'com_support'], ['chat', 'ideas', 'fb']]
         .map(([ic, href, k]) => `<a class="list-row" href="#/${href}"><span class="ico-tile">${icon(ic)}</span>
           <div class="meta"><div class="t">${esc(t(k + '_t'))}</div><div class="d">${esc(t(k + '_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`).join(''))}`;
   },
@@ -4659,6 +4676,121 @@ BINDERS.conference = function () {
   };
 };
 
+// ---------------------------------------------------------------------
+// 개선 제안 게시판 (임시) — 불편한 점·아이디어를 사진과 함께 올리고 댓글로 이야기
+// ---------------------------------------------------------------------
+const FB_STATE = { kind: 'idea', filter: 'all', files: [] };
+function fbPhotosHTML(list, link) {
+  const p = Array.isArray(list) ? list : [];
+  return p.length ? `<div class="gallery fb-photos">${p.map(u => link ? `<figure><a href="${esc(u)}" target="_blank" rel="noopener"><img src="${esc(u)}" alt="" loading="lazy"></a></figure>` : `<figure><img src="${esc(u)}" alt="" loading="lazy"></figure>`).join('')}</div>` : '';
+}
+function fbCardHTML(x, n, full) {
+  const mine = x.user_id === state.profile.id;
+  if (!mine && isBlocked(x.user_id)) return '';
+  const body = full ? para(x.body) : esc(x.body).replace(/\n/g, ' ');
+  const head = `<div class="row between top" style="gap:10px"><div class="row" style="gap:6px;flex-wrap:wrap"><span class="tag ${x.kind === 'problem' ? 'fb-problem' : ''}">${esc(t(x.kind === 'problem' ? 'fb_problem' : 'fb_idea'))}</span>
+      ${x.status !== 'open' ? `<span class="st ${x.status === 'done' ? 'st-returned' : 'st-on_field'}">${esc(t('fb_status_' + x.status))}</span>` : ''}</div>
+      <span class="small muted">${esc(mine ? t('you') : shortName(nameCache[x.user_id]?.name) || '—')} · ${esc(relTime(x.created_at))}</span></div>`;
+  const text = full ? `<p style="margin:10px 0 0">${body}</p>` : `<p style="margin:10px 0 0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden">${body}</p>`;
+  const foot = full ? `<div class="row between small muted" style="margin-top:12px">${isAdmin() ? `<label class="row" style="gap:6px">${esc(t('fb_set_status'))}<select data-fb-status="${x.id}" style="width:auto;min-height:36px;padding:4px 10px">${['open', 'planned', 'done'].map(k => `<option value="${k}" ${x.status === k ? 'selected' : ''}>${esc(t('fb_status_' + k))}</option>`).join('')}</select></label>` : '<span></span>'}
+      ${mine || isAdmin() ? `<button type="button" class="text-link" style="color:var(--danger);font-size:13.5px" data-fb-del="${x.id}">${esc(t('fb_del'))}</button>` : moreBtn('feedback', x.id, x.user_id, x.body)}</div>`
+    : `<div class="small muted" style="margin-top:10px">${icon('chat', 'width="14" height="14" style="vertical-align:-2px"')} ${esc(t('fb_comments', { n: n || 0 }))}</div>`;
+  return card(full ? `${head}${text}${fbPhotosHTML(x.photos, true)}${foot}` : `<a href="#/ideas/${x.id}" style="color:inherit;text-decoration:none;display:block">${head}${text}${fbPhotosHTML(x.photos, false)}${foot}</a>`);
+}
+VIEWS.ideas = async function (id) {
+  const back = backLink('#/community', t('community_title'));
+  if (id) {
+    const { data: post } = await sb.from('feedback_posts').select('*').eq('id', Number(id)).maybeSingle();
+    if (!post) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+    const { data: cms } = await sb.from('feedback_comments').select('*').eq('post_id', post.id).order('created_at');
+    await loadNames([post.user_id, ...(cms || []).map(c => c.user_id)]);
+    state.fbPost = post;
+    const me = state.profile.id;
+    const list = (cms || []).filter(c => c.user_id === me || !isBlocked(c.user_id));
+    return `${backLink('#/ideas', t('fb_back'))}
+      ${fbCardHTML(post, list.length, true)}
+      <div class="section-head"><h2>${esc(t('fb_comments', { n: list.length }))}</h2></div>
+      ${card(list.length ? list.map(c => `<div class="fb-comment"><div class="row between small muted"><span>${esc(c.user_id === me ? t('you') : shortName(nameCache[c.user_id]?.name) || '—')} · ${esc(relTime(c.created_at))}</span>
+          ${c.user_id === me || isAdmin() ? `<button type="button" class="quiet-del" data-fb-cdel="${c.id}" aria-label="${esc(t('fb_del'))}">${icon('trash')}</button>` : moreBtn('feedback_comment', c.id, c.user_id, c.body)}</div>
+          <p style="margin:4px 0 0">${para(c.body)}</p></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('fb_no_comments'))}</p>`)}
+      <form class="thread-form" id="fb-comment-form" style="margin-top:12px"><textarea name="body" rows="2" maxlength="1000" placeholder="${esc(t('fb_comment_ph'))}" required></textarea>
+        <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('fb_comment_send'))}</button></form>`;
+  }
+  const [{ data: posts }, { data: cms }] = await Promise.all([
+    sb.from('feedback_posts').select('*').order('created_at', { ascending: false }).limit(100),
+    sb.from('feedback_comments').select('post_id').limit(2000)]);
+  await loadNames((posts || []).map(p => p.user_id));
+  const counts = {}; (cms || []).forEach(c => { counts[c.post_id] = (counts[c.post_id] || 0) + 1; });
+  const shown = (posts || []).filter(p => FB_STATE.filter === 'all' || p.kind === FB_STATE.filter);
+  return `${back}${pageHead(t('fb_title'), t('fb_d'))}
+    ${card(`<form id="fb-form" novalidate>
+      <div class="seg" role="tablist" style="margin-bottom:12px">${['idea', 'problem'].map(k => `<button type="button" role="tab" data-fb-kind="${k}" class="${FB_STATE.kind === k ? 'active' : ''}" aria-selected="${FB_STATE.kind === k}">${esc(t('fb_' + k))}</button>`).join('')}</div>
+      <label class="field"><textarea name="body" rows="4" maxlength="2000" style="min-height:100px" placeholder="${esc(t('fb_ph'))}" required></textarea></label>
+      <div class="fb-thumbs" id="fb-thumbs">${FB_STATE.files.map((f, i) => `<figure><img src="${esc(f.preview)}" alt=""><button type="button" data-fb-rm="${i}" aria-label="${esc(t('fb_del'))}">×</button></figure>`).join('')}</div>
+      <div class="row between" style="gap:10px;flex-wrap:wrap;margin-top:8px">
+        <label class="btn light small" style="cursor:pointer">${icon('plus', 'width="15" height="15"')} ${esc(t('fb_photo'))}<input type="file" accept="image/*" multiple id="fb-file" hidden></label>
+        <span class="small muted">${esc(t('fb_photo_n'))}</span>
+        <button class="btn" type="submit" style="margin-left:auto">${esc(t('fb_post'))}</button></div>
+      <p class="small muted" style="margin:8px 0 0">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('fb_photo_safe'))}</p></form>`)}
+    <div class="filters" role="tablist" style="margin:14px 0 10px">${['all', 'idea', 'problem'].map(k => `<button type="button" role="tab" data-fb-filter="${k}" class="${FB_STATE.filter === k ? 'active' : ''}" aria-selected="${FB_STATE.filter === k}">${esc(k === 'all' ? t('fb_filter_all') : t('fb_' + k))}</button>`).join('')}</div>
+    ${shown.length ? shown.map(p => fbCardHTML(p, counts[p.id], false)).join('') : card(emptyHTML('chat', t('fb_empty')))}`;
+};
+BINDERS.ideas = function (id) {
+  const keepText = () => { const f = document.getElementById('fb-form'); if (f) FB_STATE.draft = f.body.value; };
+  const f = document.getElementById('fb-form');
+  if (f) {
+    if (FB_STATE.draft) f.body.value = FB_STATE.draft;
+    app.querySelectorAll('[data-fb-kind]').forEach(b => b.onclick = () => { keepText(); FB_STATE.kind = b.dataset.fbKind; render(); });
+    app.querySelectorAll('[data-fb-filter]').forEach(b => b.onclick = () => { keepText(); FB_STATE.filter = b.dataset.fbFilter; render(); });
+    app.querySelectorAll('[data-fb-rm]').forEach(b => b.onclick = () => { keepText(); FB_STATE.files.splice(Number(b.dataset.fbRm), 1); render(); });
+    const fi = document.getElementById('fb-file');
+    fi.onchange = () => {
+      keepText();
+      [...fi.files].slice(0, 3 - FB_STATE.files.length).forEach(file => FB_STATE.files.push({ file, preview: URL.createObjectURL(file) }));
+      render();
+    };
+    f.onsubmit = async (e) => {
+      e.preventDefault();
+      const body = f.body.value.trim(); if (!body) return;
+      const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+      try {
+        if (FB_STATE.files.length) toast(t('fb_uploading'));
+        const photos = [];
+        for (const it of FB_STATE.files) photos.push(await uploadMemberPhoto(it.file));
+        const { error } = await sb.from('feedback_posts').insert({ user_id: state.profile.id, kind: FB_STATE.kind, body, photos });
+        if (error) throw error;
+        FB_STATE.files = []; FB_STATE.draft = ''; toast(t('fb_posted')); render();
+      } catch (err) { btn.disabled = false; toast(errMsg(err), true); }
+    };
+  }
+  const cf = document.getElementById('fb-comment-form');
+  if (cf) cf.onsubmit = async (e) => {
+    e.preventDefault();
+    const body = cf.body.value.trim(); if (!body) return;
+    const btn = cf.querySelector('button'); btn.disabled = true;
+    const { error } = await sb.from('feedback_comments').insert({ post_id: state.fbPost.id, user_id: state.profile.id, body });
+    btn.disabled = false;
+    if (error) return toast(errMsg(error), true);
+    render();
+  };
+  app.querySelectorAll('[data-fb-cdel]').forEach(b => b.onclick = armTwice(b, async () => {
+    const { error } = await sb.from('feedback_comments').delete().eq('id', Number(b.dataset.fbCdel));
+    if (error) return toast(errMsg(error), true);
+    render();
+  }));
+  app.querySelectorAll('[data-fb-del]').forEach(b => b.onclick = armTwice(b, async () => {
+    const { error } = await sb.from('feedback_posts').delete().eq('id', Number(b.dataset.fbDel));
+    if (error) return toast(errMsg(error), true);
+    toast(t('adm_deleted')); location.hash = '#/ideas';
+  }));
+  const st = app.querySelector('[data-fb-status]');
+  if (st) st.onchange = async () => {
+    const { error } = await sb.from('feedback_posts').update({ status: st.value }).eq('id', Number(st.dataset.fbStatus));
+    if (error) return toast(errMsg(error), true);
+    toast(t('adm_updated')); render();
+  };
+};
+
 // 리더 대화방: 모든 나라의 선교사님 · 나라 리더 · 관리자가 함께 (학생에게는 안 보임)
 function inNetworkRoom() { return isAdmin() || (state.leaderOf && state.leaderOf.size > 0) || (state.partnerOf && state.partnerOf.size > 0); }
 VIEWS.network = async function () {
@@ -6290,7 +6422,7 @@ async function adminPostsHTML() {
     ${card((ss || []).length ? order(ss).map(sRow).join('') : `<p class="muted small" style="margin:0">${esc(t('sup_none'))}</p>`)}`;
 }
 // 신고된 내용 지우기 — 종류별 테이블과 방법 (채팅은 '삭제된 메시지'로 표시)
-const REPORT_TARGET = { message: ['messages', 'soft'], prayer: ['prayers', 'delete'], testimony: ['testimonies', 'delete'], team_post: ['team_posts', 'delete'] };
+const REPORT_TARGET = { message: ['messages', 'soft'], prayer: ['prayers', 'delete'], testimony: ['testimonies', 'delete'], team_post: ['team_posts', 'delete'], feedback: ['feedback_posts', 'delete'], feedback_comment: ['feedback_comments', 'delete'] };
 function bindAdminPosts() {
   app.querySelectorAll('[data-rp-remove],[data-rp-dismiss]').forEach(b => b.onclick = async () => {
     const id = b.dataset.rpRemove || b.dataset.rpDismiss, r = (state.adminReports || []).find(x => String(x.id) === id);
@@ -6784,6 +6916,9 @@ function notifText(n) {
     case 'leader_msg': return t('nt_leader_msg');
     case 'field_msg': return t('nt_field_msg', { c: c ? countryName(c) : '' });
     case 'net_msg': return t('nt_net_msg');
+    case 'fb_new': return t('nt_fb_new');
+    case 'fb_comment': return t('nt_fb_comment');
+    case 'fb_status': return t('nt_fb_status', { s: t('fb_status_' + (p.status || 'open')) });
     case 'checkin_ack': return t('nt_ci_ack');
     case 'pair_new': return t('nt_pair_new', { c: c ? countryName(c) : '' });
     case 'pair_msg': return t('nt_pair_msg');
