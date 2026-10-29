@@ -995,6 +995,74 @@
     .worldmap .plane { display: none; }
     .worldmap .home-ring { animation: none; opacity: 0; }
   }
+
+  /* =====================================================================
+     데스크톱·태블릿 레이아웃 (폰 화면은 위의 규칙 그대로)
+     ≥768px: 본문을 넓히고 · ≥1024px: 왼쪽 사이드바 + 넓은 본문 + 2단 배치
+     ===================================================================== */
+  @media (min-width: 768px) {
+    .apphead-inner, main { max-width: 760px; }
+    .sheet-back { align-items: center; }
+    .sheet { border-radius: 26px; }
+    @keyframes sheet-up { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+  }
+  @media (min-width: 1024px) {
+    :root { --side-w: 252px; --gutter: 40px; }
+    body { font-size: 16.5px; }
+    #app { padding-left: var(--side-w); }
+    /* 왼쪽 사이드바 */
+    .island {
+      left: 0; top: 0; bottom: 0; transform: none; width: var(--side-w); border-radius: 0; padding: 22px 14px 22px;
+      display: flex; flex-direction: column; gap: 4px;
+      background: rgba(255, 255, 255, .78); box-shadow: 1px 0 0 var(--separator, rgba(13, 27, 58, .08));
+    }
+    .island::before { content: ""; display: block; height: 38px; margin: 2px 12px 24px; background: url(../assets/SVM_Logo.svg) left center / auto 30px no-repeat; }
+    .island-inner { flex-direction: column; height: auto; gap: 4px; }
+    .island a { flex: none; flex-direction: row; justify-content: flex-start; gap: 14px; padding: 12px 16px; border-radius: 14px; font-size: 15.5px; height: auto; position: relative; }
+    .island a .ico { height: 24px; }
+    .island a > span:last-child { font-weight: 600; letter-spacing: 0; }
+    .island a:hover:not(.active) { background: rgba(13, 27, 58, .05); color: var(--navy); }
+    .island a:active { transform: none; }
+    .island a .badge, .island a .dot-badge { position: static; margin-left: auto; }
+    /* 상단 바: 로고는 사이드바로 옮기고 오른쪽 도구만 */
+    .apphead-inner { max-width: 1180px; justify-content: flex-end; padding: 0 var(--gutter); }
+    .apphead-inner > a[aria-label="SVM home"] { display: none; }
+    .apphead { padding-top: 16px; }
+    main { max-width: 1180px; padding: 0 var(--gutter) 72px; }
+    /* 화면별 폭: 기본은 읽기 좋은 한 단, 대시보드형은 2단 */
+    #view { max-width: 820px; margin-left: auto; margin-right: auto; }
+    #app[data-tab="home"] #view, #app[data-tab="my"] #view, #app[data-tab="countries"] #view, #app[data-tab="community"] #view,
+    #app[data-tab="train"] #view, #app[data-tab="teams"] #view, #app[data-tab="support"] #view, #app[data-tab="testimonies"] #view {
+      max-width: 1180px; column-count: 2; column-gap: 28px;
+    }
+    #app[data-tab="home"] #view > *, #app[data-tab="my"] #view > *, #app[data-tab="countries"] #view > *, #app[data-tab="community"] #view > *,
+    #app[data-tab="train"] #view > *, #app[data-tab="teams"] #view > *, #app[data-tab="support"] #view > *, #app[data-tab="testimonies"] #view > * { break-inside: avoid; }
+    #view > .page-head, #view > .greet, #view > div:has(> .back-pill), #view > .lang-pick, #view > .filters, #view > .banner { column-span: all; }
+    #view > .section-head { break-after: avoid; }
+    #app[data-tab="admin"] #view, #app[data-tab="lead"] #view, #app[data-tab="plans"] #view, #app[data-tab="field"] #view,
+    #app[data-tab="conference"] #view, #app[data-tab="apps"] #view { max-width: 1040px; }
+    /* 채팅: 입력창을 본문 가운데에 */
+    .composer { left: var(--side-w); right: 0; bottom: 28px; width: min(760px, calc(100% - var(--side-w) - 80px)); }
+    .chat-spacer { height: 84px; }
+    .toast { left: calc(50% + var(--side-w) / 2); bottom: 32px !important; }
+    @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
+    /* 마우스 위에 올렸을 때 */
+    a.list-row:hover, button.list-row:hover { background: rgba(13, 27, 58, .035); border-radius: 14px; }
+    .shell { transition: box-shadow .25s var(--ease), transform .25s var(--ease); }
+    a.shell:hover, .dest:hover { box-shadow: 0 18px 40px -22px rgba(13, 27, 58, .45); transform: translateY(-2px); }
+    /* 로그인 화면: 왼쪽 소개(지도) · 오른쪽 가입 폼 */
+    #app:has(> .auth-hero) { padding-left: 0; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); min-height: 100vh; align-items: center; }
+    #app:has(> .auth-hero) .auth-hero { padding: 48px 40px 48px 56px; }
+    #app:has(> .auth-hero) .auth-body { width: 100%; max-width: 500px; margin: 0 auto; padding: 48px 48px 48px 24px; }
+    .h1, h1.display { font-size: 34px; }
+    .bento { gap: 16px; }
+    .bento > .dest { min-height: 210px; }
+  }
+  @media (min-width: 1500px) {
+    :root { --side-w: 276px; }
+    #app[data-tab="home"] #view, #app[data-tab="countries"] #view, #app[data-tab="community"] #view { max-width: 1280px; column-gap: 32px; }
+    main, .apphead-inner { max-width: 1280px; }
+  }
 </style>
 </head>
 <body>
