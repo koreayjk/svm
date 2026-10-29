@@ -62,7 +62,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_net_msg": "New message in the leaders room.",
     "nt_ci_ack": "Your leader saw your help request.",
     "nt_pair_new": "You have a new prayer partner for {c}.",
-    "nt_pair_msg": "Your prayer partner wrote to you."
+    "nt_pair_msg": "Your prayer partner wrote to you.",
+    "nt_fb_new": "A new idea or problem was posted.",
+    "nt_fb_comment": "New comment on an idea thread.",
+    "nt_fb_status": "Your idea status changed."
   },
   "ko": {
     "nt_app": "{c} 신청: {s}",
@@ -111,7 +114,10 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_net_msg": "리더 대화방에 새 메시지가 있어요.",
     "nt_ci_ack": "리더가 도움 요청을 확인했어요.",
     "nt_pair_new": "{c} 기도 짝이 생겼어요.",
-    "nt_pair_msg": "기도 짝이 글을 남겼어요."
+    "nt_pair_msg": "기도 짝이 글을 남겼어요.",
+    "nt_fb_new": "새 개선 제안이 올라왔어요.",
+    "nt_fb_comment": "개선 제안 글에 새 댓글이 달렸어요.",
+    "nt_fb_status": "내 제안의 상태가 바뀌었어요."
   }
 };
 
@@ -157,6 +163,9 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'checkin_ack': return t('nt_ci_ack');
     case 'pair_new': return t('nt_pair_new', { c: country });
     case 'pair_msg': return t('nt_pair_msg');
+    case 'fb_new': return t('nt_fb_new');
+    case 'fb_comment': return t('nt_fb_comment');
+    case 'fb_status': return t('nt_fb_status');
     default: return t('nt_generic');
   }
 }
