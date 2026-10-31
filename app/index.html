@@ -695,6 +695,27 @@
   @media (hover: hover) { .msg .foot .act { opacity: 0; } .msg:hover .foot .act, .msg .foot .act:focus-visible, .msg .foot .act.armed { opacity: .8; } }
   .msg.flash .bubble { animation: flash 1.2s ease; } @keyframes flash { 0%, 60% { box-shadow: 0 0 0 3px rgba(242, 103, 34, .55); } 100% { box-shadow: var(--shadow); } }
   .edit-form textarea { min-height: 54px; width: min(340px, 70vw); font-size: 15px; background: var(--fill); }
+  /* 고급: 멘션 · 고정 · 검색 · 읽음 · 입력 중 */
+  .mention { color: var(--orange-dark); font-weight: 600; background: var(--orange-soft); border-radius: 6px; padding: 0 3px; }
+  .msg.me .bubble .mention { color: #FFD7BF; background: rgba(255, 255, 255, .14); }
+  .mention.me { box-shadow: inset 0 0 0 1px rgba(242, 103, 34, .6); }
+  .msg.mentioned .bubble { box-shadow: 0 0 0 2px rgba(242, 103, 34, .35), var(--shadow); }
+  .pin-banner { position: sticky; top: 64px; z-index: 5; display: flex; align-items: center; gap: 6px; background: rgba(255, 255, 255, .92); backdrop-filter: blur(10px); border: 1px solid var(--line); border-radius: 14px; padding: 4px 4px 4px 10px; margin-bottom: 8px; box-shadow: var(--shadow); }
+  .pin-go { flex: 1; min-width: 0; border: 0; background: none; font: inherit; font-size: 13.5px; text-align: left; cursor: pointer; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 6px 0; } .pin-go b { color: var(--navy); }
+  .pin-x { border: 0; background: none; font-size: 18px; cursor: pointer; color: var(--muted-2); padding: 4px 10px; }
+  .msg .foot .act.on { opacity: 1; background: var(--orange-soft); }
+  .more-earlier { align-self: center; border: 0; background: var(--fill); color: var(--muted); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; margin-bottom: 10px; }
+  .seen { border: 0; background: none; color: var(--orange-dark); font: inherit; font-size: 11.5px; cursor: pointer; padding: 0 2px; }
+  .ck-tools { margin: 0 0 8px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .ck-search { width: 100%; background: var(--surface); border-radius: 16px; padding: 8px; box-shadow: var(--shadow); } .ck-search[hidden] { display: none; }
+  .ck-search input { width: 100%; min-height: 42px; }
+  .ck-results { display: grid; gap: 2px; margin-top: 6px; max-height: 260px; overflow-y: auto; }
+  .ck-res { display: grid; gap: 2px; text-align: left; border: 0; background: none; font: inherit; padding: 8px 10px; border-radius: 12px; cursor: pointer; color: var(--text); } .ck-res:hover { background: var(--fill); }
+  .ck-res mark { background: #FFE3B3; color: inherit; border-radius: 3px; }
+  .typing { font-size: 12.5px; color: var(--muted-2); padding: 0 16px 4px; text-align: center; } .typing[hidden] { display: none; }
+  .composer { position: relative; }
+  .mention-pop { position: absolute; left: 6px; right: 6px; bottom: calc(100% + 6px); background: var(--surface); border-radius: 16px; box-shadow: 0 12px 32px -10px rgba(13, 27, 58, .35); padding: 4px; z-index: 6; } .mention-pop[hidden] { display: none; }
+  .mention-pop button { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; font: inherit; padding: 8px 10px; border-radius: 12px; cursor: pointer; text-align: left; } .mention-pop button:hover, .mention-pop button:first-child { background: var(--fill); }
   .composer { flex-wrap: wrap; }
   .composer .composer-bar { flex: 1 0 100%; display: grid; gap: 4px; padding: 2px 6px 4px; }
   .composer .composer-bar[hidden] { display: none; }
@@ -1257,7 +1278,7 @@ const i18n = {
     swipe: 'Swipe →',
     train_sub: 'Trained, then sent.', train_goal: 'Goal', train_hero: 'Share the gospel in their heart language.',
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
-    community_sub: 'Pray, plan and go together.', ch_reply: 'Reply', ch_react: 'React', ch_edit: 'Edit', ch_delete: 'Delete', ch_edited: 'edited', ch_photo: 'Add photo', ch_replying: 'Replying to {n}', ch_cancel: 'Cancel', ch_save: 'Save', ch_uploading: 'Sending photo…', ch_deleted_reply: 'Message', ch_photo_msg: 'Photo', ch_edit_empty: 'A message cannot be empty.', ch_img_alt: 'Photo in chat', mem_side: 'In this room', mem_view: 'See who is here', mem_title: 'Who is in this room', mem_none: 'No one yet.', mem_n: '{n} people', mem_n1: '1 person', mem_you: 'You', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
+    community_sub: 'Pray, plan and go together.', ch_seen: 'Seen {n}', ch_seen_by: 'Seen by', ch_pin: 'Pin', ch_unpin: 'Unpin', ch_pinned: 'Pinned.', ch_unpinned: 'Unpinned.', ch_earlier: 'Show earlier messages', ch_search: 'Search', ch_search_ph: 'Search this room…', ch_search_none: 'No messages found.', ch_typing_one: '{n} is typing…', ch_typing_many: '{n} and {c} others are typing…', nt_chat_mention: 'You were mentioned in a chat.', ch_reply: 'Reply', ch_react: 'React', ch_edit: 'Edit', ch_delete: 'Delete', ch_edited: 'edited', ch_photo: 'Add photo', ch_replying: 'Replying to {n}', ch_cancel: 'Cancel', ch_save: 'Save', ch_uploading: 'Sending photo…', ch_deleted_reply: 'Message', ch_photo_msg: 'Photo', ch_edit_empty: 'A message cannot be empty.', ch_img_alt: 'Photo in chat', mem_side: 'In this room', mem_view: 'See who is here', mem_title: 'Who is in this room', mem_none: 'No one yet.', mem_n: '{n} people', mem_n1: '1 person', mem_you: 'You', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
     members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station to seven mission fields.', map_hubs: 'Sending from Bryan/College Station', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
     // ② country rooms
@@ -1529,7 +1550,7 @@ const i18n = {
     swipe: '밀어서 보기 →',
     train_sub: '훈련 후 파송.', train_goal: '목표', train_hero: '그들의 마음의 언어로 복음을 전하기.',
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
-    community_sub: '함께 기도하고, 준비하고, 갑니다.', ch_reply: '답장', ch_react: '반응', ch_edit: '수정', ch_delete: '삭제', ch_edited: '수정됨', ch_photo: '사진 추가', ch_replying: '{n} 님에게 답장', ch_cancel: '취소', ch_save: '저장', ch_uploading: '사진을 보내는 중…', ch_deleted_reply: '메시지', ch_photo_msg: '사진', ch_edit_empty: '내용이 비어 있어요.', ch_img_alt: '채팅 사진', mem_side: '이 방에 있는 사람', mem_view: '누가 있는지 보기', mem_title: '이 방에 있는 사람', mem_none: '아직 아무도 없어요.', mem_n: '{n}명', mem_n1: '1명', mem_you: '나', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
+    community_sub: '함께 기도하고, 준비하고, 갑니다.', ch_seen: '읽음 {n}', ch_seen_by: '읽은 사람', ch_pin: '고정', ch_unpin: '고정 해제', ch_pinned: '글을 고정했어요.', ch_unpinned: '고정을 풀었어요.', ch_earlier: '이전 메시지 더 보기', ch_search: '검색', ch_search_ph: '이 방에서 찾기…', ch_search_none: '찾은 메시지가 없어요.', ch_typing_one: '{n} 님이 입력 중…', ch_typing_many: '{n} 님 외 {c}명이 입력 중…', nt_chat_mention: '채팅에서 나를 언급했어요.', ch_reply: '답장', ch_react: '반응', ch_edit: '수정', ch_delete: '삭제', ch_edited: '수정됨', ch_photo: '사진 추가', ch_replying: '{n} 님에게 답장', ch_cancel: '취소', ch_save: '저장', ch_uploading: '사진을 보내는 중…', ch_deleted_reply: '메시지', ch_photo_msg: '사진', ch_edit_empty: '내용이 비어 있어요.', ch_img_alt: '채팅 사진', mem_side: '이 방에 있는 사람', mem_view: '누가 있는지 보기', mem_title: '이 방에 있는 사람', mem_none: '아직 아무도 없어요.', mem_n: '{n}명', mem_n1: '1명', mem_you: '나', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
     members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
     room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
@@ -2198,6 +2219,8 @@ function createDemoClient() {
     eq(k, v) { this.f.push(r => String(r[k]) === String(v)); return this; }
     neq(k, v) { this.f.push(r => String(r[k]) !== String(v)); return this; }
     gte(k, v) { this.f.push(r => r[k] >= v); return this; }
+    lt(k, v) { this.f.push(r => r[k] < v); return this; }
+    ilike(k, p) { const re = new RegExp(String(p).replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/%/g, '.*'), 'i'); this.f.push(r => re.test(String(r[k] ?? ''))); return this; }
     lte(k, v) { this.f.push(r => r[k] <= v); return this; }
     is(k, v) { this.f.push(r => (r[k] ?? null) === v); return this; }
     gt(k, v) { this.f.push(r => r[k] > v); return this; }
@@ -2291,6 +2314,13 @@ function createDemoClient() {
         const me = db.session, mid = arguments[1]?.mid; const m = (db.messages || []).find(x => x.id === mid);
         if (!me || !m || m.user_id !== me || m.deleted) return { data: null, error: { message: 'not your message' } };
         const old = { ...m }; m.deleted = true; afterWrite('messages', 'UPDATE', m, old); save(); return { data: null, error: null };
+      }
+      if (name === 'set_message_pin') {
+        const { k, mid, pin } = arguments[1] || {}; const tb = { room: 'messages', field: 'field_messages', network: 'network_messages' }[k]; const list = db[tb] || [];
+        const m = list.find(x => x.id === mid); if (!m) return { data: null, error: { message: 'not allowed' } };
+        list.filter(x => (k === 'network' || x.country_id === m.country_id) && x.pinned_at).forEach(x => { const old = { ...x }; x.pinned_at = null; x.pinned_by = null; afterWrite(tb, 'UPDATE', x, old); });
+        if (pin) { const old = { ...m }; m.pinned_at = nowIso(); m.pinned_by = db.session; afterWrite(tb, 'UPDATE', m, old); }
+        save(); return { data: null, error: null };
       }
       if (name === 'find_prayer_partner') {
         const me = db.session, cid = arguments[1]?.p_country_id; if (!me) return { data: null, error: { message: 'not signed in' } };
@@ -3596,17 +3626,14 @@ function msgDay(iso) {
 }
 // =====================================================================
 // 채팅 공통 기능 — 나라 채팅방 · 나라별 리더 방 · 전체 리더 방이 같이 씀
-//   답장 · 이모지 반응 · 내 글 수정/삭제 · 사진 첨부 · 실시간
+//   답장 · 이모지 반응 · 내 글 수정/삭제 · 사진 · @멘션 · 글 고정 · 검색 · 읽음 표시 · 입력 중 표시 · 실시간
 // =====================================================================
 const CHAT_EMOJI = ['👍', '❤️', '🙏', '🎉', '😂'];
-const CHAT_KIND = {
-  room: { table: 'messages', react: 'room' },
-  field: { table: 'field_messages', react: 'field' },
-  network: { table: 'network_messages', react: 'network' },
-};
+const CHAT_PAGE = 60;
+const CHAT_KIND = { room: { table: 'messages' }, field: { table: 'field_messages' }, network: { table: 'network_messages' } };
 function ckExcerpt(m) { return m.deleted ? t('room_deleted') : (m.body || (m.image_url ? '📷 ' + t('ch_photo_msg') : '')).replace(/\s+/g, ' ').slice(0, 70); }
 function createChat(opts) {
-  const ck = Object.assign({ list: [], reacts: [], replyTo: null, image: null, editing: null, tray: null }, opts);
+  const ck = Object.assign({ list: [], reacts: [], reads: [], people: [], canPin: false, hasMore: false, replyTo: null, image: null, editing: null, tray: null, mentionMap: {}, typingNames: {}, typing: false }, opts);
   ck.meta = CHAT_KIND[ck.kind]; ck.table = ck.meta.table;
   ck.byId = () => new Map(ck.list.map(m => [m.id, m]));
   ck.reactMap = () => { const r = new Map(); ck.reacts.forEach(x => { const a = r.get(x.message_id) || {}; (a[x.emoji] = a[x.emoji] || new Set()).add(x.user_id); r.set(x.message_id, a); }); return r; };
@@ -3618,7 +3645,37 @@ async function ckLoadReacts(ck) {
   const { data } = await sb.from('message_reactions').select('message_id,user_id,emoji').eq('kind', ck.kind).in('message_id', ids);
   ck.reacts = data || [];
 }
-function ckMsgHTML(ck, m, prev, byId, rmap) {
+async function ckLoadReads(ck) {
+  let q;
+  if (ck.kind === 'room') q = sb.from('room_members').select('user_id,last_read_at').eq('country_id', ck.scope.country_id);
+  else q = sb.from('chat_reads').select('user_id,last_read_at').eq('kind', ck.kind).eq('country_id', ck.scope ? ck.scope.country_id : 0);
+  const { data } = await q;
+  ck.reads = (data || []).filter(r => r.user_id !== state.profile.id);
+}
+// 나라 방이 아닌 곳의 읽음 표시 (나라 방은 markRoomRead 가 따로 함)
+let _readTimer = 0;
+function markChatRead(ck) {
+  if (ck.kind === 'room' || !ck.list.length) return;
+  clearTimeout(_readTimer);
+  _readTimer = setTimeout(() => {
+    sb.from('chat_reads').upsert({ kind: ck.kind, country_id: ck.scope ? ck.scope.country_id : 0, user_id: state.profile.id, last_read_at: new Date().toISOString() }, { onConflict: 'kind,country_id,user_id' }).then(() => {});
+  }, 600);
+}
+const mentionNames = (m) => (m.mentions || []).map(id => ({ id, name: shortName(nameCache[id]?.name) })).filter(x => x.name);
+function ckBodyHTML(m) {
+  let h = esc(m.body || '');
+  mentionNames(m).sort((a, b) => b.name.length - a.name.length).forEach(({ id, name }) => {
+    const tok = esc('@' + name);
+    h = h.split(tok).join(`<span class="mention ${id === state.profile.id ? 'me' : ''}">${tok}</span>`);
+  });
+  return h;
+}
+function ckSeenHTML(ck, m) {
+  const n = ck.reads.filter(r => r.last_read_at >= m.created_at).length;
+  if (!n) return '';
+  return `<button type="button" class="seen" data-act="seen" data-mid="${m.id}" aria-label="${esc(t('ch_seen', { n }))}">✓✓ ${esc(t('ch_seen', { n }))}</button>`;
+}
+function ckMsgHTML(ck, m, prev, byId, rmap, lastMine) {
   const me = m.user_id === state.profile.id;
   if (!me && isBlocked(m.user_id)) return '';
   const newDay = !prev || new Date(prev.created_at).toDateString() !== new Date(m.created_at).toDateString();
@@ -3630,33 +3687,48 @@ function ckMsgHTML(ck, m, prev, byId, rmap) {
   const img = m.image_url && !gone ? `<a href="${esc(m.image_url)}" target="_blank" rel="noopener" class="msg-img-link"><img class="msg-img" src="${esc(m.image_url)}" alt="${esc(t('ch_img_alt'))}" loading="lazy"></a>` : '';
   const editing = ck.editing === m.id;
   const text = editing ? `<form class="edit-form" data-edit-form="${m.id}"><textarea maxlength="${ck.kind === 'room' ? 4000 : 2000}" rows="2">${esc(m.body)}</textarea><div class="row" style="gap:8px;justify-content:flex-end"><button type="button" class="btn light small" data-act="edit-cancel">${esc(t('ch_cancel'))}</button><button class="btn small" type="submit">${esc(t('ch_save'))}</button></div></form>`
-    : `${esc(m.body)}${m.edited_at ? ` <i class="edited">(${esc(t('ch_edited'))})</i>` : ''}`;
+    : `${ckBodyHTML(m)}${m.edited_at ? ` <i class="edited">(${esc(t('ch_edited'))})</i>` : ''}`;
   const rx = rmap.get(m.id) || {};
   const pills = CHAT_EMOJI.filter(e => rx[e]?.size).map(e => `<button type="button" class="rx ${rx[e].has(state.profile.id) ? 'mine' : ''}" data-act="react" data-emoji="${e}" aria-pressed="${rx[e].has(state.profile.id)}">${e} <span>${rx[e].size}</span></button>`).join('');
   const tray = ck.tray === m.id ? `<div class="rx-tray" role="group">${CHAT_EMOJI.map(e => `<button type="button" data-act="react" data-emoji="${e}">${e}</button>`).join('')}</div>` : '';
   const tag = ck.tagOf && !me ? ck.tagOf(m.user_id) : '';
   const canAdminHide = isAdmin() && !me && !gone && ck.kind === 'room';
+  const mentioned = (m.mentions || []).includes(state.profile.id);
   const acts = gone ? '' : `<button type="button" class="act" data-act="reply" aria-label="${esc(t('ch_reply'))}" title="${esc(t('ch_reply'))}">↩</button>
     <button type="button" class="act" data-act="tray" aria-label="${esc(t('ch_react'))}" title="${esc(t('ch_react'))}">☺</button>
+    ${ck.canPin ? `<button type="button" class="act ${m.pinned_at ? 'on' : ''}" data-act="pin" aria-label="${esc(t(m.pinned_at ? 'ch_unpin' : 'ch_pin'))}" title="${esc(t(m.pinned_at ? 'ch_unpin' : 'ch_pin'))}">📌</button>` : ''}
     ${me && !editing ? `<button type="button" class="act" data-act="edit" aria-label="${esc(t('ch_edit'))}" title="${esc(t('ch_edit'))}">✎</button><button type="button" class="act danger" data-act="del" aria-label="${esc(t('ch_delete'))}" title="${esc(t('ch_delete'))}">🗑</button>` : ''}
     ${!me && ck.kind === 'room' ? moreBtn('message', m.id, m.user_id, m.body) : ''}${canAdminHide ? `<button type="button" class="quiet-del" data-act="del" aria-label="${esc(t('ch_delete'))}">${icon('trash')}</button>` : ''}
     ${isAdmin() && !me && ck.kind !== 'room' ? `<button type="button" class="act danger" data-act="del" aria-label="${esc(t('ch_delete'))}" title="${esc(t('ch_delete'))}">🗑</button>` : ''}`;
   return `${newDay ? `<div class="day-sep">${esc(msgDay(m.created_at))}</div>` : ''}
-    <div class="msg ${me ? 'me' : ''} ${cont ? 'cont' : ''} ${gone ? 'gone' : ''}" data-msg="${m.id}">
+    <div class="msg ${me ? 'me' : ''} ${cont ? 'cont' : ''} ${gone ? 'gone' : ''} ${mentioned ? 'mentioned' : ''}" data-msg="${m.id}">
       <div class="who">${esc(who)} ${tag}</div>
       ${quote}
       <div class="bubble ${img && !m.body ? 'img-only' : ''}">${gone ? esc(t('room_deleted')) : `${img}${m.body || editing ? `<div class="txt">${text}</div>` : ''}`}</div>
       ${pills || tray ? `<div class="rxs">${pills}${tray}</div>` : ''}
-      <div class="foot"><span>${esc(msgTime(m.created_at))}</span>${acts}</div>
+      <div class="foot"><span>${esc(msgTime(m.created_at))}</span>${m.pinned_at ? '<span title="pinned">📌</span>' : ''}${acts}${me && lastMine === m.id && !gone ? ckSeenHTML(ck, m) : ''}</div>
     </div>`;
 }
+function ckPinHTML(ck) {
+  const p = ck.list.filter(m => m.pinned_at && !m.deleted).sort((a, b) => b.pinned_at.localeCompare(a.pinned_at))[0];
+  if (!p) return '';
+  return `<div class="pin-banner"><button type="button" class="pin-go" data-goto="${p.id}">📌 <b>${esc(p.user_id === state.profile.id ? t('you') : shortName(nameCache[p.user_id]?.name) || '—')}</b> ${esc(ckExcerpt(p))}</button>${ck.canPin ? `<button type="button" class="pin-x" data-act="unpin" data-mid="${p.id}" aria-label="${esc(t('ch_unpin'))}">×</button>` : ''}</div>`;
+}
 function ckChatHTML(ck) {
-  if (!ck.list.length) return `<div class="chat-empty">${icon('chat', 'width="30" height="30" style="color:#B4BBC7"')}<p style="margin:8px 0 0">${esc(t(ck.emptyKey || 'room_empty'))}</p></div>`;
+  const more = ck.hasMore ? `<button type="button" class="more-earlier" data-act="more">${esc(t('ch_earlier'))}</button>` : '';
+  if (!ck.list.length) return `${ckPinHTML(ck)}<div class="chat-empty">${icon('chat', 'width="30" height="30" style="color:#B4BBC7"')}<p style="margin:8px 0 0">${esc(t(ck.emptyKey || 'room_empty'))}</p></div>`;
   const byId = ck.byId(), rmap = ck.reactMap();
-  return ck.list.map((m, i) => ckMsgHTML(ck, m, ck.list[i - 1], byId, rmap)).join('');
+  const lastMine = [...ck.list].reverse().find(m => m.user_id === state.profile.id && !m.deleted)?.id;
+  return `${ckPinHTML(ck)}${more}${ck.list.map((m, i) => ckMsgHTML(ck, m, ck.list[i - 1], byId, rmap, lastMine)).join('')}`;
+}
+function ckToolsHTML() {
+  return `<div class="ck-tools"><button type="button" class="btn light small" data-ck-search-toggle>🔍 ${esc(t('ch_search'))}</button>
+    <div class="ck-search" id="ck-search" hidden><input type="text" id="ck-search-q" placeholder="${esc(t('ch_search_ph'))}" maxlength="80" autocomplete="off"><div id="ck-results" class="ck-results"></div></div></div>`;
 }
 function ckComposerHTML(ck, placeholder) {
-  return `<form class="composer" id="composer">
+  return `<div class="typing" id="ck-typing" hidden></div>
+    <form class="composer" id="composer">
+      <div class="mention-pop" id="ck-mention" hidden></div>
       <div class="composer-bar" id="ck-bar" hidden></div>
       <label class="attach" title="${esc(t('ch_photo'))}" aria-label="${esc(t('ch_photo'))}"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21 12-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l9-9a3.7 3.7 0 0 1 5.2 5.2l-9 9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2"/></svg><input type="file" accept="image/*" id="ck-file" hidden></label>
       <textarea name="body" rows="1" maxlength="${ck.kind === 'room' ? 4000 : 2000}" placeholder="${esc(placeholder)}" aria-label="${esc(placeholder)}"></textarea>
@@ -3664,12 +3736,12 @@ function ckComposerHTML(ck, placeholder) {
     </form>
     <div class="chat-spacer"></div>`;
 }
-// 화면에 붙이기: 클릭(답장·반응·수정·삭제), 보내기, 사진, 실시간
+// 화면에 붙이기: 클릭(답장·반응·수정·삭제·고정), 보내기, 사진, 멘션, 검색, 실시간
 function ckBind(ck, { chatEl, formEl, scrollToBottom, atBottom, onNew }) {
   ck.chatEl = chatEl;
+  const find = id => ck.list.find(x => String(x.id) === String(id));
   const redraw = (keepScroll) => { if (!chatEl.isConnected) return; const y = window.scrollY; chatEl.innerHTML = ckChatHTML(ck); if (keepScroll) window.scrollTo(0, y); };
   ck.redraw = redraw;
-  const find = id => ck.list.find(x => String(x.id) === String(id));
   const bar = () => document.getElementById('ck-bar');
   const paintBar = () => {
     const b = bar(); if (!b) return;
@@ -3703,16 +3775,61 @@ function ckBind(ck, { chatEl, formEl, scrollToBottom, atBottom, onNew }) {
     ck.reacts = ck.reacts.filter(r => r.message_id !== m.id);
     redraw(true);
   };
+  const setPin = async (m, pin) => {
+    const { error } = await sb.rpc('set_message_pin', { k: ck.kind, mid: m.id, pin });
+    if (error) return toast(errMsg(error), true);
+    ck.list.forEach(x => { x.pinned_at = null; x.pinned_by = null; });
+    if (pin) { m.pinned_at = new Date().toISOString(); m.pinned_by = state.profile.id; }
+    toast(t(pin ? 'ch_pinned' : 'ch_unpinned')); redraw(true);
+  };
+  // 불러오지 않은 옛 글로 이동 (검색 결과 · 고정 글)
+  const jumpTo = async (id, target) => {
+    const flash = (el) => { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); };
+    let el = chatEl.querySelector(`[data-msg="${id}"]`);
+    if (!el && target) {
+      let q = sb.from(ck.table).select('*').gte('created_at', target.created_at).order('created_at', { ascending: true }).limit(300);
+      if (ck.scope) q = q.eq('country_id', ck.scope.country_id);
+      const { data } = await q;
+      const have = new Set(ck.list.map(x => x.id));
+      (data || []).forEach(x => { if (!have.has(x.id)) ck.list.push(x); });
+      ck.list.sort((a, b) => a.created_at.localeCompare(b.created_at));
+      await loadNames(ck.list.map(x => x.user_id)); await ckLoadReacts(ck); redraw();
+      el = chatEl.querySelector(`[data-msg="${id}"]`);
+    }
+    if (el) flash(el);
+  };
+  const loadEarlier = async (btn) => {
+    btn.disabled = true;
+    const first = ck.list[0]; if (!first) return;
+    let q = sb.from(ck.table).select('*').lt('created_at', first.created_at).order('created_at', { ascending: false }).limit(CHAT_PAGE);
+    if (ck.scope) q = q.eq('country_id', ck.scope.country_id);
+    const { data } = await q;
+    const older = (data || []).reverse();
+    ck.hasMore = (data || []).length >= CHAT_PAGE;
+    await loadNames(older.map(x => x.user_id));
+    const h0 = document.documentElement.scrollHeight, y0 = window.scrollY;
+    ck.list = older.concat(ck.list); await ckLoadReacts(ck); redraw();
+    window.scrollTo(0, y0 + (document.documentElement.scrollHeight - h0));
+  };
   chatEl.onclick = async (e) => {
     const b = e.target.closest('[data-act],[data-goto]'); if (!b) return;
+    if (b.dataset.goto) { const id = b.dataset.goto; return jumpTo(id, find(id)); }
     const msgEl = b.closest('[data-msg]'); const m = msgEl ? find(msgEl.dataset.msg) : null;
-    if (b.dataset.goto) { const el = chatEl.querySelector(`[data-msg="${b.dataset.goto}"]`); if (el) { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); el.classList.add('flash'); setTimeout(() => el.classList.remove('flash'), 1400); } return; }
     const act = b.dataset.act;
+    if (act === 'more') return loadEarlier(b);
+    if (act === 'unpin') { const pm = find(b.dataset.mid); return pm && setPin(pm, false); }
     if (act === 'edit-cancel') { ck.editing = null; return redraw(true); }
+    if (act === 'seen') {
+      const mm = find(b.dataset.mid); if (!mm) return;
+      const ids = ck.reads.filter(r => r.last_read_at >= mm.created_at).map(r => r.user_id);
+      if (ck.hideSeenNames) return;
+      return openMembersSheet(t('ch_seen_by'), ids);
+    }
     if (!m) return;
     if (act === 'reply') { ck.replyTo = m; paintBar(); formEl?.querySelector('textarea')?.focus(); }
     else if (act === 'tray') { ck.tray = ck.tray === m.id ? null : m.id; redraw(true); }
     else if (act === 'react') { ck.tray = null; await toggleReaction(m, b.dataset.emoji); }
+    else if (act === 'pin') { await setPin(m, !m.pinned_at); }
     else if (act === 'edit') { ck.editing = m.id; redraw(true); chatEl.querySelector('.edit-form textarea')?.focus(); }
     else if (act === 'del') { if (!b.dataset.armed) { b.dataset.armed = '1'; b.classList.add('armed'); setTimeout(() => { delete b.dataset.armed; b.classList.remove('armed'); }, 2500); return; } await remove(m); }
   };
@@ -3735,11 +3852,61 @@ function ckBind(ck, { chatEl, formEl, scrollToBottom, atBottom, onNew }) {
     paintBar();
   });
   paintBar();
+
+  // ---- 검색
+  const stb = document.querySelector('[data-ck-search-toggle]'), sbox = document.getElementById('ck-search'), sq = document.getElementById('ck-search-q'), sres = document.getElementById('ck-results');
+  if (stb && sbox) {
+    stb.onclick = () => { sbox.hidden = !sbox.hidden; if (!sbox.hidden) sq.focus(); };
+    let timer = 0;
+    sq.oninput = () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        const text = sq.value.trim(); if (text.length < 2) { sres.innerHTML = ''; return; }
+        let q = sb.from(ck.table).select('*').ilike('body', '%' + text.replace(/[%_]/g, ' ') + '%').order('created_at', { ascending: false }).limit(30);
+        if (ck.scope) q = q.eq('country_id', ck.scope.country_id);
+        if (ck.kind === 'room') q = q.eq('deleted', false);
+        const { data } = await q;
+        const rows = data || [];
+        await loadNames(rows.map(x => x.user_id));
+        const hi = (str) => esc(str).replace(new RegExp(esc(text).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), x => `<mark>${x}</mark>`);
+        sres.innerHTML = rows.length ? rows.map(x => `<button type="button" class="ck-res" data-res="${x.id}"><span class="small muted">${esc(x.user_id === state.profile.id ? t('you') : shortName(nameCache[x.user_id]?.name) || '—')} · ${esc(msgDay(x.created_at))} ${esc(msgTime(x.created_at))}</span><span>${hi((x.body || '').replace(/\s+/g, ' ').slice(0, 140))}</span></button>`).join('') : `<p class="small muted" style="margin:6px 4px">${esc(t('ch_search_none'))}</p>`;
+        sres.querySelectorAll('[data-res]').forEach(r => r.onclick = () => { const x = rows.find(y => String(y.id) === r.dataset.res); sbox.hidden = true; jumpTo(x.id, x); });
+      }, 300);
+    };
+  }
+
   if (formEl) {
     const ta = formEl.querySelector('textarea');
     const fit = () => { ta.style.height = '44px'; ta.style.height = Math.min(140, ta.scrollHeight) + 'px'; };
-    ta.addEventListener('input', fit);
-    ta.addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) { e.preventDefault(); formEl.requestSubmit(); } });
+    // ---- @멘션: @ 다음 글자로 사람 찾기
+    const pop = document.getElementById('ck-mention');
+    const hidePop = () => { pop.hidden = true; pop.innerHTML = ''; };
+    const showPop = () => {
+      const pos = ta.selectionStart, before = ta.value.slice(0, pos);
+      const m = /(?:^|\s)@([^\s@]{0,20})$/.exec(before);
+      if (!m) return hidePop();
+      const qy = m[1].toLowerCase();
+      const cand = ck.people.filter(p => p.id !== state.profile.id && p.name && p.name.toLowerCase().includes(qy)).slice(0, 6);
+      if (!cand.length) return hidePop();
+      pop.innerHTML = cand.map(p => `<button type="button" data-mid="${p.id}" data-name="${esc(p.name)}"><span class="avatar sm" aria-hidden="true">${esc(initials(p.name))}</span>${esc(p.name)}</button>`).join(''); pop.hidden = false;
+      pop.querySelectorAll('button').forEach(bn => bn.onmousedown = (ev) => {
+        ev.preventDefault();
+        const name = bn.dataset.name, at = before.lastIndexOf('@');
+        ta.value = ta.value.slice(0, at) + '@' + name + ' ' + ta.value.slice(pos);
+        ck.mentionMap[name] = bn.dataset.mid; hidePop(); ta.focus(); fit();
+        const c = at + name.length + 2; ta.setSelectionRange(c, c);
+      });
+    };
+    let lastTyping = 0;
+    ta.addEventListener('input', () => {
+      fit(); showPop();
+      if (ck.typing && ck.channel && ta.value && Date.now() - lastTyping > 2500) { lastTyping = Date.now(); try { ck.channel.send({ type: 'broadcast', event: 'typing', payload: { n: shortName(state.profile.name) || '…', u: state.profile.id } }); } catch (e) {} }
+    });
+    ta.addEventListener('blur', () => setTimeout(hidePop, 150));
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') hidePop();
+      if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer: fine)').matches) { e.preventDefault(); if (!pop.hidden) { pop.querySelector('button')?.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true })); return; } formEl.requestSubmit(); }
+    });
     document.getElementById('ck-file').onchange = (e) => { const file = e.target.files[0]; if (file) { ck.image = { file, preview: URL.createObjectURL(file) }; paintBar(); } };
     formEl.onsubmit = async (e) => {
       e.preventDefault();
@@ -3752,9 +3919,11 @@ function ckBind(ck, { chatEl, formEl, scrollToBottom, atBottom, onNew }) {
         const row = Object.assign({ user_id: state.profile.id, body }, ck.scope || {});
         if (ck.replyTo) row.reply_to = ck.replyTo.id;
         if (image_url) row.image_url = image_url;
+        const ids = Object.entries(ck.mentionMap).filter(([name]) => body.includes('@' + name)).map(([, id]) => id).slice(0, 10);
+        if (ids.length) row.mentions = ids;
         const { data, error } = await sb.from(ck.table).insert(row).select().single();
         if (error) throw error;
-        ta.value = ''; fit(); ck.replyTo = null; ck.image = null; document.getElementById('ck-file').value = ''; paintBar(); ta.focus();
+        ta.value = ''; fit(); hidePop(); ck.replyTo = null; ck.image = null; ck.mentionMap = {}; document.getElementById('ck-file').value = ''; paintBar(); ta.focus();
         await addMessage(data);
       } catch (err) { toast(errMsg(err), true); }
       btn.disabled = false;
@@ -3763,31 +3932,63 @@ function ckBind(ck, { chatEl, formEl, scrollToBottom, atBottom, onNew }) {
   const addMessage = async (m) => {
     if (ck.list.some(x => x.id === m.id)) return;
     const stick = atBottom() || m.user_id === state.profile.id;
-    await loadNames([m.user_id]);
+    await loadNames([m.user_id, ...(m.mentions || [])]);
     ck.list.push(m); ck.list.sort((a, b) => a.created_at.localeCompare(b.created_at));
     if (!chatEl.isConnected) return;
-    redraw(); if (stick) scrollToBottom(); onNew?.(m);
+    redraw(); if (stick) scrollToBottom(); onNew?.(m); markChatRead(ck);
+    if (ck.typingNames[m.user_id]) { delete ck.typingNames[m.user_id]; paintTyping(); }
   };
-  // 실시간: 새 글 · 고침/삭제 · 반응. 구독은 방에 있는 동안 하나씩만 유지
+  const paintTyping = () => {
+    const el = document.getElementById('ck-typing'); if (!el) return;
+    const names = Object.values(ck.typingNames).map(x => x.n);
+    el.hidden = !names.length; el.textContent = names.length ? t(names.length === 1 ? 'ch_typing_one' : 'ch_typing_many', { n: names[0], c: names.length }) : '';
+  };
+  // 실시간: 새 글 · 고침/삭제 · 반응 · 읽음 · 입력 중. 구독은 방에 있는 동안 하나씩만 유지
   closeRoomSub();
   const filter = ck.scope ? Object.entries(ck.scope).map(([k, v]) => `${k}=eq.${v}`)[0] : undefined;
-  const ch = sb.channel('chat-' + ck.key)
+  const live = () => state.ck === ck && chatEl.isConnected;
+  let ch = sb.channel('chat-' + ck.key)
     .on('postgres_changes', Object.assign({ event: '*', schema: 'public', table: ck.table }, filter ? { filter } : {}), (p) => {
-      if (state.ck !== ck || !chatEl.isConnected) return;
+      if (!live()) return;
       const m = p.new, old = p.old;
       if (p.eventType === 'INSERT' && m?.id) addMessage(m);
-      else if (p.eventType === 'UPDATE' && m?.id) { const ex = find(m.id); if (ex) { Object.assign(ex, { body: m.body, deleted: m.deleted, edited_at: m.edited_at }); redraw(true); } }
-      else if (p.eventType === 'DELETE' && old?.id) { ck.list = ck.list.filter(x => x.id !== old.id); redraw(true); }
+      else if (p.eventType === 'UPDATE' && m?.id) {
+        const ex = find(m.id);
+        if (ex) {
+          Object.assign(ex, { body: m.body, deleted: m.deleted, edited_at: m.edited_at });
+          if ('pinned_at' in m) { if (m.pinned_at) ck.list.forEach(x => { if (x.id !== m.id) x.pinned_at = null; }); ex.pinned_at = m.pinned_at; }
+          redraw(true);
+        }
+      } else if (p.eventType === 'DELETE' && old?.id) { ck.list = ck.list.filter(x => x.id !== old.id); redraw(true); }
     })
     .on('postgres_changes', { event: '*', schema: 'public', table: 'message_reactions', filter: 'kind=eq.' + ck.kind }, (p) => {
-      if (state.ck !== ck || !chatEl.isConnected) return;
+      if (!live()) return;
       const r = p.new?.message_id ? p.new : p.old; if (!r?.message_id || !ck.list.some(x => x.id === r.message_id)) return;
       if (p.eventType === 'INSERT') { if (!ck.reacts.some(x => x.message_id === r.message_id && x.user_id === r.user_id && x.emoji === r.emoji)) ck.reacts.push(r); }
       else if (p.eventType === 'DELETE') { if (r.user_id) ck.reacts = ck.reacts.filter(x => !(x.message_id === r.message_id && x.user_id === r.user_id && x.emoji === r.emoji)); else ckLoadReacts(ck).then(() => redraw(true)); }
       redraw(true);
-    })
-    .subscribe();
+    });
+  // 읽음 표시 (나라 방: room_members, 리더 방: chat_reads)
+  const readTable = ck.kind === 'room' ? 'room_members' : 'chat_reads';
+  const readFilter = ck.kind === 'room' ? `country_id=eq.${ck.scope.country_id}` : `kind=eq.${ck.kind}`;
+  ch = ch.on('postgres_changes', { event: '*', schema: 'public', table: readTable, filter: readFilter }, (p) => {
+    if (!live()) return;
+    const r = p.new; if (!r?.user_id || r.user_id === state.profile.id || !r.last_read_at) return;
+    if (ck.kind !== 'room' && (r.country_id || 0) !== (ck.scope ? ck.scope.country_id : 0)) return;
+    const ex = ck.reads.find(x => x.user_id === r.user_id);
+    if (ex) ex.last_read_at = r.last_read_at; else ck.reads.push({ user_id: r.user_id, last_read_at: r.last_read_at });
+    redraw(true);
+  });
+  if (ck.typing) ch = ch.on('broadcast', { event: 'typing' }, ({ payload }) => {
+    if (!live() || !payload || payload.u === state.profile.id) return;
+    ck.typingNames[payload.u] = { n: String(payload.n || '…').slice(0, 24), at: Date.now() };
+    paintTyping();
+    setTimeout(() => { const x = ck.typingNames[payload.u]; if (x && Date.now() - x.at >= 3900) { delete ck.typingNames[payload.u]; paintTyping(); } }, 4000);
+  });
+  ch = ch.subscribe();
+  ck.channel = ch;
   state.roomSub = { key: ck.key, code: ck.key, ch };
+  markChatRead(ck);
   return { redraw };
 }
 
@@ -3810,7 +4011,7 @@ VIEWS.rooms = async function (code) {
   if (!c) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   const [rooms, msgs, members] = await Promise.all([
     loadRooms(),
-    sb.from('messages').select('*').eq('country_id', c.id).order('created_at', { ascending: false }).limit(80),
+    sb.from('messages').select('*').eq('country_id', c.id).order('created_at', { ascending: false }).limit(CHAT_PAGE),
     sb.from('room_members').select('user_id').eq('country_id', c.id),
   ]);
   const memberIds = (members.data || []).map(r => r.user_id);
@@ -3819,8 +4020,11 @@ VIEWS.rooms = async function (code) {
   const items = (msgs.data || []).reverse();
   await loadNames(items.map(m => m.user_id));
   state.room = { id: c.id, code: c.code, list: items };
-  const ck = createChat({ kind: 'room', scope: { country_id: c.id }, list: items, key: 'rooms/' + c.code.toUpperCase() });
-  await ckLoadReacts(ck); state.ck = ck;
+  const ck = createChat({ kind: 'room', scope: { country_id: c.id }, list: items, key: 'rooms/' + c.code.toUpperCase(), hasMore: (msgs.data || []).length >= CHAT_PAGE,
+    canPin: canEditCountry(c), typing: !c.is_sensitive && joined, hideSeenNames: !!c.is_sensitive });
+  await loadNames([...items.flatMap(m => m.mentions || [])]);
+  ck.people = c.is_sensitive ? [...new Set(items.map(m => m.user_id))].map(id => ({ id, name: shortName(nameCache[id]?.name) })) : memberIds.map(id => ({ id, name: shortName(nameCache[id]?.name) }));
+  await Promise.all([ckLoadReacts(ck), ckLoadReads(ck)]); state.ck = ck;
   return `${back}
     <div class="room-head">
       <span class="flag-tile" aria-hidden="true">${flag(c.code)}</span>
@@ -3831,6 +4035,7 @@ VIEWS.rooms = async function (code) {
     ${c.is_sensitive ? `<div class="banner" role="note">${icon('lock')}<span>${esc(t('sensitive_banner'))}</span></div>` : ''}
     ${joined ? '' : card(`<p style="margin:0 0 14px">${esc(t('room_join_d'))}</p>
       <button class="btn block" id="room-join">${icon('chat')} ${esc(t('room_join'))}</button>`)}
+    ${ckToolsHTML()}
     <div class="chat" id="chat" aria-live="polite">${ckChatHTML(ck)}</div>
     ${c.is_sensitive ? '' : roomSideHTML(memberIds)}
     ${joined ? `<p class="small muted" style="text-align:center;margin:6px 0 0">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('room_safety'))}</p>
@@ -5015,7 +5220,7 @@ VIEWS.network = async function (code) {
     : (state.countries || []).filter(x => state.partnerOf.has(x.id) || state.leaderOf.has(x.id));
   const cur = mine.find(x => x.id === state.netRoom) || null;   // null = 전체 리더 대화방
   const q = cur ? sb.from('field_messages').select('*').eq('country_id', cur.id) : sb.from('network_messages').select('*');
-  const { data: msgs } = await q.order('created_at', { ascending: false }).limit(120);
+  const { data: msgs } = await q.order('created_at', { ascending: false }).limit(CHAT_PAGE);
   const list = (msgs || []).slice().reverse();
   await loadNames(list.map(m => m.user_id));
   const me = state.profile.id;
@@ -5033,12 +5238,16 @@ VIEWS.network = async function (code) {
     return `<span class="net-tag ${role}">${cn.map(c => `<span aria-hidden="true">${flag(c.code)}</span>`).join('')}${cn.length ? ' ' : ''}${esc(t('net_role_' + role))}</span>`;
   };
   const ck = createChat({ kind: cur ? 'field' : 'network', scope: cur ? { country_id: cur.id } : null, list, key: 'network/' + (cur ? cur.code.toUpperCase() : ''), emptyKey: 'net_none', tagOf: cur ? null : tagOf });
-  await ckLoadReacts(ck); state.ck = ck;
+  ck.hasMore = (msgs || []).length >= CHAT_PAGE; ck.canPin = cur ? canEditCountry(cur) : inNetworkRoom();
+  await loadNames([...peopleIds, ...list.flatMap(m => m.mentions || [])]);
+  ck.people = peopleIds.map(id => ({ id, name: shortName(nameCache[id]?.name) }));
+  await Promise.all([ckLoadReacts(ck), ckLoadReads(ck)]); state.ck = ck;
   return `${backLink('#/chat', t('tab_chat'))}${pageHead(t('net_title'), cur ? t('net_d_country', { c: countryName(cur) }) : t('net_d'))}
     <div style="margin:-12px 0 12px"><button type="button" class="text-link" data-members="${esc(peopleIds.join(','))}" data-title="${esc(cur ? t('chat_nation_leaders', { c: countryName(cur) }) : t('chat_all_leaders'))}">${icon('people', 'width="15" height="15" style="vertical-align:-3px"')} ${esc(memN(peopleIds.length))} · ${esc(t('mem_view'))}</button></div>
     <div class="lang-pick" style="margin:-6px -20px 14px"><a class="chip-a ${!cur ? 'active' : ''}" href="#/network">${icon('people', 'width="15" height="15"')} ${esc(t('net_all'))}</a>${mine.map(c => `<a class="chip-a ${cur && c.id === cur.id ? 'active' : ''}" href="#/network/${esc(c.code)}"><span aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>
     <div class="banner" role="note">${icon('lock')}<span>${esc(t('net_safe'))}</span></div>
     ${roomSideHTML(peopleIds)}
+    ${ckToolsHTML()}
     <div class="chat" id="chat" aria-live="polite">${ckChatHTML(ck)}</div>
     ${ckComposerHTML(ck, t('th_ph'))}`;
 };
@@ -7128,6 +7337,7 @@ function notifText(n) {
     case 'field_msg': return t('nt_field_msg', { c: c ? countryName(c) : '' });
     case 'net_msg': return t('nt_net_msg');
     case 'chat_reply': return t('nt_chat_reply');
+    case 'chat_mention': return t('nt_chat_mention');
     case 'fb_new': return t('nt_fb_new');
     case 'fb_comment': return t('nt_fb_comment');
     case 'fb_status': return t('nt_fb_status', { s: t('fb_status_' + (p.status || 'open')) });

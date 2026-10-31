@@ -265,3 +265,41 @@ set app.uid = :'stud';
 select test.throws(format($q$insert into public.message_reactions (kind, message_id, user_id, emoji) values ('network', %s, %L, '👍')$q$, :n2, :'stud'), '학생은 리더 방 글에 반응을 못 남긴다');
 select test.ok(test.n(format($q$select 1 from public.message_reactions where kind = 'network' and message_id = %s$q$, :n2)) = 0, '학생은 리더 방 반응을 못 본다');
 reset role;
+
+-- ===== 채팅 고급: 멘션 · 고정 · 읽음 =====
+-- 멘션 알림 (방 멤버에게만)
+set role authenticated; set app.uid = :'stud2';
+insert into public.messages (country_id, user_id, body, mentions) values (:kr, :'stud2', 'Hi @Sam', array[:'stud'::uuid, :'stud3'::uuid]) returning id as mm \gset
+reset role;
+select test.ok((select count(*) from public.notifications where kind = 'chat_mention' and user_id = :'stud') = 1, '@멘션하면 그 사람에게 알림이 간다');
+select test.ok((select count(*) from public.notifications where kind = 'chat_mention' and user_id = :'stud3') = 0, '방 멤버가 아닌 사람에게는 알림이 가지 않는다');
+set role authenticated; set app.uid = :'stud2';
+select test.throws(format($q$update public.messages set mentions = array[%L::uuid] where id = %s$q$, :'admin', :mm), '보낸 뒤에는 멘션을 바꿀 수 없다');
+-- 글 고정
+select test.throws(format($q$select public.set_message_pin('room', %s, true)$q$, :mm), '일반 회원은 글을 고정할 수 없다');
+select test.throws(format($q$update public.messages set pinned_at = now() where id = %s$q$, :mm), '고정 표시를 직접 바꿀 수 없다 (전용 함수로만)');
+set app.uid = :'lead';
+select public.set_message_pin('room', :mm, true);
+select test.ok((select pinned_at from public.messages where id = :mm) is not null, '나라 리더는 글을 고정한다');
+select public.set_message_pin('room', :m3, true);
+select test.ok((select count(*) from public.messages where country_id = :kr and pinned_at is not null) = 1, '방마다 하나만 고정된다');
+select public.set_message_pin('room', :m3, false);
+select test.ok((select count(*) from public.messages where country_id = :kr and pinned_at is not null) = 0, '고정을 풀 수 있다');
+set app.uid = :'lead2';
+select test.throws(format($q$select public.set_message_pin('room', %s, true)$q$, :mm), '다른 나라 리더는 한국 방 글을 고정할 수 없다');
+select public.set_message_pin('network', :n2, true);
+select test.ok((select pinned_at from public.network_messages where id = :n2) is not null, '리더는 전체 리더 방 글을 고정한다');
+set app.uid = :'stud';
+select test.throws(format($q$select public.set_message_pin('network', %s, true)$q$, :n2), '학생은 리더 방 글을 고정할 수 없다');
+-- 읽음 표시
+set app.uid = :'lead';
+insert into public.chat_reads (kind, country_id, user_id) values ('field', :kr, :'lead');
+insert into public.chat_reads (kind, country_id, user_id) values ('network', 0, :'lead');
+select test.ok(true, '리더가 리더 방을 "읽음"으로 남긴다');
+select test.throws(format($q$insert into public.chat_reads (kind, country_id, user_id) values ('field', %s, %L)$q$, :kr, :'field'), '남의 이름으로 읽음 표시를 남길 수 없다');
+set app.uid = :'field';
+select test.ok(test.n('select 1 from public.chat_reads') >= 2, '같은 방 사람은 다른 사람의 읽음 표시를 본다');
+set app.uid = :'stud';
+select test.ok(test.n('select 1 from public.chat_reads') = 0, '학생은 리더 방 읽음 표시를 못 본다');
+select test.throws($q$insert into public.chat_reads (kind, country_id, user_id) values ('network', 0, '00000000-0000-0000-0000-0000000000d1')$q$, '학생은 리더 방에 읽음 표시를 못 남긴다');
+reset role;
