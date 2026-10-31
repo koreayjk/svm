@@ -84,7 +84,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.locator('.msg.me').last().locator('[data-act=tray]').dispatchEvent('click');
   await p.locator('.rx-tray [data-emoji="🙏"]').dispatchEvent('click'); await sleep(500);
   ok(await p.locator('.rx.mine').count() === 1, '이모지 반응을 남긴다');
-  await p.locator('.rx.mine').first().click(); await sleep(400);
+  await p.locator('.rx.mine').first().dispatchEvent('click'); await sleep(400);
   ok(await p.locator('.rx').count() === 0, '같은 반응을 다시 누르면 취소된다');
   await p.locator('.msg.me').first().locator('[data-act=edit]').dispatchEvent('click');
   await p.fill('.edit-form textarea', 'Hello team (fixed)'); await p.click('.edit-form button[type=submit]'); await sleep(700);
