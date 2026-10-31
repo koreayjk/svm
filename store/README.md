@@ -7,7 +7,7 @@
 | [`listing.md`](listing.md) | 스토어 소개 글 — 영어·한국어 (이름, 부제, 짧은/긴 설명, 키워드, 업데이트 내용, 분류) |
 | [`privacy-answers.md`](privacy-answers.md) | Google **데이터 보안** 양식 · Apple **개인정보 보호 영양 표시** 답변, 연령 등급 |
 | [`review-notes.md`](review-notes.md) | 심사 메모(영어, 그대로 붙여 넣기) · 심사용 계정 만드는 법 · 심사에서 자주 걸리는 점 점검 |
-| `screenshots/` | 스크린샷: `ios/`(1290×2796) · `android/`(1080×1920), 각각 `en/` `ko/` 8장 |
+| `screenshots/` | 스크린샷: `ios/`(1290×2796) · `android/`(1080×1920), 각각 `en/` `ko/` 9장 (채팅 추가) |
 
 스크린샷은 `tools/store_screenshots.js` 로 다시 만들 수 있습니다 (앱 화면을 바꾼 뒤에 다시 찍으세요).
 

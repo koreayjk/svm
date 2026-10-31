@@ -60,6 +60,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_prayer_answered": "A prayer you prayed for was answered.",
     "nt_field_msg": "New message in the {c} field conversation.",
     "nt_net_msg": "New message in the leaders room.",
+    "nt_chat_reply": "Someone replied to your message.",
+    "nt_chat_mention": "You were mentioned in a chat.",
     "nt_ci_ack": "Your leader saw your help request.",
     "nt_pair_new": "You have a new prayer partner for {c}.",
     "nt_pair_msg": "Your prayer partner wrote to you.",
@@ -112,6 +114,8 @@ const TEXT: Record<string, Record<string, string>> = {
     "nt_prayer_answered": "함께 기도한 제목이 응답되었어요.",
     "nt_field_msg": "{c} 선교지 대화방에 새 메시지가 있어요.",
     "nt_net_msg": "리더 대화방에 새 메시지가 있어요.",
+    "nt_chat_reply": "내 메시지에 답장이 왔어요.",
+    "nt_chat_mention": "채팅에서 나를 언급했어요.",
     "nt_ci_ack": "리더가 도움 요청을 확인했어요.",
     "nt_pair_new": "{c} 기도 짝이 생겼어요.",
     "nt_pair_msg": "기도 짝이 글을 남겼어요.",
@@ -160,6 +164,8 @@ function bodyFor(n: Notif, lang: string, country: string) {
     case 'checkin_help': return t('nt_ci_help', { c: country });
     case 'returned_testi': return t('nt_returned', { c: country });
     case 'net_msg': return t('nt_net_msg');
+    case 'chat_reply': return t('nt_chat_reply');
+    case 'chat_mention': return t('nt_chat_mention');
     case 'checkin_ack': return t('nt_ci_ack');
     case 'pair_new': return t('nt_pair_new', { c: country });
     case 'pair_msg': return t('nt_pair_msg');

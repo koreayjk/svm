@@ -33,10 +33,11 @@ async function run(name, dev) {
   await login('sam@svm.org');
 
   const shots = {};
-  const snap = async (lang, idx, label, hash, scrollSel) => {
+  const snap = async (lang, idx, label, hash, scrollSel, top) => {
     const dir = `${OUT}/${name}/${lang}`; fs.mkdirSync(dir, { recursive: true });
     await go(hash); await settle(900);
     if (scrollSel) { await p.evaluate(s => { const e0 = document.querySelector(s), e = e0 && (e0.closest('section') || e0); if (e) window.scrollTo(0, e.getBoundingClientRect().top + window.scrollY - 76); }, scrollSel); await settle(500); }
+    if (top) { await p.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); }); await settle(500); }
     await p.screenshot({ path: `${dir}/${String(idx).padStart(2, '0')}-${label}.jpg`, type: 'jpeg', quality: 88 });
   };
   for (const lang of ['en', 'ko']) {
@@ -55,6 +56,8 @@ async function run(name, dev) {
     await go('#/home'); await p.click(`.lang-toggle [data-lang=${lang}]`); await settle(500);
     await snap(lang, 7, 'checkin', '#' + appHash, '#checkin-form');
     await snap(lang, 8, 'emergency', '#/sos/' + appHash.split('/').pop());
+    if (lang === 'en') { await go('#/rooms/MX'); const j = p.locator('#room-join'); if (await j.count()) { await j.click(); await settle(900); } }
+    await snap(lang, 9, 'chat', '#/rooms/MX', null, true);
   }
   await b.close();
 }
