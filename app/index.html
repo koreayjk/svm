@@ -308,8 +308,15 @@
   }
   .island a .ico { display: grid; place-items: center; height: 28px; }
   @media (max-width: 374px) { .island a { font-size: 9.5px; } }
-  @media (max-width: 1023px) { .island-inner:has(> a:nth-child(7)) a { font-size: 9.5px; letter-spacing: -.02em; padding-inline: 0; } }
-  @media (max-width: 430px) { .island-inner:has(> a:nth-child(7)) a { font-size: 9px; } .island-inner:has(> a:nth-child(7)) a > span:last-child { text-overflow: clip; overflow: visible; } }
+  @media (min-width: 768px) and (max-width: 1023px) { .island-inner:has(> a:nth-child(7)) a { font-size: 9.5px; letter-spacing: -.02em; padding-inline: 0; } }
+  /* 휴대폰: 자주 쓰는 4개 + 더보기, 나머지는 시트로 */
+  .island a.nav-more { display: none; }
+  @media (max-width: 767px) { .island a.ov { display: none; } .island a.nav-more { display: flex; } }
+  .more-list { display: grid; gap: 4px; margin-top: 12px; }
+  .more-list a { display: flex; align-items: center; gap: 14px; padding: 12px 8px; border-radius: 14px; color: var(--text); font-weight: 700; font-size: 16px; }
+  .more-list a:active { background: var(--fill); }
+  .more-list a.active { color: var(--orange-dark); background: var(--fill); }
+  .more-list .ico-tile { flex: none; }
   .island a > span:last-child { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; letter-spacing: -.01em; }
   .island a svg { width: 24px; height: 24px; }
   .island a:active { transform: scale(.92); transition-duration: .1s; }
@@ -1234,7 +1241,7 @@ const i18n = {
     todo_reports: 'reports to review', todo_reports_1: 'report to review', nt_report: 'New report to review: {k}.',
     signup_fast: 'Takes under a minute. You can add school and phone later.',
     // tabs
-    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_chat: 'Chat', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
+    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_chat: 'Chat', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin', tab_more: 'More',
     // roles
     role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin', role_admin_all: 'Admin (all nations)', mr_add: 'Assign to a nation', mr_leader: 'Country leader', mr_partner: 'Missionary', mr_admin_note: 'Full admin: manages every nation.',
     // home
@@ -1514,7 +1521,7 @@ const i18n = {
     rp_kind_message: '채팅 메시지', rp_kind_prayer: '기도 제목', rp_kind_testimony: '간증', rp_kind_team_post: '팀 게시글', rp_kind_user: '회원',
     todo_reports: '확인할 신고', nt_report: '확인할 새 신고: {k}',
     signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
-    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_chat: '채팅', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
+    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_chat: '채팅', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리', tab_more: '더보기',
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자', role_admin_all: '전체 관리자', mr_add: '나라 담당 지정', mr_leader: '나라 리더', mr_partner: '선교사님', mr_admin_note: '전체 관리자: 모든 나라를 관리합니다.',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
     next_meeting: '다음 모임', then: '이어서',
@@ -2487,6 +2494,7 @@ const ICON = {
   check: '<path d="m5 12.5 4.2 4.2L19 7"/>',
   plus: '<path d="M12 5v14"/><path d="M5 12h14"/>',
   lock: '<rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+  more: '<circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/>',
   chat: '<path d="M20 12a7.5 7.5 0 0 1-11 6.6L4 20l1.4-4.4A7.5 7.5 0 1 1 20 12z"/>',
   plane: '<path d="M10.5 13.5 3.5 11l1.3-1.3 7.7.6 4.2-4.2a1.9 1.9 0 0 1 2.7 2.7l-4.2 4.2.6 7.7L14.5 22l-2.5-7"/>',
   voice: '<rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"/><path d="M12 18v2.5"/>',
@@ -2608,14 +2616,25 @@ window.addEventListener('scroll', () => document.querySelector('.apphead')?.clas
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
 const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'chat', conference: 'my', sos: 'home', pair: 'countries', ideas: 'community', events: 'home', rooms: 'chat', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
+function overflowTabs() { return TABS.filter(x => !x.adminOnly || isAdmin()).filter(x => x.id === 'community' || x.id === 'my' || (x.id === 'train' && isAdmin())); }
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
   const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
+  const ov = new Set(overflowTabs().map(x => x.id));
   return `<nav class="island" aria-label="Main"><div class="island-inner">
-    ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
+    ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}${ov.has(x.id) ? ' ov' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
       <span class="ico">${icon(x.icon)}${x.id === 'chat' ? badgeHTML(state.chatUnread) : ''}</span><span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
+    <a href="#more" class="nav-more ${ov.has(tab) ? 'active' : ''}" data-nav-more role="button" aria-haspopup="dialog"><span class="ico">${icon('more')}</span><span>${esc(t('tab_more'))}</span></a>
   </div></nav>`;
 }
+document.addEventListener('click', e => {
+  const m = e.target.closest('[data-nav-more]');
+  if (!m) return;
+  e.preventDefault();
+  const cur = SUB_TAB[parseRoute().tab] || parseRoute().tab;
+  openSheet(`${sheetHead(t('tab_more'))}<div class="more-list">${overflowTabs().map(x =>
+    `<a href="#/${x.id}" data-sheet-close class="${x.id === cur ? 'active' : ''}"><span class="ico-tile soft">${icon(x.icon)}</span>${esc(t('tab_' + x.id))}</a>`).join('')}</div>`);
+});
 function shell(tab, inner) {
   return `${headerHTML()}<main id="view" tabindex="-1">${inner}</main>${islandHTML(tab)}`;
 }
