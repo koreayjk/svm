@@ -18,6 +18,7 @@ function serve() {
 }
 let pass = 0, fail = 0;
 const ok = (c, msg) => { if (c) { pass++; console.log('  ✓', msg); } else { fail++; console.log('  ✗ FAIL:', msg); } };
+function location_hash(u) { return u.includes('#') ? '#' + u.split('#')[1] : ''; }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 (async () => {
@@ -38,7 +39,11 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   let p = await mk();
   await signup(p, 'First Admin', 'admin@t.org');
   ok(await p.locator('.island').count() === 1, '가입하면 앱 화면이 열린다');
-  ok((await p.locator('.island a').allInnerTexts()).map(x => x.trim()).join(',') === 'Home,Countries,Train,Chat,Community,My,Admin', '하단 메뉴: 홈·선교지·훈련·채팅·커뮤니티·마이·관리');
+  ok((await p.locator('.island a:visible').allInnerTexts()).map(x => x.trim()).join(',') === 'Home,Countries,Chat,Admin,More', '폰 하단 메뉴(관리자): 홈·선교지·채팅·관리·더보기');
+  await p.locator('.island a.nav-more').click(); await sleep(400);
+  ok((await p.locator('.more-list a').allInnerTexts()).map(x => x.trim()).join(',') === 'Train,Community,My', '더보기 시트: 훈련·커뮤니티·마이');
+  await p.locator('.more-list a', { hasText: 'Community' }).click(); await sleep(700);
+  ok(location_hash(await p.url()) === '#/community' && await p.locator('.island a.nav-more.active').count() === 1, '시트에서 이동하면 더보기가 선택 표시된다');
   ok(await p.locator('#view h1').first().isVisible(), '홈 제목이 보인다');
 
   console.log('2. 선교지 신청');
@@ -129,7 +134,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   // 첫 가입자가 관리자라서, 두 번째 사람은 새 브라우저에서 가입해도 데모 DB 가 따로라 관리자가 된다 → 역할을 일반으로
   await patchDb(s, db => { db.profiles.find(x => x.id === db.session).role = 'member'; });
   await s.reload(); await sleep(1500);
-  ok((await s.locator('.island a').allInnerTexts()).map(x => x.trim()).join(',') === 'Home,Countries,Train,Chat,Community,My', '학생에게는 관리 메뉴가 없다');
+  ok((await s.locator('.island a:visible').allInnerTexts()).map(x => x.trim()).join(',') === 'Home,Countries,Train,Chat,More' && (await s.locator('.island a').allInnerTexts()).every(x => !/Admin/.test(x)), '학생에게는 관리 메뉴가 없다 (하단 4개 + 더보기)');
   await go(s, '#/chat');
   ok(await s.locator('a[href="#/network"]').count() === 0, '학생에게는 리더 방이 안 보인다');
   await go(s, '#/conference');
