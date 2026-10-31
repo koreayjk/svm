@@ -1051,8 +1051,8 @@
     #app[data-tab="admin"] #view, #app[data-tab="lead"] #view, #app[data-tab="plans"] #view, #app[data-tab="field"] #view,
     #app[data-tab="conference"] #view, #app[data-tab="apps"] #view { max-width: 1040px; }
     /* 채팅: 입력창을 본문 가운데에 */
-    .composer { left: var(--side-w); right: 0; bottom: 28px; width: min(760px, calc(100% - var(--side-w) - 80px)); }
-    .chat-spacer { height: 84px; }
+    .composer { position: sticky; left: auto; right: auto; bottom: 28px; width: 100%; max-width: 760px; margin-inline: auto; }
+    .chat-spacer { height: 20px; }
     .toast { left: calc(50% + var(--side-w) / 2); bottom: 32px !important; }
     @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 10px) scale(.97); } to { opacity: 1; transform: translate(-50%, 0); } }
     /* 마우스 위에 올렸을 때 */
@@ -1066,6 +1066,15 @@
     .h1, h1.display { font-size: 34px; }
     .bento { gap: 16px; }
     .bento > .dest { min-height: 210px; }
+  }
+  .room-side { display: none; }
+  @media (min-width: 1120px) {
+    #app[data-tab="rooms"] #view, #app[data-tab="network"] #view { max-width: 1100px; display: grid; grid-template-columns: minmax(0, 1fr) 280px; column-gap: 28px; row-gap: 0; align-content: start; }
+    #app[data-tab="rooms"] #view > *, #app[data-tab="network"] #view > * { grid-column: 1; min-width: 0; }
+    #app[data-tab="rooms"] #view > .room-side, #app[data-tab="network"] #view > .room-side { display: block; grid-column: 2; grid-row: 1 / span 40; align-self: start; position: sticky; top: 84px; margin-top: 52px;
+      background: var(--surface); border-radius: 22px; padding: 16px 16px 10px; box-shadow: 0 10px 30px -18px rgba(13, 27, 58, .28); max-height: calc(100vh - 130px); overflow-y: auto; }
+    .rs-list { margin-top: 10px; } .rs-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; } .rs-row + .rs-row { border-top: 1px solid var(--line); }
+    .rs-row .meta { min-width: 0; } .rs-row .t { font-weight: 600; font-size: 14.5px; } .rs-row .d { margin-top: 2px; }
   }
   @media (min-width: 1500px) {
     :root { --side-w: 276px; }
@@ -1217,7 +1226,7 @@ const i18n = {
     swipe: 'Swipe →',
     train_sub: 'Trained, then sent.', train_goal: 'Goal', train_hero: 'Share the gospel in their heart language.',
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
-    community_sub: 'Pray, plan and go together.', mem_view: 'See who is here', mem_title: 'Who is in this room', mem_none: 'No one yet.', mem_n: '{n} people', mem_n1: '1 person', mem_you: 'You', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
+    community_sub: 'Pray, plan and go together.', mem_side: 'In this room', mem_view: 'See who is here', mem_title: 'Who is in this room', mem_none: 'No one yet.', mem_n: '{n} people', mem_n1: '1 person', mem_you: 'You', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
     members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station to seven mission fields.', map_hubs: 'Sending from Bryan/College Station', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
     // ② country rooms
@@ -1489,7 +1498,7 @@ const i18n = {
     swipe: '밀어서 보기 →',
     train_sub: '훈련 후 파송.', train_goal: '목표', train_hero: '그들의 마음의 언어로 복음을 전하기.',
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
-    community_sub: '함께 기도하고, 준비하고, 갑니다.', mem_view: '누가 있는지 보기', mem_title: '이 방에 있는 사람', mem_none: '아직 아무도 없어요.', mem_n: '{n}명', mem_n1: '1명', mem_you: '나', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
+    community_sub: '함께 기도하고, 준비하고, 갑니다.', mem_side: '이 방에 있는 사람', mem_view: '누가 있는지 보기', mem_title: '이 방에 있는 사람', mem_none: '아직 아무도 없어요.', mem_n: '{n}명', mem_n1: '1명', mem_you: '나', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
     members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
     room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
@@ -3380,6 +3389,16 @@ function roleTagsFor(uid) {
   (state.leaders || []).filter(x => x.user_id === uid).forEach(x => { const c = countryById(x.country_id); tags.push(['leader', `${c ? flag(c.code) + ' ' : ''}${t('net_role_leader')}`]); });
   return tags;
 }
+function roomSideHTML(ids, hideNames) {
+  const uniq = [...new Set(ids)].filter(Boolean);
+  const me = state.profile.id;
+  const rows = uniq.map(u => ({ u, name: u === me ? t('mem_you') : (shortName(nameCache[u]?.name) || '—'), tags: roleTagsFor(u) }))
+    .sort((a, b) => (b.u === me) - (a.u === me) || (b.tags.length > 0) - (a.tags.length > 0) || a.name.localeCompare(b.name));
+  return `<aside class="room-side" aria-label="${esc(t('mem_side'))}"><div class="row between"><b>${esc(t('mem_side'))}</b><span class="small muted">${esc(memN(uniq.length))}</span></div>
+    ${hideNames ? '' : `<div class="rs-list">${rows.length ? rows.map(r => `<div class="rs-row"><span class="avatar sm" aria-hidden="true">${esc(initials(r.name))}</span>
+      <div class="meta"><div class="t">${esc(r.name)}</div>${r.tags.length ? `<div class="d">${r.tags.map(([k, l]) => `<span class="net-tag ${k}">${l}</span>`).join(' ')}</div>` : ''}</div></div>`).join('') : `<p class="small muted">${esc(t('mem_none'))}</p>`}</div>`}
+  </aside>`;
+}
 async function openMembersSheet(title, ids) {
   const uniq = [...new Set(ids)].filter(Boolean);
   await Promise.all([loadNames(uniq), loadLeaders()]);
@@ -3580,6 +3599,7 @@ VIEWS.rooms = async function (code) {
     sb.from('room_members').select('user_id').eq('country_id', c.id),
   ]);
   const memberIds = (members.data || []).map(r => r.user_id);
+  if (!c.is_sensitive) await Promise.all([loadNames(memberIds), loadLeaders()]);
   const joined = c.id in rooms;
   const items = (msgs.data || []).reverse();
   await loadNames(items.map(m => m.user_id));
@@ -3595,6 +3615,7 @@ VIEWS.rooms = async function (code) {
     ${joined ? '' : card(`<p style="margin:0 0 14px">${esc(t('room_join_d'))}</p>
       <button class="btn block" id="room-join">${icon('chat')} ${esc(t('room_join'))}</button>`)}
     <div class="chat" id="chat" aria-live="polite">${chatHTML(items)}</div>
+    ${c.is_sensitive ? '' : roomSideHTML(memberIds)}
     ${joined ? `<p class="small muted" style="text-align:center;margin:6px 0 0">${icon('lock', 'width="13" height="13" style="vertical-align:-2px"')} ${esc(t('room_safety'))}</p>
       <form class="composer" id="composer">
         <textarea name="body" rows="1" maxlength="1000" placeholder="${esc(t('room_placeholder'))}" aria-label="${esc(t('room_placeholder'))}" required></textarea>
@@ -4871,6 +4892,7 @@ VIEWS.network = async function (code) {
     <div style="margin:-12px 0 12px"><button type="button" class="text-link" data-members="${esc(peopleIds.join(','))}" data-title="${esc(cur ? t('chat_nation_leaders', { c: countryName(cur) }) : t('chat_all_leaders'))}">${icon('people', 'width="15" height="15" style="vertical-align:-3px"')} ${esc(memN(peopleIds.length))} · ${esc(t('mem_view'))}</button></div>
     <div class="lang-pick" style="margin:-6px -20px 14px"><a class="chip-a ${!cur ? 'active' : ''}" href="#/network">${icon('people', 'width="15" height="15"')} ${esc(t('net_all'))}</a>${mine.map(c => `<a class="chip-a ${cur && c.id === cur.id ? 'active' : ''}" href="#/network/${esc(c.code)}"><span aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>
     <div class="banner" role="note">${icon('lock')}<span>${esc(t('net_safe'))}</span></div>
+    ${roomSideHTML(peopleIds)}
     ${card(thread)}`;
 };
 BINDERS.network = function () {
