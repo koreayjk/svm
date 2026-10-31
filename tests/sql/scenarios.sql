@@ -210,3 +210,58 @@ set app.uid = :'stud3';
 select public.delete_my_account();
 reset role;
 select test.ok((select count(*) from public.profiles where id = :'stud3') = 0, '일반 회원은 계정을 지우면 프로필도 사라진다');
+
+-- ===== 채팅 기본 기능: 답장 · 반응 · 수정/삭제 · 사진 =====
+insert into public.room_members (user_id, country_id) values (:'stud', :kr), (:'stud2', :kr);
+set role authenticated; set app.uid = :'stud';
+insert into public.messages (country_id, user_id, body) values (:kr, :'stud', 'Hello Korea team') returning id as m1 \gset
+select test.ok(:m1 is not null, '나라 방에 글을 쓴다');
+set app.uid = :'stud2';
+insert into public.messages (country_id, user_id, body, reply_to) values (:kr, :'stud2', 'Welcome!', :m1) returning id as m2 \gset
+select test.ok((select reply_to from public.messages where id = :m2) = :m1, '글에 답장한다');
+insert into public.messages (country_id, user_id, body, image_url) values (:kr, :'stud2', '', 'https://x/p.jpg') returning id as m3 \gset
+select test.ok(:m3 is not null, '글 없이 사진만 보낼 수 있다');
+select test.throws(format($q$insert into public.messages (country_id, user_id, body) values (%s, %L, '')$q$, :kr, :'stud2'), '글도 사진도 없으면 보낼 수 없다');
+insert into public.message_reactions (kind, message_id, user_id, emoji) values ('room', :m1, :'stud2', '🙏');
+select test.ok(true, '남의 글에 이모지 반응을 남긴다');
+select test.throws(format($q$insert into public.message_reactions (kind, message_id, user_id, emoji) values ('room', %s, %L, '🙏')$q$, :m1, :'stud2'), '같은 반응을 두 번은 못 남긴다');
+select test.throws(format($q$insert into public.message_reactions (kind, message_id, user_id, emoji) values ('room', %s, %L, '💩')$q$, :m1, :'stud2'), '정해진 이모지만 쓸 수 있다');
+select test.throws(format($q$insert into public.message_reactions (kind, message_id, user_id, emoji) values ('room', %s, %L, '👍')$q$, :m1, :'stud'), '남의 이름으로 반응을 남길 수 없다');
+set app.uid = :'stud';
+select test.ok(test.n(format($q$select 1 from public.message_reactions where message_id = %s$q$, :m1)) = 1, '반응은 모두에게 보인다');
+-- 수정
+update public.messages set body = 'Hello Korea team!!' where id = :m1;
+select test.ok((select body from public.messages where id = :m1) = 'Hello Korea team!!' and (select edited_at from public.messages where id = :m1) is not null, '내 글을 고치면 "수정됨" 시각이 남는다');
+select test.throws(format($q$update public.messages set user_id = %L where id = %s$q$, :'stud2', :m1), '글쓴이를 바꿀 수 없다');
+select test.throws(format($q$update public.messages set image_url = 'https://evil/x.jpg' where id = %s$q$, :m1), '이미 보낸 글에 사진을 몰래 못 붙인다');
+update public.messages set body = 'hijack' where id = :m2;
+select test.ok((select body from public.messages where id = :m2) = 'Welcome!', '남의 글은 못 고친다');
+-- 삭제 (삭제 표시)
+select public.delete_my_message(:m1);
+select test.ok(test.n(format('select 1 from public.messages where id = %s', :m1)) = 0, '내 글을 지우면 더 이상 보이지 않는다');
+select test.throws(format('select public.delete_my_message(%s)', :m2), '남의 글은 지울 수 없다');
+reset role;
+select test.ok((select count(*) from public.message_reactions where message_id = :m1) = 1, '(기록은 남아 있다)');
+set role authenticated; set app.uid = :'stud2';
+select test.ok(test.n(format($q$select 1 from public.message_reactions where message_id = %s$q$, :m1)) = 0, '지워진 글의 반응은 보이지 않는다');
+select test.throws(format($q$select public.delete_my_message(%s)$q$, :m1), '이미 지운 글을 다시 지울 수 없다');
+delete from public.message_reactions where user_id = :'stud2' and message_id = :m1;
+reset role;
+select test.ok((select count(*) from public.notifications where kind = 'chat_reply' and user_id = :'stud') = 1, '답장이 달리면 글쓴이에게 알림');
+-- 리더 방에도 같은 기능
+set role authenticated; set app.uid = :'field';
+insert into public.network_messages (user_id, body) values (:'field', 'Leaders only hello') returning id as n1 \gset
+insert into public.message_reactions (kind, message_id, user_id, emoji) values ('network', :n1, :'field', '👍');
+select test.ok(true, '리더 방 글에도 반응을 남긴다');
+update public.network_messages set body = 'Leaders only hello (edited)' where id = :n1;
+select test.ok((select edited_at from public.network_messages where id = :n1) is not null, '리더 방 글도 고칠 수 있다');
+delete from public.network_messages where id = :n1;
+select test.ok(test.n(format('select 1 from public.network_messages where id = %s', :n1)) = 0, '리더 방 글을 지운다');
+reset role;
+select test.ok((select count(*) from public.message_reactions where kind = 'network' and message_id = :n1) = 0, '글을 지우면 그 글의 반응도 정리된다');
+set role authenticated; set app.uid = :'field';
+insert into public.network_messages (user_id, body) values (:'field', 'Second one') returning id as n2 \gset
+set app.uid = :'stud';
+select test.throws(format($q$insert into public.message_reactions (kind, message_id, user_id, emoji) values ('network', %s, %L, '👍')$q$, :n2, :'stud'), '학생은 리더 방 글에 반응을 못 남긴다');
+select test.ok(test.n(format($q$select 1 from public.message_reactions where kind = 'network' and message_id = %s$q$, :n2)) = 0, '학생은 리더 방 반응을 못 본다');
+reset role;
