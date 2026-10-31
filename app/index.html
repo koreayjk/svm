@@ -308,6 +308,8 @@
   }
   .island a .ico { display: grid; place-items: center; height: 28px; }
   @media (max-width: 374px) { .island a { font-size: 9.5px; } }
+  @media (max-width: 1023px) { .island-inner:has(> a:nth-child(7)) a { font-size: 9.5px; letter-spacing: -.02em; padding-inline: 0; } }
+  @media (max-width: 430px) { .island-inner:has(> a:nth-child(7)) a { font-size: 9px; } .island-inner:has(> a:nth-child(7)) a > span:last-child { text-overflow: clip; overflow: visible; } }
   .island a > span:last-child { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; letter-spacing: -.01em; }
   .island a svg { width: 24px; height: 24px; }
   .island a:active { transform: scale(.92); transition-duration: .1s; }
@@ -1039,11 +1041,11 @@
     /* 화면별 폭: 기본은 읽기 좋은 한 단, 대시보드형은 2단 */
     #view { max-width: 820px; margin-left: auto; margin-right: auto; }
     #app[data-tab="home"] #view, #app[data-tab="my"] #view, #app[data-tab="countries"] #view, #app[data-tab="community"] #view,
-    #app[data-tab="train"] #view, #app[data-tab="teams"] #view, #app[data-tab="support"] #view, #app[data-tab="testimonies"] #view {
+    #app[data-tab="train"] #view, #app[data-tab="chat"] #view, #app[data-tab="teams"] #view, #app[data-tab="support"] #view, #app[data-tab="testimonies"] #view {
       max-width: 1180px; column-count: 2; column-gap: 28px;
     }
     #app[data-tab="home"] #view > *, #app[data-tab="my"] #view > *, #app[data-tab="countries"] #view > *, #app[data-tab="community"] #view > *,
-    #app[data-tab="train"] #view > *, #app[data-tab="teams"] #view > *, #app[data-tab="support"] #view > *, #app[data-tab="testimonies"] #view > * { break-inside: avoid; }
+    #app[data-tab="train"] #view > *, #app[data-tab="chat"] #view > *, #app[data-tab="teams"] #view > *, #app[data-tab="support"] #view > *, #app[data-tab="testimonies"] #view > * { break-inside: avoid; }
     #view > .page-head, #view > .greet, #view > div:has(> .back-pill), #view > .lang-pick, #view > .filters, #view > .banner { column-span: all; }
     #view > .section-head { break-after: avoid; }
     #app[data-tab="admin"] #view, #app[data-tab="lead"] #view, #app[data-tab="plans"] #view, #app[data-tab="field"] #view,
@@ -1145,7 +1147,7 @@ const i18n = {
     todo_reports: 'reports to review', todo_reports_1: 'report to review', nt_report: 'New report to review: {k}.',
     signup_fast: 'Takes under a minute. You can add school and phone later.',
     // tabs
-    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
+    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_chat: 'Chat', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin',
     // roles
     role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin', role_admin_all: 'Admin (all nations)', mr_add: 'Assign to a nation', mr_leader: 'Country leader', mr_partner: 'Missionary', mr_admin_note: 'Full admin: manages every nation.',
     // home
@@ -1215,7 +1217,7 @@ const i18n = {
     swipe: 'Swipe →',
     train_sub: 'Trained, then sent.', train_goal: 'Goal', train_hero: 'Share the gospel in their heart language.',
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
-    community_sub: 'Pray, plan and go together.',
+    community_sub: 'Pray, plan and go together.', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
     members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station to seven mission fields.', map_hubs: 'Sending from Bryan/College Station', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
     // ② country rooms
@@ -1425,7 +1427,7 @@ const i18n = {
     rp_kind_message: '채팅 메시지', rp_kind_prayer: '기도 제목', rp_kind_testimony: '간증', rp_kind_team_post: '팀 게시글', rp_kind_user: '회원',
     todo_reports: '확인할 신고', nt_report: '확인할 새 신고: {k}',
     signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
-    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
+    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_chat: '채팅', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리',
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자', role_admin_all: '전체 관리자', mr_add: '나라 담당 지정', mr_leader: '나라 리더', mr_partner: '선교사님', mr_admin_note: '전체 관리자: 모든 나라를 관리합니다.',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
     next_meeting: '다음 모임', then: '이어서',
@@ -1487,7 +1489,7 @@ const i18n = {
     swipe: '밀어서 보기 →',
     train_sub: '훈련 후 파송.', train_goal: '목표', train_hero: '그들의 마음의 언어로 복음을 전하기.',
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
-    community_sub: '함께 기도하고, 준비하고, 갑니다.',
+    community_sub: '함께 기도하고, 준비하고, 갑니다.', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
     members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
     room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
@@ -2427,6 +2429,7 @@ const TABS = [
   { id: 'home', icon: 'home' },
   { id: 'countries', icon: 'globe' },
   { id: 'train', icon: 'book' },
+  { id: 'chat', icon: 'chat' },
   { id: 'community', icon: 'people' },
   { id: 'my', icon: 'user' },
   { id: 'admin', icon: 'shield', adminOnly: true },
@@ -2502,14 +2505,14 @@ function headerHTML() {
 // 스크롤하면 상단 바가 반투명 소재로 바뀜 (콘텐츠가 그 아래로 지나갈 때만)
 window.addEventListener('scroll', () => document.querySelector('.apphead')?.classList.toggle('scrolled', window.scrollY > 6), { passive: true });
 // 탭이 아닌 하위 화면 → 하단 탭에서 어느 탭으로 표시할지
-const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'my', conference: 'my', sos: 'home', pair: 'countries', ideas: 'community', events: 'home', rooms: 'community', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
+const SUB_TAB = { plans: 'my', feed: 'home', following: 'home', lead: 'my', field: 'my', network: 'chat', conference: 'my', sos: 'home', pair: 'countries', ideas: 'community', events: 'home', rooms: 'chat', apply: 'countries', apps: 'my', learn: 'train', course: 'train',
   attendance: 'my', checklist: 'my', notifications: 'home', testimonies: 'community', prayers: 'community', support: 'community', teams: 'community' };
 function islandHTML(tab) {
   tab = SUB_TAB[tab] || (TABS.some(x => x.id === tab) ? tab : 'home');
   const tabs = TABS.filter(x => !x.adminOnly || isAdmin());
   return `<nav class="island" aria-label="Main"><div class="island-inner">
     ${tabs.map(x => `<a href="#/${x.id}" class="${x.id === tab ? 'active' : ''}" ${x.id === tab ? 'aria-current="page"' : ''}>
-      <span class="ico">${icon(x.icon)}${x.id === 'community' ? badgeHTML(state.chatUnread) : ''}</span><span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
+      <span class="ico">${icon(x.icon)}${x.id === 'chat' ? badgeHTML(state.chatUnread) : ''}</span><span>${esc(t('tab_' + x.id))}</span></a>`).join('')}
   </div></nav>`;
 }
 function shell(tab, inner) {
@@ -2838,10 +2841,24 @@ const VIEWS = {
   },
 
 
+  async chat() {
+    await Promise.all([loadCountries(), loadLeaders()]);
+    let leaders = '';
+    if (inNetworkRoom()) {
+      const mine = isAdmin() ? (state.countries || []).filter(x => x.is_active)
+        : (state.countries || []).filter(x => state.partnerOf.has(x.id) || state.leaderOf.has(x.id));
+      const row = (href, ico, title, desc) => `<a class="list-row" href="${href}">${ico}<div class="meta"><div class="t">${esc(title)}</div><div class="d">${esc(desc)}</div></div><span class="chev">${icon('chev')}</span></a>`;
+      leaders = `<div class="section-head"><h2>${esc(t('chat_leaders'))}</h2></div>
+        ${card(row('#/network', `<span class="ico-tile">${icon('people')}</span>`, t('chat_all_leaders'), t('chat_all_leaders_d'))
+          + mine.map(c => row('#/network/' + c.code, `<span class="flag-tile" style="font-size:30px" aria-hidden="true">${flag(c.code)}</span>`, t('chat_nation_leaders', { c: countryName(c) }), t('chat_nation_leaders_d'))).join(''))}
+        <p class="small muted" style="margin:10px 4px 0">${esc(t('chat_leaders_d'))}</p>`;
+    }
+    return `${pageHead(t('chat_title'), t('chat_sub'))}
+      ${await viewCommunityRooms()}
+      ${leaders}`;
+  },
   async community() {
     return `${pageHead(t('community_title'), t('community_sub'))}
-      ${await viewCommunityRooms()}
-      <div class="section-head"><h2>${esc(t('community_more'))}</h2></div>
       ${card([['hands', 'prayers', 'com_prayer'], ['spark', 'testimonies', 'com_testi'], ['people', 'teams', 'com_teams'], ['gift', 'support', 'com_support'], ['chat', 'ideas', 'fb']]
         .map(([ic, href, k]) => `<a class="list-row" href="#/${href}"><span class="ico-tile">${icon(ic)}</span>
           <div class="meta"><div class="t">${esc(t(k + '_t'))}</div><div class="d">${esc(t(k + '_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`).join(''))}`;
@@ -2858,7 +2875,6 @@ const VIEWS = {
       ${partnerOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile orange">${icon('globe')}</span><div class="meta"><div class="t">${esc(t('fd_title'))}</div><div class="d">${esc(t('fd_link_d', { c: partnerOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${leadOf.length ? card(`<a class="list-row" href="#/field"><span class="ico-tile">${icon('chat')}</span><div class="meta"><div class="t">${esc(t('fd_room'))}</div><div class="d">${esc(t('fd_room_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${isAdmin() ? card(`<a class="list-row" href="#/conference"><span class="ico-tile orange">${icon('check')}</span><div class="meta"><div class="t">${esc(t('cf_title'))}</div><div class="d">${esc(t('cf_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
-      ${(isAdmin() || leadOf.length || partnerOf.length) ? card(`<a class="list-row" href="#/network"><span class="ico-tile">${icon('people')}</span><div class="meta"><div class="t">${esc(t('net_title'))}</div><div class="d">${esc(t('net_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${(isAdmin() || leadOf.length || partnerOf.length) ? card(`<a class="list-row" href="#/plans"><span class="ico-tile orange">${icon('check')}</span><div class="meta"><div class="t">${esc(t('pl_title'))}</div><div class="d">${esc(t('pl_link_d'))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${leadOf.length ? card(`<a class="list-row" href="#/lead"><span class="ico-tile orange">${icon('people')}</span><div class="meta"><div class="t">${esc(t('ld_title'))}</div><div class="d">${esc(t('ld_link_d', { c: leadOf.map(countryName).join(' · ') }))}</div></div><span class="chev">${icon('chev')}</span></a>`) : ''}
       ${card(`
@@ -3530,7 +3546,7 @@ function markRoomRead(cid, iso) {
 VIEWS.rooms = async function (code) {
   const list = await loadCountries();
   const c = code && list.find(x => x.code === code.toUpperCase() && x.is_active);
-  const back = `<div style="padding-top:8px"><a href="#/community" class="back-pill">${icon('chevl')}${esc(t('community_title'))}</a></div>`;
+  const back = `<div style="padding-top:8px"><a href="#/chat" class="back-pill">${icon('chevl')}${esc(t('tab_chat'))}</a></div>`;
   if (!c) return back + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   const [rooms, msgs, members] = await Promise.all([
     loadRooms(),
@@ -4793,9 +4809,10 @@ BINDERS.ideas = function (id) {
 
 // 리더 대화방: 모든 나라의 선교사님 · 나라 리더 · 관리자가 함께 (학생에게는 안 보임)
 function inNetworkRoom() { return isAdmin() || (state.leaderOf && state.leaderOf.size > 0) || (state.partnerOf && state.partnerOf.size > 0); }
-VIEWS.network = async function () {
+VIEWS.network = async function (code) {
   await Promise.all([loadCountries(true), loadLeaders(true)]);
-  if (!inNetworkRoom()) return backLink('#/my', t('tab_my')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
+  { const cc = code && (state.countries || []).find(x => x.code === code.toUpperCase()); state.netRoom = cc ? cc.id : 0; }
+  if (!inNetworkRoom()) return backLink('#/chat', t('tab_chat')) + `<div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   // 방 목록: 전체 리더 + (내가 속한 나라마다 그 나라 리더 방. 관리자는 모든 나라)
   const mine = isAdmin() ? (state.countries || []).filter(x => x.is_active)
     : (state.countries || []).filter(x => state.partnerOf.has(x.id) || state.leaderOf.has(x.id));
@@ -4818,14 +4835,13 @@ VIEWS.network = async function () {
       <div><div class="bubble">${esc(m.body)}</div></div></div>`).join('') : `<p class="small muted" style="margin:0">${esc(t('net_none'))}</p>`}</div>
     <form class="thread-form" id="net-form"><textarea name="body" rows="2" maxlength="2000" placeholder="${esc(t('th_ph'))}" required></textarea>
       <button class="btn small navy" type="submit">${icon('send', 'width="16" height="16"')} ${esc(t('th_send'))}</button></form>`;
-  return `${backLink('#/my', t('tab_my'))}${pageHead(t('net_title'), cur ? t('net_d_country', { c: countryName(cur) }) : t('net_d'))}
-    <div class="lang-pick" style="margin:-6px -20px 14px"><a class="chip-a ${!cur ? 'active' : ''}" href="#/network" data-net-room="0">${icon('people', 'width="15" height="15"')} ${esc(t('net_all'))}</a>${mine.map(c => `<a class="chip-a ${cur && c.id === cur.id ? 'active' : ''}" href="#/network" data-net-room="${c.id}"><span aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>
+  return `${backLink('#/chat', t('tab_chat'))}${pageHead(t('net_title'), cur ? t('net_d_country', { c: countryName(cur) }) : t('net_d'))}
+    <div class="lang-pick" style="margin:-6px -20px 14px"><a class="chip-a ${!cur ? 'active' : ''}" href="#/network">${icon('people', 'width="15" height="15"')} ${esc(t('net_all'))}</a>${mine.map(c => `<a class="chip-a ${cur && c.id === cur.id ? 'active' : ''}" href="#/network/${esc(c.code)}"><span aria-hidden="true">${flag(c.code)}</span>${esc(countryName(c))}</a>`).join('')}</div>
     <div class="banner" role="note">${icon('lock')}<span>${esc(t('net_safe'))}</span></div>
     ${card(thread)}`;
 };
 BINDERS.network = function () {
   const th = document.getElementById('net-thread'); if (th) th.scrollTop = th.scrollHeight;
-  app.querySelectorAll('[data-net-room]').forEach(a => a.onclick = (e) => { e.preventDefault(); state.netRoom = Number(a.dataset.netRoom) || 0; render(); });
   const f = document.getElementById('net-form');
   if (f) f.onsubmit = async (e) => {
     e.preventDefault();
@@ -6881,7 +6897,7 @@ function paintBadges() {
   if (NATIVE && Native.Badge) Native.Badge.set({ count: (state.notifUnread || 0) + (state.chatUnread || 0) }).catch(() => {});
   const bell = document.querySelector('.bell');
   if (bell) bell.innerHTML = `${icon('bell')}${badgeHTML(state.notifUnread)}`;
-  const com = document.querySelector('.island a[href="#/community"] .ico');
+  const com = document.querySelector('.island a[href="#/chat"] .ico');
   if (com) { com.querySelector('.nbadge')?.remove(); if (state.chatUnread) com.insertAdjacentHTML('beforeend', badgeHTML(state.chatUnread)); }
 }
 // 새 알림은 실시간으로 (화면 맨 아래 짧은 안내 + 종 배지)
