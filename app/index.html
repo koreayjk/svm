@@ -1133,6 +1133,32 @@
     #app[data-tab="home"] #view, #app[data-tab="countries"] #view, #app[data-tab="community"] #view { max-width: 1280px; column-gap: 32px; }
     main, .apphead-inner { max-width: 1280px; }
   }
+
+  /* ---------- 휴대폰: 글자 크기 한 단계 줄여 차분하게 ---------- */
+  @media (max-width: 767px) {
+    body { font-size: 15px; line-height: 1.5; }
+    .display, .auth-title { font-size: 28px; }
+    h1 { font-size: 23px; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 15.5px; }
+    .section-head h2 { font-size: 17.5px; }
+    .lede, .info-sec p, .pledge-count .lbl, .list-row .meta .t { font-size: 15px; }
+    .small { font-size: 13px; }
+    .greet .date { font-size: 13px; }
+    .dday { font-size: 34px; }
+    .meet-title { font-size: 21px; margin: 14px 0 6px; }
+    .meet-when { font-size: 14px; } .meet-when .num { font-size: 16px; }
+    .event-hero h2 { font-size: 21px; } .event-hero .ev-dd { font-size: 38px; }
+    .detail-hero h1, .dest.hero h1 { font-size: 28px; }
+    .room-head h1 { font-size: 22px; }
+    .country-link .name { font-size: 16px; }
+    .dest .d-name { font-size: 19px; } .bento > .dest .d-name { font-size: 17px; }
+    .local { font-size: 19px; } .test-card .q { font-size: 18px; }
+    .trip-dd { font-size: 38px; } .sos-num { font-size: 30px; }
+    .btn { font-size: 15px; min-height: 46px; padding: 0 20px; }
+    .action-row .btn { font-size: 14.5px; }
+    .island a { font-size: 10.5px; }
+  }
 </style>
 </head>
 <body>
