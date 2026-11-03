@@ -83,6 +83,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok((await p.locator('#chat').innerText()).includes('Hello team'), '나라 방에 메시지를 보낸다');
   // 채팅 기본 기능: 답장 · 반응 · 수정 · 사진 · 삭제
   await p.locator('.msg:not(.me)').first().locator('[data-act=reply]').dispatchEvent('click');
+  ok(await p.locator('#composer').evaluate(e => getComputedStyle(e).position === 'fixed'), '폰에서 입력창은 화면 아래에 고정된다');
   ok(await p.locator('#ck-bar .cb-row').count() === 1, '메시지에 답장을 누르면 입력창 위에 "답장 중" 표시');
   await p.fill('#composer textarea', 'Replying to you'); await p.click('#composer button[type=submit]'); await sleep(900);
   ok(await p.locator('.reply-q').count() >= 1, '답장은 원래 글 인용과 함께 보인다');
