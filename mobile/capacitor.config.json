@@ -17,23 +17,12 @@
       "backgroundColor": "#F4F5F8",
       "showSpinner": false
     },
-    "FirebaseMessaging": {
+    "PushNotifications": {
       "presentationOptions": [
         "badge",
         "sound",
         "alert"
       ]
-    }
-  },
-  "experimental": {
-    "ios": {
-      "spm": {
-        "packageOptions": {
-          "@capacitor-firebase/messaging": {
-            "symlink": true
-          }
-        }
-      }
     }
   }
 }
