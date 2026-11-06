@@ -46,6 +46,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   ok(location_hash(await p.url()) === '#/community' && await p.locator('.island a.nav-more.active').count() === 1, '시트에서 이동하면 더보기가 선택 표시된다');
   ok(await p.locator('#view h1').first().isVisible(), '홈 제목이 보인다');
 
+  await go(p, '#/my');
+  await p.selectOption('#profile-form [name=age_range]', 'a18_22'); await p.click('#profile-form button[type=submit]'); await sleep(900);
+  ok(await p.locator('#profile-form [name=age_range]').inputValue() === 'a18_22', '마이 탭에서 나이대를 고르고 저장한다');
+  await go(p, '#/admin'); await p.click('[data-admin-tab=stats]').catch(() => {}); await sleep(900);
+  ok((await p.locator('#view').innerText()).includes('18–22') && /Age groups/.test(await p.locator('#view').innerText()), '관리자 통계에 나이대별 인원이 나온다');
+
   console.log('2. 선교지 신청');
   await go(p, '#/countries/KR');
   ok(await p.locator('#pledge-btn').count() === 1, '나라 페이지에 "이름 쓰기" 버튼');

@@ -1219,7 +1219,7 @@ const i18n = {
     // auth
     login: 'Log in', signup: 'Sign up', logout: 'Log out',
     email: 'Email', password: 'Password', password_hint: 'At least 6 characters',
-    name: 'Full name', name_hint: 'First and last name', school: 'School', phone: 'Phone',
+    name: 'Full name', name_hint: 'First and last name', school: 'School', phone: 'Phone', age_range: 'Age group', age_opt: 'optional', age_pick: 'Prefer not to say', age_u18: '17 or younger', age_a18_22: '18–22', age_a23_29: '23–29', age_a30_39: '30–39', age_a40_49: '40–49', age_a50: '50 and over', age_hint: 'Only used for group statistics. Never shown to others.', sx_ages: 'Age groups', sx_ages_d: 'Members who chose an age group. Counts only, no names.', sx_age_members: 'Members', sx_age_sent: 'Sent (on the field or returned)', sx_age_none: 'Not set',
     forgot_password: 'Forgot password?', send_reset: 'Send reset link', back_to_login: 'Back to log in',
     reset_sent: 'Check your email for a password reset link.',
     new_password: 'New password', set_password: 'Set new password', password_updated: 'Password updated.',
@@ -1500,7 +1500,7 @@ const i18n = {
     app_name: '학생자원운동',
     login: '로그인', signup: '회원가입', logout: '로그아웃',
     email: '이메일', password: '비밀번호', password_hint: '6자 이상',
-    name: '이름', name_hint: '이름과 성', school: '학교', phone: '연락처',
+    name: '이름', name_hint: '이름과 성', school: '학교', phone: '연락처', age_range: '나이대', age_opt: '선택', age_pick: '밝히지 않을래요', age_u18: '17세 이하', age_a18_22: '18–22세', age_a23_29: '23–29세', age_a30_39: '30–39세', age_a40_49: '40–49세', age_a50: '50세 이상', age_hint: '통계에만 쓰이고 다른 사람에게는 보이지 않아요.', sx_ages: '나이대별', sx_ages_d: '나이대를 고른 회원만 집계해요. 인원수만 보이고 이름은 보이지 않아요.', sx_age_members: '회원', sx_age_sent: '파송 (사역 중 + 귀국)', sx_age_none: '미입력',
     forgot_password: '비밀번호를 잊으셨나요?', send_reset: '재설정 링크 보내기', back_to_login: '로그인으로 돌아가기',
     reset_sent: '비밀번호 재설정 링크를 이메일로 보냈습니다.',
     new_password: '새 비밀번호', set_password: '새 비밀번호 설정', password_updated: '비밀번호가 변경되었습니다.',
@@ -1958,7 +1958,7 @@ function createDemoClient() {
       'Samuel Okafor', 'Lydia Chen', 'Isaac Moreno', 'Naomi Lee', 'Elijah Brooks', 'Abigail Santos', 'Micah Patel', 'Sarah Yoon'];
     const profiles = people.map((name, i) => ({
       id: 'seed-' + i, name, email: name.toLowerCase().replace(' ', '.') + '@example.org',
-      school: i % 3 === 0 ? 'Blinn College' : 'Texas A&M', phone: null, role: i === 2 || i === 9 ? 'graduate' : 'member', lang: 'en', created_at: ago(30 - i),
+      school: i % 3 === 0 ? 'Blinn College' : 'Texas A&M', phone: null, age_range: ['a18_22', 'a18_22', 'a23_29', 'a18_22', 'u18', 'a30_39', 'a23_29', null][i % 8], role: i === 2 || i === 9 ? 'graduate' : 'member', lang: 'en', created_at: ago(30 - i),
     }));
     // 나라별 이름 쓰기 예시 (사람 index 목록)
     const pledgeMap = { 1: [0, 2, 4, 6, 8, 10, 12, 14], 2: [1, 3, 5, 7, 11], 3: [2, 8, 13], 4: [3, 9, 14], 5: [1, 5, 9, 11, 13, 7], 6: [0, 4, 6, 10], 7: [2, 3, 8, 12, 14] };
@@ -2396,7 +2396,7 @@ function createDemoClient() {
         const u = { id: uid(), email, password, name };
         const firstOnDevice = db.users.length === 0;
         db.users.push(u);
-        db.profiles.unshift({ id: u.id, name, email, school: null, phone: null, role: firstOnDevice ? 'admin' : 'member', lang: options?.data?.lang || 'en', created_at: nowIso() });
+        db.profiles.unshift({ id: u.id, name, email, school: null, phone: null, age_range: options?.data?.age_range || null, role: firstOnDevice ? 'admin' : 'member', lang: options?.data?.lang || 'en', created_at: nowIso() });
         db.session = u.id; save();
         const s = sessionFor(u); emit('SIGNED_IN', s);
         return { data: { user: s.user, session: s }, error: null };
@@ -2531,6 +2531,8 @@ function initials(name) {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 }
+const AGE_KEYS = ['u18', 'a18_22', 'a23_29', 'a30_39', 'a40_49', 'a50'];
+function ageOptions(sel) { return `<option value="">${esc(t('age_pick'))}</option>` + AGE_KEYS.map(k => `<option value="${k}" ${sel === k ? 'selected' : ''}>${esc(t('age_' + k))}</option>`).join(''); }
 function roleTag(role) { return `<span class="tag ${esc(role)}">${role === 'graduate' ? icon('cap') : ''}${esc(t('role_' + role))}</span>`; }
 
 const TABS = [
@@ -2680,6 +2682,7 @@ function viewAuth() {
       <label class="field"><span>${esc(t('name'))} <span class="muted">· ${esc(t('name_hint'))}</span></span><input type="text" name="name" autocomplete="name" required></label>
       <label class="field"><span>${esc(t('email'))}</span><input type="email" name="email" autocomplete="email" inputmode="email" required></label>
       <label class="field"><span>${esc(t('password'))} <span class="muted">· ${esc(t('password_hint'))}</span></span><input type="password" name="password" autocomplete="new-password" minlength="6" required></label>
+      <label class="field"><span>${esc(t('age_range'))} <span class="muted">· ${esc(t('age_opt'))}</span></span><select name="age_range">${ageOptions('')}</select></label>
       <label class="agree"><input type="checkbox" name="agree" required><span>${t('agree_html', { t: TERMS_URL, p: PRIVACY_URL })}</span></label>
       <button class="btn block" type="submit">${esc(t('signup'))}</button>
       <p class="small muted auth-note">${esc(t('signup_fast'))}</p>
@@ -2741,7 +2744,7 @@ function bindAuth() {
       } else if (state.authMode === 'signup') {
         const { data, error } = await sb.auth.signUp({
           email: f.email.trim(), password: f.password,
-          options: { emailRedirectTo: redirectTo, data: { name: f.name.trim(), lang: state.lang } },
+          options: { emailRedirectTo: redirectTo, data: { name: f.name.trim(), lang: state.lang, age_range: f.age_range || undefined } },
         });
         if (error) throw error;
         if (data.session) toast(t('signup_done'));
@@ -3006,6 +3009,7 @@ const VIEWS = {
           <label class="field"><span>${esc(t('name'))}</span><input type="text" name="name" value="${esc(p.name)}" autocomplete="name"></label>
           <label class="field"><span>${esc(t('school'))}</span><input type="text" name="school" value="${esc(p.school)}" autocomplete="organization"></label>
           <label class="field"><span>${esc(t('phone'))}</span><input type="tel" name="phone" value="${esc(p.phone)}" autocomplete="tel"></label>
+          <label class="field"><span>${esc(t('age_range'))} <span class="muted">· ${esc(t('age_opt'))}</span></span><select name="age_range">${ageOptions(p.age_range || '')}</select><span class="small muted">${esc(t('age_hint'))}</span></label>
           <button class="btn navy" type="submit">${esc(t('save'))}</button>
         </form>`)}
       ${card(`
@@ -3353,7 +3357,7 @@ const BINDERS = {
     form.onsubmit = async (e) => {
       e.preventDefault();
       const f = Object.fromEntries(new FormData(form));
-      const patch = { name: f.name.trim() || null, school: f.school.trim() || null, phone: f.phone.trim() || null };
+      const patch = { name: f.name.trim() || null, school: f.school.trim() || null, phone: f.phone.trim() || null, age_range: f.age_range || null };
       const { data, error } = await sb.from('profiles').update(patch).eq('id', state.profile.id).select().single();
       if (error) return toast(errMsg(error), true);
       state.profile = data;
@@ -6928,10 +6932,12 @@ async function adminStatsHTML() {
   await loadCountries();
   const q = (table, cols = '*') => sb.from(table).select(cols).limit(5000);
   const [pr, ap, ci, ins, te, pw, pl, up, hist, nl] = await Promise.all([
-    q('profiles', 'id,created_at'), q('applications', 'id,user_id,country_id,status,start_date'), q('field_checkins', 'application_id,status,created_at'),
+    q('profiles', 'id,created_at,age_range'), q('applications', 'id,user_id,country_id,status,start_date'), q('field_checkins', 'application_id,status,created_at'),
     q('application_insurance', 'application_id,status'), q('testimonies', 'status'), q('prayers', 'country_id,answered'), q('nation_pledges', 'country_id'),
     q('field_updates', 'created_at'), q('application_status_history', 'application_id,status,changed_at'), q('newsletter_signups', 'id')]);
-  const profiles = pr.data || [], apps = ap.data || [], checks = ci.data || [], prayers = pw.data || [], pledges = pl.data || [];
+  let profRows = pr.data;
+  if (pr.error) profRows = (await q('profiles', 'id,created_at')).data;   // 나이대 컬럼(SQL 17)을 아직 안 만들었을 때
+  const profiles = profRows || [], apps = ap.data || [], checks = ci.data || [], prayers = pw.data || [], pledges = pl.data || [];
   const today = nowInTZ().date, month = today.slice(0, 7);
   const lastCi = {}, lastHelp = {};
   checks.forEach(c => { if (!lastCi[c.application_id] || c.created_at > lastCi[c.application_id]) { lastCi[c.application_id] = c.created_at; lastHelp[c.application_id] = c.status === 'need_help'; } });
@@ -6953,6 +6959,10 @@ async function adminStatsHTML() {
     return `<tr><th scope="row">${flag(c.code)} ${esc(countryName(c))}</th><td>${a.length}</td><td>${a.filter(x => x.status === 'on_field').length}</td><td>${a.filter(x => x.status === 'returned').length}</td>
       <td>${pledges.filter(x => x.country_id === c.id).length}</td></tr>`;
   }).join('');
+  const ageOf = Object.fromEntries(profiles.map(p => [p.id, p.age_range || '']));
+  const sentUsers = new Set(apps.filter(a => a.status === 'on_field' || a.status === 'returned').map(a => a.user_id));
+  const ageRows = [...AGE_KEYS, ''].map(k => ({ k, m: profiles.filter(p => (p.age_range || '') === k).length, s: [...sentUsers].filter(u => (ageOf[u] || '') === k).length }));
+  const amax = Math.max(1, ...ageRows.map(r => r.m));
   const attn = [[quiet.length, 'sx_quiet'], [help.length, 'sx_help'], [noIns.length, 'sx_ins'], [waiting.length, 'sx_pending_apps']].filter(x => x[0] > 0);
   const news30 = (up.data || []).filter(u => daysBetween(u.created_at.slice(0, 10), today) <= 30).length;
   const tile = (cls, n, lbl, sub) => `<div class="stat ${cls}" style="min-height:120px"><div><div class="big">${n.toLocaleString()}</div><div class="lbl">${esc(lbl)}</div>${sub ? `<div class="small muted" style="margin-top:4px">${esc(sub)}</div>` : ''}</div></div>`;
@@ -6965,6 +6975,8 @@ async function adminStatsHTML() {
     ${card(attn.length ? attn.map(([n, k]) => `<div class="list-row no-ico"><div class="meta"><div class="t">${esc(t(k))}</div></div><span class="st st-on_field">${n}</span></div>`).join('') : `<p class="muted" style="margin:0">${esc(t('sx_all_good'))}</p>`)}
     <div class="section-head"><h2>${esc(t('sx_funnel'))}</h2></div>
     ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t('sx_funnel_d'))}</p>${stage.map(s => `<div style="margin-top:12px"><div class="row between"><span>${esc(t('st_' + s.k))}</span><b class="num">${s.n}</b></div>${bar(s.n, top)}</div>`).join('')}`)}
+    <div class="section-head"><h2>${esc(t('sx_ages'))}</h2></div>
+    ${card(`<p class="small muted" style="margin:0 0 6px">${esc(t('sx_ages_d'))}</p>${ageRows.map(r => `<div style="margin-top:12px"><div class="row between small"><span>${esc(r.k ? t('age_' + r.k) : t('sx_age_none'))}</span><span><b class="num">${r.m}</b> · ${esc(t('sx_age_sent'))} <b class="num">${r.s}</b></span></div>${bar(r.m, amax)}</div>`).join('')}`)}
     <div class="section-head"><h2>${esc(t('sx_by_country'))}</h2></div>
     ${card(`<div style="overflow-x:auto"><table class="stats-table"><thead><tr><th></th><th>${esc(t('sx_col_apps'))}</th><th>${esc(t('sx_col_field'))}</th><th>${esc(t('sx_col_back'))}</th><th>${esc(t('sx_col_pledge'))}</th></tr></thead><tbody>${rowsC}</tbody></table></div>`)}
     <div class="section-head"><h2>${esc(t('sx_community'))}</h2></div>

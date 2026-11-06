@@ -303,3 +303,12 @@ set app.uid = :'stud';
 select test.ok(test.n('select 1 from public.chat_reads') = 0, '학생은 리더 방 읽음 표시를 못 본다');
 select test.throws($q$insert into public.chat_reads (kind, country_id, user_id) values ('network', 0, '00000000-0000-0000-0000-0000000000d1')$q$, '학생은 리더 방에 읽음 표시를 못 남긴다');
 reset role;
+
+-- ===== 17. 나이대 =====
+set role authenticated; set app.uid = :'stud';
+update public.profiles set age_range = 'a18_22' where id = :'stud';
+select test.ok((select age_range from public.profiles where id = :'stud') = 'a18_22', '본인은 나이대를 고를 수 있다');
+select test.throws(format($q$update public.profiles set age_range = '7-10' where id = %L$q$, :'stud'), '정해진 구간 밖의 값은 저장되지 않는다');
+update public.profiles set age_range = null where id = :'stud';
+select test.ok((select age_range from public.profiles where id = :'stud') is null, '나이대는 비워 둘 수 있다');
+reset role;
