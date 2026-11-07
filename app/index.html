@@ -7433,7 +7433,7 @@ VIEWS.notifications = async function () {
   const list = data || [];
   state.notifList = list;
   return `${backLink('#/home', t('tab_home'))}${pageHead(t('nt_title'))}
-    ${card(list.length ? list.map(n => `<a class="list-row ${n.read_at ? '' : 'unread-row'}" href="${esc(n.link || '#/home')}">
+    ${card(list.length ? list.map(n => `<a class="list-row ${n.read_at ? '' : 'unread-row'}" href="${esc(n.link && n.link !== '#/notifications' ? n.link : '#/home')}">
         <span class="ico-tile ${n.read_at ? 'soft' : 'orange'}">${icon(NOTIF_ICON[n.kind] || 'spark')}</span>
         <div class="meta"><div class="t">${esc(notifText(n))}</div><div class="d">${esc(relTime(n.created_at))}</div></div>
         <span class="chev">${icon('chev')}</span></a>`).join('') : emptyHTML('bell', t('nt_none')))}`;
