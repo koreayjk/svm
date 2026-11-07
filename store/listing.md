@@ -6,7 +6,7 @@
 
 ## English
 
-**Name** (30): `SVM — Student Volunteer`  (23)
+**Name** (30): `SVM Mission`  (11)  — “SVM” alone is already taken on the App Store
 **Subtitle / App Store** (30): `Train. Pray. Go. Report back.`  (29)
 **Short description / Google** (80): `Train, pray and send students on short-term missions.`  (53)
 **Promotional text / App Store** (170): `Sign a nation, train with the gospel in its language, prepare to go, check in on the field, and share what God did when you return.`  (131)
