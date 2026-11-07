@@ -1165,6 +1165,14 @@
     .action-row .btn { font-size: 14.5px; }
     .island a { font-size: 10.5px; }
   }
+
+  /* ---------- 대화방: 하단 메뉴를 숨기고 입력창을 맨 아래에 (iMessage 처럼) ---------- */
+  @media (max-width: 1023px) {
+    body:has(.composer) .island { display: none; }
+    body:has(.composer) .composer { bottom: calc(var(--safe-b) + 10px); width: calc(100% - 20px); max-width: 640px; }
+    body:has(.composer) .chat-spacer { height: calc(var(--safe-b) + 84px); }
+    body:has(.composer) .toast:not(.no-nav) { bottom: calc(var(--safe-b) + 88px); }
+  }
 </style>
 </head>
 <body>
