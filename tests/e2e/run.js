@@ -102,7 +102,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.locator('.msg.me').first().locator('[data-act=edit]').dispatchEvent('click');
   await p.fill('.edit-form textarea', 'Hello team (fixed)'); await p.click('.edit-form button[type=submit]'); await sleep(700);
   ok((await p.locator('#chat').innerText()).includes('edited'), '내 글을 고치면 "수정됨" 표시');
-  require('child_process').execSync("python3 -c \"from PIL import Image;Image.new('RGB',(400,300),(40,120,200)).save('/tmp/e2e-photo.jpg')\"");
+  await p.screenshot({ path: '/tmp/e2e-photo.jpg', type: 'jpeg', clip: { x: 0, y: 0, width: 240, height: 180 } });   // 시험용 사진 (외부 도구 없이)
   await p.setInputFiles('#ck-file', '/tmp/e2e-photo.jpg'); await sleep(400);
   await p.click('#composer button[type=submit]'); await sleep(1400);
   ok(await p.locator('.msg-img').count() === 1, '사진을 첨부해 보낸다');
