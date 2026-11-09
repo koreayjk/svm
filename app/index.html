@@ -1172,6 +1172,7 @@
 
   /* ---------- 대화방: 하단 메뉴를 숨기고 입력창을 맨 아래에 (iMessage 처럼) ---------- */
   @media (max-width: 1023px) {
+    html.kb-open body:has(.composer) .composer { bottom: 8px; }   /* 키보드가 올라오면 아래 안전 영역 여백을 없앤다 */
     body:has(.composer) .island { display: none; }
     body:has(.composer) .composer { bottom: calc(var(--safe-b) + 10px); width: calc(100% - 20px); max-width: 640px; }
     body:has(.composer) .chat-spacer { height: calc(var(--safe-b) + 84px); }
@@ -7555,6 +7556,13 @@ async function nativeUnregister() {
   await sb.rpc('unregister_device', { p_token: state.deviceToken });
   state.deviceToken = null;
 }
+// 키보드가 올라와 있는 동안(입력칸에 커서가 있을 때) 입력창 아래 여백을 줄인다
+(function () {
+  const root = document.documentElement, isField = el => el && /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName);
+  document.addEventListener('focusin', e => { if (isField(e.target)) root.classList.add('kb-open'); });
+  document.addEventListener('focusout', () => setTimeout(() => { if (!isField(document.activeElement)) root.classList.remove('kb-open'); }, 80));
+})();
+
 if (NATIVE) {
   document.documentElement.classList.add('native', 'native-' + window.Capacitor.getPlatform());
   Native.App?.addListener('appStateChange', ({ isActive }) => { if (isActive && state.profile) { badgeTimer = 0; refreshBadgesSoon(); } });
