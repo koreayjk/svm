@@ -18,7 +18,7 @@ else
   else
     sh_pg() { sh -c "$*"; }
   fi
-  sh_pg "$PGBIN/initdb -D $TMP/d -A trust >/dev/null"
+  sh_pg "$PGBIN/initdb -U postgres -D $TMP/d -A trust >/dev/null"
   sh_pg "$PGBIN/pg_ctl -D $TMP/d -o '-p $PORT -k $TMP' -l $TMP/log start >/dev/null"
   cleanup() { sh_pg "$PGBIN/pg_ctl -D $TMP/d stop -m fast >/dev/null" || true; rm -rf "$TMP"; }
   trap cleanup EXIT
