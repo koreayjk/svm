@@ -127,6 +127,12 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.fill('#fb-form textarea', 'Please add a calendar view'); await p.click('#fb-form button[type=submit]'); await sleep(1200);
   ok((await p.locator('#view').innerText()).includes('Please add a calendar view'), '개선 제안 글을 올린다');
 
+  await go(p, '#/countries/KR');
+  ok((await p.locator('#view').innerText()).includes('Community for'), '나라 페이지 안에 그 나라 커뮤니티(기도·간증·팀·후원) 메뉴가 있다');
+  await p.locator('a.list-row[href="#/prayers/KR"]').click(); await sleep(900);
+  ok(location_hash(await p.url()) === '#/prayers/KR' && await p.locator('#view h1').first().isVisible(), '나라 안의 기도 제목 링크가 열린다');
+  await go(p, '#/teams/c-KR');
+  ok(await p.locator('#view h1').first().isVisible() && await p.locator('.back-pill').count() >= 1, '나라 안의 팀 링크가 열린다');
   console.log('5. 컨퍼런스 접수 (관리자)');
   await go(p, '#/conference');
   ok((await p.locator('.cf-stats').count()) === 1, '접수 화면에 인원 현황');
