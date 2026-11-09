@@ -1106,6 +1106,9 @@
     #app[data-tab="train"] #view > *, #app[data-tab="chat"] #view > *, #app[data-tab="teams"] #view > *, #app[data-tab="support"] #view > *, #app[data-tab="testimonies"] #view > * { break-inside: avoid; }
     #view > .page-head, #view > .greet, #view > div:has(> .back-pill), #view > .lang-pick, #view > .filters, #view > .banner { column-span: all; }
     #view > .section-head { break-after: avoid; }
+    /* Safari: 2단(column-count) 안에서 움직이는(transform) 등장 애니메이션이 글자가 겹쳐 그려지는 버그를 낸다 → 2단 화면은 애니메이션 없이 바로 보여 준다 */
+    #app[data-tab="home"] #view > *, #app[data-tab="my"] #view > *, #app[data-tab="countries"] #view > *, #app[data-tab="community"] #view > *,
+    #app[data-tab="train"] #view > *, #app[data-tab="chat"] #view > *, #app[data-tab="teams"] #view > *, #app[data-tab="support"] #view > *, #app[data-tab="testimonies"] #view > * { animation: none !important; transform: none; }
     #app[data-tab="admin"] #view, #app[data-tab="lead"] #view, #app[data-tab="plans"] #view, #app[data-tab="field"] #view,
     #app[data-tab="conference"] #view, #app[data-tab="apps"] #view { max-width: 1040px; }
     /* 채팅: 입력창을 본문 가운데에 */
