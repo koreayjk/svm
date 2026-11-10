@@ -312,3 +312,18 @@ select test.throws(format($q$update public.profiles set age_range = '7-10' where
 update public.profiles set age_range = null where id = :'stud';
 select test.ok((select age_range from public.profiles where id = :'stud') is null, '나이대는 비워 둘 수 있다');
 reset role;
+
+-- ===== 18. 사진 순서 (대표 사진 = 맨 앞) =====
+set role authenticated; set app.uid = :'lead';
+update public.country_photos set sort_order = 5 where country_id = :kr and url = 'https://x/kr.jpg';
+select test.ok((select sort_order from public.country_photos where url = 'https://x/kr.jpg') = 5, '나라 리더는 자기 나라 사진의 순서를 바꾼다');
+select test.throws(format($q$update public.country_photos set url = 'https://x/evil.jpg' where country_id = %s$q$, :kr), '리더도 사진 주소는 못 바꾼다');
+select test.throws(format($q$update public.country_photos set country_id = %s where url = 'https://x/kr.jpg'$q$, :eg), '사진을 다른 나라로 옮길 수 없다');
+set app.uid = :'lead2';
+update public.country_photos set sort_order = 99 where country_id = :kr;
+reset role;
+select test.ok((select max(sort_order) from public.country_photos where country_id = :kr) <> 99, '다른 나라 리더는 한국 사진 순서를 못 바꾼다');
+set role authenticated; set app.uid = :'stud';
+update public.country_photos set sort_order = 98 where country_id = :kr;
+reset role;
+select test.ok((select max(sort_order) from public.country_photos where country_id = :kr) <> 98, '학생은 사진 순서를 못 바꾼다');

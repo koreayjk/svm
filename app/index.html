@@ -937,6 +937,9 @@
   .gallery::-webkit-scrollbar { display: none; }
   .gallery figure { position: relative; flex: 0 0 min(78%, 420px); aspect-ratio: 4 / 3; margin: 0; border-radius: 18px; overflow: hidden; scroll-snap-align: start; background: var(--fill); }
   .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .gallery .g-badge { position: absolute; left: 8px; top: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: var(--orange-ink); color: #fff; font-size: 12px; font-weight: 700; }
+  .gallery .g-tools { position: absolute; left: 8px; right: 8px; bottom: 8px; display: flex; gap: 6px; justify-content: flex-end; }
+  .gallery figure .g-tools button { position: static; width: 34px; height: 34px; }
   .gallery figure button { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; background: rgba(13, 27, 58, .6); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
   .gallery figure button svg { width: 17px; height: 17px; }
   .gallery-add { flex: 0 0 150px; aspect-ratio: 3 / 4; border-radius: 18px; display: grid; place-items: center; align-content: center; gap: 6px; text-align: center; padding: 12px; cursor: pointer; background: var(--surface); box-shadow: inset 0 0 0 1.5px var(--line); color: var(--navy); font-size: 14px; font-weight: 700; scroll-snap-align: start; }
@@ -1252,7 +1255,7 @@ const i18n = {
     todo_reports: 'reports to review', todo_reports_1: 'report to review', nt_report: 'New report to review: {k}.',
     signup_fast: 'Takes under a minute. You can add school and phone later.',
     // tabs
-    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_chat: 'Chat', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin', tab_more: 'More', cc_title: 'Community for {c}', cc_prayers_n: '{n} requests', cc_testi_n: '{n} stories', cc_teams_d: 'Your teams for this country', cc_support_d: 'Stories about supporting missions',
+    tab_home: 'Home', tab_countries: 'Countries', tab_train: 'Train', tab_chat: 'Chat', tab_community: 'Community', tab_my: 'My', tab_admin: 'Admin', tab_more: 'More', gal_cover: 'Cover', gal_make_cover: 'Make cover photo', gal_left: 'Move earlier', gal_right: 'Move later', gal_uploading_n: 'Uploading {i} of {n}…', gal_added_n: '{n} photos added.', gal_moved: 'Order saved.', gal_cover_set: 'Cover photo changed.', gal_cover_hint: 'The first photo is the cover (shown on the country card). Use the arrows to reorder.', gal_failed_n: '{n} photos could not be added.', vd_urls: 'YouTube links — one per line (add a title after the link if you like)', vd_add_many: 'Add videos', vd_added_n: '{n} videos added.', vd_bad_n: 'These lines are not YouTube links: {n}', vd_up: 'Move up', vd_down: 'Move down', vd_moved: 'Order saved.', cc_title: 'Community for {c}', cc_prayers_n: '{n} requests', cc_testi_n: '{n} stories', cc_teams_d: 'Your teams for this country', cc_support_d: 'Stories about supporting missions',
     // roles
     role_member: 'Member', role_graduate: 'Graduate', role_admin: 'Admin', role_admin_all: 'Admin (all nations)', mr_add: 'Assign to a nation', mr_leader: 'Country leader', mr_partner: 'Missionary', mr_admin_note: 'Full admin: manages every nation.',
     // home
@@ -1532,7 +1535,7 @@ const i18n = {
     rp_kind_message: '채팅 메시지', rp_kind_prayer: '기도 제목', rp_kind_testimony: '간증', rp_kind_team_post: '팀 게시글', rp_kind_user: '회원',
     todo_reports: '확인할 신고', nt_report: '확인할 새 신고: {k}',
     signup_fast: '1분이면 끝나요. 학교와 연락처는 나중에 추가할 수 있습니다.',
-    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_chat: '채팅', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리', tab_more: '더보기', cc_title: '{c} 커뮤니티', cc_prayers_n: '기도 제목 {n}개', cc_testi_n: '간증 {n}개', cc_teams_d: '이 나라의 내 팀', cc_support_d: '선교를 후원한 이야기',
+    tab_home: '홈', tab_countries: '선교지', tab_train: '훈련', tab_chat: '채팅', tab_community: '커뮤니티', tab_my: '마이', tab_admin: '관리', tab_more: '더보기', gal_cover: '대표', gal_make_cover: '대표 사진으로', gal_left: '앞으로', gal_right: '뒤로', gal_uploading_n: '{n}장 중 {i}번째 올리는 중…', gal_added_n: '사진 {n}장을 올렸어요.', gal_moved: '순서를 저장했어요.', gal_cover_set: '대표 사진을 바꿨어요.', gal_cover_hint: '맨 앞 사진이 대표 사진이에요 (나라 카드에 보여요). 화살표로 순서를 바꿀 수 있어요.', gal_failed_n: '사진 {n}장은 올리지 못했어요.', vd_urls: '유튜브 링크 — 한 줄에 하나씩 (링크 뒤에 제목을 적어도 돼요)', vd_add_many: '영상 추가', vd_added_n: '영상 {n}개를 추가했어요.', vd_bad_n: '유튜브 링크가 아닌 줄이 있어요: {n}', vd_up: '위로', vd_down: '아래로', vd_moved: '순서를 저장했어요.', cc_title: '{c} 커뮤니티', cc_prayers_n: '기도 제목 {n}개', cc_testi_n: '간증 {n}개', cc_teams_d: '이 나라의 내 팀', cc_support_d: '선교를 후원한 이야기',
     role_member: '일반 회원', role_graduate: '수료 회원', role_admin: '관리자', role_admin_all: '전체 관리자', mr_add: '나라 담당 지정', mr_leader: '나라 리더', mr_partner: '선교사님', mr_admin_note: '전체 관리자: 모든 나라를 관리합니다.',
     hello: '{name}님, 안녕하세요', hello_anon: '환영합니다',
     next_meeting: '다음 모임', then: '이어서',
@@ -3337,13 +3340,18 @@ function bindMemberList() {
 function bindGallery(c0) {
   const input = document.getElementById('photo-input');
   if (input && c0) input.onchange = async () => {
-    const file = input.files[0];
-    if (!file) return;
+    const files = [...input.files];
+    if (!files.length) return;
     const safe = document.getElementById('photo-safe');
     if (safe && !safe.checked) { input.value = ''; safe.closest('label')?.classList.add('need'); return toast(t('fd_photo_need'), true); }
-    toast(t('gal_uploading'));
-    try { await addCountryPhoto(c0, file, (state.gallery?.photos.length || 0) + 1); toast(t('gal_added')); render(); }
-    catch (e) { toast(errMsg(e), true); }
+    let order = Math.max(0, ...(state.gallery?.photos || []).map(p => p.sort_order || 0)) + 1, ok = 0, failed = 0;
+    for (let i = 0; i < files.length; i++) {
+      toast(files.length > 1 ? t('gal_uploading_n', { i: i + 1, n: files.length }) : t('gal_uploading'));
+      try { await addCountryPhoto(c0, files[i], order++); ok++; } catch (e) { failed++; if (files.length === 1) return toast(errMsg(e), true); }
+    }
+    input.value = '';
+    toast(failed ? t('gal_failed_n', { n: failed }) : files.length > 1 ? t('gal_added_n', { n: ok }) : t('gal_added'), !!failed && !ok);
+    render();
   };
   app.querySelectorAll('[data-photo-del]').forEach(b => b.onclick = async () => {
     // 두 번 눌러 확인
@@ -3351,6 +3359,12 @@ function bindGallery(c0) {
     const p = state.gallery?.photos.find(x => String(x.id) === b.dataset.photoDel);
     if (!p) return;
     try { await removeCountryPhoto(p); toast(t('gal_removed')); render(); } catch (e) { toast(errMsg(e), true); }
+  });
+  app.querySelectorAll('[data-photo-move]').forEach(b => b.onclick = async () => {
+    const [id, how] = b.dataset.photoMove.split(':');
+    b.disabled = true;
+    try { if (await reorderRows('country_photos', state.gallery?.photos || [], id, how)) { state.photos = null; toast(how === 'first' ? t('gal_cover_set') : t('gal_moved')); render(); } }
+    catch (e) { b.disabled = false; toast(errMsg(e), true); }
   });
   bindVideoFacades();
 }
@@ -4947,10 +4961,10 @@ async function loadCountryVideos(cid) {
 }
 function videosHTML(list, editable) {
   if (!list.length) return editable ? `<p class="small muted" style="margin:0 0 12px">${esc(t('vd_none'))}</p>` : '';
-  return `<div class="videos-grid">${list.map(v => `<div class="vcard">
+  return `<div class="videos-grid">${list.map((v, i) => `<div class="vcard">
       <div class="video" data-yt="${esc(v.youtube_id)}"><button type="button" aria-label="${esc(locPair(v, 'title') || 'Video')}" style="background-image:url(https://i.ytimg.com/vi/${esc(v.youtube_id)}/hqdefault.jpg)"><i>${icon('play')}</i></button></div>
       <div class="row between" style="margin-top:8px;gap:8px"><span class="small" style="font-weight:500">${esc(locPair(v, 'title') || '')}</span>
-        ${editable ? `<button type="button" class="quiet-del" data-video-del="${v.id}" aria-label="${esc(t('adm_delete'))}">${icon('trash')}</button>` : ''}</div></div>`).join('')}</div>`;
+        ${editable ? `<span class="row" style="gap:2px">${i > 0 ? `<button type="button" class="quiet-del" data-video-move="${v.id}:up" aria-label="${esc(t('vd_up'))}" title="${esc(t('vd_up'))}">${icon('chevl', 'style="transform:rotate(90deg)"')}</button>` : ''}${i < list.length - 1 ? `<button type="button" class="quiet-del" data-video-move="${v.id}:down" aria-label="${esc(t('vd_down'))}" title="${esc(t('vd_down'))}">${icon('chevl', 'style="transform:rotate(-90deg)"')}</button>` : ''}<button type="button" class="quiet-del" data-video-del="${v.id}" aria-label="${esc(t('adm_delete'))}">${icon('trash')}</button></span>` : ''}</div></div>`).join('')}</div>`;
 }
 // 유튜브: 누르기 전에는 썸네일만 (가볍고, 외부 쿠키 없음)
 function bindVideoFacades() {
@@ -4989,6 +5003,7 @@ VIEWS.field = async function (code) {
     sb.from('field_updates').select('*').eq('country_id', c.id).order('created_at', { ascending: false }).limit(5)]);
   await loadNames((msgs || []).map(m => m.user_id));
   state.gallery = { cid: c.id, photos };
+  state.fieldVideos = videos;
   state.fieldCountry = c;
   const me = state.profile.id;
   const thread = `<div class="thread-list">${(msgs || []).length ? msgs.map(m => `<div class="tmsg ${m.user_id === me ? 'me' : ''}">
@@ -5008,10 +5023,9 @@ VIEWS.field = async function (code) {
       ${galleryHTML(c, photos)}
       <div class="section-head"><h2>${esc(t('fd_videos'))}</h2></div>
       ${videosHTML(videos, true)}
-      ${card(`<form id="video-form" class="field-pair" style="align-items:end">
-        <label class="field" style="margin:0"><span>${esc(t('vd_url'))}</span><input type="text" name="url" inputmode="url" placeholder="https://www.youtube.com/watch?v=…" required></label>
-        <label class="field" style="margin:0"><span>${esc(t('vd_title'))}</span><input type="text" name="title" maxlength="120"></label>
-        <button class="btn small" type="submit" style="grid-column:1/-1">${icon('plus')} ${esc(t('vd_add'))}</button></form>`)}
+      ${card(`<form id="video-form">
+        <label class="field"><span>${esc(t('vd_urls'))}</span><textarea name="urls" rows="3" style="min-height:84px" inputmode="url" placeholder="https://www.youtube.com/watch?v=…&#10;https://youtu.be/…  제목" required></textarea></label>
+        <button class="btn small" type="submit">${icon('plus')} ${esc(t('vd_add_many'))}</button></form>`)}
       <div class="section-head"><h2>${esc(t('fd_info'))}</h2></div>
       ${card(fieldEditorHTML(c))}` : ''}
     <div class="section-head"><h2>${esc(t('fd_room'))}</h2></div>
@@ -5039,13 +5053,26 @@ BINDERS.field = function () {
   const vf = document.getElementById('video-form');
   if (vf) vf.onsubmit = async (e) => {
     e.preventDefault();
-    const id = ytId(vf.url.value.trim());
-    if (!id) return toast(t('vd_bad'), true);
-    const title = vf.title.value.trim() || null;
-    const { error } = await sb.from('country_videos').insert({ country_id: c.id, youtube_id: id, title, title_ko: title, created_by: state.profile.id });
+    const rows = [], bad = [];
+    let order = Math.max(0, ...(state.fieldVideos || []).map(v => v.sort_order || 0)) + 1;
+    vf.urls.value.split('\n').map(l => l.trim()).filter(Boolean).forEach(line => {
+      const m = /^(\S+)\s*[|\-–]?\s*(.*)$/.exec(line), id = m && ytId(m[1]);
+      if (!id) return bad.push(line.slice(0, 30));
+      const title = (m[2] || '').trim().slice(0, 120) || null;
+      rows.push({ country_id: c.id, youtube_id: id, title, title_ko: title, created_by: state.profile.id, sort_order: order++ });
+    });
+    if (!rows.length) return toast(t('vd_bad'), true);
+    const { error } = await sb.from('country_videos').insert(rows);
     if (error) return toast(errMsg(error), true);
-    toast(t('vd_added')); render();
+    toast(bad.length ? t('vd_bad_n', { n: bad.join(', ') }) : rows.length > 1 ? t('vd_added_n', { n: rows.length }) : t('vd_added'), !!bad.length);
+    render();
   };
+  app.querySelectorAll('[data-video-move]').forEach(b => b.onclick = async () => {
+    const [id, how] = b.dataset.videoMove.split(':');
+    b.disabled = true;
+    try { if (await reorderRows('country_videos', state.fieldVideos || [], id, how)) { toast(t('vd_moved')); render(); } }
+    catch (er) { b.disabled = false; toast(errMsg(er), true); }
+  });
   app.querySelectorAll('[data-video-del]').forEach(b => b.onclick = armTwice(b, async () => {
     const { error } = await sb.from('country_videos').delete().eq('id', b.dataset.videoDel);
     if (error) return toast(errMsg(error), true);
@@ -5642,13 +5669,34 @@ async function removeCountryPhoto(p) {
 function galleryHTML(c, photos) {
   const can = canEditCountry(c);
   if (!photos.length && !can) return '';
+  const last = photos.length - 1;
   return `<div class="gallery" aria-label="${esc(countryName(c))}">
-      ${photos.map(p => `<figure><img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy">
-        ${can ? `<button type="button" data-photo-del="${p.id}" aria-label="${esc(t('gal_remove'))}">${icon('trash')}</button>` : ''}</figure>`).join('')}
-      ${can ? `<label class="gallery-add">${icon('plus')}<span>${esc(t('gal_add'))}</span><input type="file" accept="image/*" id="photo-input"></label>` : ''}
+      ${photos.map((p, i) => `<figure><img src="${esc(p.url)}" alt="${esc(p.caption || '')}" loading="lazy">
+        ${can && i === 0 ? `<span class="g-badge">${icon('check', 'width="13" height="13"')} ${esc(t('gal_cover'))}</span>` : ''}
+        ${can ? `<button type="button" data-photo-del="${p.id}" aria-label="${esc(t('gal_remove'))}">${icon('trash')}</button>
+        <div class="g-tools">
+          ${i > 0 ? `<button type="button" data-photo-move="${p.id}:first" aria-label="${esc(t('gal_make_cover'))}" title="${esc(t('gal_make_cover'))}">${icon('flame')}</button>` : ''}
+          ${i > 0 ? `<button type="button" data-photo-move="${p.id}:left" aria-label="${esc(t('gal_left'))}" title="${esc(t('gal_left'))}">${icon('chevl')}</button>` : ''}
+          ${i < last ? `<button type="button" data-photo-move="${p.id}:right" aria-label="${esc(t('gal_right'))}" title="${esc(t('gal_right'))}">${icon('chev')}</button>` : ''}
+        </div>` : ''}</figure>`).join('')}
+      ${can ? `<label class="gallery-add">${icon('plus')}<span>${esc(t('gal_add'))}</span><input type="file" accept="image/*" multiple id="photo-input"></label>` : ''}
     </div>
     ${can ? `<div class="form-note" style="margin-top:-2px">${icon('lock')}<span>${esc(t('gal_note'))}</span></div>
+      ${photos.length > 1 ? `<p class="small muted" style="margin:6px 4px 10px">${esc(t('gal_cover_hint'))}</p>` : ''}
       <label class="agree" style="margin:0 4px 16px"><input type="checkbox" id="photo-safe"><span>${esc(t('fd_photo_ok'))}</span></label>` : ''}`;
+}
+async function reorderRows(table, list, id, how) {
+  const arr = [...list], i = arr.findIndex(x => String(x.id) === String(id));
+  if (i < 0) return false;
+  const [it] = arr.splice(i, 1);
+  if (how === 'first') arr.unshift(it);
+  else if (how === 'left' || how === 'up') arr.splice(Math.max(0, i - 1), 0, it);
+  else arr.splice(Math.min(arr.length, i + 1), 0, it);
+  const jobs = arr.map((x, idx) => x.sort_order === idx ? null : sb.from(table).update({ sort_order: idx }).eq('id', x.id)).filter(Boolean);
+  const res = await Promise.all(jobs);
+  const bad = res.find(r => r && r.error);
+  if (bad) throw bad.error;
+  return true;
 }
 
 // ---------------------------------------------------------------------

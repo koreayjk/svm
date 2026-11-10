@@ -140,6 +140,23 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
   await p.locator('[data-cf]').first().click(); await sleep(800);
   ok((await p.locator('.cf-stats').innerText()).replace(/\s+/g, ' ') !== before, '체크인하면 숫자가 바뀐다');
 
+  // 나라 사진·영상: 여러 개 한 번에, 대표 사진·순서 바꾸기 (관리자 = 모든 나라 편집)
+  await go(p, '#/field/KR');
+  const nPhoto = () => p.locator('.gallery figure').count();
+  const photosBefore = await nPhoto();
+  await p.check('#photo-safe');
+  await p.setInputFiles('#photo-input', ['/tmp/e2e-photo.jpg', '/tmp/e2e-photo.jpg', '/tmp/e2e-photo.jpg']); await sleep(3500);
+  ok(await nPhoto() === photosBefore + 3, '사진을 여러 장 한 번에 올린다');
+  ok(await p.locator('.gallery .g-badge').count() === 1, '맨 앞 사진에만 "대표" 표시');
+  const lastSrc = await p.locator('.gallery figure').last().locator('img').getAttribute('src');
+  await p.locator('.gallery figure').last().locator('[data-photo-move$=":first"]').dispatchEvent('click'); await sleep(1200);
+  ok(await p.locator('.gallery figure').first().locator('img').getAttribute('src') === lastSrc && await nPhoto() === photosBefore + 3, '"대표 사진으로"를 누르면 그 사진이 맨 앞으로 간다');
+  await p.fill('#video-form textarea', 'https://youtu.be/dQw4w9WgXcQ  첫 영상\nhttps://www.youtube.com/watch?v=aqz-KE-bpKQ | 둘째 영상'); await p.click('#video-form button[type=submit]'); await sleep(1000);
+  ok(await p.locator('.vcard').count() >= 2, '유튜브 링크를 여러 개 한 번에 추가한다');
+  const t0 = await p.locator('.vcard').first().locator('.small').first().innerText();
+  await p.locator('.vcard').first().locator('[data-video-move$=":down"]').dispatchEvent('click'); await sleep(900);
+  ok((await p.locator('.vcard').nth(1).locator('.small').first().innerText()) === t0, '영상 순서를 아래로 옮길 수 있다');
+
   console.log('6. 일반 학생 권한 (관리자 화면 · 리더 방이 안 보여야 한다)');
   const s = await mk();
   await s.goto(BASE + '/app/?demo'); await sleep(500);

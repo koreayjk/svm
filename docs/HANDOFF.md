@@ -48,6 +48,6 @@
 
 ## 8. 파일 지도
 - `app/index.html`: 채팅(`createChat`, `ck*`), 탭(`TABS`, `SUB_TAB`, `islandHTML`, `overflowTabs`), 뷰(`VIEWS.*`, `BINDERS.*`), 관리자 통계 `adminStatsHTML`, 번역 EN/KO 블록 두 군데.
-- `sql/01~17_*.sql` 재실행 가능. 새 기능은 18번부터.
+- `sql/01~18_*.sql` 재실행 가능. 새 기능은 19번부터.
 - `supabase/functions/push/index.ts` — 알림 문구 `TEXT`, `bodyFor()`. 종류 추가 시 함수 재배포.
 - `tests/`, `.github/workflows/test.yml`, `tools/`
