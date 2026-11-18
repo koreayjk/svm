@@ -1,6 +1,6 @@
 # 스토어 등록 자료 (Google Play · App Store)
 
-앱 이름 **SVM** · 번들/패키지 ID `com.imamerica.svm` · 게시자 **IM America Group Corp**
+앱 이름 **SVM Mission** (App Store) · 번들/패키지 ID `com.imamerica.svm` · 게시자 **IM America Group Corp**
 
 | 파일 | 내용 |
 |---|---|
