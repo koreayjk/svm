@@ -1180,6 +1180,13 @@
     body:has(.composer) .chat-spacer { height: calc(var(--safe-b) + 84px); }
     body:has(.composer) .toast:not(.no-nav) { bottom: calc(var(--safe-b) + 88px); }
   }
+
+  /* 화면 위쪽의 "‹ 뒤로" 줄은 스크롤해도 상단 바 아래에 고정 */
+  #view > div:first-child:has(> .back-pill) {
+    position: sticky; top: calc(var(--safe-t) + 56px); z-index: calc(var(--z-head) - 1); padding-bottom: 6px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); background: rgba(244, 245, 248, .72);
+  }
+  @media (min-width: 1024px) { #view > div:first-child:has(> .back-pill) { top: 62px; } }
 </style>
 </head>
 <body>
@@ -7628,6 +7635,8 @@ if (NATIVE) {
     Native.App.exitApp();
   });
   Native.StatusBar?.setStyle({ style: 'LIGHT' }).catch(() => {});
+  // 아이폰 키보드 위의 ∧ ∨ ✓ 막대를 숨겨 입력창이 키보드에 바로 붙게 한다
+  try { Native.Keyboard?.setAccessoryBarVisible?.({ isVisible: false })?.catch?.(() => {}); } catch (e) {}
   setTimeout(() => Native.SplashScreen?.hide().catch(() => {}), 400);
 }
 

@@ -23,6 +23,9 @@
         "sound",
         "alert"
       ]
+    },
+    "Keyboard": {
+      "resize": "native"
     }
   }
 }
