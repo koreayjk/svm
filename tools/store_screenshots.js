@@ -5,7 +5,7 @@
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const fs = require('fs');
 const BASE = process.argv[2] || 'http://localhost:8811', OUT = process.argv[3] || 'store/screenshots';
-const DEVICES = { ios: { w: 430, h: 932, scale: 3 }, android: { w: 360, h: 640, scale: 3 } };
+const DEVICES = { ios: { w: 402, h: 874, scale: 3 }, android: { w: 360, h: 640, scale: 3 } };
 const addDays = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 
 async function run(name, dev) {
