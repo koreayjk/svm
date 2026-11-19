@@ -5,7 +5,8 @@
 const { chromium } = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const fs = require('fs');
 const BASE = process.argv[2] || 'http://localhost:8811', OUT = process.argv[3] || 'store/screenshots';
-const DEVICES = { ios: { w: 402, h: 874, scale: 3 }, android: { w: 360, h: 640, scale: 3 } };
+const DEVICES = { ios: { w: 402, h: 874, scale: 3 }, android: { w: 360, h: 640, scale: 3 }, ipad: { w: 1032, h: 1376, scale: 2 } };   // ipad = App Store 13" (2064×2752)
+const ONLY = process.argv[4];
 const addDays = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 
 async function run(name, dev) {
@@ -61,4 +62,4 @@ async function run(name, dev) {
   }
   await b.close();
 }
-(async () => { for (const [n, d] of Object.entries(DEVICES)) { await run(n, d); console.log('done', n); } })();
+(async () => { for (const [n, d] of Object.entries(DEVICES)) { if (ONLY ? n !== ONLY : n === 'ipad') continue; await run(n, d); console.log('done', n); } })();
