@@ -5,7 +5,7 @@ assets/site.css, assets/site.js 와 이미지는 Artifact 의 files 로 함께 �
 사용: python3 tools/build_site_artifact.py <출력 경로> <앱 링크>
 """
 import re, sys
-SITE = 'https://koreayjk.github.io/svm/'
+SITE = 'https://svmagain.org/'
 out = open('index.html', encoding='utf-8').read()
 for pat in [r'<!doctype html>\s*', r'<html[^>]*>\s*', r'</html>\s*', r'<head>\s*', r'</head>\s*', r'<body>\s*', r'</body>\s*',
             r'<meta charset="utf-8">\s*', r'<meta name="viewport"[^>]*>\s*', r'<meta property="og:[^>]*>\s*', r'<meta name="theme-color"[^>]*>\s*']:

@@ -23,10 +23,10 @@
 
 | 항목 | 주소 |
 |---|---|
-| 마케팅/지원 | https://koreayjk.github.io/svm/ |
-| 개인정보처리방침 | https://koreayjk.github.io/svm/privacy/ |
-| 이용약관 | https://koreayjk.github.io/svm/terms/ |
-| 계정 삭제 안내 (Google 필수) | https://koreayjk.github.io/svm/privacy/#delete |
-| 웹 앱 | https://koreayjk.github.io/svm/app/ |
+| 마케팅/지원 | https://svmagain.org/ |
+| 개인정보처리방침 | https://svmagain.org/privacy/ |
+| 이용약관 | https://svmagain.org/terms/ |
+| 계정 삭제 안내 (Google 필수) | https://svmagain.org/privacy/#delete |
+| 웹 앱 | https://svmagain.org/app/ |
 
 지원 이메일은 아직 정해지지 않았습니다 — 두 스토어 모두 **연락 가능한 이메일**을 요구하니 정해서 넣어 주세요.
