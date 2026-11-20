@@ -4,9 +4,9 @@
 
 | 주소 | 내용 |
 |---|---|
-| [`/`](https://koreayjk.github.io/svm/) | **SVM 홈페이지** — 운동 소개(1886), 비전 영상, Mobilize·Train·Send, 가려는 학생/맞이하는 선교지, 7개 선교지, 앱 소개, 누가 이끄나, 함께하는 3가지 방법, FAQ |
-| [`/conference/`](https://koreayjk.github.io/svm/conference/) | **미션 컨퍼런스 2026** (11/20 금, 오후 6시 입장) — 그날 밤 순서, 텐트 빌리지, FAQ, **등록 폼** |
-| [`/app/`](https://koreayjk.github.io/svm/app/) | **SVM 앱** (PWA) — 가입, 선교지, 내 나라에 이름 쓰기, 이벤트, 관리자 · `app/?demo` 는 실제 DB와 분리된 체험 모드 |
+| [`/`](https://svmagain.org/) | **SVM 홈페이지** — 운동 소개(1886), 비전 영상, Mobilize·Train·Send, 가려는 학생/맞이하는 선교지, 7개 선교지, 앱 소개, 누가 이끄나, 함께하는 3가지 방법, FAQ |
+| [`/conference/`](https://svmagain.org/conference/) | **미션 컨퍼런스 2026** (11/20 금, 오후 6시 입장) — 그날 밤 순서, 텐트 빌리지, FAQ, **등록 폼** |
+| [`/app/`](https://svmagain.org/app/) | **SVM 앱** (PWA) — 가입, 선교지, 내 나라에 이름 쓰기, 이벤트, 관리자 · `app/?demo` 는 실제 DB와 분리된 체험 모드 |
 
 세 곳 모두 루트의 `config.js`(Supabase URL + anon key)를 함께 씁니다.
 
@@ -114,7 +114,7 @@ sql/05_생활_문구.sql     선교지 생활 안내 문구 바꾸기 (예전 �
    (현재 프로젝트: `uafdrygbaloqffhwcebc`)
    (모두 여러 번 실행해도 안전합니다)
 3. **Authentication → URL Configuration**
-   - Site URL: `https://koreayjk.github.io/svm/app/`
+   - Site URL: `https://svmagain.org/app/`
    - Redirect URLs 에도 같은 주소 추가 (이메일 인증·비밀번호 재설정 링크용)
 
 > **발족식 현장(3분 흐름) 팁:** Supabase는 기본적으로 가입 시 이메일 인증을 요구합니다. 현장에서 바로 둘러보게 하려면
@@ -171,7 +171,7 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 
 ## 확인이 필요한 값
 - 11/20 컨퍼런스 장소: Country Fellowship Church, 408 E 24th St, Bryan, TX 77803 (확정, 반영 완료). 이미 운영 중인 DB의 `events` 행은 SQL 편집기에서 `update public.events set location = 'Country Fellowship Church · 408 E 24th St, Bryan, TX 77803' where title_en = 'SVM Mission Conference 2026';` 를 한 번 실행하세요.
-- 검색 등록: [Google Search Console](https://search.google.com/search-console)에 `https://koreayjk.github.io/svm/` 를 추가하고 `sitemap.xml` 을 제출하면 홈페이지와 컨퍼런스가 더 빨리 검색됩니다. 컨퍼런스 페이지는 구글 "이벤트" 검색 결과에 나올 수 있게 만들어 두었습니다.
+- 검색 등록: [Google Search Console](https://search.google.com/search-console)에 `https://svmagain.org/` 를 추가하고 `sitemap.xml` 을 제출하면 홈페이지와 컨퍼런스가 더 빨리 검색됩니다. 컨퍼런스 페이지는 구글 "이벤트" 검색 결과에 나올 수 있게 만들어 두었습니다.
 - 정기 모임은 매주 주일 오후 2–4시 미션 게더링 하나입니다 (금요 모임 없음). 시간은 `app/index.html` 의 `DEFAULTS.gatherings.sunday`.
 - 국가별 소개·생활 문구는 초안입니다. 실제 내용으로 교체하세요.
 
@@ -209,7 +209,7 @@ Repository **Settings → Pages** → Source: `Deploy from a branch`, Branch: `m
 > 나라 사진 순서·대표 사진(나라 리더·선교사님도 순서를 바꿀 수 있게): `sql/18_사진_순서.sql` 을 한 번 실행하세요. 맨 앞 사진이 대표 사진입니다. 사진은 여러 장, 유튜브 링크는 여러 개를 한 번에 올릴 수 있습니다.
 > 나라 리더·대화, 선교지 선교사님: `sql/01_스키마.sql` → `sql/02_RLS.sql` 다시 실행. 선교지 안내 문구("현지에서의 생활", 나라별 숙소·식사)는 `sql/05_생활_문구.sql` 로 바꿉니다 — 예전 기본 문구일 때만 바꾸고, 관리자 화면에서 고친 내용은 그대로 둡니다.
 
-> 스토어 준비 1단계(신고·차단·계정 삭제): `sql/01_스키마.sql` → `sql/02_RLS.sql` 을 다시 실행하세요. 구글플레이 '계정 삭제 URL' 에는 `https://koreayjk.github.io/svm/privacy/#delete` 를 넣으면 됩니다. 신고는 24시간 안에 확인한다고 약관에 적혀 있으니, 관리자는 알림을 꼭 켜 두세요.
+> 스토어 준비 1단계(신고·차단·계정 삭제): `sql/01_스키마.sql` → `sql/02_RLS.sql` 을 다시 실행하세요. 구글플레이 '계정 삭제 URL' 에는 `https://svmagain.org/privacy/#delete` 를 넣으면 됩니다. 신고는 24시간 안에 확인한다고 약관에 적혀 있으니, 관리자는 알림을 꼭 켜 두세요.
 
 > 여행자 보험: `sql/01_스키마.sql` → `sql/02_RLS.sql` 을 다시 실행하면 `application_insurance` 테이블과 비공개 버킷 `insurance-docs` 가 만들어집니다. 증서는 공개 주소가 없고, 열 때마다 5분짜리 서명 링크로만 열립니다.
 

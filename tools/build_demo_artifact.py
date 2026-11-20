@@ -5,7 +5,7 @@ app/index.html 에서 문서 래퍼 태그·Supabase 라이브러리·config.js 
 사용: python3 tools/build_demo_artifact.py <출력 경로>
 """
 import re, sys
-SITE = 'https://koreayjk.github.io/svm/'
+SITE = 'https://svmagain.org/'
 out = open('app/index.html', encoding='utf-8').read()
 for pat in [r'<!doctype html>\s*', r'<html[^>]*>\s*', r'</html>\s*', r'<head>\s*', r'</head>\s*', r'<body>\s*', r'</body>\s*',
             r'<meta charset="utf-8">\s*', r'<meta name="viewport"[^>]*>\s*', r'<link rel="manifest"[^>]*>\s*',

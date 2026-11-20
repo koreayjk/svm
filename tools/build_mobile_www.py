@@ -11,7 +11,7 @@ import os, re, shutil, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WWW = os.path.join(ROOT, 'mobile', 'www')
-SITE = 'https://koreayjk.github.io/svm/'
+SITE = 'https://svmagain.org/'
 SUPABASE_UMD = os.path.join(ROOT, 'mobile', 'node_modules', '@supabase', 'supabase-js', 'dist', 'umd', 'supabase.js')
 
 html = open(os.path.join(ROOT, 'app', 'index.html'), encoding='utf-8').read()

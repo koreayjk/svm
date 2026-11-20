@@ -2443,7 +2443,7 @@ const DEMO = !configured || FORCE_DEMO;   // 연결 정보가 없으면 데모 �
 // 구글플레이·앱스토어 앱(Capacitor)으로 실행 중인지 — 웹에서는 false
 const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
 const Native = NATIVE ? window.Capacitor.Plugins : {};
-const WEB_APP_URL = 'https://koreayjk.github.io/svm/app/';   // 이메일 링크(비밀번호 재설정 등)가 돌아올 주소
+const WEB_APP_URL = 'https://svmagain.org/app/';   // 이메일 링크(비밀번호 재설정 등)가 돌아올 주소
 const CAN_DOWNLOAD = !NATIVE;   // 파일 저장·공유가 막힌 환경(미리보기 빌드·앱 안)에서는 false
 const sb = DEMO ? createDemoClient() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
