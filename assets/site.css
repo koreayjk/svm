@@ -688,3 +688,9 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .store-btn.soon:hover { transform: none; box-shadow: none; }
 .app-qr { display: block; width: 132px; height: auto; margin-top: 18px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(13, 27, 58, .1); }
 @media (max-width: 720px) { .app-qr { display: none; } }
+.hero-app { margin-top: 14px; }
+.hero-store { padding: 7px 18px 7px 14px; }
+.hero-store svg { width: 22px; height: 22px; }
+.hero-store b { font-size: 16px; }
+.hero-store { background: #fff; color: #0D1B3A; box-shadow: 0 6px 20px -8px rgba(0, 0, 0, .5); }
+.hero-store small { opacity: .65; }
