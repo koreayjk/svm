@@ -670,3 +670,9 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
   .feat-row.on .copy { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) { .feat-stage .phone img, .feat-row .copy, .feat-stage .dots i { transition: none; } }
+
+/* QR 코드 */
+.give-qr { display: block; width: 190px; height: auto; margin: 16px 0 4px; border-radius: 16px; background: #fff; box-shadow: 0 0 0 1px rgba(13, 27, 58, .1); }
+.give-qr[hidden] { display: none; }
+.foot-qr { display: block; width: 116px; height: auto; margin-top: 16px; border-radius: 12px; background: #fff; }
+@media print { .give-qr { width: 5cm; } }
