@@ -686,3 +686,5 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .store-btn b { display: block; font-size: 19px; font-weight: 700; letter-spacing: -.01em; }
 .store-btn.soon { background: rgba(13, 27, 58, .08); color: rgba(13, 27, 58, .55); cursor: default; padding-left: 20px; }
 .store-btn.soon:hover { transform: none; box-shadow: none; }
+.app-qr { display: block; width: 132px; height: auto; margin-top: 18px; border-radius: 12px; background: #fff; box-shadow: 0 0 0 1px rgba(13, 27, 58, .1); }
+@media (max-width: 720px) { .app-qr { display: none; } }
