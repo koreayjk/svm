@@ -694,3 +694,21 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .hero-store b { font-size: 16px; }
 .hero-store { background: #fff; color: #0D1B3A; box-shadow: 0 6px 20px -8px rgba(0, 0, 0, .5); }
 .hero-store small { opacity: .65; }
+
+/* training */
+.c4.wide { grid-column: span 2; }
+@media (max-width: 680px) { .c4.wide { grid-column: auto; } }
+.lesson-panel { padding: 0; }
+.lesson-panel > summary { list-style: none; cursor: pointer; padding: 22px 26px; font-size: 18px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+.lesson-panel > summary::-webkit-details-marker { display: none; }
+.lesson-panel > summary::after { content: "+"; font-size: 24px; font-weight: 400; color: var(--orange); transition: transform .2s ease; }
+.lesson-panel[open] > summary::after { transform: rotate(45deg); }
+.lesson-panel > :not(summary) { margin-left: 26px; margin-right: 26px; }
+.lesson-panel > :last-child { margin-bottom: 24px; }
+.lesson-panel h4 { margin: 16px 26px 6px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted-2); }
+.lessons { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.lessons li { display: flex; align-items: baseline; gap: 12px; font-size: 15.5px; }
+.lessons b { flex: 0 0 26px; font-family: var(--font-num); font-weight: 600; color: var(--orange); font-variant-numeric: tabular-nums; }
+.lessons span { flex: 1; }
+.lessons em { font-style: normal; font-size: 13px; color: var(--muted-2); }
+.lesson-panel { align-self: start; }
