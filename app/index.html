@@ -1018,6 +1018,24 @@
   .wk.ok { background: #0D1B3A; border-color: #0D1B3A; color: #fff; box-shadow: 0 8px 18px -12px rgba(13,27,58,.7); }
   .wk.ok .wk-l, .wk.ok .wk-s { color: rgba(255,255,255,.72); }
   .wk.ok .wk-ic { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .lsn-list { display: grid; gap: 10px; }
+  .lsn { position: relative; display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line); background: #fff; color: var(--text); font: inherit; text-align: left; cursor: pointer; transition: transform .15s var(--ease), border-color .2s, background .2s, box-shadow .2s; }
+  .lsn:active { transform: scale(.985); }
+  .lsn-n { flex: none; font-size: 26px; font-weight: 700; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: rgba(13,27,58,.28); min-width: 36px; }
+  .lsn-b { flex: 1; min-width: 0; display: grid; gap: 2px; }
+  .lsn-b small { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .lsn-b b { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .lsn-s { flex: none; display: grid; justify-items: end; gap: 3px; }
+  .lsn-s .wk-ic { position: static; }
+  .lsn-s em { font-style: normal; font-size: 10.5px; color: var(--muted); max-width: 70px; text-align: right; line-height: 1.2; }
+  .lsn.wait { border-color: rgba(242,103,34,.6); background: rgba(242,103,34,.06); }
+  .lsn.wait .lsn-n { color: var(--orange); }
+  .lsn.wait .lsn-s em { color: #B84A0F; font-weight: 500; }
+  .lsn.wait .wk-ic { border-color: var(--orange); color: var(--orange); }
+  .lsn.ok { background: #0D1B3A; border-color: #0D1B3A; color: #fff; box-shadow: 0 8px 18px -12px rgba(13,27,58,.7); }
+  .lsn.ok .lsn-n { color: rgba(255,255,255,.4); }
+  .lsn.ok .lsn-b small, .lsn.ok .lsn-s em { color: rgba(255,255,255,.72); }
+  .lsn.ok .wk-ic { background: var(--orange); border-color: var(--orange); color: #fff; }
   .wk-sm { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 8px; }
   .wk-sm .wk { min-height: 66px; padding: 8px 10px; }
   .wk-sm .wk-n { font-size: 20px; }
@@ -1357,13 +1375,13 @@ const i18n = {
     tk_sm_reset: 'If you edit your notes, your leader will need to confirm again.', tk_rep_wait: 'Waiting for your leader', tk_rep_ok: 'Confirmed by your leader',
     tk_ld_confirm: 'Confirm', tk_ld_unconfirm: 'Undo confirmation', tk_ld_confirm_all: 'Confirm all waiting ({n})', tk_ld_waiting_n: '{n} items are waiting for your confirmation.', tk_ld_sm: 'Sermon notes',
     tk_overall: 'Overall progress', tk_overall_d: 'Four tracks, a report, then graduation.', tk_glance: 'At a glance', tk_done: 'Done', tk_todo: 'Not yet',
-    tk_lang: 'Language', tk_explore: 'Explore · 7 weeks', tk_persp: 'Perspectives · 15 weeks', tk_sermons: 'Sermons & notes', tk_report: 'Final report',
-    tk_explore_d: 'The Explore book by Via Ministries. Tap a week when you finish it.', tk_persp_d: 'Perspectives on the World Christian Movement. Tap a week when you finish it.',
-    tk_week: 'Week {n}', tk_weeks_done: '{a} of {b} weeks confirmed',
+    tk_lang: 'Language', tk_explore: 'Explore · 7 lessons', tk_persp: 'Perspectives · 15 weeks', tk_sermons: 'Sermons & notes', tk_report: 'Final report',
+    tk_explore_d: 'The Explore book by Via Ministries. Tap a lesson when you finish it.', tk_persp_d: 'Perspectives on the World Christian Movement. Tap a week when you finish it.',
+    tk_week: 'Week {n}', tk_lesson: 'Lesson {n}', tk_page: 'p.{n}', tk_weeks_done: '{a} of {b} weeks confirmed',
     tk_sm_d: 'Listen to the Perspectives sermons ({t} in all) and write your notes for each one. Finish at least {n} of them.', tk_sm_count: '{a} of {b} needed', tk_sm_of: '{a} / {b} sermons', tk_sm_open: 'Open the sermons', tk_sm_title: 'Sermon {n}', tk_sm_progress: '{a} confirmed · {b} needed to graduate',
     tk_sm_note: 'Your notes', tk_sm_note_ph: 'What did you hear? What stood out? How will you respond? (at least 40 characters)', tk_sm_done_btn: 'I listened — save my notes', tk_sm_update: 'Update notes', tk_sm_undo: 'Mark as not done', tk_sm_saved: 'Saved.', tk_sm_min: 'Please write at least 40 characters of notes.', tk_sm_undone: 'Marked as not done.',
     tk_rep_d: 'After the sermons, write a report: what you learned, how your view of the nations changed, and how God is sending you.', tk_rep_locked: 'Finish {n} sermons to unlock the report ({a} checked so far).', tk_rep_ph: 'Write your report here. (at least 300 characters)', tk_rep_submit: 'Submit report', tk_rep_update: 'Update report', tk_rep_min: 'Please write at least 300 characters.', tk_rep_saved: 'Report submitted.', tk_rep_status: 'Submitted {d}', tk_rep_comment: 'Leader comment',
-    grad_req_explore: 'Explore, all weeks confirmed ({a}/{b})', grad_req_persp: 'Perspectives, all weeks confirmed ({a}/{b})', grad_req_sermons: 'Sermons confirmed by your leader ({a}/{b})', grad_req_report: 'Final report confirmed',
+    grad_req_explore: 'Explore, all lessons confirmed ({a}/{b})', grad_req_persp: 'Perspectives, all weeks confirmed ({a}/{b})', grad_req_sermons: 'Sermons confirmed by your leader ({a}/{b})', grad_req_report: 'Final report confirmed',
     tk_ld_t: 'Trainees', tk_ld_none: 'No trainees yet. Students who sign or apply for your nations appear here.', tk_ld_no_report: 'No report yet.', tk_ld_comment_ph: 'Leave a comment for the student', tk_ld_comment_save: 'Save comment',
     set_sermon: 'Sermons required to graduate', set_sermon_d: 'How many of the 126 sermons a student must finish (1–126).',
     train_lang_t: 'Language training', train_lang_d: 'Memorize the core gospel message in the local language — infinite repeat, listen, shadow, hide & self-test.',
@@ -1646,13 +1664,13 @@ const i18n = {
     tk_sm_reset: '노트를 고치면 리더가 다시 확인해야 해요.', tk_rep_wait: '리더 확인 대기', tk_rep_ok: '리더가 확인함',
     tk_ld_confirm: '확인', tk_ld_unconfirm: '확인 취소', tk_ld_confirm_all: '대기 중인 것 모두 확인 ({n})', tk_ld_waiting_n: '확인을 기다리는 항목이 {n}개 있어요.', tk_ld_sm: '설교 노트',
     tk_overall: '전체 진행률', tk_overall_d: '4가지 훈련과 보고서를 마치면 수료합니다.', tk_glance: '한눈에 보기', tk_done: '완료', tk_todo: '아직',
-    tk_lang: '언어', tk_explore: 'Explore · 7주', tk_persp: 'Perspectives · 15주', tk_sermons: '설교 듣기·노트', tk_report: '수료 보고서',
-    tk_explore_d: 'Via Ministries의 Explore 책입니다. 한 주를 마칠 때마다 눌러 체크하세요.', tk_persp_d: 'Perspectives on the World Christian Movement 입니다. 한 주를 마칠 때마다 눌러 체크하세요.',
-    tk_week: '{n}주차', tk_weeks_done: '{b}주 중 {a}주 확인',
+    tk_lang: '언어', tk_explore: 'Explore · 7강', tk_persp: 'Perspectives · 15주', tk_sermons: '설교 듣기·노트', tk_report: '수료 보고서',
+    tk_explore_d: 'Via Ministries의 Explore 책입니다. 한 강을 마칠 때마다 눌러 체크하세요.', tk_persp_d: 'Perspectives on the World Christian Movement 입니다. 한 주를 마칠 때마다 눌러 체크하세요.',
+    tk_week: '{n}주차', tk_lesson: '{n}강', tk_page: '{n}쪽', tk_weeks_done: '{b}주 중 {a}주 확인',
     tk_sm_d: 'Perspectives 설교(모두 {t}편)를 듣고 한 편마다 노트를 정리하세요. 최소 {n}편을 마쳐야 합니다.', tk_sm_count: '{b}편 중 {a}편', tk_sm_of: '설교 {a} / {b}', tk_sm_open: '설교 목록 열기', tk_sm_title: '설교 {n}', tk_sm_progress: '{a}편 확인됨 · 수료까지 {b}편 필요',
     tk_sm_note: '내 노트', tk_sm_note_ph: '무엇을 들었나요? 마음에 남은 것은? 어떻게 반응할 건가요? (40자 이상)', tk_sm_done_btn: '들었어요 — 노트 저장', tk_sm_update: '노트 수정', tk_sm_undo: '완료 취소', tk_sm_saved: '저장했어요.', tk_sm_min: '노트를 40자 이상 써 주세요.', tk_sm_undone: '완료를 취소했어요.',
     tk_rep_d: '설교를 마친 뒤 보고서를 쓰세요. 배운 것, 나라들을 보는 눈이 어떻게 달라졌는지, 하나님이 나를 어떻게 보내시는지.', tk_rep_locked: '설교 {n}편을 마치면 보고서를 쓸 수 있어요 (지금 {a}편).', tk_rep_ph: '여기에 보고서를 쓰세요. (300자 이상)', tk_rep_submit: '보고서 제출', tk_rep_update: '보고서 수정', tk_rep_min: '300자 이상 써 주세요.', tk_rep_saved: '보고서를 제출했어요.', tk_rep_status: '{d} 제출', tk_rep_comment: '리더 코멘트',
-    grad_req_explore: 'Explore 전 주차 확인 ({a}/{b})', grad_req_persp: 'Perspectives 전 주차 확인 ({a}/{b})', grad_req_sermons: '설교 리더 확인 ({a}/{b})', grad_req_report: '수료 보고서 확인',
+    grad_req_explore: 'Explore 전 강 확인 ({a}/{b})', grad_req_persp: 'Perspectives 전 주차 확인 ({a}/{b})', grad_req_sermons: '설교 리더 확인 ({a}/{b})', grad_req_report: '수료 보고서 확인',
     tk_ld_t: '훈련생', tk_ld_none: '아직 훈련생이 없어요. 이 나라에 이름을 쓰거나 신청한 학생이 여기에 보여요.', tk_ld_no_report: '아직 보고서가 없어요.', tk_ld_comment_ph: '학생에게 코멘트를 남기세요', tk_ld_comment_save: '코멘트 저장',
     set_sermon: '수료에 필요한 설교 수', set_sermon_d: '126편 중 몇 편을 마쳐야 하는지 (1–126).',
     train_lang_t: '언어 훈련', train_lang_d: '핵심 복음 메시지를 현지어로 완벽 암기 — 무한 반복, 듣기, 따라하기, 가리기, 자가 테스트.',
@@ -6229,7 +6247,26 @@ function trTile(cls, label, num, status) {
 }
 function trState(row) { return row ? (row.confirmed_at ? 'ok' : 'wait') : ''; }
 function trStatusText(cls) { return cls === 'ok' ? t('tk_status_ok') : cls === 'wait' ? t('tk_status_wait') : '—'; }
+// Explore (Via Ministries) 7개 강 — 책 목차 그대로
+const EXPLORE_PARTS = [{ en: "God's Word", ko: '하나님의 말씀' }, { en: "God's World", ko: '하나님의 세계' }, { en: "God's Work", ko: '하나님의 일' }];
+const EXPLORE_LESSONS = [
+  { part: 0, page: 3, en: "God's Heart for the World", ko: '하나님의 세계를 향한 마음' },
+  { part: 1, page: 15, en: 'Religions of the World', ko: '세계의 종교' },
+  { part: 2, page: 27, en: 'Praying to the Lord of the Harvest', ko: '추수의 주인께 기도하기' },
+  { part: 2, page: 39, en: 'Sending Laborers into the Harvest Field', ko: '추수할 밭에 일꾼 보내기' },
+  { part: 2, page: 51, en: 'Welcoming the Nations Among Us', ko: '우리 가운데 있는 열방 환영하기' },
+  { part: 2, page: 63, en: 'Going Where the Church Is Not', ko: '교회가 없는 곳으로 가기' },
+  { part: 2, page: 75, en: 'Mobilizing the Body of Christ', ko: '그리스도의 몸 동원하기' },
+];
+function lessonListHTML(by) {
+  return `<div class="lsn-list" data-track="explore">${EXPLORE_LESSONS.map((l, k) => { const i = k + 1, c = trState(by[i]), part = EXPLORE_PARTS[l.part], title = locPair(l);
+    return `<button type="button" class="lsn ${c}" data-wk="explore:${i}" aria-pressed="${!!by[i]}" aria-label="${esc(t('tk_lesson', { n: i }))}: ${esc(title)} · ${esc(trStatusText(c))}">
+      <span class="lsn-n">${String(i).padStart(2, '0')}</span>
+      <span class="lsn-b"><small>${esc(locPair(part))} · ${esc(t('tk_page', { n: l.page }))}</small><b>${esc(title)}</b></span>
+      <span class="lsn-s"><i class="wk-ic">${icon(c === 'wait' ? 'clock' : 'check')}</i><em>${esc(trStatusText(c))}</em></span></button>`; }).join('')}</div>`;
+}
 function weekGridHTML(track, by) {
+  if (track === 'explore') return lessonListHTML(by);
   const n = TRACK_WEEKS[track];
   return `<div class="wk-grid" data-track="${track}">${Array.from({ length: n }, (_, i) => i + 1).map(i => { const c = trState(by[i]); return `<button type="button" class="wk ${c}" data-wk="${track}:${i}" aria-pressed="${!!by[i]}" aria-label="${esc(t('tk_week', { n: i }))} · ${esc(trStatusText(c))}">${trTile(c, 'Week', String(i).padStart(2, '0'), trStatusText(c))}</button>`; }).join('')}</div>`;
 }
@@ -6321,7 +6358,7 @@ function refreshTrainingView() {
   const b = document.getElementById('tr-pct-bar'); if (b) b.style.width = st.pct + '%';
   [['explore', 'ex'], ['perspectives', 'pe']].forEach(([k, x]) => {
     const el = document.getElementById('tr-c-' + k); if (el) el.textContent = weeksLabel(st[x], st[x + 'W'], TRACK_WEEKS[k]);
-    const g = app.querySelector(`.wk-grid[data-track="${k}"]`); if (g) g.outerHTML = weekGridHTML(k, tr.by[k]);
+    const g = app.querySelector(`[data-track="${k}"]`); if (g) g.outerHTML = weekGridHTML(k, tr.by[k]);
   });
   bindWeeks();
 }
