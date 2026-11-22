@@ -771,3 +771,6 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
   .tr-phone, .cover { max-width: 260px; }
   .covers { max-width: 360px; }
 }
+.tr-stack { display: grid; gap: 22px; justify-items: start; }
+.tr-stack .cover { max-width: 170px; }
+@media (max-width: 860px) { .tr-stack { grid-template-columns: 150px 1fr; align-items: start; gap: 16px; } .tr-stack .cover { max-width: 150px; } }
