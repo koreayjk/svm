@@ -773,3 +773,7 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 .tr-stack { display: grid; gap: 22px; justify-items: start; }
 .tr-stack .cover { max-width: 300px; }
 @media (max-width: 860px) { .tr-stack .cover { max-width: 260px; } }
+/* 사진이 더 길 때는 글을 고정하고 사진이 스크롤되게 (sticky) */
+.tr-sec.stick-text .tr-media { position: static; }
+.tr-sec.stick-text .tr-body { position: sticky; top: 96px; }
+@media (max-width: 860px) { .tr-sec.stick-text .tr-body { position: static; } }
