@@ -777,3 +777,8 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 .tr-sec.stick-text .tr-media { position: static; }
 .tr-sec.stick-text .tr-body { position: sticky; top: 96px; }
 @media (max-width: 860px) { .tr-sec.stick-text .tr-body { position: static; } }
+/* 3번: 표지 두 권을 나란히 (한 화면에 다 보이게) */
+.tr-sec.wide-media { grid-template-columns: minmax(0, 620px) 1fr; }
+.tr-sec.wide-media .covers { grid-template-columns: 1fr 1fr; gap: 20px; max-width: none; align-items: start; }
+@media (max-width: 1100px) { .tr-sec.wide-media { grid-template-columns: minmax(0, 520px) 1fr; } .tr-sec.wide-media .covers { gap: 14px; } }
+@media (max-width: 860px) { .tr-sec.wide-media { grid-template-columns: 1fr; } .tr-sec.wide-media .covers { max-width: 360px; gap: 12px; } }
