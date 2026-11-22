@@ -10,7 +10,8 @@ out = open('index.html', encoding='utf-8').read()
 for pat in [r'<!doctype html>\s*', r'<html[^>]*>\s*', r'</html>\s*', r'<head>\s*', r'</head>\s*', r'<body>\s*', r'</body>\s*',
             r'<meta charset="utf-8">\s*', r'<meta name="viewport"[^>]*>\s*', r'<meta property="og:[^>]*>\s*', r'<meta name="theme-color"[^>]*>\s*']:
     out = re.sub(pat, '', out, flags=re.I)
-out = out.replace('href="conference/', f'href="{SITE}conference/')
+for sub in ('conference/', 'training/', 'get-the-app/', 'host/', 'privacy/', 'terms/'):
+    out = out.replace(f'href="{sub}', f'href="{SITE}{sub}')
 out = out.replace("window.SVM_BASE = '';", f"window.SVM_BASE = ''; window.SVM_APP_URL = '{sys.argv[2]}';")
 out = out.replace('</title>', '</title>\n<meta name="claude:viewport-fit-sides" content="cover">', 1)
 assert out.lstrip().startswith('<title>')
