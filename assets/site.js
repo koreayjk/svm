@@ -4,10 +4,10 @@
   const BASE = window.SVM_BASE || '';
   const KO = Object.assign({
     nav_movement: '운동 소개', nav_students: '가려는 학생', nav_fields: '선교지', nav_app: '앱', nav_host: '선교지·현지 교회',
-    nav_conf: '11/20 컨퍼런스', nav_home: 'SVM 홈', open_app: '앱 열기',
+    nav_conf: '컨퍼런스 다시보기', nav_home: 'SVM 홈', open_app: '앱 열기',
     lg_now: '지금 파송 · 7개국', lg_future: '기도하며 준비하는 나라들',
     ft_tag: '학생자원운동 · 텍사스 브라이언–컬리지 스테이션', ft_site: '사이트', ft_more: '함께하기',
-    ft_l_home: 'SVM 홈', ft_l_conf: '미션 컨퍼런스 2026', ft_l_app: 'SVM 앱', ft_l_reg: '컨퍼런스 등록', ft_l_host: '선교지 협력', ft_l_faq: '자주 묻는 질문', ft_l_privacy: '개인정보', ft_l_terms: '이용약관',
+    ft_l_home: 'SVM 홈', ft_l_conf: '미션 컨퍼런스 2026', ft_l_app: 'SVM 앱', ft_l_reg: '컨퍼런스 다시보기', ft_l_host: '선교지 협력', ft_l_faq: '자주 묻는 질문', ft_l_privacy: '개인정보', ft_l_terms: '이용약관',
     ft_hosted: 'IM Mission Foundation Group Corp 주최',
     ft_l_contact: '문의', ft_legal: 'IM Mission Foundation Group Corp(EIN 99-2847865)는 501(c)(3) 비영리 단체입니다.',
   }, window.KO || {});

@@ -785,3 +785,4 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 .more-row { margin-top: 28px; display: flex; justify-content: center; }
 .shots { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); gap: clamp(14px, 3vw, 36px); justify-content: center; margin-top: 12px; }
 @media (max-width: 680px) { .shots { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } }
+.video-wrap { max-width: 960px; margin: 0 auto; }
