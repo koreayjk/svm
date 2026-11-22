@@ -1074,6 +1074,8 @@
   .req li.ok i { background: var(--orange-ink); color: #fff; }
   .req i svg { width: 12px; height: 12px; stroke-width: 2.4; }
   .banner.ok { background: #E7F5EC; color: #146C3A; margin: 14px 0 0; }
+  .event-rec h2 { margin: 12px 0 0; color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -.02em; }
+  .event-rec .video { margin: 14px 0 2px; }
   .video { position: relative; aspect-ratio: 16 / 9; border-radius: 20px; overflow: hidden; background: var(--navy); margin-bottom: 12px; box-shadow: 0 18px 40px -22px rgba(13, 27, 58, .55); }
   .video iframe, .video button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
   .video button { cursor: pointer; padding: 0; background: var(--navy) center / cover no-repeat; }
@@ -1426,7 +1428,7 @@ const i18n = {
     train_lang_steps: 'Listen → shadow → hide → self-test, on infinite repeat.',
     community_sub: 'Pray, plan and go together.', ch_seen: 'Seen {n}', ch_seen_by: 'Seen by', ch_pin: 'Pin', ch_unpin: 'Unpin', ch_pinned: 'Pinned.', ch_unpinned: 'Unpinned.', ch_earlier: 'Show earlier messages', ch_search: 'Search', ch_search_ph: 'Search this room…', ch_search_none: 'No messages found.', ch_typing_one: '{n} is typing…', ch_typing_many: '{n} and {c} others are typing…', nt_chat_mention: 'You were mentioned in a chat.', ch_reply: 'Reply', ch_react: 'React', ch_edit: 'Edit', ch_delete: 'Delete', ch_edited: 'edited', ch_photo: 'Add photo', ch_replying: 'Replying to {n}', ch_cancel: 'Cancel', ch_save: 'Save', ch_uploading: 'Sending photo…', ch_deleted_reply: 'Message', ch_photo_msg: 'Photo', ch_edit_empty: 'A message cannot be empty.', ch_img_alt: 'Photo in chat', mem_side: 'In this room', mem_view: 'See who is here', mem_title: 'Who is in this room', mem_none: 'No one yet.', mem_n: '{n} people', mem_n1: '1 person', mem_you: 'You', chat_title: 'Chat', chat_sub: 'Talk with everyone who carries a nation, and with your leaders.', chat_leaders: 'Leaders', chat_leaders_d: 'Only missionaries, country leaders and SVM leaders see these rooms.', chat_all_leaders: 'All leaders', chat_all_leaders_d: 'Every nation together', chat_nation_leaders: 'Leaders of {c}', chat_nation_leaders_d: 'Missionaries, the country leader and HQ',
     pledge_label: 'people carry this nation', pledge_label_one: 'person carries this nation',
-    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station to seven mission fields.', map_hubs: 'Sending from Bryan/College Station', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
+    members_unit: 'members', coming_title: 'Coming next', map_now: 'Sending now · 7 fields', map_future: 'Nations we are praying toward', map_label: 'World map: SVM sends from Bryan/College Station to seven mission fields.', map_hubs: 'Sending from Bryan/College Station', demo_badge: 'Demo', demo_note: 'Demo mode — try anything. Data stays on this device only, and any email works. The first account on this device becomes an admin.', demo_reset: 'Reset demo data', demo_reset_q: 'Tap again to reset all demo data', ev_recording: 'Recording', ev_open_yt: 'Open on YouTube', ev_featured: 'Featured event', ev_title: 'Events', ev_sub: 'Conferences, launches and special gatherings.', ev_none: 'No upcoming events yet.', ev_upcoming: 'Upcoming events', ev_about: 'About this event', ev_register: 'Register', ev_add_cal: 'Add to calendar', ev_share: 'Share', ev_time_tbd: 'Time to be announced', stat_names: 'names written for the nations', stat_fields: 'mission fields open', see_all: 'See all', carry_short: 'carry this nation', carry_zero: 'Be the first to carry it', carrying_tag: 'Carrying', auth_title: 'Get started', privacy: 'Privacy',
     // ② country rooms
     room_members: '{n} members', room_members_one: '1 member', room_join: 'Join this room', room_leave: 'Leave room',
     room_join_d: 'Talk with everyone who carries this nation. Joining a room is not the same as applying, so come and go anytime.',
@@ -1711,7 +1713,7 @@ const i18n = {
     train_lang_steps: '듣기 → 따라하기 → 가리기 → 자가 테스트, 무한 반복.',
     community_sub: '함께 기도하고, 준비하고, 갑니다.', ch_seen: '읽음 {n}', ch_seen_by: '읽은 사람', ch_pin: '고정', ch_unpin: '고정 해제', ch_pinned: '글을 고정했어요.', ch_unpinned: '고정을 풀었어요.', ch_earlier: '이전 메시지 더 보기', ch_search: '검색', ch_search_ph: '이 방에서 찾기…', ch_search_none: '찾은 메시지가 없어요.', ch_typing_one: '{n} 님이 입력 중…', ch_typing_many: '{n} 님 외 {c}명이 입력 중…', nt_chat_mention: '채팅에서 나를 언급했어요.', ch_reply: '답장', ch_react: '반응', ch_edit: '수정', ch_delete: '삭제', ch_edited: '수정됨', ch_photo: '사진 추가', ch_replying: '{n} 님에게 답장', ch_cancel: '취소', ch_save: '저장', ch_uploading: '사진을 보내는 중…', ch_deleted_reply: '메시지', ch_photo_msg: '사진', ch_edit_empty: '내용이 비어 있어요.', ch_img_alt: '채팅 사진', mem_side: '이 방에 있는 사람', mem_view: '누가 있는지 보기', mem_title: '이 방에 있는 사람', mem_none: '아직 아무도 없어요.', mem_n: '{n}명', mem_n1: '1명', mem_you: '나', chat_title: '채팅', chat_sub: '같은 나라를 품은 사람들, 그리고 리더들과 이야기해요.', chat_leaders: '리더 방', chat_leaders_d: '선교사님, 나라 리더, SVM 리더만 보는 방이에요.', chat_all_leaders: '전체 리더', chat_all_leaders_d: '모든 나라 리더가 함께', chat_nation_leaders: '{c} 리더', chat_nation_leaders_d: '선교사님, 나라 리더, 본부', 
     pledge_label: '명이 이 나라를 품고 있습니다', pledge_label_one: '명이 이 나라를 품고 있습니다',
-    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
+    members_unit: '명', coming_title: '곧 열려요', map_now: '지금 파송 · 7개국', map_future: '기도하며 준비하는 나라들', map_label: '세계지도: 브라이언/컬리지 스테이션에서 7개 선교지로 보냅니다.', map_hubs: '보내는 곳: 브라이언/컬리지 스테이션', demo_badge: '데모', demo_note: '데모 모드 — 자유롭게 눌러보세요. 데이터는 이 기기에만 저장되고, 아무 이메일로나 가입됩니다. 이 기기에서 처음 가입한 계정이 관리자가 됩니다.', demo_reset: '데모 데이터 초기화', demo_reset_q: '한 번 더 누르면 데모 데이터가 모두 지워집니다', ev_recording: '다시보기', ev_open_yt: '유튜브에서 열기', ev_featured: '추천 이벤트', ev_title: '이벤트', ev_sub: '컨퍼런스, 발족식, 특별 모임.', ev_none: '다가오는 이벤트가 없습니다.', ev_upcoming: '다가오는 이벤트', ev_about: '이벤트 소개', ev_register: '등록하기', ev_add_cal: '캘린더에 추가', ev_share: '공유하기', ev_time_tbd: '시간 추후 안내', stat_names: '나라에 쓴 이름', stat_fields: '열린 선교지', see_all: '모두 보기', carry_short: '명이 품고 있어요', carry_zero: '처음으로 품어 주세요', carrying_tag: '품는 중', auth_title: '함께 시작해요', privacy: '개인정보 처리 안내',
     room_members: '{n}명 참여', room_members_one: '1명 참여', room_join: '방 참여하기', room_leave: '방 나가기',
     room_join_d: '이 나라를 품은 사람들과 이야기해요. 방 참여는 신청과 별개라서 언제든 나가고 들어올 수 있어요.',
     room_joined_toast: '{c} 나라방에 참여했어요.', room_left_toast: '방에서 나갔어요.',
@@ -2246,7 +2248,7 @@ function createDemoClient() {
           description_en: 'The launch of SVM in Bryan/College Station.\nTent Village — walk the nation booths and sign your nation.\nSign up on site with the QR code, explore the fields, and apply.\nFirst look at the SVM metaverse mission space (teaser).',
           description_ko: '브라이언/컬리지 스테이션 SVM 발족식.\n텐트 빌리지 — 나라별 부스를 돌며 내 나라에 이름 쓰기.\n현장 QR로 가입하고, 선교지를 둘러보고, 신청까지.\nSVM 메타버스 선교 공간 예고편 첫 공개.',
           starts_at: '2026-11-21T00:00:00Z', ends_at: null, all_day: false, location: 'Country Fellowship Church · 408 E 24th St, Bryan, TX 77803',
-          image_url: null, link_url: '../conference/#register', is_featured: true, is_published: true },
+          image_url: null, link_url: 'https://www.youtube.com/live/BObkT4aCdq8', is_featured: true, is_published: true },
         { id: 2, title_en: 'Winter Send-off Prayer Night', title_ko: '겨울 파송 기도회',
           subtitle_en: 'Praying over the December & January teams', subtitle_ko: '12월·1월 파송팀을 위한 기도',
           description_en: 'An evening of worship and prayer for everyone going out this winter break.', description_ko: '이번 겨울방학에 떠나는 모든 팀을 위한 예배와 기도의 밤.',
@@ -3055,7 +3057,7 @@ const VIEWS = {
       ${tripHomeCard(myApp)}
       ${sosHomeCard(apps)}
       ${confDayCard(featured, state.confHere)}
-      ${featured ? eventHero(featured) : ''}
+      ${featured ? (evRecordingId(featured) ? eventRecording(featured, evRecordingId(featured)) : eventHero(featured)) : ''}
       <div class="bento" style="margin-bottom:12px">
         <a class="stat peach" href="#/countries"><span class="s-ico">${icon('flame')}</span>
           <div><div class="big">${totalNames.toLocaleString()}</div><div class="lbl">${esc(t('stat_names'))}</div></div></a>
@@ -3243,11 +3245,12 @@ const VIEWS = {
 // ---------------------------------------------------------------------
 async function loadEvents(force) {
   if (state.events && !force) return state.events;
-  const since = new Date(Date.now() - 36 * 3600 * 1000).toISOString();   // 진행 중·당일 이벤트 포함
+  const since = new Date(Date.now() - 120 * 864e5).toISOString();   // 지난 행사 중 다시보기 영상이 있는 것도 가져온다
   const { data } = await sb.from('events').select('*').eq('is_published', true)
-    .gte('starts_at', since).order('starts_at').limit(20);
+    .gte('starts_at', since).order('starts_at').limit(40);
   const today = nowInTZ().date;
-  state.events = (data || []).filter(e => evDay(e.ends_at || e.starts_at) >= today);
+  // 오늘 이후 행사 + (대표 행사이고 유튜브 영상이 걸린) 지난 행사
+  state.events = (data || []).filter(e => evDay(e.ends_at || e.starts_at) >= today || (e.is_featured && ytId(e.link_url)));
   return state.events;
 }
 function evDay(iso) { return new Intl.DateTimeFormat('en-CA', { timeZone: CONFIG.TIMEZONE, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); }
@@ -3278,6 +3281,19 @@ function eventHero(e) {
       <div class="ev-when"><span>${icon('calendar')}${esc(evDateShort(e))} · ${esc(evTime(e))}</span>${e.location ? `<span>${icon('pin')}${esc(e.location)}</span>` : ''}</div>
       ${TORCH}
     </div></a>`;
+}
+// 지난 행사에 유튜브 영상 링크가 있으면 홈·상세에서 영상(다시보기)을 보여 준다
+function evRecordingId(e) {
+  if (!e || evDay(e.starts_at) >= nowInTZ().date) return null;
+  return ytId(e.link_url);
+}
+function eventRecording(e, vid) {
+  return `<section class="event-hero event-rec shell dark"><div class="core dark on-dark">
+      <div class="ev-top"><span class="ev-badge">${icon('play')}${esc(t('ev_recording'))}</span><div class="ev-dd"><small>${esc(evDateShort(e))}</small></div></div>
+      <h2>${esc(locPair(e, 'title'))}</h2>
+      <div class="video" data-yt="${esc(vid)}"><button type="button" aria-label="${esc(t('ev_recording'))}" style="background-image:url(https://i.ytimg.com/vi/${esc(vid)}/hqdefault.jpg)"><i>${icon('play')}</i></button></div>
+      ${TORCH}
+    </div></section>`;
 }
 function eventRow(e) {
   return `<a class="list-row dated" href="#/events/${e.id}">
@@ -3316,14 +3332,14 @@ VIEWS.events = async function (id) {
   const e = list.find(x => String(x.id) === String(id));
   if (!e) return `<div style="padding-top:8px">${back}</div><div style="margin-top:12px">${card(`<h3>${esc(t('not_found'))}</h3>`)}</div>`;
   return `<div style="padding-top:8px"><a href="#/events" class="back-pill">${icon('chevl')}${esc(t('ev_title'))}</a></div>
-    <div style="margin-top:10px">${eventHero(e).replace('<a class="event-hero', '<div class="event-hero').replace(/<\/a>$/, '</div>')}</div>
+    <div style="margin-top:10px">${evRecordingId(e) ? eventRecording(e, evRecordingId(e)) : eventHero(e).replace('<a class="event-hero', '<div class="event-hero').replace(/<\/a>$/, '</div>')}</div>
     ${card(`<div class="ev-facts">
         <div class="list-row"><span class="ico-tile">${icon('calendar')}</span><div class="meta"><div class="t">${esc(evDateLong(e))}</div><div class="d">${esc(evTime(e))}</div></div></div>
         ${e.location ? `<div class="list-row"><span class="ico-tile">${icon('pin')}</span><div class="meta"><div class="t">${esc(e.location)}</div></div></div>` : ''}
       </div>`)}
     ${locPair(e, 'description') ? card(`<span class="eyebrow">${esc(t('ev_about'))}</span><p style="margin:8px 0 0">${para(locPair(e, 'description'))}</p>`) : ''}
     <div class="btn-row">
-      ${e.link_url ? `<a class="btn block" href="${esc(e.link_url)}" target="_blank" rel="noopener">${icon('arrow')} ${esc(t('ev_register'))}</a>` : ''}
+      ${e.link_url ? `<a class="btn block" href="${esc(e.link_url)}" target="_blank" rel="noopener">${icon('arrow')} ${esc(evRecordingId(e) ? t('ev_open_yt') : t('ev_register'))}</a>` : ''}
       ${CAN_DOWNLOAD ? `<button class="btn block navy" id="ics-btn" data-id="${e.id}">${icon('calendar')} ${esc(t('ev_add_cal'))}</button>` : ''}
       ${navigator.share && CAN_DOWNLOAD ? `<button class="btn block light" id="share-btn">${esc(t('ev_share'))}</button>` : ''}
     </div>`;
@@ -3602,6 +3618,7 @@ const BINDERS = {
 };
 
 BINDERS.home = function () {
+  bindVideoFacades();
   const hb = document.getElementById('conf-here');
   if (hb) hb.onclick = async () => {
     hb.disabled = true;
@@ -3614,6 +3631,7 @@ BINDERS.home = function () {
 };
 
 BINDERS.events = function (id) {
+  bindVideoFacades();
   const e = (state.events || []).find(x => String(x.id) === String(id));
   if (!e) return;
   const ics = document.getElementById('ics-btn');
@@ -6182,7 +6200,7 @@ BINDERS.learn = function () {
 // ---------------------------------------------------------------------
 // ③ 교육 — B. 선교 교육 (영상 + 소감) · C. 수료
 // ---------------------------------------------------------------------
-function ytId(url) { const m = /(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/.exec(url || ''); return m ? m[1] : null; }
+function ytId(url) { const m = /(?:v=|youtu\.be\/|embed\/|shorts\/|live\/)([\w-]{11})/.exec(url || ''); return m ? m[1] : null; }
 async function loadCourses() {
   const [courses, fb] = await Promise.all([
     sb.from('courses').select('*').order('sort_order').order('id'),
