@@ -360,3 +360,29 @@ select test.ok(test.n('select 1 from public.training_reports where user_id = ' |
 set app.uid = :'admin';
 select test.ok(test.n('select 1 from public.training_progress where user_id = ' || quote_literal('00000000-0000-0000-0000-0000000000d9'::text)) = 1, '관리자는 모든 훈련 기록을 본다');
 reset role;
+
+-- ===== 20. 이중 확인 (학생 체크 + 리더 확인) =====
+set role authenticated; set app.uid = :'stud';
+update public.training_progress set confirmed_at = now() where user_id = :'stud' and track = 'sermon' and item = 12;
+select test.ok((select confirmed_at from public.training_progress where user_id = :'stud' and track = 'sermon' and item = 12) is null, '학생은 자기 항목을 스스로 확인할 수 없다');
+select test.ok(test.n('select 1 from public.training_progress where user_id = ' || quote_literal(:'stud') || ' and confirmed_at is null') = 1, '확인 전에는 인정되지 않은 상태다');
+set app.uid = :'lead';
+update public.training_progress set confirmed_at = now(), note = '바꿔치기' where user_id = :'stud' and track = 'sermon' and item = 12;
+select test.ok((select confirmed_by from public.training_progress where user_id = :'stud' and item = 12) = :'lead'::uuid, '리더가 확인하면 누가 확인했는지 남는다');
+select test.ok((select note from public.training_progress where user_id = :'stud' and item = 12) = '설교 노트입니다', '리더는 학생의 노트를 바꿀 수 없다');
+set app.uid = :'stud';
+delete from public.training_progress where user_id = :'stud' and item = 12;
+select test.ok(test.n('select 1 from public.training_progress where user_id = ' || quote_literal(:'stud') || ' and item = 12') = 1, '확인된 항목은 학생이 지울 수 없다');
+update public.training_progress set note = '노트를 고쳤어요' where user_id = :'stud' and item = 12;
+select test.ok((select confirmed_at from public.training_progress where user_id = :'stud' and item = 12) is null, '노트를 고치면 확인이 풀린다');
+set app.uid = :'lead2';
+update public.training_progress set confirmed_at = now() where user_id = '00000000-0000-0000-0000-0000000000d9';
+reset role;
+select test.ok((select confirmed_at from public.training_progress where user_id = '00000000-0000-0000-0000-0000000000d9') is null, '상관없는 나라 리더는 확인할 수 없다');
+set role authenticated; set app.uid = :'lead';
+update public.training_reports set confirmed_at = now() where user_id = :'stud';
+select test.ok((select confirmed_at from public.training_reports where user_id = :'stud') is not null, '리더는 보고서를 확인한다');
+set app.uid = :'stud';
+update public.training_reports set body = '보고서를 고쳤어요' where user_id = :'stud';
+select test.ok((select confirmed_at from public.training_reports where user_id = :'stud') is null, '보고서를 고치면 확인이 풀린다');
+reset role;
