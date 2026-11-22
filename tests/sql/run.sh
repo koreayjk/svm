@@ -28,7 +28,7 @@ fi
 OUT="$(mktemp)"
 {
   run -f "$HERE/stubs.sql"
-  for f in "$ROOT"/sql/0[1235]_*.sql "$ROOT"/sql/0[789]_*.sql "$ROOT"/sql/1[0-9]_*.sql; do
+  for f in "$ROOT"/sql/0[1235]_*.sql "$ROOT"/sql/0[789]_*.sql "$ROOT"/sql/[12][0-9]_*.sql; do
     echo "-- load: $(basename "$f")" >&2
     run -f "$f"
   done
