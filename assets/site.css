@@ -761,16 +761,15 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 .tr-phone, .cover { margin: 0; max-width: 300px; }
 .cover figcaption { margin-top: 10px; font-size: 13px; line-height: 1.4; color: var(--muted-2); text-align: center; }
 .cover figcaption b { color: var(--text); font-weight: 600; }
-.covers { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 320px; }
+.covers { display: grid; grid-template-columns: 1fr; gap: 22px; max-width: 300px; }
 .covers .cover { max-width: none; }
-.covers .cover figcaption { font-size: 11.5px; }
 @media (max-width: 860px) {
   .tr-sec, .tr-sec.rev { grid-template-columns: 1fr; gap: 20px; }
   .tr-sec.rev .tr-media { order: 0; }
   .tr-media { position: static; }
   .tr-phone, .cover { max-width: 260px; }
-  .covers { max-width: 360px; }
+  .covers { max-width: 260px; }
 }
 .tr-stack { display: grid; gap: 22px; justify-items: start; }
-.tr-stack .cover { max-width: 170px; }
-@media (max-width: 860px) { .tr-stack { grid-template-columns: 150px 1fr; align-items: start; gap: 16px; } .tr-stack .cover { max-width: 150px; } }
+.tr-stack .cover { max-width: 300px; }
+@media (max-width: 860px) { .tr-stack .cover { max-width: 260px; } }
