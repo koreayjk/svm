@@ -780,3 +780,8 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 /* 3번: 표지 두 권을 위아래로. 화면보다 길어서, 아래 끝이 화면 바닥에 닿으면 고정되게 */
 .tr-sec.tall-media .tr-media { top: min(96px, calc(100vh - 900px)); }
 @media (max-width: 860px) { .tr-sec.tall-media .tr-media { top: auto; } }
+
+/* 홈의 요약 섹션 */
+.more-row { margin-top: 28px; display: flex; justify-content: center; }
+.shots { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); gap: clamp(14px, 3vw, 36px); justify-content: center; margin-top: 12px; }
+@media (max-width: 680px) { .shots { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } }
