@@ -1025,6 +1025,8 @@
   .lsn-b { flex: 1; min-width: 0; display: grid; gap: 2px; }
   .lsn-b small { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .lsn-b b { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .lsn-d { font-size: 12.5px; font-weight: 400; line-height: 1.45; color: var(--muted-2); }
+  .lsn.ok .lsn-d { color: rgba(255,255,255,.78); }
   .lsn-s { flex: none; display: grid; justify-items: end; gap: 3px; }
   .lsn-s .wk-ic { position: static; }
   .lsn-s em { font-style: normal; font-size: 10.5px; color: var(--muted); max-width: 70px; text-align: right; line-height: 1.2; }
@@ -1376,7 +1378,7 @@ const i18n = {
     tk_ld_confirm: 'Confirm', tk_ld_unconfirm: 'Undo confirmation', tk_ld_confirm_all: 'Confirm all waiting ({n})', tk_ld_waiting_n: '{n} items are waiting for your confirmation.', tk_ld_sm: 'Sermon notes',
     tk_overall: 'Overall progress', tk_overall_d: 'Four tracks, a report, then graduation.', tk_glance: 'At a glance', tk_done: 'Done', tk_todo: 'Not yet',
     tk_lang: 'Language', tk_explore: 'Explore · 7 lessons', tk_persp: 'Perspectives · 15 lessons', tk_sermons: 'Sermons & notes', tk_report: 'Final report',
-    tk_explore_d: 'The Explore book by Via Ministries. Tap a lesson when you finish it.', tk_persp_d: 'Perspectives on the World Christian Movement. Tap a lesson when you finish it.',
+    tk_explore_d: 'The Explore book by Via Nations. Tap a lesson when you finish it. Short summaries are ours; the book is © Via Nations.', tk_persp_d: 'Perspectives on the World Christian Movement. Tap a lesson when you finish it.',
     tk_week: 'Week {n}', tk_lesson: 'Lesson {n}', tk_page: 'p.{n}', tk_weeks_done: '{a} of {b} weeks confirmed',
     tk_sm_d: 'Listen to the Perspectives sermons ({t} in all) and write your notes for each one. Finish at least {n} of them.', tk_sm_count: '{a} of {b} needed', tk_sm_of: '{a} / {b} sermons', tk_sm_open: 'Open the sermons', tk_sm_title: 'Sermon {n}', tk_sm_progress: '{a} confirmed · {b} needed to graduate',
     tk_sm_note: 'Your notes', tk_sm_note_ph: 'What did you hear? What stood out? How will you respond? (at least 40 characters)', tk_sm_done_btn: 'I listened — save my notes', tk_sm_update: 'Update notes', tk_sm_undo: 'Mark as not done', tk_sm_saved: 'Saved.', tk_sm_min: 'Please write at least 40 characters of notes.', tk_sm_undone: 'Marked as not done.',
@@ -1665,7 +1667,7 @@ const i18n = {
     tk_ld_confirm: '확인', tk_ld_unconfirm: '확인 취소', tk_ld_confirm_all: '대기 중인 것 모두 확인 ({n})', tk_ld_waiting_n: '확인을 기다리는 항목이 {n}개 있어요.', tk_ld_sm: '설교 노트',
     tk_overall: '전체 진행률', tk_overall_d: '4가지 훈련과 보고서를 마치면 수료합니다.', tk_glance: '한눈에 보기', tk_done: '완료', tk_todo: '아직',
     tk_lang: '언어', tk_explore: 'Explore · 7강', tk_persp: 'Perspectives · 15강', tk_sermons: '설교 듣기·노트', tk_report: '수료 보고서',
-    tk_explore_d: 'Via Ministries의 Explore 책입니다. 한 강을 마칠 때마다 눌러 체크하세요.', tk_persp_d: 'Perspectives on the World Christian Movement 입니다. 한 강을 마칠 때마다 눌러 체크하세요.',
+    tk_explore_d: 'Via Nations의 Explore 교재입니다. 한 강을 마칠 때마다 눌러 체크하세요. 요약은 SVM이 쓴 것이며 교재의 저작권은 Via Nations에 있습니다.', tk_persp_d: 'Perspectives on the World Christian Movement 입니다. 한 강을 마칠 때마다 눌러 체크하세요.',
     tk_week: '{n}주차', tk_lesson: '{n}강', tk_page: '{n}쪽', tk_weeks_done: '{b}주 중 {a}주 확인',
     tk_sm_d: 'Perspectives 설교(모두 {t}편)를 듣고 한 편마다 노트를 정리하세요. 최소 {n}편을 마쳐야 합니다.', tk_sm_count: '{b}편 중 {a}편', tk_sm_of: '설교 {a} / {b}', tk_sm_open: '설교 목록 열기', tk_sm_title: '설교 {n}', tk_sm_progress: '{a}편 확인됨 · 수료까지 {b}편 필요',
     tk_sm_note: '내 노트', tk_sm_note_ph: '무엇을 들었나요? 마음에 남은 것은? 어떻게 반응할 건가요? (40자 이상)', tk_sm_done_btn: '들었어요 — 노트 저장', tk_sm_update: '노트 수정', tk_sm_undo: '완료 취소', tk_sm_saved: '저장했어요.', tk_sm_min: '노트를 40자 이상 써 주세요.', tk_sm_undone: '완료를 취소했어요.',
@@ -6247,18 +6249,18 @@ function trTile(cls, label, num, status) {
 }
 function trState(row) { return row ? (row.confirmed_at ? 'ok' : 'wait') : ''; }
 function trStatusText(cls) { return cls === 'ok' ? t('tk_status_ok') : cls === 'wait' ? t('tk_status_wait') : '—'; }
-// 교재 목차 그대로 — Explore(Via Ministries) 7강, Perspectives 15강
+// 교재 목차 그대로 — Explore(Via Nations) 7강, Perspectives 15강
 const LESSONS = {
   explore: {
     parts: [{ en: "God's Word", ko: '하나님의 말씀' }, { en: "God's World", ko: '하나님의 세계' }, { en: "God's Work", ko: '하나님의 일' }],
     items: [
-      { part: 0, page: 3, en: "God's Heart for the World", ko: '하나님의 세계를 향한 마음' },
-      { part: 1, page: 15, en: 'Religions of the World', ko: '세계의 종교' },
-      { part: 2, page: 27, en: 'Praying to the Lord of the Harvest', ko: '추수의 주인께 기도하기' },
-      { part: 2, page: 39, en: 'Sending Laborers into the Harvest Field', ko: '추수할 밭에 일꾼 보내기' },
-      { part: 2, page: 51, en: 'Welcoming the Nations Among Us', ko: '우리 가운데 있는 열방 환영하기' },
-      { part: 2, page: 63, en: 'Going Where the Church Is Not', ko: '교회가 없는 곳으로 가기' },
-      { part: 2, page: 75, en: 'Mobilizing the Body of Christ', ko: '그리스도의 몸 동원하기' },
+      { part: 0, page: 3, en: "God's Heart for the World", ko: '하나님의 세계를 향한 마음', d_en: "Reads the Bible as one big story about God's passion to be worshiped by every people, not as a pile of separate verses.", d_ko: '성경을 따로 떨어진 구절 모음이 아니라, 모든 민족에게 예배받고자 하시는 하나님의 열정을 담은 하나의 큰 이야기로 읽습니다.' },
+      { part: 1, page: 15, en: 'Religions of the World', ko: '세계의 종교', d_en: "A look at where the world stands: how far the gospel has spread, how many peoples are still waiting and what is left to do.", d_ko: '세계가 지금 어디에 있는지 살핍니다. 복음이 얼마나 퍼졌고, 아직 기다리는 민족이 얼마나 되며, 남은 일이 무엇인지 봅니다.' },
+      { part: 2, page: 27, en: 'Praying to the Lord of the Harvest', ko: '추수의 주인께 기도하기', d_en: "Why intercession matters, and how your prayers join what God is already doing among the nations.", d_ko: '중보기도가 왜 중요한지, 그리고 내 기도가 열방 가운데 이미 일하시는 하나님의 일에 어떻게 함께하는지 배웁니다.' },
+      { part: 2, page: 39, en: 'Sending Laborers into the Harvest Field', ko: '추수할 밭에 일꾼 보내기', d_en: "Going and sending belong together. Learn why those who send, by praying, giving and caring, matter as much as those who go.", d_ko: '가는 일과 보내는 일은 함께입니다. 기도하고, 드리고, 돌보며 보내는 사람이 가는 사람만큼 중요한 이유를 배웁니다.' },
+      { part: 2, page: 51, en: 'Welcoming the Nations Among Us', ko: '우리 가운데 있는 열방 환영하기', d_en: "Many people who have never heard of Jesus now live near us. Practical ways to befriend international neighbors and students.", d_ko: '예수님을 들어 본 적 없는 많은 사람이 우리 가까이 살고 있습니다. 외국인 이웃과 유학생의 친구가 되는 실제적인 방법을 나눕니다.' },
+      { part: 2, page: 63, en: 'Going Where the Church Is Not', ko: '교회가 없는 곳으로 가기', d_en: "How ordinary people, with any skill or job, can serve among unreached peoples, and the myths that keep many from going.", d_ko: '어떤 기술과 직업을 가진 평범한 사람이든 미전도 민족 가운데서 섬길 수 있는 길과, 가는 것을 막는 흔한 오해를 다룹니다.' },
+      { part: 2, page: 75, en: 'Mobilizing the Body of Christ', ko: '그리스도의 몸 동원하기', d_en: "Passing the vision on: how to call others to pray, send, welcome and go, and why you do not need special training to start.", d_ko: '비전을 전하는 법입니다. 다른 사람을 기도, 보냄, 환영, 감으로 부르는 방법과, 시작하는 데 특별한 훈련이 필요 없는 이유를 봅니다.' },
     ],
   },
   perspectives: {
@@ -6287,7 +6289,7 @@ function lessonListHTML(track, by) {
   return `<div class="lsn-list" data-track="${track}">${L.items.map((l, k) => { const i = k + 1, c = trState(by[i]), part = L.parts[l.part], title = locPair(l);
     return `<button type="button" class="lsn ${c}" data-wk="${track}:${i}" aria-pressed="${!!by[i]}" aria-label="${esc(t('tk_lesson', { n: i }))}: ${esc(title)} · ${esc(trStatusText(c))}">
       <span class="lsn-n">${String(i).padStart(2, '0')}</span>
-      <span class="lsn-b"><small>${esc(locPair(part))} · ${esc(t('tk_page', { n: l.page }))}</small><b>${esc(title)}</b></span>
+      <span class="lsn-b"><small>${esc(locPair(part))} · ${esc(t('tk_page', { n: l.page }))}</small><b>${esc(title)}</b>${l.d_en ? `<span class="lsn-d">${esc(state.lang === 'ko' ? l.d_ko : l.d_en)}</span>` : ''}</span>
       <span class="lsn-s"><i class="wk-ic">${icon(c === 'wait' ? 'clock' : 'check')}</i><em>${esc(trStatusText(c))}</em></span></button>`; }).join('')}</div>`;
 }
 function weekGridHTML(track, by) {

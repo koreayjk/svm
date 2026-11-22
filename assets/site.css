@@ -712,3 +712,6 @@ body { word-break: keep-all; overflow-wrap: anywhere; }
 .lessons span { flex: 1; }
 .lessons em { font-style: normal; font-size: 13px; color: var(--muted-2); }
 .lesson-panel { align-self: start; }
+.lessons .ld { display: block; margin-top: 2px; font-size: 13.5px; line-height: 1.5; color: var(--muted-2); }
+.lessons li { align-items: flex-start; }
+.lessons b { padding-top: 1px; }
