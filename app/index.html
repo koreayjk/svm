@@ -401,6 +401,13 @@
   .auth-note { text-align: center; margin: 14px 0 0; }
   .auth-points { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 26px; text-align: center; }
   .auth-points div { font-size: 12.5px; color: var(--muted-2); line-height: 1.4; }
+.store-badges { margin: 16px 0 4px; text-align: center; }
+.store-badges .sb-h { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+.store-badges .sb-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.store-badges .sb { display: inline-flex; align-items: center; gap: 9px; padding: 8px 16px 8px 13px; border-radius: 12px; background: #0D1B3A; color: #fff; text-decoration: none; line-height: 1.1; text-align: left; }
+.store-badges .sb svg { width: 22px; height: 22px; flex: none; }
+.store-badges .sb small { display: block; font-size: 10px; opacity: .8; }
+.store-badges .sb b { display: block; font-size: 15px; font-weight: 700; }
   .auth-legal { text-align: center; margin: 22px 0 0; font-size: 13px; }
   .auth-legal a { color: var(--muted-2); text-decoration: underline; text-underline-offset: 3px; }
   .auth-points b { display: block; font-family: var(--font-num); font-weight: 600; font-size: 24px; color: var(--navy); margin-bottom: 2px; }
@@ -1320,7 +1327,7 @@ const i18n = {
     tagline: 'Mobilizing · Training · Sending',
     app_name: 'Student Volunteer Movement',
     // auth
-    login: 'Log in', signup: 'Sign up', logout: 'Log out',
+    login: 'Log in', signup: 'Sign up', logout: 'Log out', get_app_t: 'Get the mobile app', get_app_d: 'Download SVM on your phone.',
     email: 'Email', password: 'Password', password_hint: 'At least 6 characters',
     name: 'Full name', name_hint: 'First and last name', school: 'School', phone: 'Phone', age_range: 'Age group', age_opt: 'optional', age_pick: 'Prefer not to say', age_u18: '17 or younger', age_a18_22: '18–22', age_a23_29: '23–29', age_a30_39: '30–39', age_a40_49: '40–49', age_a50: '50 and over', age_hint: 'Only used for group statistics. Never shown to others.', sx_ages: 'Age groups', sx_ages_d: 'Members who chose an age group. Counts only, no names.', sx_age_members: 'Members', sx_age_sent: 'Sent (on the field or returned)', sx_age_none: 'Not set',
     forgot_password: 'Forgot password?', send_reset: 'Send reset link', back_to_login: 'Back to log in',
@@ -1614,7 +1621,7 @@ const i18n = {
   ko: {
     tagline: 'Mobilizing · Training · Sending',
     app_name: '학생자원운동',
-    login: '로그인', signup: '회원가입', logout: '로그아웃',
+    login: '로그인', signup: '회원가입', logout: '로그아웃', get_app_t: '모바일 앱 받기', get_app_d: '휴대폰에 SVM 앱을 설치하세요.',
     email: '이메일', password: '비밀번호', password_hint: '6자 이상',
     name: '이름', name_hint: '이름과 성', school: '학교', phone: '연락처', age_range: '나이대', age_opt: '선택', age_pick: '밝히지 않을래요', age_u18: '17세 이하', age_a18_22: '18–22세', age_a23_29: '23–29세', age_a30_39: '30–39세', age_a40_49: '40–49세', age_a50: '50세 이상', age_hint: '통계에만 쓰이고 다른 사람에게는 보이지 않아요.', sx_ages: '나이대별', sx_ages_d: '나이대를 고른 회원만 집계해요. 인원수만 보이고 이름은 보이지 않아요.', sx_age_members: '회원', sx_age_sent: '파송 (사역 중 + 귀국)', sx_age_none: '미입력',
     forgot_password: '비밀번호를 잊으셨나요?', send_reset: '재설정 링크 보내기', back_to_login: '로그인으로 돌아가기',
@@ -2558,6 +2565,17 @@ const DEMO = !configured || FORCE_DEMO;   // 연결 정보가 없으면 데모 �
 const NATIVE = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
 const Native = NATIVE ? window.Capacitor.Plugins : {};
 const WEB_APP_URL = 'https://svmagain.org/app/';   // 이메일 링크(비밀번호 재설정 등)가 돌아올 주소
+const STORE_APPLE = 'https://apps.apple.com/app/id6832082506', STORE_GOOGLE = 'https://play.google.com/store/apps/details?id=com.imamerica.svm';
+function storeBadges() {
+  if (NATIVE) return '';
+  const ap = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 1.4c0 1.1-.5 2.2-1.2 3-.8.8-2.1 1.5-3.1 1.4-.1-1.1.4-2.3 1.1-3 .8-.9 2.2-1.5 3.2-1.4zM20.5 17.1c-.5 1.3-.8 1.8-1.5 3-1 1.6-2.4 3.5-4.1 3.5-1.5 0-1.9-1-4-1s-2.5 1-4 1c-1.7 0-3-1.8-4-3.4C-1 16.2-.1 10.7 2.6 8c1.5-1.5 3.5-2.3 5.4-2.3 2 0 3.3 1.1 4.9 1.1 1.6 0 2.6-1.1 4.9-1.1 1.7 0 3.5.9 4.8 2.5-4.2 2.3-3.5 8.3.9 9.9z"/></svg>';
+  const gp = '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#00C3FF" d="M3.3 1.8 13.2 12 3.3 22.2z"/><path fill="#00E676" d="M3.3 1.8 13.2 12l3.7-3.7z"/><path fill="#FF3D57" d="M3.3 22.2 13.2 12l3.7 3.7z"/><path fill="#FFC400" d="m16.9 8.3 4.4 2.5v2.4l-4.4 2.5L13.2 12z"/></svg>';
+  const small = state.lang === 'ko' ? '다운로드' : 'Download on the';
+  const gsmall = state.lang === 'ko' ? '다운로드' : 'Get it on';
+  return `<div class="store-badges"><div class="sb-h">${esc(t('get_app_t'))}</div><div class="sb-row">
+    <a class="sb" href="${STORE_APPLE}" target="_blank" rel="noopener">${ap}<span><small>${small}</small><b>App Store</b></span></a>
+    <a class="sb" href="${STORE_GOOGLE}" target="_blank" rel="noopener">${gp}<span><small>${gsmall}</small><b>Google Play</b></span></a></div></div>`;
+}
 const CAN_DOWNLOAD = !NATIVE;   // 파일 저장·공유가 막힌 환경(미리보기 빌드·앱 안)에서는 false
 const sb = DEMO ? createDemoClient() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_ANON_KEY);
 
@@ -2858,6 +2876,7 @@ function viewAuth() {
         <div><b>${esc(t('ap2_n'))}</b>${esc(t('ap2'))}</div>
         <div><b>${esc(t('ap3_n'))}</b>${esc(t('ap3'))}</div>
       </div>
+      ${storeBadges()}
       <p class="auth-legal"><a href="${TERMS_URL}" target="_blank" rel="noopener">${esc(t('terms'))}</a> · <a href="${PRIVACY_URL}" target="_blank" rel="noopener">${esc(t('privacy'))}</a></p>
     </div>`;
 }
@@ -3165,6 +3184,7 @@ const VIEWS = {
       ${card(`<a class="list-row" href="#/checklist"><span class="ico-tile">${icon('bag')}</span><div class="meta"><div class="t">${esc(t('my_check_t'))}</div><div class="d">${esc(t('my_check_d'))}</div></div><span class="chev">${icon('chev')}</span></a>
         <a class="list-row" href="#/attendance"><span class="ico-tile">${icon('calendar')}</span><div class="meta"><div class="t">${esc(t('my_att_t'))}</div><div class="d">${esc(t('my_att_d'))}</div></div><span class="chev">${icon('chev')}</span></a>
         <a class="list-row" href="#/teams"><span class="ico-tile">${icon('people')}</span><div class="meta"><div class="t">${esc(t('com_teams_t'))}</div><div class="d">${esc(t('teams_sub'))}</div></div><span class="chev">${icon('chev')}</span></a>`)}
+      ${storeBadges() ? card(storeBadges()) : ''}
       ${card(`<div class="stack">
         <button class="btn light block ${state.installPrompt ? '' : 'hidden'}" id="install-btn">${esc(t('install_app'))}</button>
         ${isIOS ? `<div class="row small muted" style="gap:10px"><span class="ico-tile soft">${icon('download')}</span>${esc(t('install_ios'))}</div>` : ''}
