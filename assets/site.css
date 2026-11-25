@@ -786,3 +786,10 @@ a.c4.go:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -18px rgba(
 .shots { display: grid; grid-template-columns: repeat(3, minmax(0, 260px)); gap: clamp(14px, 3vw, 36px); justify-content: center; margin-top: 12px; }
 @media (max-width: 680px) { .shots { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; } }
 .video-wrap { max-width: 960px; margin: 0 auto; }
+
+.hero-app { display: flex; flex-wrap: wrap; gap: 10px; }
+.app-qrs { display: flex; gap: 16px; margin-top: 18px; }
+.app-qrs figure { margin: 0; text-align: center; }
+.app-qrs .app-qr { margin-top: 0; }
+.app-qrs figcaption { margin-top: 6px; font-size: 12px; font-weight: 600; color: rgba(13, 27, 58, .65); }
+@media (max-width: 720px) { .app-qrs { display: none; } }
